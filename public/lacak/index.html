@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lacak Status Servis Smartphone • Ngalam Fix Pro</title>
+  <meta name="description" content="Lacak progres pengerjaan servis HP Android dan Apple iPhone Anda di Ngalam Fix Pro secara real-time. Cek status tahapan teknisi lab, garansi 90 hari, dan estimasi selesai.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="../js/device-sensor.js"></script>
+  <style>
+    .tracking-portal-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.08);
+    }
+
+    .tracking-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 28px;
+    }
+    .tracking-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .tracking-ticket-badge {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+    .tracking-status-badge {
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+    }
+    .tracking-status-badge.step-5 {
+      background: #ecfdf5;
+      color: #059669;
+      border-color: #a7f3d0;
+    }
+    .tracking-timeline-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+    .tracking-timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      position: relative;
+    }
+    .tracking-step {
+      text-align: center;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    .tracking-step.completed {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+    .tracking-step.active {
+      background: #eff6ff;
+      border-color: #0284c7;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+    }
+    .tracking-step-node {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      background: #e2e8f0;
+      color: #64748b;
+    }
+    .tracking-step.completed .tracking-step-node {
+      background: #10b981;
+      color: #ffffff;
+    }
+    .tracking-step.active .tracking-step-node {
+      background: #0284c7;
+      color: #ffffff;
+      animation: pulse 1.5s infinite;
+    }
+    .tracking-step-content strong {
+      display: block;
+      font-size: 0.82rem;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .tracking-step-content small {
+      display: block;
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+    .tracking-step-meta {
+      margin-top: 6px;
+      font-size: 0.7rem;
+      color: #0284c7;
+      font-weight: 700;
+    }
+    .tracking-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .tracking-detail-item {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 18px;
+    }
+    .tracking-detail-item span {
+      display: block;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .tracking-detail-item strong {
+      font-size: 0.95rem;
+      color: #0f172a;
+    }
+    .tracking-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 18px;
+    }
+  </style>
+</head>
+
+<body style="background: #f8fafc; color: #0f172a;">
+
+  <!-- HEADER NAVIGATION -->
+  <header class="header" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid #e2e8f0;">
+    <div class="wrap nav">
+      <a class="logo" href="../index.html">
+        <div class="logo-badge">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+        </div>
+        <span>Ngalam <b>Fix Pro</b></span>
+      </a>
+
+      <!-- Unified Responsive Navigation End -->
+      <div class="navend">
+        <a class="navend-login navend-lacak active" href="index.html" title="Lacak Progres Unit Servis" style="color: #0284c7; font-weight: 700; border-color: rgba(2, 132, 199, 0.3); background: rgba(2, 132, 199, 0.08);">
+          <span>🔍 Lacak Unit</span>
+        </a>
+        <a class="navend-login" href="../login/index.html" title="Masuk Akun Member Pelanggan">
+          <span>👤 Masuk</span>
+        </a>
+
+        <a class="btn small" href="../pesan-servis/index.html">
+          <span>Pesan Servis</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+
+        <!-- Burger Toggle Button -->
+        <button type="button" class="menu-toggle-btn" id="menuToggleBtn" aria-label="Buka Menu Navigasi">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="nav-dropdown-menu" id="navDropdownMenu">
+          <div class="nav-dropdown-header">
+            <span class="nav-dropdown-title">MENU NAVIGASI</span>
+            <button type="button" class="nav-dropdown-close" id="navDropdownClose">✕</button>
+          </div>
+          <div class="nav-dropdown-links">
+            <a href="../index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🏠</span><strong>Beranda</strong></a>
+            <a href="../layanan/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📱</span><strong>Layanan Servis</strong></a>
+            <a href="../pesan-servis/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📝</span><strong>Pesan Servis</strong></a>
+            <a href="../kontak/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📍</span><strong>Kontak & Lokasi</strong></a>
+            <a href="index.html" class="nav-dropdown-item active"><span class="nav-dropdown-item-icon">🔍</span><strong>Lacak Status Perangkat</strong></a>
+            <a href="../login/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">👤</span><strong>Masuk Akun Pelanggan</strong></a>
+          </div>
+          <div class="nav-dropdown-divider"></div>
+          <div class="nav-dropdown-section">
+            <a href="../mitra/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🛵</span><strong>Portal Mitra & QR Afiliasi</strong></a>
+            <a href="../teknisi/login.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🛠️</span><strong>Login Teknisi Lab</strong></a>
+            <a href="../admin/login.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">👩‍💼</span><strong>Login Admin & Kasir</strong></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <!-- HERO SECTION -->
+  <section class="wrap" style="padding-top: 44px; padding-bottom: 24px; text-align: center;">
+    <div style="max-width: 680px; margin: 0 auto;">
+      <div class="eyebrow-pill" style="margin: 0 auto 14px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #0284c7;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>SISTEM PELACAKAN UNIT RESMI • NGALAM FIX PRO</span>
+      </div>
+      <h1 style="font-size: 2.3rem; line-height: 1.25; margin-bottom: 12px; color: #0f172a; font-weight: 800;">
+        Lacak Progres Servis HP Anda.<br>
+        <span style="background: linear-gradient(135deg, #0284c7, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pantau Tahapan Lab Secara Real-Time.</span>
+      </h1>
+      <p style="margin: 0 auto; color: #475569; font-size: 0.98rem; max-width: 620px; line-height: 1.6;">
+        Masukkan nomor tiket tanda terima fisik (contoh: <b>NGF-20261023-0001</b>) atau nomor WhatsApp yang didaftarkan saat penyerahan unit HP.
+      </p>
+    </div>
+  </section>
+
+  <!-- TRACKING SECTION CONTAINER -->
+  <section class="wrap" style="max-width: 860px; margin: 20px auto 110px; padding: 0 16px;">
+    
+    <!-- Top Direct Link to Customer Login Portal -->
+    <div style="margin-bottom: 24px; padding: 14px 20px; background: linear-gradient(135deg, #eff6ff, #f8fafc); border: 1.5px solid #bfdbfe; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.05);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: #ffffff; border: 1.5px solid #bfdbfe; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
+          👤
+        </div>
+        <div>
+          <strong style="color: #1e40af; font-size: 0.94rem; display: block;">Punya Akun Member Pelanggan?</strong>
+          <span style="color: #475569; font-size: 0.83rem;">Masuk ke dashboard akun untuk melihat kartu garansi 90 hari & seluruh riwayat perbaikan Anda.</span>
+        </div>
+      </div>
+      <a href="../login/index.html" class="btn small" style="border-radius: 10px; font-size: 0.85rem; padding: 8px 18px; background: #0284c7; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+        <span>Buka Portal Member 🚀</span>
+      </a>
+    </div>
+
+    <div class="tracking-portal-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 36px 32px; box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 style="font-size: 1.4rem; color: #0f172a; margin: 0 0 6px; font-weight: 800;">Formulir Pelacakan Tiket Servis</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Ketik nomor tanda terima atau nomor WhatsApp yang terdaftar pada nota servis.</p>
+      </div>
+
+      <!-- Search Form -->
+      <form id="trackForm" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;">
+        <div style="flex: 1; min-width: 260px; position: relative;">
+          <input
+            type="text"
+            id="ticketInput"
+            class="form-control"
+            placeholder="Ketik nomor tiket (contoh: NGF-20261023-0001) atau no WhatsApp"
+            required
+            style="padding: 16px 20px; font-size: 1.02rem; background: #ffffff; border: 1.5px solid #cbd5e1; color: #0f172a; border-radius: 14px; width: 100%; box-shadow: 0 2px 6px rgba(15,23,42,0.04); outline: none; transition: all 0.2s ease;"
+          >
+        </div>
+        <button type="submit" class="btn" id="trackSubmitBtn" style="padding: 16px 30px; font-size: 1.02rem; font-weight: 700; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 8px 25px rgba(2, 132, 199, 0.25); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>Lacak Unit 🔍</span>
+        </button>
+      </form>
+
+      <!-- Loading Indicator -->
+      <div id="trackingLoading" class="hidden" style="text-align: center; padding: 40px 20px; color: #0284c7;">
+        <div style="font-size: 2.2rem; margin-bottom: 8px;">⏳</div>
+        <strong>Menghubungkan ke meja lab teknisi & database workshop...</strong>
+      </div>
+
+      <!-- Not Found Alert -->
+      <div id="trackingNotFound" class="hidden" style="margin-top: 24px; background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.25); border-radius: 16px; padding: 22px; color: #dc2626; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 6px;">🔍❌</div>
+        <strong style="font-size: 1.08rem; display: block; margin-bottom: 6px;">Nomor Tiket atau WhatsApp Tidak Ditemukan</strong>
+        <p style="margin: 0; font-size: 0.88rem; color: #b91c1c; line-height: 1.6;">
+          Pastikan nomor yang dimasukkan sudah sesuai dengan nota tanda terima Anda. Jika baru mendaftar atau butuh bantuan, hubungi Customer Care kami di WhatsApp <b>0813-3030-4321</b>.
+        </p>
+      </div>
+
+      <!-- Initial Empty State -->
+      <div id="trackingEmpty" style="text-align: center; padding: 40px 24px; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 20px; color: #64748b;">
+        <div style="font-size: 3.2rem; margin-bottom: 12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.06));">📱✨</div>
+        <strong style="color: #0f172a; font-size: 1.15rem; display: block; margin-bottom: 8px; font-weight: 800;">Lacak Status Pengerjaan Smartphone Anda</strong>
+        <p style="margin: 0 auto 20px; max-width: 520px; font-size: 0.88rem; line-height: 1.6; color: #475569;">
+          Ketik nomor tiket servis atau nomor WhatsApp Anda pada formulir di atas. Sistem akan menampilkan tahapan pengerjaan step 1–5, catatan diagnosa teknisi, dan estimasi selesai.
+        </p>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 999px; font-size: 0.78rem; font-weight: 700; color: #0284c7;">
+            ⚡ Update Real-time Meja Lab
+          </span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 999px; font-size: 0.78rem; font-weight: 700; color: #059669;">
+            🛡️ Garansi Resmi Hingga 90 Hari
+          </span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 999px; font-size: 0.78rem; font-weight: 700; color: #d97706;">
+            🔒 Privasi Data Aman 100%
+          </span>
+        </div>
+      </div>
+
+      <!-- Single / Search Result Container (Rendered by lacak.js) -->
+      <div id="trackingResult" class="hidden" style="margin-top: 24px;"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap footgrid">
+      <div class="foot-col">
+        <a class="logo" href="../index.html">
+          <div class="logo-badge">
+            <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+          </div>
+          <span>Ngalam<b>Fix Pro</b></span>
+        </a>
+        <p style="margin-top: 8px;">Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya di Kota Malang.</p>
+      </div>
+      <div class="foot-col">
+        <strong>Layanan Utama HP</strong>
+        <a href="../layanan/index.html">Servis Apple iPhone</a>
+        <a href="../layanan/index.html">Servis Layar Android</a>
+        <a href="../layanan/index.html">Ganti Layar OLED & Baterai</a>
+      </div>
+      <div class="foot-col">
+        <strong>Bantuan Pelanggan</strong>
+        <a href="../pesan-servis/index.html">Formulir Pesan Servis</a>
+        <a href="index.html">Lacak Status Unit Servis</a>
+        <a href="../login/index.html">Masuk Akun Member Pelanggan</a>
+        <a href="../kontak/index.html">Lokasi Workshop & Jam Kerja</a>
+      </div>
+      <div class="foot-col">
+        <strong>Hubungi Kami</strong>
+        <p style="color:#ffffff;font-weight:600;">Customer Care & WhatsApp:</p>
+        <p>+62 813-3030-4321 (Liem Hingky Liman)</p>
+      </div>
+    </div>
+    <div class="wrap copyright">
+      <div>© 2026 Ngalam Fix Pro. Hak Cipta Dilindungi. Sistem Pelacakan Resmi.</div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CHATBOT WIDGET (BOTTOM-LEFT LUXURY AI ASSISTANT) -->
+  <div class="chatbot-container">
+    <button type="button" class="chatbot-trigger" id="chatbotTrigger" aria-label="Buka NgalamBot AI">
+      <!-- ANIMATED AI PROFILE AVATAR FROM NGALAM FIX PRO LOGO -->
+      <div class="ai-avatar-animated" style="width: 44px; height: 44px;">
+        <div class="ai-avatar-glow"></div>
+        <div class="ai-avatar-ring-outer"></div>
+        <div class="ai-avatar-ring-inner"></div>
+        <div class="ai-avatar-core">
+          <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar" class="ai-avatar-img">
+          <div class="ai-scanner-line"></div>
+        </div>
+        <span class="ai-status-dot"></span>
+      </div>
+      <div class="chatbot-trigger-text">
+        <span class="chatbot-trigger-title">Tanya NgalamBot</span>
+        <span class="chatbot-trigger-sub">AI Asisten Servis HP</span>
+      </div>
+      <div class="chatbot-trigger-badge">
+        <span class="pulse-green-dot"></span>
+        <span>Online</span>
+      </div>
+    </button>
+
+    <div class="chatbot-panel" id="chatbotPanel">
+      <div class="chatbot-header">
+        <div class="chatbot-title-box">
+          <!-- ANIMATED AI PROFILE AVATAR IN HEADER -->
+          <div class="ai-avatar-animated" style="width: 42px; height: 42px;">
+            <div class="ai-avatar-glow"></div>
+            <div class="ai-avatar-ring-outer"></div>
+            <div class="ai-avatar-ring-inner"></div>
+            <div class="ai-avatar-core">
+              <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar" class="ai-avatar-img">
+              <div class="ai-scanner-line"></div>
+            </div>
+            <span class="ai-status-dot"></span>
+          </div>
+          <div class="chatbot-header-text">
+            <strong>NgalamBot <span class="chatbot-pill-tag">AI PRO</span></strong>
+            <small><span class="pulse-green-dot"></span> Siap Menjawab 24/7</small>
+          </div>
+        </div>
+        <div class="chatbot-header-actions">
+          <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20status%20servis" target="_blank" rel="noopener noreferrer" class="chatbot-wa-btn" title="Chat WhatsApp PIC Workshop">
+            <span>💬 WA</span>
+          </a>
+          <button type="button" class="chatbot-close-btn" id="chatbotClose" aria-label="Tutup Chat">✕</button>
+        </div>
+      </div>
+
+      <div class="chatbot-body" id="chatbotMessages">
+        <div class="chatbot-bubble-row bot">
+          <div class="ai-bubble-avatar">
+            <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI">
+          </div>
+          <div class="chatbot-bubble bot">
+            Halo! Sedang melacak tiket servis atau ingin bertanya seputar estimasi pengerjaan dan garansi unit Anda?
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-chips">
+        <button type="button" class="chatbot-chip" data-query="Bagaimana cara klaim garansi?">🛡️ Klaim Garansi</button>
+        <button type="button" class="chatbot-chip" data-query="Berapa lama estimasi pengerjaan servis?">⏱️ Estimasi Waktu</button>
+        <button type="button" class="chatbot-chip" data-query="Di mana lokasi workshop?">📍 Lokasi Workshop</button>
+        <button type="button" class="chatbot-chip" data-query="Apakah ada layanan antar jemput?">🛵 Antar Jemput</button>
+      </div>
+
+      <div class="chatbot-footer">
+        <div class="chatbot-input-row">
+          <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Tanya status, garansi, estimasi..." autocomplete="off">
+          <button type="button" id="chatbotSend" class="chatbot-send-btn" aria-label="Kirim Pesan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <div class="chatbot-disclaimer">
+          Ditenagai AI Spesialis Servis Smartphone • Estimasi Real-time
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/device-sensor.js"></script>
+  <script src="../js/api-base.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="lacak.js"></script>
+  <script src="../js/chatbot.js"></script>
+</body>
+</html>

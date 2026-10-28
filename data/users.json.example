@@ -1,0 +1,18 @@
+[
+  {
+    "id": "USR-MITRA-EXAMPLE",
+    "username": "mitra_demo",
+    "password": "password123",
+    "name": "Mitra Contoh",
+    "role": "ojol",
+    "category": "Mitra Kurir Ojek Online (Motor)",
+    "avatar": "🛵",
+    "phone": "081234567890",
+    "email": "mitra@example.com",
+    "referralCode": "MTR-DEMO-001",
+    "commissionRate": 10,
+    "totalCommission": 0,
+    "status": "Siaga / Aktif",
+    "lastActive": "Baru Terdaftar"
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "PROMO-001",
+    "title": "Diskon Servis Hingga 30% Ganti Layar OLED & Baterai Original",
+    "description": "Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi hingga 90 hari.",
+    "badgeTag": "🔥 PROMO SPESIAL BULAN INI",
+    "badgePill": "🏷️ DISKON S/D 30%",
+    "theme": "red",
+    "promoCode": "NGALAMPROMO30",
+    "buttonText": "Klaim Promo Servis ↗",
+    "buttonLink": "pesan-servis/index.html?promo=NGALAMPROMO30",
+    "image": "images/promo-banner-1.jpg",
+    "active": true,
+    "createdAt": "2026-10-23T08:00:00.000Z",
+    "updatedAt": "2026-10-23T04:10:49.212Z"
+  },
+  {
+    "id": "PROMO-002",
+    "title": "Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA",
+    "description": "Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal.",
+    "badgeTag": "🟢 WORKSHOP MEJA TERBUKA & TRANSPARAN",
+    "badgePill": "⚡ BISA DITUNGGU (30–60 MENIT)",
+    "theme": "green",
+    "promoCode": "🛡️ GARANSI S/D 90 HARI",
+    "buttonText": "Konsultasi Teknisi Langsung ↗",
+    "buttonLink": "https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu",
+    "image": "images/spesialis-hp-banner.jpg",
+    "active": true,
+    "createdAt": "2026-10-23T08:05:00.000Z",
+    "updatedAt": "2026-10-26T15:35:05.399Z"
+  },
+  {
+    "id": "PROMO-003",
+    "title": "Paket Komplit Ganti LCD: Gratis Pasang Tempered Glass 9H Presisi",
+    "description": "Khusus reparasi layar Super Retina XDR iPhone, Dynamic AMOLED Samsung, serta panel seri Xiaomi, Vivo, OPPO & Realme.",
+    "badgeTag": "🎁 BONUS TEMPERED GLASS 9H",
+    "badgePill": "✨ FLASH DEAL BULAN INI",
+    "theme": "purple",
+    "promoCode": "FREEGLASS9H",
+    "buttonText": "Pesan Ganti Layar ↗",
+    "buttonLink": "pesan-servis/index.html?promo=FREEGLASS9H",
+    "image": "images/promo-banner-1.jpg",
+    "active": true,
+    "createdAt": "2026-10-23T08:10:00.000Z",
+    "updatedAt": "2026-10-26T15:35:14.802Z"
+  }
+]

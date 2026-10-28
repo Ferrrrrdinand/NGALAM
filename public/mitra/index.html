@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Mitra Driver, Ojol & Afiliasi QR Code • Ngalam Fix Pro</title>
+  <meta name="description"
+    content="Portal resmi mitra driver ojek online dan bengkel rekanan Ngalam Fix Pro. Dapatkan kode unik afiliasi otomatis, QR Code scan pribadi, dan komisi hingga 10% setiap servis HP.">
+  <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="../js/device-sensor.js"></script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .mitra-container {
+      max-width: 1100px;
+      margin: 36px auto 80px;
+      padding: 0 20px;
+    }
+    .mitra-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 9999px;
+      color: #059669;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .mitra-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .auth-tab-btn {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .auth-tab-btn.active {
+      background: #059669;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+    }
+    .auth-tab-btn:not(.active) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    .form-control-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 0.95rem;
+      background: #ffffff;
+      color: #0f172a;
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    .form-control-input:focus {
+      outline: none;
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+    .btn-mitra-primary {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-mitra-primary:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+      transform: translateY(-1px);
+    }
+    .qr-card {
+      background: linear-gradient(135deg, #ffffff, #f0fdf4);
+      border: 2px dashed #059669;
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+    }
+    .qr-image-wrapper {
+      display: inline-block;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(5, 150, 105, 0.12);
+      border: 1px solid #d1fae5;
+      margin-bottom: 16px;
+    }
+    .qr-image-wrapper img {
+      width: 220px;
+      height: 220px;
+      display: block;
+    }
+    .code-pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #059669;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 6px 18px;
+      border-radius: 12px;
+      letter-spacing: 1px;
+    }
+    .stat-metric-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .stat-metric-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 4px 0;
+    }
+    .stat-metric-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #d4af37;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+      display: inline-block;
+    }
+    .brand-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .logo-circle img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="header" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid #e2e8f0;">
+    <div class="wrap nav">
+      <a class="logo" href="../index.html">
+        <div class="logo-badge">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+        </div>
+        <span>Ngalam <b>Fix Pro</b></span>
+        <span class="logo-pill" style="background: #ecfdf5; border-color: #a7f3d0; color: #059669;">MITRA AFILIASI</span>
+      </a>
+
+      <!-- Unified Responsive Navigation End -->
+      <div class="navend">
+        <a class="navend-login" href="../lacak/index.html" title="Lacak Progres Unit Servis">
+          <span>🔍 Lacak Unit</span>
+        </a>
+        <a class="navend-login" href="../login/index.html" title="Masuk Akun Member Pelanggan">
+          <span>👤 Masuk</span>
+        </a>
+
+        <a class="btn small" href="../pesan-servis/index.html" style="background: #059669; border-color: #059669; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);">
+          <span>Pesan Servis</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+
+        <!-- Burger Toggle Button -->
+        <button type="button" class="menu-toggle-btn" id="menuToggleBtn" aria-label="Buka Menu Navigasi">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="nav-dropdown-menu" id="navDropdownMenu">
+          <div class="nav-dropdown-header">
+            <span class="nav-dropdown-title">MENU NAVIGASI</span>
+            <button type="button" class="nav-dropdown-close" id="navDropdownClose">✕</button>
+          </div>
+          <div class="nav-dropdown-links">
+            <a href="../index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🏠</span><strong>Beranda</strong></a>
+            <a href="../layanan/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📱</span><strong>Layanan Servis</strong></a>
+            <a href="../pesan-servis/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📝</span><strong>Pesan Servis</strong></a>
+            <a href="../kontak/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📍</span><strong>Kontak & Lokasi</strong></a>
+            <a href="../lacak/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🔍</span><strong>Lacak Status Perangkat</strong></a>
+            <a href="../login/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">👤</span><strong>Masuk Akun Pelanggan</strong></a>
+          </div>
+          <div class="nav-dropdown-divider"></div>
+          <div class="nav-dropdown-section">
+            <a href="index.html" class="nav-dropdown-item active"><span class="nav-dropdown-item-icon">🛵</span><strong>Portal Mitra & QR Afiliasi</strong></a>
+            <a href="../teknisi/login.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🛠️</span><strong>Login Teknisi Lab</strong></a>
+            <a href="../admin/login.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">👩‍💼</span><strong>Login Admin & Kasir</strong></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <main class="mitra-container">
+    <!-- SUB-VIEW 1: UNAUTHENTICATED (LOGIN / REGISTER) -->
+    <div id="mitraAuthSection">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div class="mitra-hero-badge">
+          <span>🛵 🏪 PROGRAM RESMI KEMITRAAN & AFILIASI QR CODE</span>
+        </div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin: 0 0 10px; color: #0f172a;">
+          Rekomendasikan Servis HP,<br><span style="color: #059669;">Dapatkan Komisi 10% Per Transaksi!</span>
+        </h1>
+        <p style="color: #64748b; max-width: 650px; margin: 0 auto; line-height: 1.5; font-size: 0.95rem;">
+          Khusus Mitra Driver Ojol (Gojek, Grab, Maxim, Shopee) dan Toko/Bengkel Rekanan Malang. Setiap mitra memiliki <strong>Kode Unik Otomatis</strong> & <strong>QR Code Pribadi</strong>. Pelanggan cukup scan QR Code Anda saat memesan servis, dan komisi otomatis masuk ke akun Anda!
+        </p>
+      </div>
+
+      <div style="max-width: 520px; margin: 0 auto;">
+        <!-- TAB TOGGLE -->
+        <div style="display: flex; gap: 10px; background: #f1f5f9; padding: 6px; border-radius: 14px; margin-bottom: 24px;">
+          <button type="button" class="auth-tab-btn active" id="tabBtnLogin">Masuk Akun Mitra</button>
+          <button type="button" class="auth-tab-btn" id="tabBtnRegister">Daftar Mitra Baru</button>
+        </div>
+
+        <!-- ALERT BOX -->
+        <div id="mitraAlertBox" style="display: none; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4;"></div>
+
+        <!-- FORM 1: LOGIN -->
+        <div id="formLoginContainer" class="mitra-card">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0 0 8px; color: #0f172a;">Masuk ke Portal Mitra</h2>
+          <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 20px;">
+            Hanya akun yang terdaftar resmi di Google Spreadsheet tab <code>MitraDriver</code> yang dapat mengakses.
+          </p>
+
+          <form id="formMitraLogin">
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Username / No. WhatsApp / Kode Afiliasi</label>
+              <input type="text" id="loginMitraId" class="form-control-input" placeholder="Contoh: mitra_andi atau 081234567811" required>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Kata Sandi Akun</label>
+              <input type="password" id="loginMitraPassword" class="form-control-input" placeholder="Masukkan kata sandi mitra" required>
+            </div>
+
+            <button type="submit" id="btnSubmitLogin" class="btn-mitra-primary">
+              <span>🚀 Masuk ke Dashboard Mitra</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- FORM 2: REGISTER -->
+        <div id="formRegisterContainer" class="mitra-card" style="display: none;">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0 0 8px; color: #0f172a;">Pendaftaran Akun Mitra Baru</h2>
+          <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 20px;">
+            Kode unik afiliasi & QR Code akan <strong>dibuat secara otomatis</strong> dan langsung tersinkronkan ke Google Spreadsheet.
+          </p>
+
+          <form id="formMitraRegister">
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Nama Lengkap Mitra / Toko <span style="color:#ef4444;">*</span></label>
+              <input type="text" id="regMitraName" class="form-control-input" placeholder="Contoh: Budi Prasetyo (Gojek Lowokwaru)" required>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Kategori Mitra Armada <span style="color:#ef4444;">*</span></label>
+              <select id="regMitraCategory" class="form-control-input" required>
+                <option value="Mitra Kurir Ojek Online (Motor)">🛵 Mitra Kurir Ojek Online (Motor)</option>
+                <option value="Mitra Driver Mobil / Antar-Jemput">🚗 Mitra Driver Mobil / Antar-Jemput</option>
+                <option value="Mitra Bengkel / Toko Aksesoris Rekanan">🏪 Mitra Bengkel / Toko Rekanan</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Nomor WhatsApp Aktif <span style="color:#ef4444;">*</span></label>
+              <input type="tel" id="regMitraPhone" class="form-control-input" placeholder="Contoh: 081234567899" required>
+              <small style="color: #64748b; font-size: 0.78rem;">Digunakan untuk konfirmasi penarikan komisi & notifikasi order servis.</small>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Username Akun <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="regMitraUsername" class="form-control-input" placeholder="mitra_budi" required>
+              </div>
+              <div>
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Kata Sandi <span style="color:#ef4444;">*</span></label>
+                <input type="password" id="regMitraPassword" class="form-control-input" placeholder="Minimal 6 karakter" required>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">Email (Opsional)</label>
+              <input type="email" id="regMitraEmail" class="form-control-input" placeholder="budi@gmail.com">
+            </div>
+
+            <button type="submit" id="btnSubmitRegister" class="btn-mitra-primary">
+              <span>✨ Buat Akun & Dapatkan QR Code</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-VIEW 2: AUTHENTICATED DASHBOARD (SHOWN WHEN LOGGED IN) -->
+    <div id="mitraDashboardSection" style="display: none;">
+      <!-- TOP BANNER -->
+      <div class="mitra-card" style="background: linear-gradient(135deg, #064e3b, #065f46); color: #ffffff; border: none; padding: 28px 32px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+          <div style="display: flex; align-items: center; gap: 18px;">
+            <div style="width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,0.15); font-size: 2.2rem; display: flex; align-items: center; justify-content: center;" id="dashAvatar">🛵</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span style="background: #10b981; color: #ffffff; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">MITRA RESMI TERDAFTAR</span>
+                <span style="font-size: 0.78rem; opacity: 0.9;">✅ Terverifikasi di Google Spreadsheet (Tab MitraDriver)</span>
+              </div>
+              <h2 style="font-size: 1.55rem; font-weight: 800; margin: 0 0 2px;" id="dashMitraName">Mas Andi</h2>
+              <p style="margin: 0; font-size: 0.88rem; opacity: 0.85;" id="dashCategory">Mitra Kurir Ojek Online (Motor) • WA: 081234567811</p>
+            </div>
+          </div>
+          <div>
+            <button type="button" id="btnMitraLogout" style="padding: 10px 18px; background: rgba(255,255,255,0.18); color: #ffffff; border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; font-weight: 700; cursor: pointer;">
+              Keluar Akun
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID: QR CODE CARD & STATS -->
+      <div style="display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: start;">
+        <!-- LEFT: QR CODE & AFFILIATE LINK -->
+        <div class="qr-card">
+          <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: #ecfdf5; border-radius: 9999px; color: #059669; font-weight: 800; font-size: 0.75rem; margin-bottom: 12px;">
+            <span>SCAN LANGSUNG KE PESAN SERVIS</span>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; margin: 0 0 8px; color: #064e3b;">QR Code Afiliasi Anda</h3>
+          <p style="font-size: 0.84rem; color: #047857; margin: 0 0 18px; line-height: 1.4;">
+            Tunjukkan QR Code ini kepada pelanggan Anda atau tempel di motor/helm/toko Anda. Pelanggan cukup scan dan order!
+          </p>
+
+          <div class="qr-image-wrapper">
+            <img id="dashQrImage" src="" alt="QR Code Afiliasi Mitra">
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase;">Kode Unik Afiliasi Anda</div>
+            <div class="code-pill" id="dashRefCode">MTR-ANDI-8492</div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="dashAffiliateUrl" readonly class="form-control-input" style="font-size: 0.8rem; background: #f8fafc; font-family: monospace;">
+              <button type="button" id="btnCopyAffiliateLink" style="padding: 10px 14px; background: #059669; color: #ffffff; border: none; border-radius: 10px; font-weight: 700; font-size: 0.82rem; cursor: pointer; white-space: nowrap;">
+                Salin Link
+              </button>
+            </div>
+            <a id="btnDownloadQr" href="#" download="QR_Afiliasi_NgalamFixPro.png" target="_blank" style="padding: 11px; background: #0f172a; color: #ffffff; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>📥 Unduh Gambar QR Code (PNG)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- RIGHT: COMMISSION STATS & HOW IT WORKS -->
+        <div>
+          <!-- METRIC STATS -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;">
+            <div class="stat-metric-card" style="border-left: 4px solid #10b981;">
+              <div class="stat-metric-label">Total Komisi Didapat</div>
+              <div class="stat-metric-val" style="color: #059669;" id="dashTotalComm">Rp 0</div>
+              <small style="color: #64748b; font-size: 0.75rem;">Tersinkronkan ke Spreadsheet</small>
+            </div>
+            <div class="stat-metric-card" style="border-left: 4px solid #0284c7;">
+              <div class="stat-metric-label">Servis Tereferensi</div>
+              <div class="stat-metric-val" style="color: #0284c7;" id="dashTotalOrders">0</div>
+              <small style="color: #64748b; font-size: 0.75rem;">Total unit smartphone</small>
+            </div>
+            <div class="stat-metric-card" style="border-left: 4px solid #f59e0b;">
+              <div class="stat-metric-label">Tingkat Komisi Anda</div>
+              <div class="stat-metric-val" style="color: #d97706;" id="dashCommRate">10%</div>
+              <small style="color: #64748b; font-size: 0.75rem;">Dari total harga servis</small>
+            </div>
+          </div>
+
+          <!-- HOW IT WORKS STEP -->
+          <div class="mitra-card" style="padding: 22px 24px; margin-bottom: 24px; background: #ffffff;">
+            <h4 style="font-size: 0.98rem; font-weight: 800; margin: 0 0 14px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+              <span>💡 Cara Kerja Komisi Afiliasi Ngalam Fix Pro</span>
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+              <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 1.4rem; margin-bottom: 6px;">1️⃣ 📲</div>
+                <strong style="font-size: 0.85rem; color: #0f172a; display: block; margin-bottom: 4px;">Pelanggan Scan QR</strong>
+                <p style="margin: 0; font-size: 0.78rem; color: #64748b; line-height: 1.35;">
+                  Pelanggan scan QR Code Anda dan formulir booking mendeteksi Anda sebagai mitra perekomendasi.
+                </p>
+              </div>
+              <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 1.4rem; margin-bottom: 6px;">2️⃣ 🔬</div>
+                <strong style="font-size: 0.85rem; color: #0f172a; display: block; margin-bottom: 4px;">Teknisi Tangani Unit</strong>
+                <p style="margin: 0; font-size: 0.78rem; color: #64748b; line-height: 1.35;">
+                  Teknisi kami memperbaiki perangkat dengan garansi 90 hari. Jasa servis tetap berjalan profesional.
+                </p>
+              </div>
+              <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 1.4rem; margin-bottom: 6px;">3️⃣ 💰</div>
+                <strong style="font-size: 0.85rem; color: #0f172a; display: block; margin-bottom: 4px;">Komisi 10% Otomatis</strong>
+                <p style="margin: 0; font-size: 0.78rem; color: #64748b; line-height: 1.35;">
+                  Komisi 10% langsung dihitung dan dicatat di Google Spreadsheet tab <code>MitraDriver</code>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- REFERRED ORDERS TABLE -->
+          <div class="mitra-card" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0; color: #0f172a;">Daftar Servis Pelanggan Afiliasi Anda</h3>
+              <span id="orderCountBadge" style="font-size: 0.8rem; background: #ecfdf5; color: #059669; font-weight: 700; padding: 4px 10px; border-radius: 9999px;">0 Unit</span>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.86rem; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.78rem; text-transform: uppercase;">
+                    <th style="padding: 10px 12px;">No. Tiket</th>
+                    <th style="padding: 10px 12px;">Pelanggan</th>
+                    <th style="padding: 10px 12px;">Smartphone</th>
+                    <th style="padding: 10px 12px;">Status</th>
+                    <th style="padding: 10px 12px;">Biaya Servis</th>
+                    <th style="padding: 10px 12px; color: #059669;">Komisi Anda</th>
+                  </tr>
+                </thead>
+                <tbody id="dashOrdersBody">
+                  <tr>
+                    <td colspan="6" style="padding: 30px; text-align: center; color: #94a3b8;">
+                      Belum ada servis yang menggunakan kode afiliasi Anda. Bagikan QR Code Anda untuk mulai mendapatkan komisi!
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/device-sensor.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="mitra.js?v=1.0"></script>
+</body>
+</html>

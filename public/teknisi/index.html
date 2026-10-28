@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meja Kerja Teknisi Lab • Ngalam Fix Pro</title>
+  <meta name="description"
+    content="Portal meja kerja pengerjaan teknisi workshop lab Ngalam Fix Pro. Memantau dan memperbarui 5 tahapan unit servis yang ditugaskan oleh Admin.">
+  <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="../js/device-sensor.js"></script>
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #eff6ff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --success: #059669;
+      --success-light: #ecfdf5;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f8fafc !important;
+      color: var(--text-main) !important;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Modern Top Navbar */
+    .lab-navbar {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .lab-nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      padding: 0 24px;
+      max-width: 1320px;
+      margin: 0 auto;
+      gap: 16px;
+    }
+    .lab-nav-row-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lab-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      flex-shrink: 0;
+    }
+    .lab-brand-pill {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .lab-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      border: 1.5px solid #a7f3d0;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #047857;
+      white-space: nowrap;
+    }
+    .lab-status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .lab-nav-top-right {
+      display: none;
+    }
+    .lab-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .lab-btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid var(--border-color);
+      background: #ffffff;
+      color: #334155;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .lab-btn-icon:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .lab-user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0f9ff;
+      border: 1.5px solid #bae6fd;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #0284c7;
+      white-space: nowrap;
+    }
+    .lab-logout-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid #fecaca;
+      background: #fef2f2;
+      color: #dc2626;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .lab-logout-btn:hover {
+      background: #fee2e2;
+      border-color: #f87171;
+    }
+
+    /* Main Container */
+    .lab-main-wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 20px 70px;
+      box-sizing: border-box;
+    }
+
+    /* Modern Hero Profile Card */
+    .tech-profile-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px 28px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
+      margin-top: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .tech-profile-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+      min-width: 0;
+    }
+    .tech-avatar-circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border: 2px solid #bfdbfe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      flex-shrink: 0;
+      box-shadow: 0 8px 16px rgba(2, 132, 199, 0.12);
+    }
+    .tech-profile-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .tech-profile-header-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .tech-name-heading {
+      font-size: 1.45rem;
+      color: #0f172a;
+      margin: 0;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .tech-desk-badge {
+      background: #eff6ff;
+      border: 1.5px solid #bae6fd;
+      color: #0284c7;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 3px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .tech-specialty-line {
+      color: #475569;
+      font-size: 0.88rem;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+    .tech-status-line {
+      font-size: 0.84rem;
+      margin-top: 6px;
+      line-height: 1.3;
+    }
+    .tech-stats-group {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .tech-stat-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px 20px;
+      min-width: 120px;
+      text-align: center;
+    }
+    .tech-stat-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    .tech-stat-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* Section Control Header */
+    .workbench-section-header {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px 24px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.03);
+    }
+    .workbench-section-title-wrap {
+      flex: 1;
+      min-width: 260px;
+    }
+    .workbench-search-wrapper {
+      position: relative;
+      min-width: 280px;
+    }
+    .workbench-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+    .workbench-search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: #0f172a;
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .workbench-search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    /* Cards Grid */
+    .workbench-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 22px;
+      margin-bottom: 36px;
+    }
+
+    /* 5-Stage Stepper Container */
+    .stepper-pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    .step-pipeline-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+      position: relative;
+    }
+    .step-pipeline-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      color: #64748b;
+      font-size: 0.82rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .step-pipeline-item.active .step-pipeline-circle {
+      background: #0284c7;
+      border-color: #0369a1;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(2, 132, 199, 0.4);
+      transform: scale(1.08);
+    }
+    .step-pipeline-item.completed .step-pipeline-circle {
+      background: #10b981;
+      border-color: #059669;
+      color: #ffffff;
+    }
+    .step-pipeline-text {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #64748b;
+      line-height: 1.25;
+    }
+    .step-pipeline-item.active .step-pipeline-text {
+      color: #0284c7;
+      font-weight: 800;
+    }
+    .step-pipeline-item.completed .step-pipeline-text {
+      color: #059669;
+    }
+
+    /* Card Pengerjaan Unit */
+    .tech-job-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+    .tech-job-card:hover {
+      box-shadow: 0 12px 36px rgba(15, 23, 42, 0.09);
+      border-color: #93c5fd;
+    }
+    .tech-job-card.finished {
+      border-color: #a7f3d0;
+      background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+    }
+
+    /* Premium Empty State */
+    .workbench-empty-card {
+      grid-column: 1 / -1;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 56px 32px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+      max-width: 780px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .workbench-empty-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border: 2px solid #bae6fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      box-shadow: 0 10px 24px rgba(2, 132, 199, 0.1);
+    }
+    .workbench-empty-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+      text-align: left;
+    }
+    .workbench-empty-hint {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    /* =========================================================================
+       RESPONSIVE MOBILE STYLES (Smartphones & Small Tablets < 768px)
+       ========================================================================= */
+    @media (max-width: 768px) {
+      .lab-nav-container {
+        flex-direction: column;
+        padding: 12px 16px;
+        min-height: auto;
+        gap: 10px;
+      }
+      .lab-nav-row-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .lab-nav-top-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .lab-status-pill {
+        padding: 4px 10px;
+        font-size: 0.72rem;
+      }
+      .lab-nav-actions {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+      }
+      .lab-nav-actions .lab-btn-icon {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+      }
+      .lab-user-badge.desktop-only,
+      .desktop-logout-btn,
+      .desktop-status-pill {
+        display: none !important;
+      }
+      .lab-brand-pill {
+        display: none;
+      }
+
+      .lab-main-wrap {
+        padding: 0 14px 40px !important;
+      }
+
+      /* Profile Hero Card on Mobile */
+      .tech-profile-card {
+        padding: 16px;
+        margin-top: 14px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+      .tech-profile-left {
+        gap: 12px;
+      }
+      .tech-avatar-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        font-size: 1.7rem;
+      }
+      .tech-name-heading {
+        font-size: 1.15rem;
+      }
+      .tech-desk-badge {
+        font-size: 0.72rem;
+        padding: 2px 8px;
+      }
+      .tech-specialty-line {
+        font-size: 0.78rem;
+      }
+      .tech-status-line {
+        font-size: 0.78rem;
+        margin-top: 4px;
+      }
+      .tech-stats-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+      }
+      .tech-stat-box {
+        min-width: 0;
+        padding: 10px;
+        border-radius: 12px;
+      }
+      .tech-stat-num {
+        font-size: 1.25rem;
+      }
+      .tech-stat-label {
+        font-size: 0.68rem;
+      }
+
+      /* Section Header Controls */
+      .workbench-section-header {
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        border-radius: 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .workbench-section-title-wrap {
+        min-width: 0;
+      }
+      .workbench-section-title-wrap h2 {
+        font-size: 1.1rem !important;
+      }
+      .workbench-section-title-wrap p {
+        font-size: 0.8rem !important;
+      }
+      .workbench-search-wrapper {
+        min-width: 0;
+        width: 100%;
+      }
+
+      /* Cards Grid */
+      .workbench-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      /* Empty State Card */
+      .workbench-empty-card {
+        padding: 28px 16px;
+        border-radius: 18px;
+      }
+      .workbench-empty-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2.2rem;
+        border-radius: 18px;
+        margin: 0 auto 14px;
+      }
+      .workbench-empty-card h3 {
+        font-size: 1.2rem !important;
+      }
+      .workbench-empty-card p {
+        font-size: 0.86rem !important;
+        line-height: 1.5 !important;
+        margin-bottom: 14px !important;
+      }
+      .workbench-empty-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .workbench-empty-hint {
+        padding: 12px 14px;
+      }
+
+      /* Stepper Pipeline */
+      .stepper-pipeline {
+        gap: 4px;
+        padding: 10px 6px;
+        border-radius: 12px;
+        margin: 12px 0;
+      }
+      .step-pipeline-circle {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 0.72rem !important;
+      }
+      .step-pipeline-text {
+        font-size: 0.62rem !important;
+        line-height: 1.15 !important;
+      }
+    }
+
+    /* Logout Modal & Transition Animation Styles */
+    @keyframes modalPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(24px);
+      }
+      70% {
+        opacity: 1;
+        transform: scale(1.02) translateY(-2px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes pulseExitRing {
+      0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+        transform: scale(0.96);
+      }
+      50% {
+        box-shadow: 0 0 0 16px rgba(239, 68, 68, 0);
+        transform: scale(1.04);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        transform: scale(0.96);
+      }
+    }
+
+    @keyframes spinWheel {
+      to { transform: rotate(360deg); }
+    }
+
+    .logout-anim-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(14px);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .logout-anim-card {
+      background: #ffffff;
+      border: 1.5px solid #fecaca;
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(220, 38, 38, 0.2);
+      animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .logout-anim-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      border: 2.5px solid #f87171;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+      margin: 0 auto 18px;
+      animation: pulseExitRing 1.8s infinite ease-in-out;
+      transition: all 0.3s ease;
+    }
+
+    .logout-progress-track {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 22px 0 12px;
+    }
+
+    .logout-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      border-radius: 999px;
+      transition: width 0.35s ease-out;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MODERN HEADER NAVBAR -->
+  <header class="lab-navbar">
+    <div class="lab-nav-container">
+      <div class="lab-nav-row-top">
+        <a class="lab-brand" href="../index.html">
+          <div class="logo-badge" style="width: 38px; height: 38px; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1.5px solid #cbd5e1; flex-shrink: 0;">
+            <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 1.12rem; font-weight: 800; line-height: 1.1; color: #0f172a;">
+              Ngalam<b style="color: #0284c7;">Fix Pro</b>
+            </div>
+            <span style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Sistem Meja Kerja Lab</span>
+          </div>
+          <span class="lab-brand-pill">TEKNISI LAB</span>
+        </a>
+
+        <!-- Right Side on Mobile: Status + Logout -->
+        <div class="lab-nav-top-right">
+          <div class="lab-status-pill">
+            <span class="lab-status-dot"></span>
+            <span>Online</span>
+          </div>
+          <button type="button" class="lab-logout-btn mobile-logout-btn" id="techLogoutBtnMobile" title="Keluar">
+            🚪 Keluar
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions (Desktop all-in-one, Mobile clean 2-button row) -->
+      <div class="lab-nav-actions">
+        <!-- Live Status Dot (Desktop) -->
+        <div class="lab-status-pill desktop-status-pill">
+          <span class="lab-status-dot"></span>
+          <span>Lab Online</span>
+        </div>
+
+        <button type="button" class="lab-btn-icon" id="refreshTechBtn" title="Perbarui Data Antrean">
+          🔄 Refresh Tugas
+        </button>
+
+        <a href="../index.html" class="lab-btn-icon" title="Ke Beranda Utama">
+          Ke Beranda ↗
+        </a>
+
+        <!-- Technician Session Badge -->
+        <div class="lab-user-badge desktop-only" id="techUserBadge">
+          <span id="techUserAvatar">🔬</span>
+          <span id="techUserName">Ferdinand (Teknisi Lab)</span>
+        </div>
+
+        <button type="button" class="lab-logout-btn desktop-logout-btn" id="techLogoutBtn" title="Keluar dari Akun">
+          🚪 Keluar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="wrap lab-main-wrap">
+
+    <!-- TOP TECHNICIAN PROFILE HERO -->
+    <div class="tech-profile-card">
+      <div class="tech-profile-left">
+        <div class="tech-avatar-circle" id="deskAvatarBig">🔬</div>
+        <div class="tech-profile-info">
+          <div class="tech-profile-header-line">
+            <h1 class="tech-name-heading" id="deskTechName">
+              Ferdinand (Teknisi Lab)
+            </h1>
+            <span id="deskLocationBadge" class="tech-desk-badge">
+              Meja Lab Workshop - Teknisi Utama
+            </span>
+          </div>
+          <div class="tech-specialty-line" id="deskSpecialtyText">
+            Spesialisasi: Spesialis Servis Smartphone & Hardware Lab
+          </div>
+          <div class="tech-status-line" id="deskStatusBadge">
+            <span style="color: #047857; font-weight: 800;">🟢 Meja Standby (Siap Menerima Tugas dari Admin)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics on this desk -->
+      <div class="tech-stats-group">
+        <div class="tech-stat-box">
+          <div class="tech-stat-num" style="color: #0284c7;" id="myAssignedCount">0 Unit</div>
+          <div class="tech-stat-label">Tugas Aktif</div>
+        </div>
+        <div class="tech-stat-box">
+          <div class="tech-stat-num" style="color: #059669;" id="myCompletedTodayCount">0 Unit</div>
+          <div class="tech-stat-label">Selesai Hari Ini</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKBENCH SECTION CONTROLS (TITLE & SEARCH) -->
+    <div class="workbench-section-header">
+      <div class="workbench-section-title-wrap">
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 4px;">
+          Daftar Tugas Unit HP dari Admin
+        </h2>
+        <p style="color: #64748b; font-size: 0.85rem; margin: 0; line-height: 1.4;">
+          Kelola pengerjaan unit secara bertahap melalui 5 status resmi yang terhubung transparan ke Admin dan Pelanggan.
+        </p>
+      </div>
+
+      <!-- Search Input -->
+      <div class="workbench-search-wrapper">
+        <span class="workbench-search-icon">🔍</span>
+        <input type="text" id="techSearchInput" class="workbench-search-input" placeholder="Cari tiket, tipe HP, pemilik...">
+      </div>
+    </div>
+
+    <!-- NOTIFICATION BOX -->
+    <div id="techNotificationBox" style="display: none; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem;"></div>
+
+    <!-- WORKBENCH GRID CONTAINER (EMPTY STATE OR CARDS) -->
+    <div id="technicianCardsContainer" class="workbench-cards-grid">
+      <!-- Populated dynamically by teknisi.js -->
+    </div>
+
+    <!-- WORKSHOP FOOTNOTE INFORMATION -->
+    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 18px 24px; font-size: 0.85rem; color: #64748b; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);">
+      <div>
+        ℹ️ <b>Transparansi Real-Time:</b> Setiap kenaikan tahapan dan catatan lab otomatis tersinkronisasi ke monitor antrean admin (<code style="color: #7c3aed; font-weight: 700;">/admin/</code>) dan pelacakan customer (<code style="color: #0284c7; font-weight: 700;">/lacak/</code>).
+      </div>
+      <div style="color: #334155; font-weight: 700;">
+        Shift Lab Workshop Ngalam Fix Pro
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL EDIT CATATAN DIAGNOSA -->
+  <div id="noteModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; border-radius: 20px; max-width: 520px; width: 100%; padding: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: 1.5px solid #e2e8f0;">
+      <h3 style="margin: 0 0 8px; font-size: 1.25rem; color: #0f172a; font-weight: 800;" id="noteModalTitle">Tambah Catatan Lab Teknisi</h3>
+      <p style="color: #64748b; font-size: 0.86rem; margin: 0 0 16px;">Catatan ini akan dapat dibaca langsung oleh Admin dan Pelanggan pada menu lacak status servis.</p>
+      
+      <textarea id="noteModalInput" class="form-control" rows="4" placeholder="Tuliskan hasil diagnosa, komponen yang diganti, atau status pengujian..." style="width: 100%; padding: 12px; font-size: 0.92rem; border: 1.5px solid #cbd5e1; border-radius: 10px; margin-bottom: 18px; box-sizing: border-box; outline: none;"></textarea>
+      
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="lab-btn-icon" id="cancelNoteModalBtn" style="padding: 10px 18px;">
+          Batal
+        </button>
+        <button type="button" id="saveNoteModalBtn" style="border: none; padding: 10px 20px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);">
+          Simpan Catatan Lab 💾
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <div id="logoutConfirmModal" class="logout-anim-overlay">
+    <div class="logout-anim-card" style="max-width: 440px; padding: 32px 28px;">
+      <div style="width: 68px; height: 68px; border-radius: 20px; background: #fef2f2; border: 2px solid #fecaca; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 16px;">
+        🚪
+      </div>
+      <h3 style="margin: 0 0 8px; font-size: 1.3rem; color: #0f172a; font-weight: 800;">
+        Keluar dari Meja Kerja Lab?
+      </h3>
+      <p style="color: #64748b; font-size: 0.88rem; margin: 0 0 24px; line-height: 1.5;">
+        Sesi pengerjaan teknisi <b>Ferdinand</b> akan ditutup dan status kehadiran Anda di meja lab akan dialihkan menjadi offline.
+      </p>
+      
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" class="lab-btn-icon" id="cancelLogoutBtn" style="flex: 1; padding: 12px; font-size: 0.9rem; justify-content: center;">
+          Batal
+        </button>
+        <button type="button" class="lab-logout-btn" id="confirmLogoutActionBtn" style="flex: 1; padding: 12px; font-size: 0.9rem; justify-content: center; background: linear-gradient(135deg, #ef4444, #dc2626); color: #ffffff; border: none; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">
+          Ya, Keluar 🚪
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGOUT ANIMATION OVERLAY -->
+  <div id="logoutAnimationOverlay" class="logout-anim-overlay">
+    <div class="logout-anim-card">
+      <div class="logout-anim-circle" id="logoutCircleIcon">🔒</div>
+      <h3 style="font-size: 1.4rem; color: #0f172a; font-weight: 800; margin: 0 0 6px;">
+        Menutup Sesi Meja Kerja
+      </h3>
+      <p style="font-size: 0.9rem; color: #64748b; margin: 0 0 14px;" id="logoutSubtitle">
+        Menyinkronkan data status teknisi Ferdinand...
+      </p>
+      <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 999px; background: #fffbeb; border: 1.5px solid #fde68a; color: #b45309; font-size: 0.82rem; font-weight: 800;">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 8px #f59e0b;"></span>
+        <span>Menyimpan Log Aktivitas Lab</span>
+      </div>
+
+      <!-- Animated Progress Bar -->
+      <div class="logout-progress-track">
+        <div class="logout-progress-fill" id="logoutProgressFill"></div>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; color: #dc2626; font-weight: 700;">
+        <span class="anim-spinner" style="display: inline-block; width: 14px; height: 14px; border: 2px solid #fecaca; border-top-color: #dc2626; border-radius: 50%; animation: spinWheel 0.8s linear infinite;"></span>
+        <span id="logoutStatusStepText">Menonaktifkan status kehadiran lab...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap copyright" style="text-align: center; color: #64748b; font-size: 0.85rem; padding: 24px 0;">
+      <div>© 2026 Ngalam Fix Pro. Sistem Pengerjaan Khusus Meja Kerja Teknisi Workshop.</div>
+    </div>
+  </footer>
+
+  <script src="../js/device-sensor.js"></script>
+  <script src="../js/api-base.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="teknisi.js"></script>
+</body>
+
+</html>

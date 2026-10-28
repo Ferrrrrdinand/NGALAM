@@ -1,0 +1,15 @@
+{
+  "appsScriptUrl": "",
+  "customersSpreadsheetId": "",
+  "customersSheetName": "DataCustomer",
+  "driversSpreadsheetId": "",
+  "driversSheetName": "MitraDriver",
+  "workersSpreadsheetId": "",
+  "workersSheetName": "DataPekerja",
+  "transactionsSpreadsheetId": "",
+  "transactionsSheetName": "RiwayatTransaksi",
+  "financeSpreadsheetId": "",
+  "financeSheetName": "CatatanKeuangan",
+  "autoSync": true,
+  "lastSyncTime": null
+}

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layanan Servis HP Android & iPhone • Ngalam Fix Pro</title>
+  <meta name="description" content="Katalog layanan servis spesialis HP Android & iPhone di Ngalam Fix Pro. Ganti layar OLED/AMOLED, ganti baterai, perbaikan mesin mati total, ganti kaca OCA.">
+    <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+<link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="../js/device-sensor.js"></script>
+</head>
+<body>
+
+  <!-- HEADER NAVIGATION -->
+  <header class="header">
+    <div class="wrap nav">
+      <a class="logo" href="../index.html">
+        <div class="logo-badge">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+        </div>
+        <span>Ngalam <b>Fix Pro</b></span>
+      </a>
+
+      <div class="navend">
+        <a class="navend-login" href="../lacak/index.html" title="Lacak Progres Unit Servis">
+          <span>🔍 Lacak Unit</span>
+        </a>
+        <a class="navend-login" href="../login/index.html" title="Masuk Akun Member Pelanggan">
+          <span>👤 Masuk</span>
+        </a>
+
+        <a class="btn small" href="../pesan-servis/index.html">
+          <span>Pesan Servis</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+
+        <!-- Burger Toggle Button -->
+        <button type="button" class="menu-toggle-btn" id="menuToggleBtn" aria-label="Buka Menu Navigasi">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="nav-dropdown-menu" id="navDropdownMenu">
+          <div class="nav-dropdown-header">
+            <span class="nav-dropdown-title">MENU NAVIGASI</span>
+            <button type="button" class="nav-dropdown-close" id="navDropdownClose">✕</button>
+          </div>
+
+          <div class="nav-dropdown-links">
+            <a href="../index.html" class="nav-dropdown-item">
+              <span class="nav-dropdown-item-icon">🏠</span>
+              <div class="nav-dropdown-item-text">
+                <strong>Beranda</strong>
+                <small>Halaman utama & ringkasan</small>
+              </div>
+            </a>
+            <a href="index.html" class="nav-dropdown-item active">
+              <span class="nav-dropdown-item-icon">📱</span>
+              <div class="nav-dropdown-item-text">
+                <strong>Layanan Servis</strong>
+                <small>Servis HP Android & iPhone</small>
+              </div>
+            </a>
+            <a href="../pesan-servis/index.html" class="nav-dropdown-item">
+              <span class="nav-dropdown-item-icon">📝</span>
+              <div class="nav-dropdown-item-text">
+                <strong>Pesan Servis</strong>
+                <small>Booking perbaikan online</small>
+              </div>
+            </a>
+            <a href="../kontak/index.html" class="nav-dropdown-item">
+              <span class="nav-dropdown-item-icon">📍</span>
+              <div class="nav-dropdown-item-text">
+                <strong>Kontak & Lokasi</strong>
+                <small>Workshop & nomor telepon</small>
+              </div>
+            </a>
+            <a href="../lacak/index.html" class="nav-dropdown-item">
+              <span class="nav-dropdown-item-icon">🔍</span>
+              <div class="nav-dropdown-item-text">
+                <strong>Lacak Status Perangkat</strong>
+                <small>Cek tiket progres servis real-time</small>
+              </div>
+            </a>
+            <a href="../login/index.html" class="nav-dropdown-item">
+              <span class="nav-dropdown-item-icon">👤</span>
+              <div class="nav-dropdown-item-text">
+                <strong>Masuk Akun Pelanggan</strong>
+                <small>Member portal & riwayat HP</small>
+              </div>
+            </a>
+          </div>
+
+          <div class="nav-dropdown-divider"></div>
+
+          <div class="nav-dropdown-section">
+            <span class="nav-dropdown-subtitle">PORTAL MITRA & STAF WORKSHOP</span>
+            <a href="../mitra/index.html" class="nav-dropdown-item" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+              <span class="nav-dropdown-item-icon">🛵</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #059669;">Portal Mitra & QR Afiliasi</strong>
+                <small style="color: #64748b;">Komisi 10% & referral QR Code</small>
+              </div>
+            </a>
+            <a href="../teknisi/login.html" class="nav-dropdown-item" style="background: #eff6ff; border: 1px solid #bae6fd;">
+              <span class="nav-dropdown-item-icon">🛠️</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #0284c7;">Login Teknisi Lab</strong>
+                <small style="color: #64748b;">Meja lab & penanganan unit</small>
+              </div>
+            </a>
+            <a href="../admin/login.html" class="nav-dropdown-item" style="background: #f5f3ff; border: 1px solid #ddd6fe;">
+              <span class="nav-dropdown-item-icon">👩‍💼</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #6d28d9;">Login Admin & Kasir</strong>
+                <small style="color: #64748b;">Walk-in counter Meja 1 & nota fisik</small>
+              </div>
+            </a>
+          </div>
+
+          <div class="nav-dropdown-footer">
+            <a href="../pesan-servis/index.html" class="btn small full">
+              <span>Pesan Servis Sekarang ↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <!-- PAGE HERO -->
+  <section class="pagehero">
+    <div class="wrap">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 16px;">
+        <div style="width: 60px; height: 60px; border-radius: 14px; background: #ffffff; padding: 3px; border: 2px solid #d4af37; box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35); flex-shrink: 0;">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block;">
+        </div>
+        <div class="eyebrow-pill" style="margin: 0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          <span>KATALOG RESMI SPESIALIS SERVIS HP</span>
+        </div>
+      </div>
+      <h1>
+        Layanan Servis HP Android & iPhone<br>
+        <span>Profesional, Cepat & Bergaransi.</span>
+      </h1>
+      <p>
+        Semua perbaikan smartphone Android dan Apple iPhone dikerjakan oleh teknisi spesialis bersertifikasi di meja kerja transparan. Pengecekan awal gratis, suku cadang original, dan garansi tertulis hingga 90 hari.
+      </p>
+
+      <div class="pagehero-stats">
+        <div class="pagehero-stat-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Garansi Komponen 30 – 90 Hari</span>
+        </div>
+        <div class="pagehero-stat-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Layanan Express Bisa Ditunggu (30–90 Menit)</span>
+        </div>
+        <div class="pagehero-stat-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Diagnosa Gratis & Disetujui di Awal</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY FILTER TABS -->
+  <section class="section wrap" style="padding-top: 40px;">
+    <div class="category-tabs" id="categoryTabs">
+      <button class="cat-tab-btn active" data-filter="all">Semua Layanan (12)</button>
+      <button class="cat-tab-btn" data-filter="iphone">🍎 Apple iPhone</button>
+      <button class="cat-tab-btn" data-filter="android">🤖 Android Phone</button>
+      <button class="cat-tab-btn" data-filter="layar">📱 Layar & Kaca</button>
+      <button class="cat-tab-btn" data-filter="baterai">🔋 Baterai & Daya</button>
+      <button class="cat-tab-btn" data-filter="mesin">⚙️ Mesin & IC</button>
+    </div>
+
+    <!-- SERVICES GRID -->
+    <div class="services" id="servicesContainer" style="margin-top: 36px;">
+      <!-- Service 1: iPhone LCD -->
+      <div class="card servicecard" data-category="iphone layar">
+        <div class="service-cat-pill">Apple iPhone</div>
+        <div class="service-icon-box">🍎</div>
+        <h3>Ganti Layar OLED Super Retina iPhone</h3>
+        <p>Solusi layar retak, garis hijau/putih (green screen), atau blank sentuh. Pemindahan modul IC TrueTone agar warna layar akurat dan ProMotion 120Hz aktif normal.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 450.000</span>
+          <span class="time">⚡ 45–90 Menit</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Fitur TrueTone Tetap Aktif</li>
+          <li>✓ Panel OLED Presisi High-Grade</li>
+          <li>✓ Garansi Resmi 90 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=iphone&problem=lcd" class="btn small full" style="margin-top:16px;">Booking Servis iPhone</a>
+      </div>
+
+      <!-- Service 2: iPhone Battery -->
+      <div class="card servicecard" data-category="iphone baterai">
+        <div class="service-cat-pill">Apple iPhone</div>
+        <div class="service-icon-box">🔋</div>
+        <h3>Ganti Baterai Original iPhone (High Capacity)</h3>
+        <p>Mengatasi baterai boros, indikator Service Recommended, atau mati saat persentase 20%. Sel baterai bersertifikasi dengan Battery Health 100% terbaca di pengaturan iOS.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 280.000</span>
+          <span class="time">⚡ 30–60 Menit</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Battery Health 100% Aktif</li>
+          <li>✓ Bebas Notifikasi Unknown Part</li>
+          <li>✓ Garansi Resmi 90 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=iphone&problem=baterai" class="btn small full" style="margin-top:16px;">Booking Servis Baterai</a>
+      </div>
+
+      <!-- Service 3: iPhone Backglass -->
+      <div class="card servicecard" data-category="iphone">
+        <div class="service-cat-pill">Apple iPhone</div>
+        <div class="service-icon-box">✨</div>
+        <h3>Ganti Kaca Belakang (Backglass) Laser Machine</h3>
+        <p>Pembersihan kaca belakang pecah menggunakan mesin laser presisi dingin tanpa risiko merusak kumparan wireless charging MagSafe atau rangka internal.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 250.000</span>
+          <span class="time">⚡ 2–3 Jam</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Teknologi Laser Dingin Presisi</li>
+          <li>✓ MagSafe Tetap Berfungsi 100%</li>
+          <li>✓ Garansi 60 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=iphone&problem=backglass" class="btn small full" style="margin-top:16px;">Booking Servis Backglass</a>
+      </div>
+
+      <!-- Service 4: iPhone Face ID -->
+      <div class="card servicecard" data-category="iphone mesin">
+        <div class="service-cat-pill">Apple iPhone</div>
+        <div class="service-icon-box">👤</div>
+        <h3>Perbaikan Face ID & TrueDepth Sensor</h3>
+        <p>Face ID tidak berfungsi, tidak bisa mendeteksi wajah, atau dinonaktifkan setelah kena air. Perbaikan sensor dot projector dan flood illuminator secara presisi mikro.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 350.000</span>
+          <span class="time">1–2 Hari Kerja</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Peralatan Kalibrasi FaceID</li>
+          <li>✓ Data Wajah Kembali Normal</li>
+          <li>✓ Garansi 60 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=iphone&problem=faceid" class="btn small full" style="margin-top:16px;">Booking Perbaikan Face ID</a>
+      </div>
+
+      <!-- Service 5: Android AMOLED -->
+      <div class="card servicecard" data-category="android layar">
+        <div class="service-cat-pill">Android Service</div>
+        <div class="service-icon-box">🤖</div>
+        <h3>Ganti Layar Dynamic AMOLED Android (120Hz)</h3>
+        <p>Pemasangan layar Samsung Galaxy S/Z Series, Xiaomi 13T/POCO, Vivo, OPPO & Realme. Refresh rate halus 120Hz dan in-display fingerprint scanner terbaca akurat.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 280.000</span>
+          <span class="time">⚡ 1–2 Jam</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Refresh Rate 120Hz Aktif Halus</li>
+          <li>✓ Fingerprint di Layar Normal</li>
+          <li>✓ Garansi Resmi 90 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=android&problem=lcd" class="btn small full" style="margin-top:16px;">Booking Servis AMOLED</a>
+      </div>
+
+      <!-- Service 6: Android Battery -->
+      <div class="card servicecard" data-category="android baterai">
+        <div class="service-cat-pill">Android Service</div>
+        <div class="service-icon-box">⚡</div>
+        <h3>Ganti Baterai Android Original Fast Charging</h3>
+        <p>Penggantian baterai HP Samsung, Xiaomi, POCO, Vivo, OPPO original berkapasitas real 5000mAh. Mendukung Super Fast Charging 45W / 67W / 120W Turbo Charge tanpa panas berlebih.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 180.000</span>
+          <span class="time">⚡ 30–60 Menit</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Support Turbo / Fast Charging</li>
+          <li>✓ Kapasitas Real & Aman dari Kembung</li>
+          <li>✓ Garansi Resmi 90 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=android&problem=baterai" class="btn small full" style="margin-top:16px;">Booking Baterai Android</a>
+      </div>
+
+      <!-- Service 7: Bootloop / Software -->
+      <div class="card servicecard" data-category="android">
+        <div class="service-cat-pill">Android Service</div>
+        <div class="service-icon-box">💾</div>
+        <h3>Bypass Bootloop & Flash Firmware Resmi Android</h3>
+        <p>Mengatasi HP mentok di logo, restart berulang (bootloop), sistem crash setelah update OTA, atau softbrick. Menggunakan firmware official resmi dari pabrikan.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 120.000</span>
+          <span class="time">⚡ 1–2 Jam</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Firmware Pabrikan Resmi</li>
+          <li>✓ Upaya Maksimal Penyelamatan Data</li>
+          <li>✓ Garansi 30 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?type=android&problem=software" class="btn small full" style="margin-top:16px;">Booking Flash Firmware</a>
+      </div>
+
+      <!-- Service 8: Glass Only OCA -->
+      <div class="card servicecard" data-category="layar">
+        <div class="service-cat-pill">Layar & Kaca</div>
+        <div class="service-icon-box">🔍</div>
+        <h3>Ganti Kaca Saja (Glass Only OCA Lamination)</h3>
+        <p>Layar luar retak parah tapi gambar LCD/OLED masih tampil jernih dan sentuhan masih responsif normal? Cukup ganti kaca luarnya saja. Hemat biaya hingga 50%!</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 180.000</span>
+          <span class="time">⚡ 2–3 Jam</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Panel Original Asli Tetap Dipakai</li>
+          <li>✓ Mesin OCA Vacuum Bubble-Free</li>
+          <li>✓ Hemat Biaya s/d 50%</li>
+        </ul>
+        <a href="../pesan-servis/index.html?problem=kaca" class="btn small full" style="margin-top:16px;">Booking Ganti Kaca OCA</a>
+      </div>
+
+      <!-- Service 9: Port Charger -->
+      <div class="card servicecard" data-category="baterai">
+        <div class="service-cat-pill">Daya & Baterai</div>
+        <div class="service-icon-box">🔌</div>
+        <h3>Perbaikan Port Konektor Charger Type-C & Lightning</h3>
+        <p>Kabel harus ditekan atau ditekuk baru mau ngecas, fitur fast charging hilang, atau port kemasukan kotoran/karat. Penggantian modul sub-board konektor original.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 120.000</span>
+          <span class="time">⚡ 30–45 Menit</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Fast Charging Aktif Kembali</li>
+          <li>✓ Koneksi Kabel Kuat & Kokoh</li>
+          <li>✓ Garansi 60 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?problem=charging" class="btn small full" style="margin-top:16px;">Booking Port Charger</a>
+      </div>
+
+      <!-- Service 10: Mesin IC Power -->
+      <div class="card servicecard" data-category="mesin">
+        <div class="service-cat-pill">Mesin & Hardware</div>
+        <div class="service-icon-box">🔬</div>
+        <h3>Reparasi Mesin HP Mati Total & IC Power</h3>
+        <p>Analisa penelusuran konslet short-circuit jalur motherboard menggunakan Thermal Camera dan skematik ZXW. Perbaikan IC Power (PMIC), CPU reballing, dan jalur daya.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 300.000</span>
+          <span class="time">1–3 Hari Kerja</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Deteksi Thermal Camera Infrared</li>
+          <li>✓ Penyelamatan Data Penting</li>
+          <li>✓ Garansi 60 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?problem=mati_total" class="btn small full" style="margin-top:16px;">Booking Servis Mesin</a>
+      </div>
+
+      <!-- Service 11: Water Damage -->
+      <div class="card servicecard" data-category="mesin">
+        <div class="service-cat-pill">Mesin & Hardware</div>
+        <div class="service-icon-box">💧</div>
+        <h3>Emergency Service HP Tercebur Air (Water Damage)</h3>
+        <p>Pencucian motherboard dengan cairan kimia de-oksidasi dan getaran tabung Ultrasonic Cleaning. Menghentikan karat dan korosi sebelum merusak chip memori data Anda.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 150.000</span>
+          <span class="time">1–2 Hari Kerja</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Pembersihan Tabung Ultrasonic</li>
+          <li>✓ Penanganan Cepat Cegah Short</li>
+          <li>✓ Prioritas Selamatkan Data</li>
+        </ul>
+        <a href="../pesan-servis/index.html?problem=water_damage" class="btn small full" style="margin-top:16px;">Booking Tangani HP Basah</a>
+      </div>
+
+      <!-- Service 12: Kamera & Audio -->
+      <div class="card servicecard" data-category="mesin">
+        <div class="service-cat-pill">Kamera & Audio</div>
+        <div class="service-icon-box">📷</div>
+        <h3>Perbaikan Kamera HP Getar (OIS) & Speaker</h3>
+        <p>Kamera HP bergetar (stabilizer OIS rusak), fokus tidak mau jalan, kaca lensa kamera pecah buram, atau suara speaker kresek dan mikrofon telepon mati.</p>
+        <div class="service-meta">
+          <span class="price">Mulai Rp 150.000</span>
+          <span class="time">⚡ 1–2 Jam</span>
+        </div>
+        <ul class="service-checklist">
+          <li>✓ Kamera Jernih & Stabil Kembali</li>
+          <li>✓ Pembersihan Filter Suara Mesh</li>
+          <li>✓ Garansi 60 Hari</li>
+        </ul>
+        <a href="../pesan-servis/index.html?problem=kamera" class="btn small full" style="margin-top:16px;">Booking Servis Kamera</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" style="margin-top: 60px;">
+    <div class="wrap footgrid">
+      <div class="foot-col">
+        <a class="logo" href="../index.html">
+          <div class="logo-badge">
+            <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+          </div>
+          <span>Ngalam<b>Fix Pro</b></span>
+        </a>
+        <p style="margin-top: 8px;">
+          Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya dengan standar pengerjaan profesional, suku cadang original bergaransi resmi, dan transparansi proses.
+        </p>
+      </div>
+
+      <div class="foot-col">
+        <strong>Layanan Utama HP</strong>
+        <a href="index.html">Servis Apple iPhone (iOS)</a>
+        <a href="index.html">Servis Android (Samsung, Xiaomi dll)</a>
+        <a href="index.html">Ganti Layar OLED & AMOLED</a>
+        <a href="index.html">Ganti Baterai Original HP</a>
+        <a href="index.html">Reparasi Mesin Mati Total & IC</a>
+      </div>
+
+      <div class="foot-col">
+        <strong>Bantuan & Info</strong>
+        <a href="../pesan-servis/index.html">Formulir Pesan Servis</a>
+        <a href="../lacak/index.html">Lacak Status Pengerjaan</a>
+        <a href="../login/index.html">Masuk Akun Pelanggan</a>
+        <a href="../admin/login.html">Login Admin & Kasir</a>
+        <a href="../teknisi/login.html" style="color: #94a3b8; font-size: 0.86rem;">🔒 Login Teknisi & Mitra</a>
+        <a href="../kontak/index.html">Kebijakan Garansi 90 Hari</a>
+      </div>
+
+      <div class="foot-col">
+        <strong>Hubungi Workshop</strong>
+        <div class="foot-contact-item">
+          <i>📱</i>
+          <div>
+            <span style="color: #ffffff; font-weight: 600;">WhatsApp Resmi:</span>
+            <p>+62 813-3030-4321 (Liem Hingky Liman)</p>
+          </div>
+        </div>
+        <div class="foot-contact-item">
+          <i>🕒</i>
+          <div>
+            <span style="color: #ffffff; font-weight: 600;">Jam Operasional:</span>
+            <p>Senin – Sabtu, 09.00 – 18.00 WIB</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap copyright">
+      <div>© 2026 Ngalam Fix Pro. Hak Cipta Dilindungi. Solusi Cepat, Transparan, Bergaransi.</div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CHATBOT WIDGET (BOTTOM-LEFT LUXURY AI ASSISTANT) -->
+  <div class="chatbot-container">
+    <button type="button" class="chatbot-trigger" id="chatbotTrigger" aria-label="Buka NgalamBot AI">
+      <div class="chatbot-trigger-avatar">
+        <div class="ai-avatar-animated">
+          <div class="ai-avatar-glow"></div>
+          <div class="ai-avatar-ring-outer"></div>
+          <div class="ai-avatar-ring-inner"></div>
+          <div class="ai-scanner-line"></div>
+          <div class="ai-avatar-core">
+            <img src="../images/ngalam-bot-ai.jpg" alt="Logo Animasi NgalamBot AI" class="ai-avatar-img">
+          </div>
+          <span class="ai-status-dot"></span>
+        </div>
+      </div>
+      <div class="chatbot-trigger-text">
+        <span class="chatbot-trigger-title">Tanya NgalamBot</span>
+        <span class="chatbot-trigger-sub">AI Asisten Servis HP</span>
+      </div>
+      <div class="chatbot-trigger-badge">
+        <span class="pulse-green-dot"></span>
+        <span>Online</span>
+      </div>
+    </button>
+
+    <div class="chatbot-panel" id="chatbotPanel">
+      <div class="chatbot-header">
+        <div class="chatbot-title-box">
+          <div class="ai-avatar-animated">
+            <div class="ai-avatar-glow"></div>
+            <div class="ai-avatar-ring-outer"></div>
+            <div class="ai-avatar-ring-inner"></div>
+            <div class="ai-scanner-line"></div>
+            <div class="ai-avatar-core">
+              <img src="../images/ngalam-bot-ai.jpg" alt="Logo Animasi NgalamBot AI" class="ai-avatar-img">
+            </div>
+            <span class="ai-status-dot"></span>
+          </div>
+          <div class="chatbot-header-text">
+            <strong>NgalamBot <span class="chatbot-pill-tag">AI PRO</span></strong>
+            <small><span class="pulse-green-dot"></span> Siap Menjawab 24/7</small>
+          </div>
+        </div>
+        <div class="chatbot-header-actions">
+          <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20HP" target="_blank" rel="noopener noreferrer" class="chatbot-wa-btn" title="Chat WhatsApp PIC Workshop">
+            <span>💬 WA</span>
+          </a>
+          <button type="button" class="chatbot-close-btn" id="chatbotClose" aria-label="Tutup Chat">✕</button>
+        </div>
+      </div>
+
+      <div class="chatbot-body" id="chatbotMessages">
+        <div class="chatbot-bubble-row bot">
+          <div class="ai-bubble-avatar">
+            <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar">
+          </div>
+          <div class="chatbot-bubble bot">
+            Halo! Saya <b>NgalamBot</b>, asisten cerdas spesialis smartphone Ngalam Fix Pro. Ada yang bisa saya bantu terkait katalog servis kami?
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-chips">
+        <button type="button" class="chatbot-chip" data-query="Berapa biaya ganti LCD?">📱 Biaya Layar/LCD</button>
+        <button type="button" class="chatbot-chip" data-query="Berapa biaya ganti baterai?">🔋 Ganti Baterai</button>
+        <button type="button" class="chatbot-chip" data-query="Di mana lokasi workshop?">📍 Lokasi Workshop</button>
+        <button type="button" class="chatbot-chip" data-query="Bagaimana cara lacak status servis?">🔍 Lacak Tiket</button>
+        <button type="button" class="chatbot-chip" data-query="Nomor kontak Mas Liem Hingky Liman?">👨‍🔧 Kontak Mas Hingky</button>
+      </div>
+
+      <div class="chatbot-input-area">
+        <div class="chatbot-input-box">
+          <input type="text" id="chatbotInput" placeholder="Ketik pertanyaan seputar servis HP..." autocomplete="off">
+        </div>
+        <button type="button" id="chatbotSendBtn" class="chatbot-send-icon-btn" aria-label="Kirim Pesan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/device-sensor.js"></script>
+  <script src="../js/api-base.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="layanan.js"></script>
+  <script src="../js/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesan Servis Smartphone • Ngalam Fix Pro</title>
+  <meta name="description"
+    content="Formulir pendaftaran dan booking servis HP Android dan Apple iPhone di Ngalam Fix Pro. Dapatkan no tiket resmi, garansi tertulis, Liem Hingky Liman 081330304321.">
+    <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+<link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="../js/device-sensor.js"></script>
+  <style>
+    /* Direct Modern White Theme & Alignment Fixes */
+    body.booking-page-body {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    .header {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    .logo {
+      color: #0f172a !important;
+      font-weight: 800 !important;
+    }
+    .logo b {
+      background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+    .logo-pill {
+      background: #eff6ff !important;
+      border: 1px solid #bae6fd !important;
+      color: #0284c7 !important;
+    }
+    .formpage {
+      display: grid !important;
+      grid-template-columns: 380px 1fr !important;
+      gap: 40px !important;
+      padding: 30px 0 70px !important;
+      align-items: start !important;
+    }
+    .formpage > div:first-child {
+      position: sticky !important;
+      top: 96px !important;
+      align-self: start !important;
+    }
+    @media (max-width: 1024px) {
+      .formpage {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+        max-width: 860px !important;
+        margin: 20px auto 60px !important;
+      }
+      .formpage > div:first-child {
+        position: static !important;
+      }
+    }
+    .booking-form-card {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 24px !important;
+      padding: 36px 32px !important;
+      box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+      color: #0f172a !important;
+    }
+    .b-form-group {
+      margin-bottom: 24px !important;
+      padding-bottom: 22px !important;
+      border-bottom: 1px solid #f1f5f9 !important;
+    }
+    .b-form-group:last-of-type {
+      border-bottom: none !important;
+      margin-bottom: 12px !important;
+      padding-bottom: 0 !important;
+    }
+    .b-form-step-badge {
+      background: #eff6ff !important;
+      border: 1px solid #bae6fd !important;
+      color: #0284c7 !important;
+      font-size: 0.74rem !important;
+      font-weight: 800 !important;
+      padding: 3px 10px !important;
+      border-radius: 999px !important;
+      letter-spacing: 0.5px !important;
+    }
+    .b-form-label {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      font-size: 0.98rem !important;
+      font-weight: 800 !important;
+      color: #0f172a !important;
+      margin-bottom: 12px !important;
+    }
+    .form-field-label {
+      display: block !important;
+      font-size: 0.86rem !important;
+      font-weight: 700 !important;
+      color: #334155 !important;
+      margin-bottom: 6px !important;
+    }
+    .form-field-hint {
+      font-size: 0.75rem !important;
+      color: #64748b !important;
+      font-weight: 500 !important;
+    }
+    .b-input, .b-textarea, .form-control {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      border-radius: 12px !important;
+      padding: 13px 16px !important;
+      color: #0f172a !important;
+      font-size: 0.95rem !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+    }
+    .b-input:focus, .b-textarea:focus, .form-control:focus {
+      background: #ffffff !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 3.5px rgba(2, 132, 199, 0.15) !important;
+    }
+    .form-grid-3 {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 16px !important;
+      width: 100% !important;
+    }
+    .form-grid-3 > div:nth-child(3) {
+      grid-column: 1 / -1 !important;
+    }
+    @media (min-width: 1120px) {
+      .form-grid-3 {
+        grid-template-columns: 1fr 1fr 1.15fr !important;
+      }
+      .form-grid-3 > div:nth-child(3) {
+        grid-column: auto !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .form-grid-3 {
+        grid-template-columns: 1fr !important;
+      }
+      .form-grid-3 > div:nth-child(3) {
+        grid-column: auto !important;
+      }
+    }
+    .brand-chip-btn {
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #334155 !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+    }
+    .brand-chip-btn:hover {
+      background: #f0f9ff !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+    }
+    .brand-chip-btn.active {
+      background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+      border-color: #0284c7 !important;
+      color: #ffffff !important;
+    }
+    .damage-chip-btn {
+      background: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      color: #334155 !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+    }
+    .damage-chip-btn:hover {
+      background: #f8fafc !important;
+      border-color: #94a3b8 !important;
+      color: #0f172a !important;
+    }
+    .damage-chip-btn.selected {
+      background: #eff6ff !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+      font-weight: 700 !important;
+    }
+    .b-promo-container {
+      background: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+    }
+    .quick-promo-chip {
+      background: #ffffff !important;
+      border: 1.5px dashed #bae6fd !important;
+      color: #0284c7 !important;
+    }
+    .btn-booking-submit {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.28) !important;
+    }
+  </style>
+</head>
+
+<body class="booking-page-body" style="background:#f8fafc; color:#0f172a;">
+
+  <!-- HEADER NAVIGATION -->
+  <header class="header">
+    <div class="wrap nav">
+      <a class="logo" href="../index.html">
+        <div class="logo-badge">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+        </div>
+        <span>Ngalam <b>Fix Pro</b></span>
+      </a>
+
+      <div class="navend">
+        <a class="navend-login" href="../lacak/index.html" title="Lacak Progres Unit Servis">
+          <span>🔍 Lacak Unit</span>
+        </a>
+        <a class="navend-login" href="../login/index.html" title="Masuk Akun Member Pelanggan">
+          <span>👤 Masuk</span>
+        </a>
+
+        <a class="btn small" href="index.html">
+          <span>Pesan Servis</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+
+        <button type="button" class="menu-toggle-btn" id="menuToggleBtn" aria-label="Buka Menu Navigasi">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
+
+        <div class="nav-dropdown-menu" id="navDropdownMenu">
+          <div class="nav-dropdown-header">
+            <span class="nav-dropdown-title">MENU NAVIGASI</span>
+            <button type="button" class="nav-dropdown-close" id="navDropdownClose">✕</button>
+          </div>
+          <div class="nav-dropdown-links">
+            <a href="../index.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">🏠</span><strong>Beranda</strong></a>
+            <a href="../layanan/index.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">📱</span><strong>Layanan Servis</strong></a>
+            <a href="index.html" class="nav-dropdown-item active"><span
+                class="nav-dropdown-item-icon">📝</span><strong>Pesan Servis</strong></a>
+            <a href="../kontak/index.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">📍</span><strong>Kontak & Lokasi</strong></a>
+            <a href="../lacak/index.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">🔍</span><strong>Lacak Status Perangkat</strong></a>
+            <a href="../login/index.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">👤</span><strong>Masuk Akun Pelanggan</strong></a>
+          </div>
+          <div class="nav-dropdown-divider"></div>
+          <div class="nav-dropdown-section">
+            <a href="../mitra/index.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">🛵</span><strong>Portal Mitra & QR Afiliasi</strong></a>
+            <a href="../teknisi/login.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">🛠️</span><strong>Login Teknisi Lab</strong></a>
+            <a href="../admin/login.html" class="nav-dropdown-item"><span
+                class="nav-dropdown-item-icon">👩‍💼</span><strong>Login Admin & Kasir</strong></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <!-- BOOKING SECTION -->
+  <section class="wrap formpage" style="margin-top: 40px; margin-bottom: 70px;">
+    <!-- Left Column: Trust, Speed & Benefits -->
+    <div>
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+        <div style="width: 64px; height: 64px; border-radius: 16px; background: #ffffff; padding: 4px; border: 2.5px solid #d4af37; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35); flex-shrink: 0;">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Resmi Ngalam Fix Pro" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block;">
+        </div>
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: #b45309; letter-spacing: 0.5px; display: block;">WORKSHOP RESMI MALANG</span>
+          <strong style="font-size: 1.05rem; color: #0f172a; display: block;">Ngalam Fix Pro</strong>
+        </div>
+      </div>
+
+      <div class="booking-hero-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path
+            d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+        </svg>
+        <span>FORMULIR BOOKING SERVIS RESMI</span>
+      </div>
+
+      <h1 class="booking-title">
+        Daftarkan Servis HP Anda.<br>
+        <span class="gradient-text">Cepat, Aman & Bergaransi.</span>
+      </h1>
+
+      <p class="booking-subtitle">
+        Isi data perangkat smartphone Anda untuk mendapatkan <strong>Nomor Tiket Servis Resmi</strong>. Data otomatis
+        terhubung langsung ke antrian teknisi workshop kami dan tersinkronisasi ke Google Spreadsheet secara real-time.
+      </p>
+
+      <!-- Benefits Card -->
+      <div class="booking-benefit-card">
+        <div class="booking-benefit-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span>Kenapa Booking Langsung di Sini?</span>
+        </div>
+        <ul class="booking-benefit-list">
+          <li class="booking-benefit-item">
+            <div class="booking-benefit-icon"
+              style="color: #059669; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); font-weight: 800;">✓
+            </div>
+            <div class="booking-benefit-text">
+              <strong>Gratis Biaya Cek Awal & Konsultasi</strong>
+              <small>Tanpa biaya bongkar sama sekali jika Anda membatalkan perbaikan.</small>
+            </div>
+          </li>
+          <li class="booking-benefit-item">
+            <div class="booking-benefit-icon"
+              style="color: #38bdf8; background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.25);">⚡
+            </div>
+            <div class="booking-benefit-text">
+              <strong>Bisa Ditunggu Langsung (Express)</strong>
+              <small>Estimasi 30–60 menit pengerjaan selesai langsung di depan meja teknisi kami.</small>
+            </div>
+          </li>
+          <li class="booking-benefit-item">
+            <div class="booking-benefit-icon"
+              style="color: #fbbf24; background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.25);">🛡️
+            </div>
+            <div class="booking-benefit-text">
+              <strong>Garansi Tertulis s/d 90 Hari</strong>
+              <small>Jaminan klaim suku cadang mudah dan transparan dengan nota resmi.</small>
+            </div>
+          </li>
+          <li class="booking-benefit-item">
+            <div class="booking-benefit-icon"
+              style="color: #c084fc; background: rgba(168, 85, 247, 0.12); border-color: rgba(168, 85, 247, 0.25);">🔒
+            </div>
+            <div class="booking-benefit-text">
+              <strong>Data Pelanggan & Privasi Terjaga 100%</strong>
+              <small>PIN atau sandi layar tidak wajib dibagikan demi keamanan data Anda.</small>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Need Help Card -->
+      <div class="booking-help-box">
+        <div class="booking-help-avatar">👨‍🔧</div>
+        <div class="booking-help-text">
+          <strong>Butuh Bantuan Mendesak?</strong>
+          <span>Hubungi PIC Workshop Liem Hingky Liman</span>
+        </div>
+        <a href="https://wa.me/6281330304321" target="_blank" class="booking-help-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2Z" />
+          </svg>
+          <span>Chat WhatsApp</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Luxury Form Card -->
+    <div class="booking-form-card">
+      <div class="form-header-badge">
+        <h2>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 8 9" />
+          </svg>
+          <span>Formulir Masuk Servis</span>
+        </h2>
+        <span class="form-header-tag">ONLINE INTAKE RESMI</span>
+      </div>
+
+      <form id="bookingForm">
+        <!-- AFFILIATE MITRA RECOMMENDATION BANNER (AUTO ACTIVATED VIA QR CODE SCAN / ?ref=...) -->
+        <div id="affiliateBanner" class="affiliate-banner" style="display: none; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 2px solid #10b981; border-radius: 16px; padding: 18px 20px; margin-bottom: 24px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);">
+          <div style="display: flex; align-items: flex-start; gap: 14px;">
+            <div style="font-size: 2.2rem; line-height: 1; flex-shrink: 0;" id="affiliateMitraAvatar">🛵</div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                <span style="background: #059669; color: #ffffff; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 9999px; letter-spacing: 0.5px;">MITRA RESMI TERVERIFIKASI</span>
+                <span id="affiliateBadgeCode" style="font-family: monospace; font-weight: 700; background: #ffffff; color: #065f46; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem;">MTR-ANDI-8492</span>
+              </div>
+              <h3 style="margin: 0 0 4px 0; font-size: 1.05rem; color: #065f46; font-weight: 700;">
+                Rekomendasi Servis dari: <span id="affiliateMitraName">Mas Andi (Mitra Kurir Ojol)</span>
+              </h3>
+              <p style="margin: 0; font-size: 0.83rem; color: #047857; line-height: 1.4;">
+                Anda terhubung langsung melalui QR Code Resmi Mitra. Nikmati penjemputan unit cepat, garansi 90 hari, dan komisi teralokasi otomatis untuk mitra Anda.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Brand & Model HP Selection -->
+        <div class="b-form-group">
+          <label class="b-form-label">
+            <span>
+              <span class="b-form-step-badge">LANGKAH 1</span>
+              <span>Pilih Merek & Model Smartphone <span class="req">*</span></span>
+            </span>
+            <span class="sub">Tersedia semua tipe di Indonesia</span>
+          </label>
+
+          <!-- Brand Quick Chips -->
+          <div class="brand-chips-grid" id="brandChipsGrid" aria-label="Pilih Merek Cepat">
+            <button type="button" class="brand-chip-btn active" data-brand="apple">
+              <svg class="brand-svg-logo" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.08.64-2.73 1.4-.56.64-1.06 1.7-1.01 2.74 1.07.08 2.15-.55 2.73-1.27z" />
+              </svg>
+              <span>Apple iPhone</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="samsung">
+              <svg class="brand-svg-logo" width="20" height="14" viewBox="0 0 44 16" fill="none">
+                <rect width="44" height="16" rx="3.5" fill="#034EA2" /><text x="22" y="11.5" fill="#FFFFFF"
+                  font-family="'Inter', Arial, sans-serif" font-weight="900" font-size="7" letter-spacing="0.6"
+                  text-anchor="middle">SAMSUNG</text>
+              </svg>
+              <span>Samsung</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="xiaomi">
+              <svg class="brand-svg-logo" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="6.5" fill="#FF6900" />
+                <path
+                  d="M6 7.5h2.8v4.8c0 .7.5 1.2 1.2 1.2s1.2-.5 1.2-1.2V7.5H14v4.8c0 .7.5 1.2 1.2 1.2s1.2-.5 1.2-1.2V7.5H18v5.2c0 2.2-1.8 4-4 4-1.3 0-2.4-.6-3.1-1.6-.7 1-1.8 1.6-3.1 1.6-2.2 0-4-1.8-4-4V7.5z"
+                  fill="#FFFFFF" />
+                <rect x="15.2" y="10" width="1.4" height="3.8" rx="0.4" fill="#FF6900" />
+              </svg>
+              <span>Xiaomi / Redmi</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="poco">
+              <svg class="brand-svg-logo" width="20" height="14" viewBox="0 0 32 16" fill="none">
+                <rect width="32" height="16" rx="3.5" fill="#FFD700" /><text x="16" y="11.5" fill="#000000"
+                  font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="8" letter-spacing="0.5"
+                  text-anchor="middle">POCO</text>
+              </svg>
+              <span>POCO</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="oppo">
+              <svg class="brand-svg-logo" width="20" height="14" viewBox="0 0 34 16" fill="none">
+                <rect width="34" height="16" rx="3.5" fill="#00875A" /><text x="17" y="11.2" fill="#FFFFFF"
+                  font-family="'Inter', Arial, sans-serif" font-weight="900" font-size="7.5" letter-spacing="-0.2"
+                  text-anchor="middle">oppo</text>
+              </svg>
+              <span>OPPO</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="vivo">
+              <svg class="brand-svg-logo" width="20" height="14" viewBox="0 0 32 16" fill="none">
+                <rect width="32" height="16" rx="3.5" fill="#0055FF" /><text x="16" y="11.2" fill="#FFFFFF"
+                  font-family="'Inter', Arial, sans-serif" font-weight="800" font-size="8" letter-spacing="0.2"
+                  text-anchor="middle">vivo</text>
+              </svg>
+              <span>Vivo</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="realme">
+              <svg class="brand-svg-logo" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="6" fill="#FFC915" />
+                <path
+                  d="M7 17V7h4.8c2.2 0 3.7 1.3 3.7 3.2 0 1.5-.9 2.5-2.2 2.9L16 17h-2.8l-2.4-3.5H9.4V17H7zm2.4-5.5h2.2c1 0 1.6-.5 1.6-1.3 0-.8-.6-1.3-1.6-1.3H9.4v2.6z"
+                  fill="#000000" />
+              </svg>
+              <span>Realme</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="infinix">
+              <svg class="brand-svg-logo" width="20" height="14" viewBox="0 0 36 16" fill="none">
+                <rect width="36" height="16" rx="3.5" fill="#0B1528" stroke="#15E89B" stroke-width="1.2" /><text x="18"
+                  y="11.2" fill="#15E89B" font-family="'Inter', Arial, sans-serif" font-weight="900" font-size="6.8"
+                  letter-spacing="0.5" text-anchor="middle">infinix</text>
+              </svg>
+              <span>Infinix</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="iqoo">
+              <svg class="brand-svg-logo" width="20" height="14" viewBox="0 0 32 16" fill="none">
+                <rect width="32" height="16" rx="3.5" fill="#FFCC00" /><text x="16" y="11.5" fill="#000000"
+                  font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="7.5"
+                  letter-spacing="-0.3" text-anchor="middle">iQOO</text>
+              </svg>
+              <span>iQOO</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="tecno_itel">
+              <svg class="brand-svg-logo" width="22" height="14" viewBox="0 0 36 16" fill="none">
+                <rect width="18" height="16" rx="3.5" fill="#0066FF" />
+                <rect x="18" width="18" height="16" rx="3.5" fill="#E60012" /><text x="9" y="11" fill="#FFFFFF"
+                  font-family="'Inter', sans-serif" font-weight="900" font-size="5.8"
+                  text-anchor="middle">TEC</text><text x="27" y="11" fill="#FFFFFF" font-family="'Inter', sans-serif"
+                  font-weight="900" font-size="5.8" text-anchor="middle">itel</text>
+              </svg>
+              <span>Tecno & itel</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="asus">
+              <svg class="brand-svg-logo" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M2.5 13.5l4.8 2.2-2.1 1.7 5.5 3.6 4.3-5-3.8-1.5 5.5-2.2 4.1 4.2 2.7-1.5-3.5-3.8 4.7-1.8L12.5 1.5C9.8 1.5 7.6 2.7 6.1 4.7L2.5 13.5z"
+                  fill="#FF0033" />
+                <path d="M12.2 8.5l-2.8 1.2 1.8.7-2.2 2.5 2.1-.8 1.1-3.6z" fill="#FFFFFF" />
+              </svg>
+              <span>ASUS ROG</span>
+            </button>
+            <button type="button" class="brand-chip-btn" data-brand="others">
+              <svg class="brand-svg-logo" width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4" />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853" />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  fill="#FBBC05" />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  fill="#EA4335" />
+              </svg>
+              <span>Lainnya / Pixel</span>
+            </button>
+          </div>
+
+          <!-- Brand & Model Dynamic Dropdown Pair -->
+          <div class="form-grid-2" style="margin-top: 10px;">
+            <div>
+              <label class="b-form-label" for="custBrandSelect">
+                <span>Merek Smartphone <span class="req">*</span></span>
+              </label>
+              <select id="custBrandSelect" class="b-input form-control" required>
+                <option value="apple">🍎 Apple (iPhone, iPad, Watch)</option>
+                <option value="samsung">📱 Samsung Galaxy (S, Z Fold/Flip, A, M)</option>
+                <option value="xiaomi">⚡ Xiaomi & Redmi Series</option>
+                <option value="poco">🚀 POCO Series (F, X, M, C)</option>
+                <option value="oppo">🟢 OPPO (Find X/N, Reno, A Series)</option>
+                <option value="vivo">🔵 Vivo (X Series, V Series, Y Series)</option>
+                <option value="realme">🟡 Realme (GT, Angka Pro, C Series)</option>
+                <option value="infinix">♾️ Infinix (GT, ZERO, NOTE, HOT)</option>
+                <option value="iqoo">🏎️ iQOO Series (12, Neo, Z Series)</option>
+                <option value="tecno_itel">⚡ Tecno & itel Mobile</option>
+                <option value="asus">🎮 ASUS ROG Phone & Zenfone</option>
+                <option value="others">🌐 Google Pixel, Huawei, Sony & Lainnya</option>
+              </select>
+            </div>
+            <div>
+              <label class="b-form-label" for="custModelSelect">
+                <span>Tipe / Seri Model HP <span class="req">*</span></span>
+              </label>
+              <select id="custModelSelect" class="b-input form-control" required>
+                <!-- Populated automatically by booking.js based on selected brand -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Color / Storage / Custom Variant Note -->
+          <div style="margin-top: 12px;">
+            <label class="b-form-label" for="custModelDetail">
+              <span>Warna & Kapasitas Memori <span class="sub">(Opsional)</span></span>
+            </label>
+            <input type="text" id="custModelDetail" class="b-input form-control"
+              placeholder="Contoh: Sierra Blue 256GB / Titanium Black 512GB / Cosmic Grey">
+          </div>
+        </div>
+
+        <!-- 2. Metode Servis -->
+        <div class="b-form-group">
+          <label class="b-form-label">
+            <span>
+              <span class="b-form-step-badge">LANGKAH 2</span>
+              <span>Metode Pengerjaan <span class="req">*</span></span>
+            </span>
+          </label>
+          <div class="device-segmented-grid">
+            <label class="device-seg-option">
+              <input type="radio" name="method" value="walkin" checked>
+              <div class="device-seg-card">
+                <div class="device-seg-icon">🏢</div>
+                <div class="device-seg-info">
+                  <strong>Datang ke Workshop</strong>
+                  <small>Bisa ditunggu langsung 30–60 menit</small>
+                </div>
+              </div>
+            </label>
+            <label class="device-seg-option">
+              <input type="radio" name="method" value="pickup">
+              <div class="device-seg-card">
+                <div class="device-seg-icon">🛵</div>
+                <div class="device-seg-info">
+                  <strong>Antar-Jemput (Pickup)</strong>
+                  <small>Kurir workshop jemput ke lokasi Anda</small>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Alamat Penjemputan (Toggled if Pickup selected) -->
+        <div class="b-form-group hidden" id="addressFieldGroup">
+          <label class="b-form-label" for="custAddress">
+            <span>Alamat Penjemputan / Domisili Lengkap <span class="req">*</span></span>
+          </label>
+          <input type="text" id="custAddress" class="b-input form-control"
+            placeholder="Contoh: Jl. Soekarno Hatta No. 45, Lowokwaru, Kota Malang (Sebutkan patokan/RT/RW)">
+        </div>
+
+        <!-- 3. Pilihan Gejala Kerusakan (Chips) -->
+        <div class="b-form-group">
+          <label class="b-form-label">
+            <span>
+              <span class="b-form-step-badge">LANGKAH 3</span>
+              <span>Gejala & Keluhan Kerusakan <span class="req">*</span></span>
+            </span>
+            <span class="sub">(Bisa pilih lebih dari satu)</span>
+          </label>
+          <div class="damage-chips-grid">
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Layar / LCD / OLED Pecah">📱 Layar /
+              LCD Pecah</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Baterai Drop / Cepat Habis">🔋
+              Baterai Drop</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Ganti Kaca Depan (Glass Only OCA)">✨
+              Ganti Kaca OCA</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn"
+              data-tag="Port Charger Kendor / Tidak Mengisi">⚡ Port Charger Rusak</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Mesin Mati Total / Konslet">⚠️ Mati
+              Total / IC</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="HP Tercebur Air / Korosi">💧
+              Tercebur Air</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Kamera Belakang Getar / Buram">📸
+              Kamera Getar / Buram</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Speaker / Mikrofon Rusak">🔊 Speaker
+              / Mic Mati</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Bootloop Mentok Logo / Software">🔄
+              Bootloop / Software</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Backdoor / Kaca Belakang Retak">🛡️
+              Backdoor / Casing Retak</button>
+            <button type="button" class="problem-tag-btn damage-chip-btn" data-tag="Sinyal Hilang / No Service">📶
+              Masalah Sinyal / IMEI</button>
+          </div>
+        </div>
+
+        <!-- 4. Data Pemilik & Kontak Notifikasi (3 Columns: Nama, WA, Email) -->
+        <div class="b-form-group">
+          <label class="b-form-label">
+            <span>
+              <span class="b-form-step-badge">LANGKAH 4</span>
+              <span>Data Pemilik & Kontak Notifikasi <span class="req">*</span></span>
+            </span>
+            <span class="sub">Untuk tiket resmi & nota digital</span>
+          </label>
+          <div class="form-grid-3">
+            <div>
+              <label class="form-field-label" for="custName">
+                <span>Nama Lengkap Pemilik <span class="req">*</span></span>
+              </label>
+              <input type="text" id="custName" class="b-input form-control" placeholder="Contoh: Bpk. Hendra Saputra" required
+                autocomplete="name">
+            </div>
+            <div>
+              <label class="form-field-label" for="custPhone">
+                <span>Nomor WhatsApp Aktif <span class="req">*</span></span>
+              </label>
+              <input type="tel" id="custPhone" class="b-input form-control" placeholder="Contoh: 081234567890" required
+                autocomplete="tel">
+            </div>
+            <div>
+              <label class="form-field-label" for="custEmail">
+                <span>Alamat Email <span class="form-field-hint">(Untuk Bukti Tanda Terima & Nota Garansi Digital)</span></span>
+              </label>
+              <input type="email" id="custEmail" class="b-input form-control" placeholder="Contoh: nama@email.com"
+                autocomplete="email">
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Kode Promo & Voucher Diskon (Potongan Langsung) -->
+        <div class="b-form-group">
+          <label class="b-form-label" for="custPromoCode">
+            <span>
+              <span class="b-form-step-badge">LANGKAH 5</span>
+              <span>Kode Promo / Voucher Diskon</span>
+            </span>
+            <span class="sub" style="color: #059669; font-weight: 700;">(Potongan Langsung Memotong Biaya)</span>
+          </label>
+          <div class="b-promo-container">
+            <div class="promo-input-group">
+              <input type="text" id="custPromoCode" class="b-input form-control promo-code-input"
+                placeholder="Contoh: NGALAMPROMO30" autocomplete="off">
+              <button type="button" class="btn-apply-promo" id="btnApplyPromo">
+                <span>Gunakan Promo ✨</span>
+              </button>
+              <button type="button" class="btn-remove-promo" id="btnRemovePromo" style="display: none;">
+                <span>Batalkan</span>
+              </button>
+            </div>
+
+            <!-- Quick promo suggestion chips -->
+            <div class="quick-promos-wrapper" id="quickPromosWrap">
+              <div class="quick-promo-title">
+                <span>🎟️ Promo Tersedia & Siap Digunakan:</span>
+              </div>
+              <div class="quick-promo-list" id="quickPromoList">
+                <span style="font-size: 0.78rem; color: #94a3b8;">Memuat promo aktif...</span>
+              </div>
+            </div>
+
+            <!-- Live Alert Box (Success / Expired Error) -->
+            <div class="promo-alert-box" id="promoAlertBox"></div>
+
+            <!-- Real-Time Price Deduction Breakdown Card -->
+            <div class="promo-breakdown-card" id="promoBreakdownCard">
+              <div class="breakdown-row original">
+                <span>Estimasi Biaya Servis Awal:</span>
+                <span id="cardOriginalPrice" style="text-decoration: line-through;">Rp 350.000</span>
+              </div>
+              <div class="breakdown-row discount">
+                <span id="cardPromoLabel">Potongan Diskon Promo (30%):</span>
+                <span id="cardDiscountAmount">- Rp 105.000</span>
+              </div>
+              <div class="breakdown-row final">
+                <span>Total Estimasi Setelah Promo:</span>
+                <span class="breakdown-final-price" id="cardFinalPrice">Rp 245.000</span>
+              </div>
+              <div style="font-size: 0.78rem; color: #86efac; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+                <span>🎉 Diskon langsung diterapkan dan tercatat resmi pada nomor tiket Anda!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Catatan Tambahan (Kronologi) -->
+        <div class="b-form-group">
+          <label class="b-form-label" for="custNotes">
+            <span>
+              <span class="b-form-step-badge">LANGKAH 6</span>
+              <span>Catatan Tambahan / Kronologi Kejadian</span>
+            </span>
+            <span class="sub">(Opsional)</span>
+          </label>
+          <textarea id="custNotes" class="b-textarea form-control" rows="3"
+            placeholder="Contoh: Jatuh dari meja, tampilan layar bergaris hijau tapi sentuhan masih merespon..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-booking-submit" id="bookingSubmitBtn">
+          <span>🚀 Kirim Pendaftaran Servis & Ambil Nomor Tiket</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <!-- Trust Badges -->
+        <div class="form-trust-footer">
+          <span>🔒 Enkripsi Data SSL</span>
+          <span>⚡ Sinkron Google Sheets & Antrian Workshop</span>
+          <span>🛡️ Garansi Tertulis Resmi</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- SUCCESS MODAL POPUP -->
+  <div class="receipt-modal-backdrop" id="successModal">
+    <div class="receipt-modal-container">
+      <div style="font-size: 3rem; margin-bottom: 12px;">🎉</div>
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Pendaftaran Servis Berhasil!
+      </h2>
+      <p style="color: #475569; font-size: 0.95rem; margin-bottom: 20px;">
+        Data reparasi Anda telah tersimpan di sistem workshop dan disinkronisasikan ke Google Spreadsheet.
+      </p>
+
+      <div
+        style="background: #eff6ff; border: 1.5px dashed #93c5fd; border-radius: 14px; padding: 18px; margin-bottom: 24px;">
+        <div
+          style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px; color: #0284c7; font-weight: 700;">
+          NOMOR TIKET RESMI ANDA</div>
+        <div id="createdTicketBadge"
+          style="font-size: 1.85rem; font-family: 'JetBrains Mono', monospace; font-weight: 900; color: #0f172a; letter-spacing: 2px; margin-top: 6px;">
+          NGF-20261023-0000</div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">Simpan nomor tiket ini untuk melacak proses
+          pengerjaan reparasi.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a id="waConfirmLink" href="#" target="_blank" class="btn whatsapp full">
+          <span>Konfirmasi ke WhatsApp Mas Liem Hingky Liman</span>
+        </a>
+        <a id="trackOrderLink" href="#" class="btn outline darkoutline full">
+          <span>Lihat Status di Halaman Tracking 🔍</span>
+        </a>
+        <button type="button" class="btn small" id="closeModalBtn"
+          style="background: transparent; color: #94a3b8; border: none; margin-top: 4px; cursor: pointer;">
+          Tutup Jendela
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap footgrid">
+      <div class="foot-col">
+        <a class="logo" href="../index.html">
+          <div class="logo-badge">
+            <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+          </div>
+          <span>Ngalam<b>Fix Pro</b></span>
+        </a>
+        <p style="margin-top: 8px;">Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya di Malang.
+        </p>
+      </div>
+      <div class="foot-col">
+        <strong>Layanan Utama HP</strong>
+        <a href="../layanan/index.html">Servis Apple iPhone</a>
+        <a href="../layanan/index.html">Servis Android</a>
+        <a href="../layanan/index.html">Ganti Layar OLED</a>
+      </div>
+      <div class="foot-col">
+        <strong>Bantuan & Info</strong>
+        <a href="../lacak/index.html">Lacak Status Pengerjaan</a>
+        <a href="../login/index.html">Masuk Akun Pelanggan</a>
+        <a href="../admin/login.html">Login Admin & Kasir</a>
+        <a href="../teknisi/login.html">Login Teknisi & Mitra</a>
+        <a href="../kontak/index.html">Hubungi Workshop</a>
+      </div>
+      <div class="foot-col">
+        <strong>Kontak Workshop</strong>
+        <p style="color:#ffffff;font-weight:600;">WhatsApp Resmi:</p>
+        <p>+62 813-3030-4321 (Liem Hingky Liman)</p>
+      </div>
+    </div>
+    <div class="wrap copyright">
+      <div>© 2026 Ngalam Fix Pro. Hak Cipta Dilindungi.</div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CHATBOT WIDGET (BOTTOM-LEFT LUXURY AI ASSISTANT) -->
+  <div class="chatbot-container">
+    <button type="button" class="chatbot-trigger" id="chatbotTrigger" aria-label="Buka NgalamBot AI">
+      <!-- ANIMATED AI PROFILE AVATAR FROM NGALAM FIX PRO LOGO -->
+      <div class="ai-avatar-animated" style="width: 44px; height: 44px;">
+        <div class="ai-avatar-glow"></div>
+        <div class="ai-avatar-ring-outer"></div>
+        <div class="ai-avatar-ring-inner"></div>
+        <div class="ai-avatar-core">
+          <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar" class="ai-avatar-img">
+          <div class="ai-scanner-line"></div>
+        </div>
+        <span class="ai-status-dot"></span>
+      </div>
+      <div class="chatbot-trigger-text">
+        <span class="chatbot-trigger-title">Tanya NgalamBot</span>
+        <span class="chatbot-trigger-sub">AI Asisten Servis HP</span>
+      </div>
+      <div class="chatbot-trigger-badge">
+        <span class="pulse-green-dot"></span>
+        <span>Online</span>
+      </div>
+    </button>
+
+    <div class="chatbot-panel" id="chatbotPanel">
+      <div class="chatbot-header">
+        <div class="chatbot-title-box">
+          <!-- ANIMATED AI PROFILE AVATAR IN HEADER -->
+          <div class="ai-avatar-animated" style="width: 42px; height: 42px;">
+            <div class="ai-avatar-glow"></div>
+            <div class="ai-avatar-ring-outer"></div>
+            <div class="ai-avatar-ring-inner"></div>
+            <div class="ai-avatar-core">
+              <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar" class="ai-avatar-img">
+              <div class="ai-scanner-line"></div>
+            </div>
+            <span class="ai-status-dot"></span>
+          </div>
+          <div class="chatbot-header-text">
+            <strong>NgalamBot <span class="chatbot-pill-tag">AI PRO</span></strong>
+            <small><span class="pulse-green-dot"></span> Siap Menjawab 24/7</small>
+          </div>
+        </div>
+        <div class="chatbot-header-actions">
+          <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20butuh%20bantuan%20isi%20form%20servis" target="_blank" rel="noopener noreferrer" class="chatbot-wa-btn" title="Chat WhatsApp PIC Workshop">
+            <span>💬 WA</span>
+          </a>
+          <button type="button" class="chatbot-close-btn" id="chatbotClose" aria-label="Tutup Chat">✕</button>
+        </div>
+      </div>
+
+      <div class="chatbot-body" id="chatbotMessages">
+        <div class="chatbot-bubble-row bot">
+          <div class="ai-bubble-avatar">
+            <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI">
+          </div>
+          <div class="chatbot-bubble bot">
+            Halo! Butuh rekomendasi jenis perbaikan atau estimasi biaya untuk pemesanan servis Anda?
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-chips">
+        <button type="button" class="chatbot-chip" data-query="Berapa biaya ganti LCD?">📱 Biaya Layar</button>
+        <button type="button" class="chatbot-chip" data-query="Berapa biaya ganti baterai?">🔋 Ganti Baterai</button>
+        <button type="button" class="chatbot-chip" data-query="Berapa lama estimasi pengerjaan servis?">⏱️ Estimasi Waktu</button>
+        <button type="button" class="chatbot-chip" data-query="Apakah ada layanan antar jemput?">🛵 Antar Jemput</button>
+      </div>
+
+      <div class="chatbot-footer">
+        <div class="chatbot-input-row">
+          <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Tanya estimasi harga, garansi, proses..." autocomplete="off">
+          <button type="button" id="chatbotSend" class="chatbot-send-btn" aria-label="Kirim Pesan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <div class="chatbot-disclaimer">
+          Ditenagai AI Spesialis Servis Smartphone • Estimasi Real-time
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/device-sensor.js"></script>
+  <script src="../js/api-base.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="booking.js"></script>
+  <script src="../js/chatbot.js"></script>
+</body>
+
+</html>

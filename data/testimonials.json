@@ -1,0 +1,42 @@
+[
+  {
+    "id": "TESTI-1792723751464",
+    "ticketId": "NGF-20261023-7182",
+    "name": "Rian Pratama",
+    "device": "Samsung S22 Ultra",
+    "rating": 5,
+    "text": "Servis ganti layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi 90 hari. Mantap!",
+    "date": "23 Okt 2026",
+    "verified": true
+  },
+  {
+    "id": "TESTI-20261023-0001",
+    "ticketId": "NGF-20261023-0001",
+    "name": "Dimas Prasetyo",
+    "device": "Apple iPhone 14 Pro Max",
+    "rating": 5,
+    "text": "Layar iPhone tiba-tiba green screen blank setelah update iOS, sempat panik karena di tempat resmi divonis ganti whole unit jutaan. Di Ngalam Fix Pro berhasil diperbaiki jalurnya dalam 1,5 jam, TrueTone aktif normal dan data utuh. Luar biasa!",
+    "date": "23 Okt 2026",
+    "verified": true
+  },
+  {
+    "id": "TESTI-20261022-0002",
+    "ticketId": "NGF-20261022-4389",
+    "name": "Siti Rahmawati",
+    "device": "Samsung Galaxy S23 Ultra",
+    "rating": 5,
+    "text": "Port cas kendor dan kamera belakang getar OIS saat buka Instagram. Dikerjakan langsung di depan mata dalam 45 menit selesai. Fast charging 45W lancar lagi dan kamera fokus mulus. Tempat servis HP paling jujur.",
+    "date": "22 Okt 2026",
+    "verified": true
+  },
+  {
+    "id": "TESTI-20261021-0003",
+    "ticketId": "NGF-20261021-2472",
+    "name": "Budi Santoso",
+    "device": "Xiaomi 13T & iPhone 13",
+    "rating": 5,
+    "text": "HP Xiaomi anak saya tercebur ke ember air dan mati total. Dibawa ke Ngalam Fix Pro langsung ditangani ultrasonic cleaning dan ganti IC power. Nyala normal kembali tanpa kehilangan foto-foto keluarga. Recommended!",
+    "date": "21 Okt 2026",
+    "verified": true
+  }
+]

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Khusus Admin & Workshop Manager • Ngalam Fix Pro</title>
+  <meta name="description" content="Portal login independen untuk Admin Meja 1, Kasir, dan Workshop Manager Ngalam Fix Pro. Akses operasional, kasir, antrean walk-in, dan analitik.">
+    <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+<link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="../js/device-sensor.js"></script>
+</head>
+<body style="background: #f8fafc; color: #0f172a;">
+
+  <!-- ADMIN LOGIN HEADER -->
+  <header class="header" style="background: rgba(255, 255, 255, 0.95); border-bottom: 1px solid #e2e8f0;">
+    <div class="wrap nav" style="min-height: 70px;">
+      <a class="logo" href="../index.html">
+        <div class="logo-badge">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
+        </div>
+        <span>Ngalam <b>Fix Pro</b></span>
+        <span class="logo-pill" style="background: #7c3aed; color: #ffffff;">ADMIN & MANAGER</span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="../index.html" class="btn small outline" style="background: #ffffff; border: 1px solid #cbd5e1; color: #334155;">
+          Ke Beranda ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="pagehero">
+    <div class="wrap" style="text-align: center; max-width: 760px; margin: 0 auto;">
+      <div class="eyebrow-pill" style="margin: 0 auto 12px; background: #f5f3ff; border: 1px solid #ddd6fe; color: #7c3aed;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>PORTAL SISTEM LOGIN: 2 ROLE (KASIR & ADMIN SUPER USER)</span>
+      </div>
+      <h1 style="font-size: 2.2rem; margin-bottom: 10px; color: #0f172a;">
+        Sistem Masuk Staf Operasional Workshop.<br>
+        <span style="background: linear-gradient(135deg, #7c3aed, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Hak Akses Terpisah: Kasir & Admin Super User.</span>
+      </h1>
+      <p style="margin: 0 auto; color: #475569; font-size: 0.95rem; max-width: 640px;">
+        <b>Kasir:</b> Pendaftaran kerusakan HP offline, pembagian antrean teknisi lab, dan cetak struk transaksi harian.<br>
+        <b>Admin:</b> Akses Super User untuk kontrol seluruh sistem, pembukuan kas besar, banner, dan pengaturan database.
+      </p>
+    </div>
+  </section>
+
+  <!-- LOGIN CARD -->
+  <section class="wrap" style="max-width: 660px; margin-top: -24px; margin-bottom: 70px;">
+    <div class="auth-portal-card" style="border-color: #ddd6fe; box-shadow: 0 20px 50px rgba(124, 58, 237, 0.08);">
+
+      <div style="text-align: center; margin-bottom: 24px;">
+        <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" style="width: 76px; height: 76px; border-radius: 18px; margin: 0 auto 14px; display: block; border: 2px solid rgba(212, 175, 55, 0.6); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);">
+        <h2 style="font-size: 1.35rem; color: #0f172a; margin: 0 0 6px;">Otentikasi Kasir & Admin Super User</h2>
+        <p style="color: #475569; font-size: 0.88rem; margin: 0;">Pilih jabatan kerja operasional Anda untuk membuka dashboard.</p>
+      </div>
+
+      <!-- Toggle Tabs: Login vs Registrasi Staf -->
+      <div style="display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+        <button type="button" id="tabAdminLoginBtn" style="flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; background: #ffffff; color: #7c3aed; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+          🔑 Masuk Sistem
+        </button>
+        <button type="button" id="tabAdminRegisterBtn" style="flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; background: transparent; color: #64748b;">
+          📝 Registrasi Kasir / Admin
+        </button>
+      </div>
+
+      <div id="firstTimeSetupNotice" style="display: none; background: #eff6ff; border: 1.5px dashed #93c5fd; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.86rem; color: #1e40af;">
+        💡 <b>Setup Awal:</b> Data akun staf kosong. Gunakan tab <b>Registrasi Kasir / Admin</b> untuk membuat akun pertama Anda.
+      </div>
+
+      <!-- Role Selector (Pilihan Mode: Kasir vs Admin Super User) -->
+      <div class="auth-role-group" id="loginRoleGroup" style="margin-bottom: 22px;">
+        <button type="button" class="auth-role-btn active" data-role="kasir" id="kasirRoleBtn">
+          <span style="font-size: 1.5rem;">👩‍💼</span>
+          <div>
+            <span style="font-weight: 700; display: block;">Kasir (Front Desk)</span>
+            <small style="font-size: 0.76rem; color: #64748b; font-weight: normal;">Input HP Offline, Bagi Antrean & Struk</small>
+          </div>
+        </button>
+        <button type="button" class="auth-role-btn" data-role="admin" id="adminRoleBtn">
+          <span style="font-size: 1.5rem;">👑</span>
+          <div>
+            <span style="font-weight: 700; display: block;">Admin (Super User)</span>
+            <small style="font-size: 0.76rem; color: #64748b; font-weight: normal;">Akses Penuh & Kontrol Seluruh Sistem</small>
+          </div>
+        </button>
+      </div>
+
+      <!-- Alert Notification Box -->
+      <div id="adminLoginAlert" style="display: none; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem;"></div>
+
+      <!-- Login Form -->
+      <form id="adminLoginForm">
+        <input type="hidden" id="adminSelectedRole" value="kasir">
+
+        <!-- Username / Email -->
+        <div class="auth-input-wrapper">
+          <label for="adminIdentifier">Username atau Email Akun *</label>
+          <span class="auth-input-icon">👤</span>
+          <input
+            type="text"
+            id="adminIdentifier"
+            class="auth-input-control"
+            placeholder="Masukkan username atau email"
+            required
+            autocomplete="username"
+          >
+        </div>
+
+        <!-- Password -->
+        <div class="auth-input-wrapper">
+          <label for="adminPassword">Kata Sandi (Password) *</label>
+          <span class="auth-input-icon">🔒</span>
+          <input
+            type="password"
+            id="adminPassword"
+            class="auth-input-control"
+            placeholder="Masukkan kata sandi"
+            required
+            autocomplete="current-password"
+          >
+          <button type="button" class="auth-password-toggle" id="toggleAdminPassBtn" title="Tampilkan/Sembunyikan Sandi" aria-label="Toggle Password">
+            👁️
+          </button>
+        </div>
+
+        <!-- KODE REFERRAL KHUSUS OWNER / SUPER ADMIN (Hanya tampil saat mode Owner aktif) -->
+        <div class="auth-input-wrapper" id="referralCodeWrapper" style="display: none; background: #faf5ff; border: 1.5px dashed #c084fc; padding: 14px; border-radius: 14px; margin-top: 10px;">
+          <label for="adminReferralCode" style="color: #6b21a8; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <span>🔑 Kode Referral Admin Keseluruhan *</span>
+          </label>
+          <div style="position: relative;">
+            <span class="auth-input-icon" style="top: 50%; transform: translateY(-50%);">🛡️</span>
+            <input
+              type="text"
+              id="adminReferralCode"
+              class="auth-input-control"
+              placeholder="Masukkan kode referral otorisasi"
+              style="border-color: #d8b4fe; background: #ffffff; letter-spacing: 1px; font-family: monospace; font-size: 0.95rem; font-weight: 600;"
+              autocomplete="off"
+            >
+          </div>
+          <small style="display: block; margin-top: 6px; color: #7e22ce; font-size: 0.78rem;">
+            🔒 Wajib diisi dengan kode referral resmi pimpinan untuk membuka seluruh modul kontrol sistem.
+          </small>
+        </div>
+
+        <!-- Remember me & Help -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; margin-bottom: 22px; font-size: 0.86rem; color: #64748b; flex-wrap: wrap; gap: 10px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="adminRememberCheck" checked>
+            <span>Ingat Sesi di Komputer Ini</span>
+          </label>
+          <span style="color: #7c3aed; font-size: 0.8rem; font-weight: 600;">
+            Akses Terenkripsi TLS 256-bit
+          </span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="adminSubmitBtn" class="btn" style="width: 100%; padding: 15px; font-size: 1.05rem; font-weight: 700; border-radius: 14px; background: linear-gradient(135deg, #7c3aed, #2563eb); box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>Masuk ke Dashboard Operasional 🚀</span>
+        </button>
+      </form>
+
+      <!-- Registration Form (Pendaftaran Admin / Owner Baru) -->
+      <form id="adminRegisterForm" style="display: none;">
+        <div class="auth-input-wrapper">
+          <label for="regAdminName">Nama Lengkap Admin / Manager *</label>
+          <span class="auth-input-icon">👤</span>
+          <input
+            type="text"
+            id="regAdminName"
+            class="auth-input-control"
+            placeholder="Contoh: Budi Santoso / Ibu Maya"
+            required
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="auth-input-wrapper">
+          <label for="regAdminUser">Username Login *</label>
+          <span class="auth-input-icon">🆔</span>
+          <input
+            type="text"
+            id="regAdminUser"
+            class="auth-input-control"
+            placeholder="Contoh: admin atau budi.manager"
+            required
+            autocomplete="username"
+          >
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="auth-input-wrapper">
+            <label for="regAdminEmail">Email (Opsional)</label>
+            <span class="auth-input-icon">✉️</span>
+            <input
+              type="email"
+              id="regAdminEmail"
+              class="auth-input-control"
+              placeholder="admin@ngalamfix.com"
+              autocomplete="email"
+            >
+          </div>
+          <div class="auth-input-wrapper">
+            <label for="regAdminPhone">No. WhatsApp (Opsional)</label>
+            <span class="auth-input-icon">📱</span>
+            <input
+              type="tel"
+              id="regAdminPhone"
+              class="auth-input-control"
+              placeholder="081234567890"
+              autocomplete="tel"
+            >
+          </div>
+        </div>
+
+        <div class="auth-input-wrapper">
+          <label for="regAdminPass">Kata Sandi (Password) *</label>
+          <span class="auth-input-icon">🔒</span>
+          <input
+            type="password"
+            id="regAdminPass"
+            class="auth-input-control"
+            placeholder="Minimal 6 karakter"
+            required
+            autocomplete="new-password"
+          >
+        </div>
+
+        <div class="auth-input-wrapper">
+          <label for="regAdminRole">Peran / Hak Akses Staf *</label>
+          <select id="regAdminRole" class="auth-input-control" style="cursor: pointer; font-weight: 600;">
+            <option value="kasir" selected>👩‍💼 Kasir (Input Kerusakan HP Offline, Bagi Antrean Teknisi & Cetak Struk)</option>
+            <option value="admin">👑 Admin (Super User - Akses & Kontrol Penuh Seluruh Sistem)</option>
+          </select>
+        </div>
+
+        <div class="auth-input-wrapper" id="regReferralWrapper" style="display: none; background: #faf5ff; border: 1.5px dashed #c084fc; padding: 14px; border-radius: 14px; margin-top: 10px;">
+          <label for="regAdminReferral" style="color: #6b21a8; font-weight: 700; display: block; margin-bottom: 6px;">
+            🔑 Tentukan Kode Referral Otorisasi Super Admin:
+          </label>
+          <input
+            type="text"
+            id="regAdminReferral"
+            class="auth-input-control"
+            value="NGALAM-SUPER-2026"
+            placeholder="NGALAM-SUPER-2026"
+            style="border-color: #d8b4fe; background: #ffffff; letter-spacing: 1px; font-family: monospace; font-size: 0.95rem; font-weight: 700;"
+          >
+          <small style="display: block; margin-top: 6px; color: #7e22ce; font-size: 0.78rem;">
+            Kode ini digunakan saat masuk dengan mode Admin (Super User).
+          </small>
+        </div>
+
+        <button type="submit" id="regAdminSubmitBtn" class="btn" style="width: 100%; padding: 15px; font-size: 1.05rem; font-weight: 700; border-radius: 14px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; border: none; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; cursor: pointer;">
+          <span>Daftarkan Akun & Sinkronkan ke Sheets 🚀</span>
+        </button>
+      </form>
+
+      <!-- Separation Notice -->
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.8rem; color: #64748b;">
+        <span>Bukan Staf Workshop? </span>
+        <a href="../teknisi/login.html" style="color: #0284c7; text-decoration: none; font-weight: 600;">🛠️ Login Teknisi</a>
+        <span> atau </span>
+        <a href="../login/index.html" style="color: #059669; text-decoration: none; font-weight: 700;">🔍 Lacak Servis Pelanggan</a>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="../js/device-sensor.js"></script>
+  <script src="../js/api-base.js"></script>
+  <script src="admin_login.js"></script>
+</body>
+</html>
