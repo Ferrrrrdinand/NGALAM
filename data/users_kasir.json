@@ -1,0 +1,43 @@
+[
+  {
+    "id": "USR-KASIR-01",
+    "username": "kasir",
+    "password": "password123",
+    "name": "Kasir Meja 1",
+    "role": "kasir",
+    "category": "Front Desk & Kasir POS",
+    "avatar": "👩‍💼",
+    "phone": "081330304321",
+    "email": "kasir@ngalamfixpro.com",
+    "desk": "Meja 1 - Front Desk & Kasir Utama",
+    "specialty": "Penerimaan Walk-in, Hitung Biaya, Antrean & Cetak Struk POS",
+    "status": "Siaga / Aktif"
+  },
+  {
+    "id": "USR-KASIR-02",
+    "username": "kasir1",
+    "password": "password123",
+    "name": "Kasir Shift Pagi",
+    "role": "kasir",
+    "category": "Front Desk & Kasir POS",
+    "avatar": "👩‍💼",
+    "phone": "081330304322",
+    "email": "kasir1@ngalamfixpro.com",
+    "desk": "Meja 1 - Front Desk",
+    "specialty": "Penerimaan Unit Servis Offline & Pembayaran",
+    "status": "Siaga / Aktif"
+  },
+  {
+    "id": "USR-KASIR-FERDINAND",
+    "username": "ferdinandleandro12@gmail.com",
+    "email": "ferdinandleandro12@gmail.com",
+    "password": "123456",
+    "name": "Ferdinand (Kasir Meja 1)",
+    "role": "kasir",
+    "avatar": "👩‍💼",
+    "phone": "082335493176",
+    "desk": "Meja 1 - Front Desk & Kasir",
+    "specialty": "Penerimaan Kerusakan Offline, Bagi Antrean & Cetak Struk",
+    "status": "Siaga / Aktif"
+  }
+]

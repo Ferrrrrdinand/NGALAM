@@ -82,12 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const savedRaw = localStorage.getItem('ngalam_auth_user') || sessionStorage.getItem('ngalam_auth_user');
       if (savedRaw) {
         const savedUser = JSON.parse(savedRaw);
-        if (savedUser && savedUser.token && (savedUser.role === 'admin' || savedUser.role === 'owner' || savedUser.role === 'kasir')) {
-          showAlert(`Sesi login aktif terdeteksi (${savedUser.name || savedUser.username}). Mengalihkan ke dashboard...`, true);
-          const target = resolveSafeRedirect(urlParams.get('redirect'));
-          setTimeout(() => {
-            window.location.replace(target);
-          }, 350);
+        if (savedUser && savedUser.token) {
+          if (savedUser.role === 'kasir') {
+            window.location.replace('../kasir/index.html');
+            return;
+          }
+          if (savedUser.role === 'admin' || savedUser.role === 'owner') {
+            showAlert(`Sesi login admin aktif terdeteksi (${savedUser.name || savedUser.username}). Mengalihkan ke dashboard...`, true);
+            const target = resolveSafeRedirect(urlParams.get('redirect'));
+            setTimeout(() => {
+              window.location.replace(target);
+            }, 350);
+            return;
+          }
         }
       }
     } catch (_) {}
@@ -97,46 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const referralCodeWrapper = document.getElementById('referralCodeWrapper');
 
   function selectRole(role) {
-    const isKasir = (role === 'kasir');
-    if (adminSelectedRole) adminSelectedRole.value = isKasir ? 'kasir' : 'admin';
-
-    kasirRoleBtn?.classList.toggle('active', isKasir);
-    adminRoleBtn?.classList.toggle('active', !isKasir);
-
-    if (isKasir) {
-      if (referralCodeWrapper) referralCodeWrapper.style.display = 'none';
-      if (adminReferralCode) {
-        adminReferralCode.removeAttribute('required');
-        adminReferralCode.value = '';
-      }
-      if (adminSubmitBtn) {
-        adminSubmitBtn.innerHTML = `
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
-          <span>Masuk sebagai Kasir Meja 1</span>
-        `;
-      }
-    } else {
-      if (referralCodeWrapper) referralCodeWrapper.style.display = 'block';
-      if (adminReferralCode) {
-        adminReferralCode.removeAttribute('required');
-        if (!adminReferralCode.value) adminReferralCode.value = 'NGALAM-SUPER-2026';
-      }
-      if (adminSubmitBtn) {
-        adminSubmitBtn.innerHTML = `
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="2.5"/><path d="M12 13.5v2.5"/></svg>
-          <span>Buka Akses Penuh Admin Super User</span>
-        `;
-      }
+    if (adminSelectedRole) adminSelectedRole.value = 'admin';
+    if (referralCodeWrapper) referralCodeWrapper.style.display = 'block';
+    if (adminReferralCode) {
+      adminReferralCode.removeAttribute('required');
+      if (!adminReferralCode.value) adminReferralCode.value = 'NGALAM-SUPER-2026';
+    }
+    if (adminSubmitBtn) {
+      adminSubmitBtn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="2.5"/><path d="M12 13.5v2.5"/></svg>
+        <span>Buka Akses Penuh Admin Super User</span>
+      `;
     }
   }
 
-  kasirRoleBtn?.addEventListener('click', () => selectRole('kasir'));
-  adminRoleBtn?.addEventListener('click', () => selectRole('admin'));
+  // Default initialize role to Admin Super User
+  selectRole('admin');
 
-  // Default initialize role button states to Kasir
-  selectRole('kasir');
-
-  // Deteksi otomatis akun Admin / Owner saat mengetik username
+  // Deteksi otomatis saat mengetik username
   adminIdentifier?.addEventListener('input', () => {
     const val = (adminIdentifier.value || '').trim().toLowerCase();
     if (val === 'owner' || val === 'ferdinand' || val === 'admin' || val.includes('owner') || val.includes('ferdinand')) {
@@ -487,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const identifier = adminIdentifier?.value.trim();
     const password = adminPassword?.value.trim();
-    const role = adminSelectedRole?.value || 'kasir';
+    const role = adminSelectedRole?.value || 'admin';
     const referralCode = adminReferralCode?.value.trim() || '';
 
     if (!identifier || !password) {
@@ -518,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
           message: 'Akun Mitra memiliki portal pengerjaan tersendiri. Silakan login melalui Portal Mitra resmi.',
           hints: [
             'Klik tautan Portal Mitra di bawah formulir untuk masuk ke halaman mitra.',
-            'Halaman ini diperuntukkan bagi Kasir Meja 1 dan Admin Super User.'
+            'Halaman ini diperuntukkan bagi Super Admin & Owner Workshop.'
           ],
           targetInputId: 'adminIdentifier'
         });
@@ -553,8 +538,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (data.success && data.user) {
-        if (data.user.role !== 'admin' && data.user.role !== 'owner' && data.user.role !== 'kasir') {
-          const rejectMsg = 'Akses Ditolak: Hanya Kasir Meja 1 dan Admin Super User yang diizinkan masuk ke dashboard ini.';
+        // Jika akun kasir login di halaman admin, arahkan ke dashboard kasir
+        if (data.user.role === 'kasir') {
+          const storage = adminRememberCheck?.checked ? localStorage : sessionStorage;
+          storage.setItem('ngalam_auth_user', JSON.stringify(data.user));
+          localStorage.setItem('ngalam_auth_user', JSON.stringify(data.user));
+          document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=86400; SameSite=Lax`;
+          showAlert('Akun Kasir terdeteksi. Mengalihkan ke Dashboard Kasir Meja 1...', true);
+          setTimeout(() => {
+            window.location.replace('../kasir/index.html');
+          }, 350);
+          return;
+        }
+
+        if (data.user.role !== 'admin' && data.user.role !== 'owner') {
+          const rejectMsg = 'Akses Ditolak: Halaman ini hanya diperuntukkan bagi Super Admin dan Owner.';
           if (window.showAuthErrorModal) {
             window.showAuthErrorModal({
               title: 'Akses Ditolak!',
@@ -566,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        const roleTitle = (data.user.role === 'kasir') ? 'Kasir Meja 1' : 'Admin Super User';
+        const roleTitle = 'Admin Super User';
         showAlert(data.message || `Login berhasil sebagai ${roleTitle}! Mengalihkan...`, true);
         const storage = adminRememberCheck?.checked ? localStorage : sessionStorage;
         storage.setItem('ngalam_auth_user', JSON.stringify(data.user));
@@ -582,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
             user: {
               name: data.user.name || data.user.username,
               role: data.user.role,
-              roleText: (data.user.role === 'kasir') ? 'Kasir Meja 1 Workshop' : 'Admin Super User (Full Access)'
+              roleText: 'Admin Super User (Full Access)'
             },
             redirectUrl: redirectTarget,
             duration: 1300
@@ -595,14 +593,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 350);
       } else {
         const errMsg = data.error || data.message || 'Username atau password yang Anda masukkan tidak cocok.';
+        if (errMsg.includes('KASIR')) {
+          showAlert(`⚠️ ${errMsg} <a href="../kasir/login.html" style="color: #0284c7; font-weight: 800; text-decoration: underline; margin-left: 6px;">Buka Login Kasir Meja 1 ↗</a>`);
+        } else {
+          showAlert(errMsg);
+        }
         if (window.showAuthErrorModal) {
           window.showAuthErrorModal({
-            title: 'Login Gagal!',
+            title: errMsg.includes('KASIR') ? 'Akun Kasir Terdeteksi' : 'Login Gagal!',
             message: errMsg,
             targetInputId: 'adminPassword'
           });
         }
-        showAlert(errMsg);
       }
     } catch (err) {
       console.warn('Backend login fetch error, evaluating fallback:', err);

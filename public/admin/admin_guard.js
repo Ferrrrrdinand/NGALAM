@@ -1,6 +1,7 @@
 /**
  * NGALAM FIX PRO - Admin Route Guard
- * Immediately blocks unauthenticated access and verifies admin/manager role.
+ * Memastikan hanya Super Admin & Owner yang dapat mengakses dashboard manajemen utama.
+ * Jika staf kasir membuka halaman ini, otomatis dialihkan ke dashboard kasir.
  */
 (function () {
   'use strict';
@@ -11,13 +12,25 @@
       return;
     }
     const user = JSON.parse(raw);
-    if (!user || !user.token || (user.role !== 'admin' && user.role !== 'owner' && user.role !== 'kasir')) {
+    if (!user || !user.token) {
+      localStorage.removeItem('ngalam_auth_user');
+      sessionStorage.removeItem('ngalam_auth_user');
+      window.location.replace('login.html?reason=required');
+      return;
+    }
+    // Jika akun kasir, alihkan langsung ke portal kasir meja 1
+    if (user.role === 'kasir') {
+      window.location.replace('../kasir/index.html');
+      return;
+    }
+    // Hanya perbolehkan admin dan owner di area admin
+    if (user.role !== 'admin' && user.role !== 'owner') {
       localStorage.removeItem('ngalam_auth_user');
       sessionStorage.removeItem('ngalam_auth_user');
       window.location.replace('login.html?reason=role_mismatch&redirect=' + encodeURIComponent(window.location.pathname));
       return;
     }
-    // Sync session cookie
+    // Sinkronisasi session cookie
     document.cookie = 'ngalam_token=' + user.token + '; path=/; max-age=86400; SameSite=Lax';
   } catch (e) {
     window.location.replace('login.html?reason=required');

@@ -76,10 +76,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateNavAuthBadges() {
     const adminLinks = document.querySelectorAll('a[href*="admin/login.html"], a[href*="admin/index.html"], a[href$="/admin"]');
+    const kasirLinks = document.querySelectorAll('a[href*="kasir/login.html"], a[href*="kasir/index.html"], a[href$="/kasir"]');
     const techLinks = document.querySelectorAll('a[href*="teknisi/login.html"], a[href*="teknisi/index.html"], a[href$="/teknisi"]');
     adminLinks.forEach((a) => {
       const small = a.querySelector('small');
-      if (small) small.textContent = 'Walk-in counter Meja 1 & kasir';
+      if (small) small.textContent = 'Pusat kontrol, omset & teknisi';
+    });
+    kasirLinks.forEach((a) => {
+      const small = a.querySelector('small');
+      if (small) small.textContent = 'Walk-in counter Meja 1 & POS kasir';
     });
     techLinks.forEach((a) => {
       const small = a.querySelector('small');

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Kasir & Front Desk Meja 1 • Ngalam Fix Pro</title>
+  <meta name="description" content="Sistem kasir POS dan pendaftaran unit servis offline meja 1 Ngalam Fix Pro.">
+  <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="stylesheet" href="../css/style.css?v=8.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="../js/device-sensor.js"></script>
+  <!-- Kasir Route Guard -->
+  <script src="kasir_guard.js"></script>
+
+  <style>
+    :root {
+      --kasir-primary: #0284c7;
+      --kasir-dark: #0369a1;
+      --kasir-light: #f0f9ff;
+      --gold-accent: #d4af37;
+      --border-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: #f8fafc !important;
+      color: var(--text-main) !important;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Kasir Header Navbar */
+    .kasir-navbar {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(14px);
+      border-bottom: 1.5px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .kasir-nav-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .kasir-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .kasir-brand-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid #0284c7;
+    }
+
+    .kasir-brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.18rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .kasir-badge-pill {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .kasir-profile-widget {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+      padding: 6px 14px;
+      border-radius: 14px;
+      border: 1.5px solid #e2e8f0;
+    }
+
+    .kasir-avatar-box {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #ffffff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .kasir-btn-logout {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      color: #dc2626;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .kasir-btn-logout:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    .kasir-main-container {
+      max-width: 1360px;
+      margin: 24px auto 60px;
+      padding: 0 20px;
+    }
+
+    /* Metrics Grid */
+    .kasir-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 992px) {
+      .kasir-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 576px) {
+      .kasir-metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+      transition: all 0.2s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      border-color: #0284c7;
+    }
+
+    .metric-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .metric-num {
+      font-size: 1.45rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      margin: 0;
+      color: #0f172a;
+    }
+
+    .metric-label {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin: 2px 0 0;
+      font-weight: 600;
+    }
+
+    /* Tab Controls */
+    .kasir-tab-nav {
+      display: flex;
+      gap: 8px;
+      background: #ffffff;
+      padding: 6px;
+      border-radius: 16px;
+      border: 1.5px solid #e2e8f0;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .kasir-tab-btn {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: #64748b;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .kasir-tab-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+    }
+
+    .kasir-tab-btn:hover:not(.active) {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    /* Content Panels */
+    .kasir-panel-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 28px 28px;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+      margin-bottom: 30px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      margin: 0;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Form Layout */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 0.94rem;
+      outline: none;
+      font-family: inherit;
+      color: #0f172a;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    /* Tables */
+    .kasir-table-wrapper {
+      overflow-x: auto;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+    }
+
+    .kasir-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .kasir-table th {
+      background: #f8fafc;
+      padding: 14px 16px;
+      font-weight: 800;
+      color: #475569;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+
+    .kasir-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #0f172a;
+      vertical-align: middle;
+    }
+
+    .kasir-table tr:hover td {
+      background: #f0f9ff;
+    }
+
+    /* Status Badges */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .badge-status.menunggu {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .badge-status.pengerjaan {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+    .badge-status.selesai {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .badge-status.lunas {
+      background: #f3e8ff;
+      color: #6b21a8;
+      border: 1px solid #e9d5ff;
+    }
+
+    /* Buttons */
+    .btn-kasir-primary {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.94rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-kasir-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35);
+    }
+
+    .btn-kasir-outline {
+      background: #ffffff;
+      color: #0284c7;
+      border: 1.5px solid #0284c7;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-kasir-outline:hover {
+      background: #f0f9ff;
+    }
+
+    /* Thermal Receipt Modal Print Area */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .modal-content-receipt {
+      background: #ffffff;
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .thermal-paper {
+      background: #fffdfa;
+      border: 1.5px dashed #cbd5e1;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #0f172a;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .thermal-paper hr {
+      border: none;
+      border-top: 1px dashed #94a3b8;
+      margin: 10px 0;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .thermal-paper, .thermal-paper * {
+        visibility: visible;
+      }
+      .thermal-paper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+        margin: 0;
+        padding: 4mm;
+        border: none;
+        background: #ffffff;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="kasir-navbar">
+    <div class="kasir-nav-container">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a class="kasir-brand" href="../index.html">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo" class="kasir-brand-img">
+          <div>
+            <div class="kasir-brand-title">Ngalam Fix Pro</div>
+            <small style="color: #64748b; font-weight: 700; font-size: 0.74rem;">WORKSHOP SMARTPHONE MALANG</small>
+          </div>
+        </a>
+        <span class="kasir-badge-pill">KASIR MEJA 1 • FRONT DESK</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="kasir-profile-widget">
+          <div class="kasir-avatar-box" id="kasirAvatar">👩‍💼</div>
+          <div>
+            <div style="font-weight: 800; font-size: 0.88rem;" id="kasirNameDisplay">Kasir Meja 1</div>
+            <small style="color: #059669; font-weight: 700; font-size: 0.74rem;">🟢 Online & Bertugas</small>
+          </div>
+        </div>
+
+        <button type="button" class="btn-kasir-outline" id="btnOpenDrawer" title="Buka laci kasir manual">
+          💵 Buka Laci Kas
+        </button>
+
+        <button type="button" class="kasir-btn-logout" id="btnKasirLogout">
+          <span>Keluar Kasir 🚪</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN KASIR CONTAINER -->
+  <main class="kasir-main-container">
+
+    <!-- METRICS OVERVIEW -->
+    <section class="kasir-metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon-box" style="background: #eff6ff; color: #2563eb;">📝</div>
+        <div>
+          <h3 class="metric-num" id="metricTotalWalkin">0</h3>
+          <p class="metric-label">Unit Masuk Hari Ini</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-box" style="background: #fffbeb; color: #d97706;">⚡</div>
+        <div>
+          <h3 class="metric-num" id="metricInLab">0</h3>
+          <p class="metric-label">Sedang di Meja Lab</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-box" style="background: #ecfdf5; color: #059669;">💰</div>
+        <div>
+          <h3 class="metric-num" id="metricKasHariIni">Rp 0</h3>
+          <p class="metric-label">Kasir Diterima Hari Ini</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon-box" style="background: #fdf2f8; color: #db2777;">🛡️</div>
+        <div>
+          <h3 class="metric-num" id="metricReadyPickup">0</h3>
+          <p class="metric-label">Siap Diambil & Lunas</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB NAVIGATION -->
+    <nav class="kasir-tab-nav">
+      <button type="button" class="kasir-tab-btn active" data-tab="walkinTab">
+        <span>📝 1. Penerimaan Unit Servis Walk-In</span>
+      </button>
+      <button type="button" class="kasir-tab-btn" data-tab="posPaymentTab">
+        <span>💳 2. Kasir POS & Pelunasan Transaksi</span>
+      </button>
+      <button type="button" class="kasir-tab-btn" data-tab="rekapKasTab">
+        <span>📊 3. Rekap Kas Harian & Laci POS</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: PENERIMAAN UNIT SERVIS BARU (WALK-IN) -->
+    <section id="walkinTab" class="kasir-panel-card">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">📝 Registrasi Pendaftaran Servis Offline (Meja 1)</h2>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
+            Input penerimaan unit HP pelanggan walk-in dan otomatis cetak tanda terima fisik/digital.
+          </p>
+        </div>
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 14px; border-radius: 10px; font-weight: 700; color: #1e40af; font-size: 0.84rem;">
+          No. Tiket Otomatis: <b id="previewTicketId" style="color: #0284c7;">NGM-20261030-001</b>
+        </div>
+      </div>
+
+      <form id="kasirWalkinForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="walkinCustomerName">Nama Lengkap Pelanggan *</label>
+            <input type="text" id="walkinCustomerName" class="form-control" placeholder="Contoh: Bpk. Budi Santoso" required>
+          </div>
+          <div class="form-group">
+            <label for="walkinCustomerPhone">Nomor WhatsApp Pelanggan *</label>
+            <input type="tel" id="walkinCustomerPhone" class="form-control" placeholder="Contoh: 081234567890" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="walkinDeviceModel">Merk & Model Smartphone *</label>
+            <input type="text" id="walkinDeviceModel" class="form-control" placeholder="Contoh: iPhone 13 Pro Max / Samsung S23 Ultra" required>
+          </div>
+          <div class="form-group">
+            <label for="walkinDeviceImei">IMEI / Serial Number (Opsional)</label>
+            <input type="text" id="walkinDeviceImei" class="form-control" placeholder="Contoh: 356891234567890">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label for="walkinDamageIssue">Keluhan Kerusakan Utama *</label>
+          <textarea id="walkinDamageIssue" class="form-control" rows="2" placeholder="Contoh: Layar sentuh blank hitam setelah jatuh, tombol volume macet, baterai boros..." required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="walkinCompleteness">Kelengkapan Unit Saat Diterima</label>
+            <select id="walkinCompleteness" class="form-control">
+              <option value="Unit Only (Hanya HP)">Unit Only (Hanya HP)</option>
+              <option value="Unit + Charger / Kabel">Unit + Charger / Kabel</option>
+              <option value="Unit + Dusbox Lengkap">Unit + Dusbox Lengkap</option>
+              <option value="Unit + Case Pelindung">Unit + Case Pelindung</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="walkinPatternPassword">PIN / Pola Layar Unit (Untuk Cek Sensor Lab)</label>
+            <input type="text" id="walkinPatternPassword" class="form-control" placeholder="Contoh: 123456 atau Pola L">
+          </div>
+        </div>
+
+        <div class="form-row" style="background: #f8fafc; border: 1.5px dashed #cbd5e1; padding: 16px; border-radius: 14px; margin-bottom: 22px;">
+          <div class="form-group">
+            <label for="walkinEstimatedCost">Estimasi Biaya Servis (Rp)</label>
+            <input type="number" id="walkinEstimatedCost" class="form-control" placeholder="Contoh: 350000" min="0" step="5000">
+          </div>
+          <div class="form-group">
+            <label for="walkinDownPayment">Uang Muka / DP Diterima Kasir (Rp)</label>
+            <input type="number" id="walkinDownPayment" class="form-control" placeholder="0 jika belum bayar DP" min="0" step="5000" value="0">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; align-items: center;">
+          <button type="reset" class="btn-kasir-outline" style="padding: 12px 20px;">
+            Reset Form
+          </button>
+          <button type="submit" class="btn-kasir-primary" id="btnSaveWalkin">
+            <span>Simpan & Cetak Tanda Terima 🖨️</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 2: KASIR POS & PELUNASAN TRANSAKSI -->
+    <section id="posPaymentTab" class="kasir-panel-card" style="display: none;">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">💳 Kasir POS & Pelunasan Transaksi</h2>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
+            Kelola pembayaran unit selesai servis, cetak invoice lunas resmi bergaransi 90 hari.
+          </p>
+        </div>
+        <div>
+          <input type="text" id="posSearchInput" class="form-control" placeholder="🔍 Cari Tiket / Nama / WA..." style="max-width: 280px;">
+        </div>
+      </div>
+
+      <div class="kasir-table-wrapper">
+        <table class="kasir-table" id="posOrdersTable">
+          <thead>
+            <tr>
+              <th>No. Tiket</th>
+              <th>Pelanggan</th>
+              <th>Unit HP</th>
+              <th>Status Unit</th>
+              <th>Total Biaya</th>
+              <th>DP Masuk</th>
+              <th>Sisa Tagihan</th>
+              <th>Aksi Kasir</th>
+            </tr>
+          </thead>
+          <tbody id="posOrdersTableBody">
+            <!-- Dynamic rows loaded via kasir.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: REKAP KAS HARIAN -->
+    <section id="rekapKasTab" class="kasir-panel-card" style="display: none;">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">📊 Rekap Buku Kas & Laci Kasir Meja 1</h2>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
+            Rincian penerimaan uang kasir hari ini (Tunai, QRIS, Transfer).
+          </p>
+        </div>
+        <button type="button" class="btn-kasir-primary" id="btnPrintDailyReport">
+          <span>Cetak Rekap Kasir 🖨️</span>
+        </button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+        <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 18px; border-radius: 14px;">
+          <small style="color: #166534; font-weight: 700; text-transform: uppercase;">Total Masuk Tunai (Cash)</small>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #15803d; margin-top: 6px;" id="rekapCashTotal">Rp 0</div>
+          <small style="color: #166534;">Tersimpan di laci meja 1</small>
+        </div>
+
+        <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; padding: 18px; border-radius: 14px;">
+          <small style="color: #075985; font-weight: 700; text-transform: uppercase;">Total Masuk QRIS</small>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0284c7; margin-top: 6px;" id="rekapQrisTotal">Rp 0</div>
+          <small style="color: #075985;">Terverifikasi otomatis</small>
+        </div>
+
+        <div style="background: #fffdf5; border: 1.5px solid #fde68a; padding: 18px; border-radius: 14px;">
+          <small style="color: #92400e; font-weight: 700; text-transform: uppercase;">Total Uang Muka (DP)</small>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #b45309; margin-top: 6px;" id="rekapDpTotal">Rp 0</div>
+          <small style="color: #92400e;">Penerimaan unit walk-in</small>
+        </div>
+      </div>
+
+      <div class="kasir-table-wrapper">
+        <table class="kasir-table">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>No. Transaksi / Tiket</th>
+              <th>Keterangan</th>
+              <th>Metode</th>
+              <th>Nominal</th>
+              <th>Kasir</th>
+            </tr>
+          </thead>
+          <tbody id="rekapLogTableBody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: PEMBAYARAN KASIR POS -->
+  <div class="modal-backdrop" id="modalPaymentBackdrop">
+    <div class="modal-content-receipt">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">💳 Kasir Pembayaran POS</h3>
+        <button type="button" id="btnClosePaymentModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-weight: 800; color: #0284c7;" id="payModalTicketId">NGM-XXXX</div>
+        <div style="font-size: 0.9rem; font-weight: 700; margin-top: 2px;" id="payModalCustName">Pelanggan</div>
+        <div style="font-size: 0.82rem; color: #64748b;" id="payModalDevice">Device Model</div>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 0.85rem; font-weight: 700;">Sisa Tagihan yang Harus Dibayar:</label>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #dc2626;" id="payModalRemaining">Rp 0</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label for="payMethodSelect">Metode Pembayaran</label>
+        <select id="payMethodSelect" class="form-control">
+          <option value="Tunai">💵 Tunai (Cash)</option>
+          <option value="QRIS">📱 QRIS Statis / Dinamis</option>
+          <option value="Transfer Bank">🏦 Transfer Bank BCA/Mandiri</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label for="payAmountReceived">Uang Diterima dari Pelanggan (Rp)</label>
+        <input type="number" id="payAmountReceived" class="form-control" placeholder="0" min="0" step="1000">
+      </div>
+
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 700;">
+          <span>Uang Kembalian:</span>
+          <span id="payChangeAmount" style="color: #059669; font-size: 1.1rem; font-weight: 800;">Rp 0</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-kasir-primary" id="btnConfirmPayment" style="width: 100%; justify-content: center;">
+        <span>Proses Lunas & Cetak Struk 🖨️</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: STRUK THERMAL CETAK -->
+  <div class="modal-backdrop" id="modalReceiptBackdrop">
+    <div class="modal-content-receipt">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800;">🖨️ Pratinjau Struk POS Thermal</h3>
+        <button type="button" id="btnCloseReceiptModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- Thermal Paper Element -->
+      <div class="thermal-paper" id="thermalPaperArea">
+        <div style="text-align: center;">
+          <b style="font-size: 1.05rem;">NGALAM FIX PRO</b><br>
+          <small>Spesialis Servis HP & Gadget Malang</small><br>
+          <small>Jl. Danau Toba No. 42, Sawojajar, Malang</small><br>
+          <small>WhatsApp: 0812-9988-7766</small>
+        </div>
+        <hr>
+        <div>
+          <b>NO: <span id="thTicketNo">NGM-001</span></b><br>
+          TGL: <span id="thDateTime">2026-10-30 11:30</span><br>
+          KASIR: <span id="thCashierName">Kasir Meja 1</span><br>
+          PELANGGAN: <span id="thCustName">Bpk. Budi</span> (<span id="thCustPhone">08123</span>)
+        </div>
+        <hr>
+        <div>
+          <b>UNIT:</b> <span id="thDevice">iPhone 13</span><br>
+          <b>KERUSAKAN:</b> <span id="thIssue">Ganti Baterai Original</span>
+        </div>
+        <hr>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Total Biaya:</span>
+          <b id="thTotalCost">Rp 350.000</b>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>DP Diterima:</span>
+          <span id="thDp">Rp 100.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Pelunasan:</span>
+          <span id="thPaid">Rp 250.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-top: 4px;">
+          <b>SISA:</b>
+          <b id="thRemaining">Rp 0 (LUNAS)</b>
+        </div>
+        <hr>
+        <div style="text-align: center; font-size: 0.78rem;">
+          <b>🛡️ GARANSI RESMI 90 HARI</b><br>
+          Simpan struk ini untuk klaim garansi.<br>
+          Terima kasih atas kepercayaan Anda!
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn-kasir-outline" style="flex: 1; justify-content: center;" id="btnDownloadReceipt">
+          📥 Simpan PDF
+        </button>
+        <button type="button" class="btn-kasir-primary" style="flex: 1; justify-content: center;" onclick="window.print()">
+          🖨️ Cetak Struk
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api-base.js"></script>
+  <script src="kasir.js"></script>
+</body>
+</html>

@@ -174,23 +174,28 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   // Kelompok 1: Admin Staff & Kasir (admin, owner, kasir)
   // Kelompok 2: Teknisi & Mitra Ojek Online (teknisi, ojol, mitra)
   if (role && role !== 'all' && role !== 'any') {
-    const isStaffPortal = (role === 'admin' || role === 'owner' || role === 'kasir');
-    const userIsStaff = (user.role === 'admin' || user.role === 'owner' || user.role === 'kasir');
     const isSuperAdminUser = (user.role === 'admin' || user.role === 'owner');
 
-    if (isSuperAdminUser) {
-      // Super Admin / Owner memiliki hak akses universal ke seluruh portal operasional (Admin, Kasir, Meja Teknisi Lab)
-    } else if (isStaffPortal && userIsStaff) {
-      // If user is explicitly registered as kasir and tries to enter as admin (super user)
-      if (user.role === 'kasir' && (role === 'admin' || role === 'owner')) {
-        throw new Error('Akun ini terdaftar sebagai KASIR. Anda tidak memiliki akses Super User (Admin).');
+    if (role === 'admin' || role === 'owner') {
+      if (user.role === 'kasir') {
+        throw new Error('Akun ini terdaftar sebagai KASIR. Silakan login melalui Portal Kasir Meja 1.');
       }
-    } else if (
-      (role === 'teknisi' || role === 'ojol' || role === 'mitra') &&
-      (user.role === 'teknisi' || user.role === 'ojol' || user.role === 'mitra' || isSuperAdminUser)
-    ) {
-      // Allowed for technician & mitra ojek online portal
-    } else if (user.role !== role) {
+      if (!isSuperAdminUser) {
+        throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan ADMIN.`);
+      }
+    } else if (role === 'kasir') {
+      if (user.role !== 'kasir' && !isSuperAdminUser) {
+        throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan KASIR.`);
+      }
+    } else if (role === 'teknisi') {
+      if (user.role !== 'teknisi' && !isSuperAdminUser) {
+        throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan TEKNISI.`);
+      }
+    } else if (role === 'ojol' || role === 'mitra') {
+      if (user.role !== 'ojol' && user.role !== 'mitra' && !isSuperAdminUser) {
+        throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan MITRA.`);
+      }
+    } else if (user.role !== role && !isSuperAdminUser) {
       throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan ${role.toUpperCase()}.`);
     }
   }

@@ -5,24 +5,11 @@
     "password": "password123",
     "name": "Admin Super User",
     "role": "admin",
-    "category": "Staf Workshop",
+    "category": "Super Admin Workshop",
     "avatar": "👑",
     "phone": "081330304321",
     "email": "admin@ngalamfixpro.com",
     "referralCode": "NGALAM-SUPER-2026",
-    "status": "Siaga / Aktif"
-  },
-  {
-    "id": "USR-KASIR-01",
-    "username": "kasir",
-    "password": "password123",
-    "name": "Kasir Meja 1",
-    "role": "kasir",
-    "category": "Front Desk",
-    "avatar": "👩‍💼",
-    "phone": "081330304321",
-    "email": "kasir@ngalamfixpro.com",
-    "referralCode": "",
     "status": "Siaga / Aktif"
   },
   {
@@ -62,17 +49,5 @@
     "handledToday": 0,
     "status": "Siaga / Aktif",
     "lastActive": "2026-10-28T23:30:17.284Z"
-  },
-  {
-    "id": "USR-KASIR-1793333089494",
-    "username": "ferdinandleandro12@gmail.com",
-    "email": "ferdinandleandro12@gmail.com",
-    "password": "123456",
-    "name": "Ferdinand",
-    "role": "kasir",
-    "avatar": "👩‍💼",
-    "phone": "082335493176",
-    "desk": "Meja 1 - Front Desk & Kasir",
-    "specialty": "Penerimaan Kerusakan Offline, Bagi Antrean & Cetak Struk"
   }
 ]

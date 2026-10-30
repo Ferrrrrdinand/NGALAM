@@ -27,6 +27,9 @@ const FILE_PATHS = {
   get admin() {
     return resolveFilePath('USERS_ADMIN_FILE', 'data/users_admin.json');
   },
+  get kasir() {
+    return resolveFilePath('USERS_KASIR_FILE', 'data/users_kasir.json');
+  },
   get teknisi() {
     return resolveFilePath('USERS_TEKNISI_FILE', 'data/users_teknisi.json');
   },
@@ -72,7 +75,7 @@ function writeJson(filePath, data) {
 }
 
 /**
- * 1. GET & SAVE ADMIN / KASIR USERS
+ * 1. GET & SAVE ADMIN USERS
  */
 function getAdminUsers() {
   return readJson(FILE_PATHS.admin);
@@ -85,7 +88,20 @@ function saveAdminUsers(users) {
 }
 
 /**
- * 2. GET & SAVE TEKNISI USERS
+ * 2. GET & SAVE KASIR / FRONT DESK USERS
+ */
+function getKasirUsers() {
+  return readJson(FILE_PATHS.kasir);
+}
+
+function saveKasirUsers(users) {
+  const ok = writeJson(FILE_PATHS.kasir, users);
+  syncLegacyUsersFile();
+  return ok;
+}
+
+/**
+ * 3. GET & SAVE TEKNISI USERS
  */
 function getTeknisiUsers() {
   return readJson(FILE_PATHS.teknisi);
@@ -98,7 +114,7 @@ function saveTeknisiUsers(users) {
 }
 
 /**
- * 3. GET & SAVE MITRA / OJOL / REKANAN USERS
+ * 4. GET & SAVE MITRA / OJOL / REKANAN USERS
  */
 function getMitraUsers() {
   return readJson(FILE_PATHS.mitra);
@@ -117,13 +133,20 @@ function saveMitraUsers(users) {
 function syncLegacyUsersFile() {
   try {
     const admins = readJson(FILE_PATHS.admin);
+    const kasirs = readJson(FILE_PATHS.kasir);
     const techs = readJson(FILE_PATHS.teknisi);
     const mitras = readJson(FILE_PATHS.mitra);
 
     const mergedMap = new Map();
 
-    // Prioritas: Admin > Teknisi > Mitra
+    // Prioritas: Admin > Kasir > Teknisi > Mitra
     admins.forEach(u => { if (u && (u.id || u.username)) mergedMap.set(u.id || u.username, u); });
+    kasirs.forEach(u => {
+      const key = u.id || u.username;
+      if (!mergedMap.has(key)) {
+        mergedMap.set(key, u);
+      }
+    });
     techs.forEach(u => {
       const key = u.id || u.username;
       if (!mergedMap.has(key)) {
@@ -168,10 +191,11 @@ function phonesMatch(p1, p2) {
 }
 
 /**
- * Ambil seluruh pengguna (gabungan admin, teknisi, mitra) untuk keperluan login universal
+ * Ambil seluruh pengguna (gabungan admin, kasir, teknisi, mitra) untuk keperluan login universal
  */
 function getAllUsers() {
   const admins = getAdminUsers().map(u => ({ ...u, _fileSource: 'admin' }));
+  const kasirs = getKasirUsers().map(u => ({ ...u, _fileSource: 'kasir' }));
   const techs = getTeknisiUsers().map(u => ({ ...u, _fileSource: 'teknisi' }));
   const mitras = getMitraUsers().map(u => ({ ...u, _fileSource: 'mitra' }));
 
@@ -180,6 +204,18 @@ function getAllUsers() {
   admins.forEach(u => {
     if (u && (u.id || u.username)) {
       userMap.set(u.id || u.username, { ...u, roles: [u.role] });
+    }
+  });
+
+  kasirs.forEach(u => {
+    const key = u.id || u.username;
+    if (userMap.has(key)) {
+      const existing = userMap.get(key);
+      if (!existing.roles.includes('kasir')) existing.roles.push('kasir');
+      existing.desk = existing.desk || u.desk;
+      existing.specialty = existing.specialty || u.specialty;
+    } else {
+      userMap.set(key, { ...u, roles: [u.role] });
     }
   });
 
@@ -237,7 +273,7 @@ function saveUserByRole(user) {
 
   const role = user.role.toLowerCase();
 
-  if (role === 'admin' || role === 'owner' || role === 'kasir' || role === 'superadmin') {
+  if (role === 'admin' || role === 'owner' || role === 'superadmin') {
     const list = getAdminUsers();
     const idx = list.findIndex(u => (u.id && u.id === user.id) || (u.username && u.username.toLowerCase() === (user.username || '').toLowerCase()));
     if (idx !== -1) {
@@ -246,6 +282,17 @@ function saveUserByRole(user) {
       list.push(user);
     }
     return saveAdminUsers(list);
+  }
+
+  if (role === 'kasir') {
+    const list = getKasirUsers();
+    const idx = list.findIndex(u => (u.id && u.id === user.id) || (u.username && u.username.toLowerCase() === (user.username || '').toLowerCase()));
+    if (idx !== -1) {
+      list[idx] = { ...list[idx], ...user };
+    } else {
+      list.push(user);
+    }
+    return saveKasirUsers(list);
   }
 
   if (role === 'teknisi') {
@@ -281,6 +328,7 @@ function saveUserByRole(user) {
  */
 function getUserFileDetails() {
   const adminPath = FILE_PATHS.admin;
+  const kasirPath = FILE_PATHS.kasir;
   const teknisiPath = FILE_PATHS.teknisi;
   const mitraPath = FILE_PATHS.mitra;
 
@@ -291,6 +339,13 @@ function getUserFileDetails() {
       absolutePath: adminPath,
       exists: fs.existsSync(adminPath),
       count: getAdminUsers().length
+    },
+    kasir: {
+      envVar: 'USERS_KASIR_FILE',
+      path: path.relative(ROOT_DIR, kasirPath).replace(/\\/g, '/'),
+      absolutePath: kasirPath,
+      exists: fs.existsSync(kasirPath),
+      count: getKasirUsers().length
     },
     teknisi: {
       envVar: 'USERS_TEKNISI_FILE',
@@ -313,6 +368,8 @@ module.exports = {
   FILE_PATHS,
   getAdminUsers,
   saveAdminUsers,
+  getKasirUsers,
+  saveKasirUsers,
   getTeknisiUsers,
   saveTeknisiUsers,
   getMitraUsers,
