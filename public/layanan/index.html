@@ -134,40 +134,42 @@
     /* ========================================================== */
     /* CATALOG TOOLBAR & LIVE SEARCH BAR                         */
     /* ========================================================== */
+    .catalog-toolbar-section .wrap,
+    .services-main-section.wrap,
+    .layanan-hero .wrap {
+      width: min(1360px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
     .catalog-toolbar-section {
       background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 20px 0;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding: 16px 0;
       position: sticky;
       top: 64px;
       z-index: 40;
-      box-shadow: 0 4px 20px -8px rgba(15, 23, 42, 0.05);
-      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px -8px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(12px);
     }
 
     .catalog-toolbar {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
       gap: 16px;
+      flex-wrap: wrap;
+      width: 100%;
     }
 
-    @media (min-width: 992px) {
-      .catalog-toolbar {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-    }
-
-    /* Tabs Container */
+    /* Tabs Container: Rapi menyebar hingga ke samping kanan */
     .category-tabs-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
+      flex-wrap: wrap;
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     .category-tabs-bar::-webkit-scrollbar {
@@ -175,63 +177,89 @@
     }
 
     .cat-tab-btn {
-      background: #f8fafc;
+      background: #ffffff;
       border: 1.5px solid #cbd5e1;
-      color: #000000;
-      padding: 9px 18px;
+      color: #0f172a;
+      padding: 8px 16px;
       border-radius: 999px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
     }
 
     .cat-tab-btn:hover {
       background: #fffdf5;
-      border-color: #93c5fd;
-      color: #000000;
-      transform: translateY(-1px);
+      border-color: #d4af37;
+      color: #b45309;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.18);
     }
 
     .cat-tab-btn.active {
       background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #ca8a04 100%);
       color: #ffffff !important;
       border-color: transparent;
-      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
-      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.38);
+      transform: translateY(-2px);
     }
 
-    /* Live Search Box */
+    /* Live Search Box: Tertata rapi di samping kanan */
     .catalog-search-wrapper {
       position: relative;
-      min-width: 280px;
-      max-width: 380px;
-      width: 100%;
+      width: 300px;
+      min-width: 240px;
+      max-width: 360px;
+      flex-shrink: 0;
+      margin-left: auto;
     }
 
     .catalog-search-input {
       width: 100%;
-      padding: 10px 40px 10px 42px;
+      padding: 9px 38px 9px 40px;
       background: #f8fafc;
       border: 1.5px solid #cbd5e1;
       border-radius: 999px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-family: inherit;
-      color: #000000;
+      color: #0f172a;
       outline: none;
       transition: all 0.2s ease;
       box-sizing: border-box;
+      box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.04);
     }
 
     .catalog-search-input:focus {
       background: #ffffff;
-      border-color: #b45309;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      border-color: #d4af37;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+
+    @media (max-width: 991px) {
+      .catalog-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .category-tabs-bar {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 6px;
+      }
+
+      .catalog-search-wrapper {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+      }
     }
 
     .search-icon-left {

@@ -6108,33 +6108,34 @@ footer.footer {
 .cat-tab-btn {
   background: #ffffff;
   border: 1.5px solid #cbd5e1;
-  color: #000000;
-  padding: 10px 22px;
+  color: #0f172a;
+  padding: 8px 16px;
   border-radius: 999px;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 6px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
 .cat-tab-btn:hover {
   background: #fffdf5;
-  border-color: #fde047;
+  border-color: #d4af37;
   color: #b45309;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.12);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.18);
 }
 
 .cat-tab-btn.active {
   background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #ca8a04 100%);
   color: #ffffff !important;
   border-color: transparent;
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.38);
   transform: translateY(-2px);
 }
 

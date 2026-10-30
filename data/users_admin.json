@@ -62,5 +62,17 @@
     "handledToday": 0,
     "status": "Siaga / Aktif",
     "lastActive": "2026-10-28T23:30:17.284Z"
+  },
+  {
+    "id": "USR-KASIR-1793333089494",
+    "username": "ferdinandleandro12@gmail.com",
+    "email": "ferdinandleandro12@gmail.com",
+    "password": "123456",
+    "name": "Ferdinand",
+    "role": "kasir",
+    "avatar": "👩‍💼",
+    "phone": "082335493176",
+    "desk": "Meja 1 - Front Desk & Kasir",
+    "specialty": "Penerimaan Kerusakan Offline, Bagi Antrean & Cetak Struk"
   }
 ]
