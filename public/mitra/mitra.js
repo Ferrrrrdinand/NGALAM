@@ -3,9 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const API_BASE = (window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002')
-    ? ''
-    : 'http://localhost:3000';
+  let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
+    ? window.getNgalamApiBase()
+    : '';
 
   // DOM Elements - Navigation & Sub-views
   const mitraAuthSection = document.getElementById('mitraAuthSection');
@@ -22,15 +22,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginMitraPassword = document.getElementById('loginMitraPassword');
   const btnSubmitLogin = document.getElementById('btnSubmitLogin');
 
-  // Keamanan Ketat: Selalu bersihkan sesi login & input saat halaman portal mitra dibuka
-  try {
-    localStorage.removeItem('ngalam_mitra_session');
-    sessionStorage.removeItem('ngalam_mitra_session');
-  } catch (_) {}
-  if (loginMitraId) loginMitraId.value = '';
-  if (loginMitraPassword) loginMitraPassword.value = '';
-  if (mitraAuthSection) mitraAuthSection.style.display = 'block';
-  if (mitraDashboardSection) mitraDashboardSection.style.display = 'none';
+  // Periksa apakah sudah ada sesi login mitra aktif
+  const urlParams = new URLSearchParams(window.location.search);
+  const isMitraLoggedOut = urlParams.get('action') === 'logout';
+
+  if (isMitraLoggedOut) {
+    try {
+      localStorage.removeItem('ngalam_mitra_session');
+      sessionStorage.removeItem('ngalam_mitra_session');
+    } catch (_) {}
+  } else {
+    try {
+      const raw = localStorage.getItem('ngalam_mitra_session') || sessionStorage.getItem('ngalam_mitra_session');
+      if (raw) {
+        const savedMitra = JSON.parse(raw);
+        if (savedMitra && (savedMitra.referralCode || savedMitra.username)) {
+          renderDashboard(savedMitra);
+        }
+      }
+    } catch (_) {}
+  }
 
   const formMitraRegister = document.getElementById('formMitraRegister');
   const regMitraName = document.getElementById('regMitraName');
@@ -101,16 +112,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = loginMitraPassword?.value.trim();
 
     if (!identifier || !password) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Kolom Wajib Diisi',
+          message: 'Mohon isi identifier (username / WhatsApp / kode afiliasi) dan kata sandi akun mitra.',
+          targetInputId: !identifier ? 'loginMitraId' : 'loginMitraPassword'
+        });
+      }
       showAlert('Mohon isi identifier dan kata sandi akun mitra.');
       return;
     }
 
     btnSubmitLogin.disabled = true;
-    btnSubmitLogin.innerHTML = '<span>⏳ Memeriksa ke Google Spreadsheet...</span>';
+    btnSubmitLogin.innerHTML = '<span>⏳ Memeriksa ke Database Sistem...</span>';
     hideAlert();
 
     try {
-      const res = await fetch(`${API_BASE}/api/mitra/login`, {
+      let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
+        ? window.getNgalamApiBase()
+        : '';
+      if (window.resolveNgalamApiBase) {
+        try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
+      }
+
+      const res = await fetch(`${apiBase}/api/mitra/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password })
@@ -120,14 +145,53 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.success && data.driver) {
         showAlert(data.message, true);
         localStorage.setItem('ngalam_mitra_session', JSON.stringify(data.driver));
+
+        if (window.showAuthSuccessModal) {
+          window.showAuthSuccessModal({
+            title: 'Login Mitra Berhasil!',
+            subtitle: `Selamat datang kembali, ${data.driver.name}!`,
+            user: {
+              name: data.driver.name,
+              role: 'mitra',
+              roleText: `🤝 Mitra Afiliasi (${data.driver.referralCode || 'Partner'})`,
+              avatar: '🤝'
+            },
+            duration: 1300,
+            onComplete: () => {
+              renderDashboard(data.driver);
+            }
+          });
+          return;
+        }
+
         setTimeout(() => {
           renderDashboard(data.driver);
         }, 600);
       } else {
-        showAlert(data.message || 'Gagal masuk akun mitra.');
+        const errMsg = data.message || 'Identifier atau kata sandi akun mitra tidak cocok.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Login Mitra Gagal!',
+            message: errMsg,
+            hints: [
+              'Periksa apakah tombol <b>Caps Lock</b> sedang aktif pada keyboard.',
+              'Pastikan username atau nomor WhatsApp Anda sudah terdaftar.',
+              'Anda dapat menggunakan username, no. WhatsApp, atau kode afiliasi Anda.'
+            ],
+            targetInputId: 'loginMitraPassword'
+          });
+        }
+        showAlert(errMsg);
       }
     } catch (err) {
-      showAlert('Gagal terhubung ke server: ' + err.message);
+      const errMsg = 'Gagal terhubung ke server: ' + err.message;
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Koneksi Server Gagal',
+          message: errMsg
+        });
+      }
+      showAlert(errMsg);
     } finally {
       btnSubmitLogin.disabled = false;
       btnSubmitLogin.innerHTML = '<span>🚀 Masuk ke Dashboard Mitra</span>';
@@ -145,16 +209,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = regMitraEmail?.value.trim();
 
     if (!name || !username || !password || !phone) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Kolom Wajib Diisi',
+          message: 'Nama, Kategori, No. WhatsApp, Username, dan Password wajib diisi untuk pendaftaran mitra.',
+          targetInputId: !name ? 'regMitraName' : (!phone ? 'regMitraPhone' : (!username ? 'regMitraUsername' : 'regMitraPassword'))
+        });
+      }
       showAlert('Nama, Kategori, No. WhatsApp, Username, dan Password wajib diisi.');
       return;
     }
 
     btnSubmitRegister.disabled = true;
-    btnSubmitRegister.innerHTML = '<span>⏳ Mendaftarkan & Menyinkronkan ke Spreadsheet...</span>';
+    btnSubmitRegister.innerHTML = '<span>⏳ Mendaftarkan Akun Mitra ke Database...</span>';
     hideAlert();
 
     try {
-      const res = await fetch(`${API_BASE}/api/mitra/register`, {
+      let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
+        ? window.getNgalamApiBase()
+        : '';
+      if (window.resolveNgalamApiBase) {
+        try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
+      }
+
+      const res = await fetch(`${apiBase}/api/mitra/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, category, phone, username, password, email })
@@ -164,14 +242,48 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.success && data.mitra) {
         showAlert(data.message, true);
         localStorage.setItem('ngalam_mitra_session', JSON.stringify(data.mitra));
+
+        if (window.showAuthSuccessModal) {
+          window.showAuthSuccessModal({
+            title: 'Akun Mitra Berhasil Dibuat!',
+            subtitle: `Selamat bergabung, ${data.mitra.name}! Kode afiliasi unik & QR Code Anda telah aktif.`,
+            user: {
+              name: data.mitra.name,
+              role: 'mitra',
+              roleText: `🤝 Mitra Afiliasi (${data.mitra.referralCode})`,
+              avatar: '🤝'
+            },
+            duration: 1400,
+            onComplete: () => {
+              renderDashboard(data.mitra);
+            }
+          });
+          return;
+        }
+
         setTimeout(() => {
           renderDashboard(data.mitra);
         }, 1000);
       } else {
-        showAlert(data.message || 'Pendaftaran mitra gagal.');
+        const errMsg = data.message || 'Pendaftaran mitra gagal.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Pendaftaran Mitra Gagal!',
+            message: errMsg,
+            targetInputId: 'regMitraUsername'
+          });
+        }
+        showAlert(errMsg);
       }
     } catch (err) {
-      showAlert('Gagal menghubungi server: ' + err.message);
+      const errMsg = 'Gagal menghubungi server: ' + err.message;
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Koneksi Server Gagal',
+          message: errMsg
+        });
+      }
+      showAlert(errMsg);
     } finally {
       btnSubmitRegister.disabled = false;
       btnSubmitRegister.innerHTML = '<span>✨ Buat Akun & Dapatkan QR Code</span>';
@@ -187,13 +299,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dashAvatar.textContent = mitra.avatar || (mitra.role === 'ojol' ? '🛵' : '🏪');
     dashMitraName.textContent = mitra.name;
+    dashMitraName.style.color = '#ffffff';
     dashCategory.textContent = `${mitra.category || 'Mitra Resmi'} • WA: ${mitra.phone || '-'}`;
+    dashCategory.style.color = '#ecfdf5';
     dashRefCode.textContent = mitra.referralCode;
 
     // Build URL & QR Image
     const host = window.location.host;
     const protocol = window.location.protocol;
-    const affiliateUrl = `${protocol}//${host}/pesan-servis/index.html?ref=${encodeURIComponent(mitra.referralCode)}`;
+    const hasPublicPrefix = window.location.pathname.includes('/public/');
+    const basePath = hasPublicPrefix ? '/public/pesan-servis/index.html' : '/pesan-servis/index.html';
+    const affiliateUrl = `${protocol}//${host}${basePath}?ref=${encodeURIComponent(mitra.referralCode)}`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=12&data=${encodeURIComponent(affiliateUrl)}`;
 
     dashAffiliateUrl.value = affiliateUrl;
@@ -205,7 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch live dashboard orders and update stats
     try {
-      const res = await fetch(`${API_BASE}/api/mitra/dashboard?ref=${encodeURIComponent(mitra.referralCode)}`);
+      let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
+        ? window.getNgalamApiBase()
+        : '';
+      if (window.resolveNgalamApiBase) {
+        try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
+      }
+      const res = await fetch(`${apiBase}/api/mitra/dashboard?ref=${encodeURIComponent(mitra.referralCode)}`);
       const json = await res.json();
       if (json.success) {
         if (json.stats) {
@@ -227,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!Array.isArray(orders) || orders.length === 0) {
       dashOrdersBody.innerHTML = `
         <tr>
-          <td colspan="6" style="padding: 30px; text-align: center; color: #94a3b8;">
+          <td colspan="6" style="padding: 30px; text-align: center; color: #475569; font-weight: 600;">
             Belum ada servis yang menggunakan kode afiliasi Anda. Bagikan QR Code Anda untuk mulai mendapatkan komisi!
           </td>
         </tr>

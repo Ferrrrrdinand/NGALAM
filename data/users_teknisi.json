@@ -1,0 +1,62 @@
+[
+  {
+    "id": "USR-TECH-FERDINAND",
+    "username": "ferdinand",
+    "password": "123456",
+    "name": "Ferdinand (Teknisi Lab Workshop)",
+    "role": "teknisi",
+    "avatar": "🔬",
+    "phone": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "desk": "Meja Lab Workshop - Teknisi Utama",
+    "specialty": "Spesialis Servis Smartphone & Hardware Lab",
+    "onlineStatus": "online",
+    "workStatus": "standby",
+    "currentJob": null,
+    "handledToday": 0,
+    "status": "Siaga / Aktif",
+    "lastActive": "2026-10-29T08:09:02.544Z"
+  },
+  {
+    "id": "USR-TECH-01",
+    "username": "rian",
+    "password": "password123",
+    "name": "Mas Rian (Spesialis iPhone & Layar)",
+    "role": "teknisi",
+    "avatar": "🛠️",
+    "phone": "081234567801",
+    "email": "rian@ngalamfixpro.com",
+    "desk": "Meja Lab 1 - Spesialis Apple & Layar OLED",
+    "specialty": "Ganti Kaca OCA, LCD Original, TrueTone",
+    "onlineStatus": "online",
+    "workStatus": "handled phone",
+    "currentJob": {
+      "orderId": "NGF-20261029-1488",
+      "phoneType": "🍎 Apple (iPhone, iPad, Watch) - iPhone 16 Pro / 16 Pro Max",
+      "customerName": "Ferdinand",
+      "step": 2,
+      "startedAt": "2026-10-29T06:41:41.561Z"
+    },
+    "handledToday": 3,
+    "status": "Siaga / Aktif",
+    "lastActive": "2026-10-29T08:09:02.536Z"
+  },
+  {
+    "id": "USR-TECH-02",
+    "username": "budi",
+    "password": "password123",
+    "name": "Mas Budi (Spesialis Mesin & IC)",
+    "role": "teknisi",
+    "avatar": "🔬",
+    "phone": "081234567802",
+    "email": "budi@ngalamfixpro.com",
+    "desk": "Meja Lab 2 - Hardware & IC Lab",
+    "specialty": "Reballing IC Power, CPU, EMMC/UFS, Jalur Mati Total",
+    "onlineStatus": "offline",
+    "workStatus": "offline",
+    "currentJob": null,
+    "handledToday": 1,
+    "status": "Siaga / Aktif",
+    "lastActive": "2026-10-29T06:30:00.000Z"
+  }
+]

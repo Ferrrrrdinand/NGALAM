@@ -9,40 +9,66 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatbotClose = document.getElementById('chatbotClose');
   const chatbotMessages = document.getElementById('chatbotMessages');
   const chatbotInput = document.getElementById('chatbotInput');
-  const chatbotSendBtn = document.getElementById('chatbotSendBtn');
+  const chatbotSendBtn = document.getElementById('chatbotSendBtn') || document.getElementById('chatbotSend');
   const chatbotChipsContainer = document.querySelector('.chatbot-chips');
+  const chatbotContainer = document.querySelector('.chatbot-container');
 
   if (!chatbotTrigger || !chatbotPanel) return;
 
-  let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
-    ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+  async function getApiBase() {
+    if (typeof window !== 'undefined' && window.resolveNgalamApiBase) {
+      try {
+        return await window.resolveNgalamApiBase();
+      } catch (_) {}
+    }
+    return (typeof window !== 'undefined' && window.getNgalamApiBase)
+      ? window.getNgalamApiBase()
+      : '';
+  }
 
-  function toggleChatbot() {
-    chatbotPanel.classList.toggle('active');
-    if (chatbotPanel.classList.contains('active')) {
-      chatbotInput?.focus();
+  function setPanelState(open) {
+    if (open) {
+      chatbotPanel.classList.add('active');
+      chatbotContainer?.classList.add('panel-open');
+      setTimeout(() => chatbotInput?.focus(), 120);
+    } else {
+      chatbotPanel.classList.remove('active');
+      chatbotContainer?.classList.remove('panel-open');
     }
   }
 
+  function toggleChatbot() {
+    const isNowOpen = !chatbotPanel.classList.contains('active');
+    setPanelState(isNowOpen);
+  }
+
+  const isSubdir = window.location.pathname.includes('/layanan') ||
+                   window.location.pathname.includes('/pesan-servis') ||
+                   window.location.pathname.includes('/kontak') ||
+                   window.location.pathname.includes('/lacak') ||
+                   window.location.pathname.includes('/login') ||
+                   window.location.pathname.includes('/mitra') ||
+                   window.location.pathname.includes('/admin') ||
+                   window.location.pathname.includes('/teknisi');
+  const prefix = isSubdir ? '../' : '';
+
+  function getAiBubbleAvatar(extraStyle = '') {
+    return `
+      <div class="ai-bubble-avatar" title="NgalamBot AI Assistant" style="${extraStyle}">
+        <img src="${prefix}images/ngalambot-avatar.jpg" alt="NgalamBot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">
+      </div>
+    `;
+  }
+
   chatbotTrigger.addEventListener('click', toggleChatbot);
-  chatbotClose?.addEventListener('click', () => chatbotPanel.classList.remove('active'));
+  chatbotClose?.addEventListener('click', () => setPanelState(false));
 
   function appendMessage(sender, text) {
     if (!chatbotMessages) return;
 
-    const isSubdir = window.location.pathname.includes('/layanan') ||
-                     window.location.pathname.includes('/pesan-servis') ||
-                     window.location.pathname.includes('/kontak') ||
-                     window.location.pathname.includes('/login') ||
-                     window.location.pathname.includes('/admin') ||
-                     window.location.pathname.includes('/teknisi');
-    const prefix = isSubdir ? '../' : '';
-    const avatarImg = `${prefix}images/ngalam-bot-ai.jpg`;
-
     let processedText = text;
     if (sender === 'bot') {
-      processedText = processedText.replace(/href="login\/index\.html/g, `href="${prefix}login/index.html`);
+      processedText = processedText.replace(/href="(login|lacak)\/index\.html/g, `href="${prefix}$1/index.html`);
     }
 
     const rowDiv = document.createElement('div');
@@ -50,9 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sender === 'bot') {
       rowDiv.innerHTML = `
-        <div class="ai-bubble-avatar" title="NgalamBot AI Assistant">
-          <img src="${avatarImg}" alt="NgalamBot AI Avatar">
-        </div>
+        ${getAiBubbleAvatar()}
         <div class="chatbot-bubble bot">${processedText}</div>
       `;
     } else {
@@ -61,45 +85,47 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
+    function scrollChatToBottom(smooth = true) {
+      if (!chatbotMessages) return;
+      chatbotMessages.scrollTo({
+        top: chatbotMessages.scrollHeight,
+        behavior: smooth ? 'smooth' : 'auto',
+      });
+    }
+
     chatbotMessages.appendChild(rowDiv);
-    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    scrollChatToBottom(true);
   }
 
   function showTyping() {
-    const isSubdir = window.location.pathname.includes('/layanan') ||
-                     window.location.pathname.includes('/pesan-servis') ||
-                     window.location.pathname.includes('/kontak') ||
-                     window.location.pathname.includes('/login') ||
-                     window.location.pathname.includes('/admin') ||
-                     window.location.pathname.includes('/teknisi');
-    const prefix = isSubdir ? '../' : '';
-    const avatarImg = `${prefix}images/ngalam-bot-ai.jpg`;
-
-    // Activate thinking state on all AI animated avatars
-    document.querySelectorAll('.ai-avatar-animated').forEach(el => el.classList.add('is-thinking'));
+    // Activate thinking state on AI avatars
+    document.querySelectorAll('.chatbot-avatar-frame, .chatbot-header-avatar, .ai-avatar-animated').forEach(el => el.classList.add('is-thinking'));
 
     const typingDiv = document.createElement('div');
     typingDiv.id = 'botTypingIndicator';
     typingDiv.className = 'chatbot-bubble-row bot';
     typingDiv.innerHTML = `
-      <div class="ai-bubble-avatar" style="border-color: #a855f7;">
-        <img src="${avatarImg}" alt="NgalamBot AI Avatar">
-      </div>
+      ${getAiBubbleAvatar('border-color: #a855f7;')}
       <div class="chatbot-bubble bot" style="display:inline-flex;align-items:center;gap:8px;">
-        <span style="font-size:0.76rem;color:#c084fc;font-weight:600;">NgalamBot menganalisa</span>
+        <span style="font-size:0.76rem;color:#b45309;font-weight:700;">NgalamBot menganalisa</span>
         <span style="display:inline-flex;gap:4px;align-items:center;">
-          <span style="width:5px;height:5px;background:#c084fc;border-radius:50%;display:inline-block;animation:pulse 0.8s infinite;"></span>
-          <span style="width:5px;height:5px;background:#c084fc;border-radius:50%;display:inline-block;animation:pulse 0.8s infinite 0.2s;"></span>
-          <span style="width:5px;height:5px;background:#c084fc;border-radius:50%;display:inline-block;animation:pulse 0.8s infinite 0.4s;"></span>
+          <span style="width:5px;height:5px;background:#b45309;border-radius:50%;display:inline-block;animation:pulse 0.8s infinite;"></span>
+          <span style="width:5px;height:5px;background:#b45309;border-radius:50%;display:inline-block;animation:pulse 0.8s infinite 0.2s;"></span>
+          <span style="width:5px;height:5px;background:#b45309;border-radius:50%;display:inline-block;animation:pulse 0.8s infinite 0.4s;"></span>
         </span>
       </div>
     `;
     chatbotMessages?.appendChild(typingDiv);
-    if (chatbotMessages) chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    if (chatbotMessages) {
+      chatbotMessages.scrollTo({
+        top: chatbotMessages.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }
 
   function hideTyping() {
-    document.querySelectorAll('.ai-avatar-animated').forEach(el => el.classList.remove('is-thinking'));
+    document.querySelectorAll('.chatbot-avatar-frame, .chatbot-header-avatar, .ai-avatar-animated').forEach(el => el.classList.remove('is-thinking'));
     const el = document.getElementById('botTypingIndicator');
     if (el) el.remove();
   }
@@ -124,12 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchBotResponse(userText) {
     showTyping();
     try {
-      const res = await fetch(`${API_BASE}/api/chat`, {
+      const apiBase = await getApiBase();
+      const res = await fetch(`${apiBase}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userText }),
       });
-      const data = await res.json();
+      const rawText = await res.text();
+      let data = {};
+      try {
+        data = JSON.parse(rawText);
+      } catch (_) {
+        throw new Error(`Respon server tidak valid (${res.status})`);
+      }
       hideTyping();
       if (data.success && data.reply) {
         appendMessage('bot', data.reply);
@@ -137,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
           updateChips(data.chips);
         }
       } else {
-        appendMessage('bot', 'Maaf, terjadi kendala saat memproses jawaban dari server Node.js.');
+        appendMessage('bot', data.message || 'Maaf, terjadi kendala saat memproses jawaban dari server Node.js.');
       }
     } catch (err) {
       hideTyping();

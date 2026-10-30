@@ -1,6 +1,6 @@
 /**
  * NGALAM FIX PRO - Booking & Intake Handler
- * Communicates with Node.js backend -> Google Sheets API & Local Database
+ * Communicates with Node.js backend -> PostgreSQL Database & Local Storage
  * Includes all Indonesian phone models and customer email support
  */
 
@@ -34,9 +34,86 @@ document.addEventListener('DOMContentLoaded', () => {
   const cardDiscountAmount = document.getElementById('cardDiscountAmount');
   const cardFinalPrice = document.getElementById('cardFinalPrice');
 
+  // Customer Member Elements for Auto-Fill
+  const custNameInput = document.getElementById('custName');
+  const custPhoneInput = document.getElementById('custPhone');
+  const custEmailInput = document.getElementById('custEmail');
+  const custAddressInput = document.getElementById('custAddress');
+  const memberAutofillBadge = document.getElementById('memberAutofillBadge');
+  const autofillMemberName = document.getElementById('autofillMemberName');
+  const autofillMemberPhone = document.getElementById('autofillMemberPhone');
+
+  // Auto-fill member data if customer has registered or logged in
+  function autofillMemberData() {
+    try {
+      const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+      let cust = null;
+      if (rawCust) {
+        cust = JSON.parse(rawCust);
+      } else {
+        const rawLast = localStorage.getItem('ngalam_last_booking_contact');
+        if (rawLast) cust = JSON.parse(rawLast);
+      }
+
+      if (!cust) return;
+
+      const name = cust.name || '';
+      const phone = cust.whatsapp || cust.phone || cust.customerPhone || '';
+      const email = cust.email || '';
+      const address = cust.district || cust.address || '';
+
+      if (custNameInput && name && !custNameInput.value) {
+        custNameInput.value = name;
+      }
+      if (custPhoneInput && phone && !custPhoneInput.value) {
+        custPhoneInput.value = phone;
+      }
+      if (custEmailInput && email && !custEmailInput.value) {
+        custEmailInput.value = email;
+      }
+      if (custAddressInput && address && !custAddressInput.value) {
+        custAddressInput.value = address;
+      }
+
+      if (memberAutofillBadge && (name || phone)) {
+        memberAutofillBadge.style.display = 'flex';
+        if (autofillMemberName) autofillMemberName.textContent = name || 'Member';
+        if (autofillMemberPhone) autofillMemberPhone.textContent = phone || '-';
+      }
+    } catch (err) {
+      console.warn('[Booking] Autofill member error:', err);
+    }
+  }
+
+  // Real-time lookup if customer enters phone/whatsapp manually
+  custPhoneInput?.addEventListener('blur', async () => {
+    const rawVal = (custPhoneInput.value || '').trim();
+    if (!rawVal || (custNameInput && custNameInput.value)) return;
+
+    try {
+      if (window.resolveNgalamApiBase) {
+        API_BASE = await window.resolveNgalamApiBase();
+      }
+      const res = await fetch(`${API_BASE}/api/customer/lookup?identifier=${encodeURIComponent(rawVal)}`);
+      const data = await res.json();
+      if (data.success && data.customer) {
+        const c = data.customer;
+        if (custNameInput && !custNameInput.value && c.name) custNameInput.value = c.name;
+        if (custEmailInput && !custEmailInput.value && c.email) custEmailInput.value = c.email;
+        if (custAddressInput && !custAddressInput.value && c.district) custAddressInput.value = c.district;
+
+        if (memberAutofillBadge) {
+          memberAutofillBadge.style.display = 'flex';
+          if (autofillMemberName) autofillMemberName.textContent = c.name;
+          if (autofillMemberPhone) autofillMemberPhone.textContent = c.whatsapp || rawVal;
+        }
+      }
+    } catch (_) {}
+  });
+
   let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
   // Calculate Base Price based on selected problems / devices
   function calculateCurrentBasePrice() {
@@ -69,7 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
         API_BASE = await window.resolveNgalamApiBase();
       }
       const res = await fetch(`${API_BASE}/api/promo-codes`);
-      const json = await res.json();
+      const rawText = await res.text();
+      let json = {};
+      try { json = JSON.parse(rawText); } catch (_) {}
       if (json.success && Array.isArray(json.data) && json.data.length > 0) {
         quickPromoList.innerHTML = '';
         json.data.forEach((promo) => {
@@ -125,7 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ promoCode: code, basePrice }),
       });
-      const data = await res.json();
+      const rawText = await res.text();
+      let data = {};
+      try { data = JSON.parse(rawText); } catch (_) {}
 
       if (data.valid && data.promo) {
         appliedPromo = data;
@@ -422,35 +503,139 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPromo(requestedPromo.toUpperCase());
   }
 
-  // Affiliate Mitra Referral & QR Code Scan Detection (e.g. ?ref=MTR-ANDI-8492)
-  let activeAffiliateRef = urlParams.get('ref') || urlParams.get('affiliate') || localStorage.getItem('ngalam_affiliate_ref') || '';
-  if (activeAffiliateRef) {
-    activeAffiliateRef = activeAffiliateRef.trim().toUpperCase();
-    localStorage.setItem('ngalam_affiliate_ref', activeAffiliateRef);
+  // Affiliate Mitra Referral & QR Code Detection
+  const custAffiliateInput = document.getElementById('custAffiliateInput');
+  const btnApplyAffiliate = document.getElementById('btnApplyAffiliate');
+  const btnRemoveAffiliate = document.getElementById('btnRemoveAffiliate');
+  const affiliateInputAlert = document.getElementById('affiliateInputAlert');
 
-    // Verifikasi kode mitra ke backend
-    (async () => {
-      try {
-        if (window.resolveNgalamApiBase) {
-          API_BASE = await window.resolveNgalamApiBase();
-        }
-        const refRes = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(activeAffiliateRef)}`);
-        const refData = await refRes.json();
-        if (refData.success && refData.mitra) {
-          const banner = document.getElementById('affiliateBanner');
-          const nameEl = document.getElementById('affiliateMitraName');
-          const badgeEl = document.getElementById('affiliateBadgeCode');
-          const avatarEl = document.getElementById('affiliateMitraAvatar');
+  let activeAffiliateRef = '';
 
-          if (banner) banner.style.display = 'block';
-          if (nameEl) nameEl.textContent = refData.mitra.name;
-          if (badgeEl) badgeEl.textContent = refData.mitra.referralCode;
-          if (avatarEl) avatarEl.textContent = refData.mitra.avatar || '🛵';
-        }
-      } catch (err) {
-        console.warn('[Booking] Could not fetch affiliate mitra details:', err.message);
+  async function applyAffiliateCode(rawCode, silent = false) {
+    const code = (rawCode || custAffiliateInput?.value || '').trim().toUpperCase();
+    if (!code) {
+      if (!silent && affiliateInputAlert) {
+        affiliateInputAlert.style.display = 'block';
+        affiliateInputAlert.style.background = '#fef2f2';
+        affiliateInputAlert.style.color = '#b91c1c';
+        affiliateInputAlert.style.border = '1px solid #fecaca';
+        affiliateInputAlert.textContent = 'Silakan masukkan kode referral mitra terlebih dahulu.';
       }
-    })();
+      return;
+    }
+
+    if (btnApplyAffiliate) {
+      btnApplyAffiliate.disabled = true;
+      btnApplyAffiliate.innerHTML = '<span>⏳ Memeriksa...</span>';
+    }
+
+    try {
+      if (window.resolveNgalamApiBase) {
+        API_BASE = await window.resolveNgalamApiBase();
+      }
+      const refRes = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(code)}`);
+      const refData = await refRes.json();
+      if (refData.success && refData.mitra) {
+        activeAffiliateRef = refData.mitra.referralCode;
+        localStorage.setItem('ngalam_affiliate_ref', activeAffiliateRef);
+
+        if (custAffiliateInput) {
+          custAffiliateInput.value = activeAffiliateRef;
+          custAffiliateInput.style.borderColor = '#10b981';
+          custAffiliateInput.style.background = '#f0fdf4';
+        }
+        if (btnRemoveAffiliate) btnRemoveAffiliate.style.display = 'inline-block';
+
+        const banner = document.getElementById('affiliateBanner');
+        const nameEl = document.getElementById('affiliateMitraName');
+        const badgeEl = document.getElementById('affiliateBadgeCode');
+        const avatarEl = document.getElementById('affiliateMitraAvatar');
+
+        if (banner) banner.style.display = 'block';
+        if (nameEl) nameEl.textContent = refData.mitra.name;
+        if (badgeEl) badgeEl.textContent = refData.mitra.referralCode;
+        if (avatarEl) avatarEl.textContent = refData.mitra.avatar || '🛵';
+
+        if (affiliateInputAlert) {
+          affiliateInputAlert.style.display = 'block';
+          affiliateInputAlert.style.background = '#ecfdf5';
+          affiliateInputAlert.style.color = '#047857';
+          affiliateInputAlert.style.border = '1px solid #a7f3d0';
+          affiliateInputAlert.innerHTML = `✅ Terhubung ke mitra resmi: <b>${refData.mitra.name}</b> (${refData.mitra.referralCode}). Komisi otomatis dialokasikan ke mitra!`;
+        }
+      } else {
+        if (!silent && affiliateInputAlert) {
+          affiliateInputAlert.style.display = 'block';
+          affiliateInputAlert.style.background = '#fef2f2';
+          affiliateInputAlert.style.color = '#b91c1c';
+          affiliateInputAlert.style.border = '1px solid #fecaca';
+          affiliateInputAlert.textContent = refData.message || `Kode mitra "${code}" tidak ditemukan di database.`;
+        }
+      }
+    } catch (err) {
+      if (!silent && affiliateInputAlert) {
+        affiliateInputAlert.style.display = 'block';
+        affiliateInputAlert.style.background = '#fef2f2';
+        affiliateInputAlert.style.color = '#b91c1c';
+        affiliateInputAlert.style.border = '1px solid #fecaca';
+        affiliateInputAlert.textContent = 'Gagal memeriksa kode mitra: ' + err.message;
+      }
+    } finally {
+      if (btnApplyAffiliate) {
+        btnApplyAffiliate.disabled = false;
+        btnApplyAffiliate.innerHTML = '<span>Hubungkan Mitra 🛵</span>';
+      }
+    }
+  }
+
+  function removeAffiliateCode() {
+    activeAffiliateRef = '';
+    localStorage.removeItem('ngalam_affiliate_ref');
+    if (custAffiliateInput) {
+      custAffiliateInput.value = '';
+      custAffiliateInput.style.borderColor = '';
+      custAffiliateInput.style.background = '';
+    }
+    const banner = document.getElementById('affiliateBanner');
+    if (banner) banner.style.display = 'none';
+    if (btnRemoveAffiliate) btnRemoveAffiliate.style.display = 'none';
+    if (affiliateInputAlert) {
+      affiliateInputAlert.style.display = 'none';
+      affiliateInputAlert.innerHTML = '';
+    }
+  }
+
+  btnApplyAffiliate?.addEventListener('click', () => applyAffiliateCode());
+  btnRemoveAffiliate?.addEventListener('click', removeAffiliateCode);
+  custAffiliateInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      applyAffiliateCode();
+    }
+  });
+
+  // Deteksi kode referral mitra otomatis dari 3 sumber:
+  // 1. URL parameter (?ref=... / ?referral=... / ?affiliate=...)
+  // 2. Akun member pelanggan yang login (cust.referredByMitra)
+  // 3. LocalStorage riwayat kunjungan (ngalam_affiliate_ref)
+  let initialAffiliate = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('affiliate') || '';
+  if (!initialAffiliate) {
+    try {
+      const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+      if (rawCust) {
+        const custObj = JSON.parse(rawCust);
+        if (custObj && (custObj.referredByMitra || custObj.referralCode)) {
+          initialAffiliate = custObj.referredByMitra || custObj.referralCode;
+        }
+      }
+    } catch (_) {}
+  }
+  if (!initialAffiliate) {
+    initialAffiliate = localStorage.getItem('ngalam_affiliate_ref') || '';
+  }
+
+  if (initialAffiliate) {
+    applyAffiliateCode(initialAffiliate, true);
   }
 
   // Problem tags toggle with dynamic promo recalculation
@@ -539,7 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cost: finalCostString,
       promoCode: appliedPromo ? appliedPromo.promo.code : '',
       discountAmount: appliedPromo ? appliedPromo.discountAmount : 0,
-      affiliateRef: activeAffiliateRef || localStorage.getItem('ngalam_affiliate_ref') || '',
+      affiliateRef: activeAffiliateRef || (custAffiliateInput ? custAffiliateInput.value.trim().toUpperCase() : '') || localStorage.getItem('ngalam_affiliate_ref') || '',
       duration: '30 - 60 Menit',
       status: 'Registrasi & Masuk',
       step: 1,
@@ -558,7 +743,15 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload),
       });
 
-      const result = await res.json();
+      const responseText = await res.text();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (jsonErr) {
+        throw new Error(
+          `Respon server tidak valid (HTTP ${res.status}). Pastikan server backend Node.js berjalan di port 3000.`
+        );
+      }
 
       if (result.success && result.data) {
         const order = result.data;
@@ -571,7 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const waMsg = encodeURIComponent(
-          `Halo Ngalam Fix Pro (Liem Hingky Liman),\n` +
+          `Halo Ngalam Fix Pro,\n` +
           `Saya baru saja melakukan booking servis online:\n` +
           `• No. Tiket: ${order.id}\n` +
           `• Nama: ${customerName}\n` +
@@ -588,10 +781,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (trackOrderLink) {
-          // Point to login/tracking page with ticket query
+          // Point to dedicated tracking page with ticket query
           const isSubdir = window.location.pathname.includes('/pesan-servis');
-          trackOrderLink.href = `${isSubdir ? '../' : ''}login/index.html?track=${encodeURIComponent(order.id)}`;
+          trackOrderLink.href = `${isSubdir ? '../' : ''}lacak/index.html?track=${encodeURIComponent(order.id)}`;
         }
+
+        // Save contact to local storage for instant future auto-fills
+        try {
+          localStorage.setItem('ngalam_last_booking_contact', JSON.stringify({
+            name: customerName,
+            whatsapp: whatsapp,
+            email: email || '',
+            address: address || ''
+          }));
+
+          // If member is logged in, attach new order to their session cache
+          const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+          if (rawCust) {
+            const custObj = JSON.parse(rawCust);
+            if (!custObj.savedOrders) custObj.savedOrders = [];
+            custObj.savedOrders.unshift(order);
+            custObj.totalOrders = (custObj.totalOrders || 0) + 1;
+            custObj.activeOrders = (custObj.activeOrders || 0) + 1;
+            localStorage.setItem('ngalam_customer_session', JSON.stringify(custObj));
+          }
+        } catch (_) {}
 
         // Show Success Modal
         if (successModal) successModal.classList.add('active');
@@ -602,6 +816,9 @@ document.addEventListener('DOMContentLoaded', () => {
         problemTagButtons.forEach((b) => b.classList.remove('selected'));
         populateModels(custBrandSelect?.value || 'apple');
         removePromo(true);
+
+        // Keep member info pre-filled for next booking
+        setTimeout(autofillMemberData, 100);
       } else {
         alert('Gagal mengirim pendaftaran: ' + (result.message || 'Terjadi kesalahan'));
       }
@@ -624,6 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initial load of active promos
+  // Initial load of active promos & member auto-fill
   loadQuickPromos();
+  autofillMemberData();
 });

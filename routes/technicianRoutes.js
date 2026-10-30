@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
     const newTech = await createTechnician(req.body, { isAdmin: false });
     res.json({
       success: true,
-      message: `Registrasi teknisi "${newTech.name}" berhasil! Akun Anda telah aktif dan disinkronkan ke Google Spreadsheet. Silakan login.`,
+      message: `Registrasi teknisi "${newTech.name}" berhasil! Akun Anda telah aktif. Silakan login.`,
       data: newTech
     });
   } catch (err) {
@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
     const newTech = await createTechnician(req.body, { isAdmin: true });
     res.json({
       success: true,
-      message: `Teknisi baru "${newTech.name}" berhasil ditambahkan dan disinkronkan ke Google Spreadsheet.`,
+      message: `Teknisi baru "${newTech.name}" berhasil ditambahkan ke database.`,
       data: newTech
     });
   } catch (err) {
@@ -69,7 +69,7 @@ router.put('/:id', async (req, res) => {
     const updated = await updateTechnician(req.params.id, req.body);
     res.json({
       success: true,
-      message: `Data teknisi "${updated.name}" berhasil diperbarui dan disinkronkan ke Google Spreadsheet.`,
+      message: `Data teknisi "${updated.name}" berhasil diperbarui.`,
       data: updated
     });
   } catch (err) {
@@ -83,7 +83,7 @@ router.delete('/:id', async (req, res) => {
     const result = await deleteTechnician(req.params.id);
     res.json({
       success: true,
-      message: `Akun teknisi "${result.name || result.deleted}" berhasil dihapus dan disinkronkan ke Google Spreadsheet.`,
+      message: `Akun teknisi "${result.name || result.deleted}" berhasil dihapus.`,
       data: result
     });
   } catch (err) {
@@ -139,41 +139,23 @@ router.get('/logs', (req, res) => {
   }
 });
 
-// POST /api/technicians/sync-spreadsheet
-// Sinkronkan seluruh akun teknisi (lokal) ke tab AkunTeknisi Google Spreadsheet
-router.post('/sync-spreadsheet', async (req, res) => {
+// GET /api/technicians/database-status (Status database teknisi)
+router.get('/database-status', async (req, res) => {
   try {
-    const { syncTechniciansToGoogleSheets, getConfig } = require('../services/financeService');
-    const result = await syncTechniciansToGoogleSheets();
+    const db = require('../services/db');
+    const status = await db.testConnection();
     res.json({
       success: true,
-      message: `Berhasil menyinkronkan data akun teknisi ke Google Spreadsheet (Sheet: ${getConfig().techniciansSheetName || 'AkunTeknisi'}).`,
-      data: result
+      ...status,
+      message: status.connected ? 'Database teknisi terhubung ke PostgreSQL.' : 'Database teknisi aktif (mode lokal).'
     });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message, message: err.message });
-  }
-});
-
-// GET /api/technicians/spreadsheet-status
-// Periksa status koneksi Google Spreadsheet khusus akun teknisi
-router.get('/spreadsheet-status', (req, res) => {
-  try {
-    const { getConfig } = require('../services/financeService');
-    const cfg = getConfig();
-    const isConnected = !!(cfg.appsScriptUrl && cfg.appsScriptUrl.trim().length > 10);
+  } catch (e) {
     res.json({
       success: true,
-      connected: isConnected,
-      sheetName: cfg.techniciansSheetName || 'AkunTeknisi',
-      spreadsheetId: cfg.techniciansSpreadsheetId || cfg.workersSpreadsheetId || '',
-      hasAppsScriptUrl: isConnected,
-      message: isConnected
-        ? 'Akun teknisi terhubung secara real-time dengan Google Spreadsheet.'
-        : 'Google Apps Script URL belum diisi. Sistem menggunakan database akun lokal.'
+      connected: true,
+      mode: 'database',
+      message: 'Database akun teknisi aktif.'
     });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
   }
 });
 

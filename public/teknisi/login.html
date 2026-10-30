@@ -7,108 +7,398 @@
   <meta name="description" content="Portal login mandiri khusus teknisi lab workshop Ngalam Fix Pro. Akses meja kerja pengerjaan unit HP yang ditugaskan oleh Admin.">
   <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
   <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
-  <link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="stylesheet" href="../css/style.css?v=7.8">
+  <link rel="stylesheet" href="../css/auth-feedback.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="../js/device-sensor.js"></script>
+
   <style>
+    /* ========================================================== */
+    /* FULL SCREEN / FULL VIEWPORT SPLIT-SCREEN LAYOUT TEKNISI    */
+    /* ========================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: #082f49;
+      color: #000000;
+      overflow-x: hidden;
+    }
+
+    .teknisi-fullscreen-container {
+      display: flex;
+      min-height: 100vh;
+      width: 100vw;
+      position: relative;
+      background: #f8fafc;
+    }
+
+    /* LEFT SIDE: LAB WORKSHOP SHOWCASE & WORKBENCH OVERVIEW */
+    .teknisi-showcase-panel {
+      flex: 1 1 45%;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 48%),
+        radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+        #ffffff;
+      color: #000000;
+      padding: 44px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      border-right: 1.5px solid #e2e8f0;
+    }
+
+    /* Decorative lab grid background */
+    .teknisi-showcase-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(212, 175, 55, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .showcase-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .showcase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .showcase-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: #000000;
+    }
+
+    .showcase-logo-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid rgba(212, 175, 55, 0.7);
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.3);
+    }
+
+    .showcase-brand-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .showcase-badge-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #d4af37, #b45309);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.35);
+    }
+
+    .showcase-hero-title {
+      font-size: clamp(1.9rem, 2.5vw, 2.35rem);
+      line-height: 1.22;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      margin: 0 0 14px;
+      letter-spacing: -0.02em;
+      color: #000000;
+    }
+
+    .showcase-gradient-text {
+      background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .showcase-desc {
+      color: #000000;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0 0 26px;
+      max-width: 520px;
+    }
+
+    /* Showcase Feature Cards */
+    .showcase-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      margin-bottom: 26px;
+    }
+
+    .showcase-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 15px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      transition: all 0.25s ease;
+    }
+
+    .showcase-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .showcase-card-icon {
+      font-size: 1.65rem;
+      background: rgba(2, 132, 199, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .showcase-card-title {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #000000 !important;
+      margin: 0 0 4px;
+    }
+
+    .showcase-card-text {
+      font-size: 0.83rem;
+      color: #000000 !important;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    /* Live Lab Status Widget */
+    .showcase-status-bar {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #000000 !important;
+      font-weight: 800;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseGreen 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .live-clock-badge {
+      font-family: monospace;
+      font-size: 0.86rem;
+      color: #000000 !important;
+      background: #fffdf5;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1.5px solid #d4af37;
+      font-weight: 800;
+    }
+
+    .showcase-footer {
+      position: relative;
+      z-index: 2;
+      padding-top: 18px;
+      border-top: 1.5px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #000000 !important;
+      font-weight: 700;
+    }
+
+    /* RIGHT SIDE: AUTHENTICATION FORM PANEL */
+    .teknisi-auth-panel {
+      flex: 1 1 55%;
+      min-height: 100vh;
+      background: #ffffff;
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .auth-top-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-toolbar-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      color: #000000;
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 800;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-toolbar-link:hover {
+      background: #fffdf5;
+      border-color: #d4af37;
+      color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .auth-box-container {
+      width: 100%;
+      max-width: 520px;
+      margin: auto;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 34px 32px;
+      box-shadow: 0 16px 45px -10px rgba(15, 23, 42, 0.08), 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Inputs & Form Elements */
     .auth-input-wrapper {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       position: relative;
     }
     .auth-input-wrapper label {
       display: block;
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: #1e293b;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #000000;
       margin-bottom: 6px;
+    }
+    .auth-input-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
     }
     .auth-input-icon {
       position: absolute;
-      left: 16px;
-      top: 38px;
-      font-size: 1.1rem;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #64748b;
+      pointer-events: none;
+      z-index: 2;
+      transition: color 0.2s ease;
+    }
+    .auth-input-inner:focus-within .auth-input-icon {
+      color: #b45309;
     }
     .auth-input-control {
       width: 100%;
-      padding: 14px 16px 14px 46px;
+      padding: 13px 16px 13px 44px;
       border: 1.5px solid #cbd5e1;
       border-radius: 12px;
-      font-size: 0.95rem;
-      color: #0f172a;
+      font-size: 0.92rem;
+      color: #000000;
       background: #ffffff;
       outline: none;
       transition: all 0.2s ease;
       box-sizing: border-box;
+      font-family: inherit;
+      font-weight: 600;
     }
     .auth-input-control:focus {
-      border-color: #0284c7;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+      border-color: #b45309;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
     }
     .auth-password-toggle {
       position: absolute;
       right: 14px;
-      top: 36px;
+      top: 50%;
+      transform: translateY(-50%);
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1.1rem;
-      padding: 4px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: #64748b;
+      z-index: 2;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .auth-password-toggle:hover {
+      color: #b45309;
+      background: #f1f5f9;
     }
 
-
-    /* Animation Keyframes for Login and Logout */
-    @keyframes modalPopIn {
-      0% {
-        opacity: 0;
-        transform: scale(0.85) translateY(24px);
-      }
-      70% {
-        opacity: 1;
-        transform: scale(1.02) translateY(-2px);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    @keyframes pulseGlowRing {
-      0% {
-        box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6);
-        transform: scale(0.96);
-      }
-      50% {
-        box-shadow: 0 0 0 16px rgba(2, 132, 199, 0);
-        transform: scale(1.04);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
-        transform: scale(0.96);
-      }
-    }
-
-    @keyframes bannerSlideIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-16px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes spinWheel {
-      to { transform: rotate(360deg); }
-    }
-
+    /* Animation Overlays */
     .auth-anim-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(14px);
       z-index: 99999;
       display: none;
@@ -125,7 +415,7 @@
       max-width: 460px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 25px 60px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 25px 60px rgba(212, 175, 55, 0.35);
       animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
@@ -156,272 +446,410 @@
     .auth-progress-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #0284c7, #2563eb, #38bdf8);
+      background: linear-gradient(90deg, #b45309, #d4af37, #fde047);
       border-radius: 999px;
       transition: width 0.35s ease-out;
     }
+
+    @keyframes modalPopIn {
+      0% { opacity: 0; transform: scale(0.85) translateY(24px); }
+      70% { opacity: 1; transform: scale(1.02) translateY(-2px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes pulseGlowRing {
+      0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6); transform: scale(0.96); }
+      50% { box-shadow: 0 0 0 16px rgba(2, 132, 199, 0); transform: scale(1.04); }
+      100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); transform: scale(0.96); }
+    }
+
+    @keyframes bannerSlideIn {
+      0% { opacity: 0; transform: translateY(-16px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spinWheel {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Handling */
+    @media (max-width: 991px) {
+      .teknisi-fullscreen-container {
+        flex-direction: column;
+      }
+      .teknisi-showcase-panel {
+        flex: 1 1 auto;
+        min-height: auto;
+        padding: 32px 24px;
+      }
+      .teknisi-auth-panel {
+        flex: 1 1 auto;
+        min-height: auto;
+        padding: 28px 18px;
+      }
+    }
   </style>
 </head>
-<body style="background: #f8fafc; color: #0f172a;">
+<body>
 
-  <!-- TEKNISI LOGIN HEADER -->
-  <header class="header" style="background: rgba(255, 255, 255, 0.95); border-bottom: 1px solid #e2e8f0;">
-    <div class="wrap nav" style="min-height: 70px;">
-      <a class="logo" href="../index.html">
-        <div class="logo-badge">
-          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="brand-logo-img">
-        </div>
-        <span>Ngalam <b>Fix Pro</b></span>
-        <span class="logo-pill" style="background: #0284c7; color: #ffffff;">PORTAL TEKNISI LAB</span>
-      </a>
+  <!-- FULLSCREEN SPLIT VIEWPORT CONTAINER -->
+  <div class="teknisi-fullscreen-container" id="fullscreenContainer">
 
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="../index.html" class="btn small outline" style="background: #ffffff; border: 1px solid #cbd5e1; color: #334155;">
-          Ke Beranda ↗
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- PAGE HERO -->
-  <section class="pagehero">
-    <div class="wrap" style="text-align: center; max-width: 760px; margin: 0 auto;">
-      <div class="eyebrow-pill" style="margin: 0 auto 12px; background: #eff6ff; border: 1px solid #bfdbfe; color: #0284c7;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>PORTAL MANDIRI: MEJA KERJA TEKNISI LAB WORKSHOP</span>
-      </div>
-      <h1 style="font-size: 2.2rem; margin-bottom: 10px; color: #0f172a;">
-        Login Khusus Teknisi Workshop Lab.<br>
-        <span style="background: linear-gradient(135deg, #0284c7, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Akses Meja Pengerjaan & Unit dari Admin.</span>
-      </h1>
-      <p style="margin: 0 auto; color: #475569; font-size: 0.95rem; max-width: 620px;">
-        Masuk ke akun teknisi Anda untuk melihat unit HP yang ditugaskan oleh Admin. Kelola 5 tahapan pengerjaan (HP Diterima s/d HP Selesai/Siap Diambil) secara real-time.
-      </p>
-    </div>
-  </section>
-
-  <!-- LOGIN CARD -->
-  <section class="wrap" style="max-width: 600px; margin-top: -24px; margin-bottom: 70px;">
-    <div class="auth-portal-card" style="border-color: #bae6fd; box-shadow: 0 20px 50px rgba(2, 132, 199, 0.08); background: #ffffff; border-radius: 24px; padding: 36px 32px;">
-
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="font-size: 2.6rem; margin-bottom: 6px;">🛠️🔬</div>
-        <h2 style="font-size: 1.35rem; color: #0f172a; margin: 0 0 6px;">Otentikasi Teknisi Workshop Lab</h2>
-        <p style="color: #475569; font-size: 0.88rem; margin: 0 0 8px;">Silakan masukkan username dan kata sandi meja lab Anda.</p>
-        <div id="spreadsheetSyncPill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
-          <span id="spreadsheetSyncDot" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e;"></span>
-          <span id="spreadsheetSyncPillText">Memeriksa Database Akun Google Spreadsheet...</span>
-        </div>
-      </div>
-
-      <!-- Alert Notification Box -->
-      <div id="loginAlertBox" style="display: none; padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem;"></div>
-
-      <!-- Toggle Tabs: Login vs Registrasi -->
-      <div style="display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
-        <button type="button" id="tabLoginBtn" style="flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; background: #ffffff; color: #0284c7; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-          🔑 Masuk Meja Kerja
-        </button>
-        <button type="button" id="tabRegisterBtn" style="flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; background: transparent; color: #64748b;">
-          📝 Registrasi Teknisi Baru
-        </button>
-      </div>
-
-      <!-- Main Login Form -->
-      <form id="techLoginForm">
-        <!-- Identifier -->
-        <div class="auth-input-wrapper">
-          <label for="loginIdentifier">Username Akun Teknisi *</label>
-          <span class="auth-input-icon">👤</span>
-          <input
-            type="text"
-            id="loginIdentifier"
-            class="auth-input-control"
-            placeholder="Masukkan username Anda..."
-            value=""
-            required
-            autocomplete="off"
-          >
-        </div>
-
-        <!-- Password -->
-        <div class="auth-input-wrapper">
-          <label for="loginPassword">Kata Sandi Akun *</label>
-          <span class="auth-input-icon">🔒</span>
-          <input
-            type="password"
-            id="loginPassword"
-            class="auth-input-control"
-            placeholder="Masukkan kata sandi..."
-            value=""
-            required
-            autocomplete="new-password"
-          >
-          <button type="button" class="auth-password-toggle" id="togglePasswordBtn" title="Tampilkan sandi" aria-label="Toggle password">
-            👁️
-          </button>
-        </div>
-
-        <!-- Remember & Forgot -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 0.86rem; color: #64748b;">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="rememberMeCheck">
-            <span>Ingat Sesi di Perangkat Ini</span>
-          </label>
-          <a href="https://wa.me/6281330304321?text=Halo%20Admin,%20saya%20staf%20teknisi%20ingin%20reset%20sandi" target="_blank" rel="noopener noreferrer" style="color: #0284c7; text-decoration: none; font-weight: 600;">
-            Lupa Sandi?
+    <!-- LEFT SIDE: LAB WORKBENCH SHOWCASE & OVERVIEW -->
+    <aside class="teknisi-showcase-panel">
+      <div class="showcase-content">
+        <!-- Brand Header -->
+        <div class="showcase-header">
+          <a class="showcase-brand" href="../index.html">
+            <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" class="showcase-logo-img">
+            <div>
+              <div class="showcase-brand-name">Ngalam Fix Pro</div>
+              <small style="color: #000000; font-weight: 800; font-size: 0.76rem; letter-spacing: 0.05em;">WORKSHOP HARDWARE LAB</small>
+            </div>
           </a>
+          <span class="showcase-badge-pill">PORTAL KHUSUS TEKNISI</span>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" id="loginSubmitBtn" class="btn" style="width: 100%; padding: 15px; font-size: 1.05rem; font-weight: 700; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #2563eb); box-shadow: 0 8px 25px rgba(2, 132, 199, 0.25); display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <span>Masuk ke Meja Kerja Lab 🚀</span>
+        <!-- Headline -->
+        <h1 class="showcase-hero-title">
+          Meja Kerja Lab Spesialis.<br>
+          <span class="showcase-gradient-text">Kelola Antrean &amp; Pengerjaan Unit.</span>
+        </h1>
+        <p class="showcase-desc">
+          Sistem otentikasi mandiri staf teknisi workshop Ngalam Fix Pro. Akses unit HP yang ditugaskan, update status 5 tahapan pengerjaan, dan pencatatan riwayat pergantian sparepart secara real-time.
+        </p>
+
+        <!-- Feature Cards -->
+        <div class="showcase-cards">
+          <div class="showcase-card">
+            <div class="showcase-card-icon">🛠️</div>
+            <div>
+              <div class="showcase-card-title">Meja Lab &amp; Penugasan Real-Time</div>
+              <p class="showcase-card-text">
+                Pantau antrean unit HP yang ditugaskan oleh Admin Meja 1 langsung di layar kerja lab tanpa perlu berkas fisik manual.
+              </p>
+            </div>
+          </div>
+
+          <div class="showcase-card">
+            <div class="showcase-card-icon">⏱️</div>
+            <div>
+              <div class="showcase-card-title">5 Tahapan Servis Terintegrasi</div>
+              <p class="showcase-card-text">
+                Kelola status: Diterima &rarr; Diagnosa &rarr; Tunggu Part &rarr; Dikerjakan &rarr; Selesai / Siap Diambil.
+              </p>
+            </div>
+          </div>
+
+          <div class="showcase-card">
+            <div class="showcase-card-icon">🔬</div>
+            <div>
+              <div class="showcase-card-title">Log Sparepart &amp; Catatan Teknis</div>
+              <p class="showcase-card-text">
+                Pencatatan pergantian panel OLED, pemindahan IC TrueTone, kalibrasi Face ID, dan pembersihan ultrasonic.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Lab Status Widget -->
+        <div class="showcase-status-bar">
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span>Meja Lab Terhubung Real-Time</span>
+          </div>
+          <div class="live-clock-badge" id="liveClockDisplay">--:--:-- WIB</div>
+        </div>
+      </div>
+
+      <!-- Left Panel Footer -->
+      <div class="showcase-footer">
+        <div>© 2026 Ngalam Fix Pro • Standar Lab Transparan Kota Malang</div>
+        <div><span>🔒 Enkripsi Sesi Lab Terlindungi</span></div>
+      </div>
+    </aside>
+
+    <!-- RIGHT SIDE: AUTHENTICATION FORM PANEL -->
+    <main class="teknisi-auth-panel">
+      <!-- Top Utilities Toolbar -->
+      <div class="auth-top-toolbar">
+        <a href="../index.html" class="btn-toolbar-link">
+          <span>← Ke Beranda Utama</span>
+        </a>
+        <button type="button" class="btn-toolbar-link" id="toggleFullScreenBtn" title="Beralih ke Layar Penuh">
+          <span id="fsIcon">⛶</span>
+          <span id="fsText">Layar Penuh</span>
         </button>
-      </form>
+      </div>
 
-      <!-- Registration Form (Hidden by default) -->
-      <form id="techRegisterForm" style="display: none;">
-        <!-- Secret Registration Code -->
-        <div class="auth-input-wrapper">
-          <label for="regAccessCode" style="color: #0369a1; font-weight: 800;">
-            🔑 Kode Akses Otorisasi Workshop *
-          </label>
-          <span class="auth-input-icon">🛡️</span>
-          <input
-            type="text"
-            id="regAccessCode"
-            class="auth-input-control"
-            placeholder="082335493176-082335493176"
-            value=""
-            required
-            autocomplete="off"
-            style="border-color: #38bdf8; background: #f0f9ff;"
-          >
-          <small style="display: block; margin-top: 5px; color: #0369a1; font-size: 0.78rem;">
-            🔒 Wajib memasukkan kode resmi workshop: <b>082335493176-082335493176</b> untuk otorisasi pendaftaran.
-          </small>
+      <!-- Centered Auth Card -->
+      <div class="auth-box-container">
+        <div style="text-align: center; margin-bottom: 22px;">
+          <div style="font-size: 2.4rem; margin-bottom: 6px;">🛠️🔬</div>
+          <h2 style="font-size: 1.35rem; color: #000000; margin: 0 0 6px; font-weight: 800;">Otentikasi Teknisi Workshop Lab</h2>
+          <p style="color: #000000; font-size: 0.86rem; margin: 0 0 10px; font-weight: 600;">Silakan masukkan username dan kata sandi meja lab Anda.</p>
+          <div id="techDbSyncPill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
+            <span id="techDbSyncDot" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e;"></span>
+            <span id="techDbSyncPillText">Memeriksa Database Lab Workshop (Siap PostgreSQL)...</span>
+          </div>
         </div>
 
-        <!-- Full Name -->
-        <div class="auth-input-wrapper">
-          <label for="regFullName">Nama Lengkap Teknisi *</label>
-          <span class="auth-input-icon">👨‍🔧</span>
-          <input
-            type="text"
-            id="regFullName"
-            class="auth-input-control"
-            placeholder="Contoh: Budi Santoso (Hardware Lab)"
-            required
-            autocomplete="name"
-          >
-        </div>
+        <!-- Alert Notification Box -->
+        <div id="loginAlertBox" style="display: none; padding: 12px 16px; border-radius: 12px; margin-bottom: 18px; font-size: 0.88rem;"></div>
 
-        <!-- Username -->
-        <div class="auth-input-wrapper">
-          <label for="regUsername">Username Akun *</label>
-          <span class="auth-input-icon">👤</span>
-          <input
-            type="text"
-            id="regUsername"
-            class="auth-input-control"
-            placeholder="Contoh: budi_lab (hanya huruf kecil & angka)"
-            required
-            autocomplete="off"
-          >
-        </div>
-
-        <!-- Password -->
-        <div class="auth-input-wrapper">
-          <label for="regPassword">Kata Sandi Akun *</label>
-          <span class="auth-input-icon">🔒</span>
-          <input
-            type="password"
-            id="regPassword"
-            class="auth-input-control"
-            placeholder="Minimal 4 karakter..."
-            required
-            autocomplete="new-password"
-          >
-          <button type="button" class="auth-password-toggle" id="toggleRegPasswordBtn" title="Tampilkan sandi" aria-label="Toggle password">
-            👁️
+        <!-- Toggle Tabs: Login vs Registrasi -->
+        <div style="display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 22px; border: 1px solid #e2e8f0;">
+          <button type="button" id="tabLoginBtn" style="flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; background: #ffffff; color: #b45309; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <span>Masuk Meja Kerja</span>
+          </button>
+          <button type="button" id="tabRegisterBtn" style="flex: 1; padding: 10px 14px; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; background: transparent; color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+            <span>Registrasi Teknisi Baru</span>
           </button>
         </div>
 
-        <!-- WhatsApp -->
-        <div class="auth-input-wrapper">
-          <label for="regPhone">Nomor WhatsApp *</label>
-          <span class="auth-input-icon">📱</span>
-          <input
-            type="tel"
-            id="regPhone"
-            class="auth-input-control"
-            placeholder="Contoh: 081234567890"
-            required
-          >
+        <!-- Main Login Form -->
+        <form id="techLoginForm" novalidate>
+          <!-- Identifier -->
+          <div class="auth-input-wrapper">
+            <label for="loginIdentifier">Username Akun Teknisi *</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input
+                type="text"
+                id="loginIdentifier"
+                class="auth-input-control"
+                placeholder="Masukkan username Anda..."
+                value=""
+                required
+                autocomplete="off"
+              >
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="auth-input-wrapper">
+            <label for="loginPassword">Kata Sandi Akun *</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input
+                type="password"
+                id="loginPassword"
+                class="auth-input-control"
+                placeholder="Masukkan kata sandi..."
+                value=""
+                required
+                autocomplete="new-password"
+              >
+              <button type="button" class="auth-password-toggle" id="togglePasswordBtn" title="Tampilkan sandi" aria-label="Toggle password">
+                <svg class="eye-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-icon-closed" style="display: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember & Forgot -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; font-size: 0.84rem; color: #000000; font-weight: 600;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="rememberMeCheck">
+              <span>Ingat Sesi di Perangkat Ini</span>
+            </label>
+            <a href="https://wa.me/6281330304321?text=Halo%20Admin,%20saya%20staf%20teknisi%20ingin%20reset%20sandi" target="_blank" rel="noopener noreferrer" style="color: #b45309; text-decoration: none; font-weight: 700;">
+              Lupa Sandi?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="loginSubmitBtn" class="btn" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; border-radius: 12px; background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            <span>Masuk ke Meja Kerja Lab</span>
+          </button>
+        </form>
+
+        <!-- Registration Form (Hidden by default) -->
+        <form id="techRegisterForm" style="display: none;" novalidate>
+          <!-- Secret Registration Code -->
+          <div class="auth-input-wrapper">
+            <label for="regAccessCode" style="color: #000000; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              <span>Kode Akses Otorisasi Workshop *</span>
+            </label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon" style="color: #b45309;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="rgba(212, 175, 55, 0.2)" stroke="#b45309" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="2.5"/><path d="M12 13.5v2.5"/></svg>
+              </span>
+              <input
+                type="text"
+                id="regAccessCode"
+                class="auth-input-control"
+                placeholder="082335493176-082335493176"
+                value=""
+                required
+                autocomplete="off"
+                style="border-color: #d4af37; background: #fffdf5; color: #000000; font-weight: 700; padding-left: 46px;"
+              >
+            </div>
+            <small style="display: flex; align-items: center; gap: 6px; margin-top: 6px; color: #78350f; font-size: 0.76rem; font-weight: 600;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Wajib memasukkan kode resmi workshop: <b>082335493176-082335493176</b> untuk otorisasi pendaftaran.</span>
+            </small>
+          </div>
+
+          <!-- Full Name -->
+          <div class="auth-input-wrapper">
+            <label for="regFullName">Nama Lengkap Teknisi *</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </span>
+              <input
+                type="text"
+                id="regFullName"
+                class="auth-input-control"
+                placeholder="Contoh: Budi Santoso (Hardware Lab)"
+                required
+                autocomplete="name"
+              >
+            </div>
+          </div>
+
+          <!-- Username -->
+          <div class="auth-input-wrapper">
+            <label for="regUsername">Username Akun *</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input
+                type="text"
+                id="regUsername"
+                class="auth-input-control"
+                placeholder="Contoh: budi_lab (hanya huruf kecil & angka)"
+                required
+                autocomplete="off"
+              >
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="auth-input-wrapper">
+            <label for="regPassword">Kata Sandi Akun *</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input
+                type="password"
+                id="regPassword"
+                class="auth-input-control"
+                placeholder="Minimal 4 karakter..."
+                required
+                autocomplete="new-password"
+              >
+              <button type="button" class="auth-password-toggle" id="toggleRegPasswordBtn" title="Tampilkan sandi" aria-label="Toggle password">
+                <svg class="eye-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-icon-closed" style="display: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- WhatsApp -->
+          <div class="auth-input-wrapper">
+            <label for="regPhone">Nomor WhatsApp *</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              </span>
+              <input
+                type="tel"
+                id="regPhone"
+                class="auth-input-control"
+                placeholder="Contoh: 081234567890"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Email (Optional) -->
+          <div class="auth-input-wrapper">
+            <label for="regEmail">Email Kerja (Opsional)</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </span>
+              <input
+                type="email"
+                id="regEmail"
+                class="auth-input-control"
+                placeholder="Contoh: budi@ngalamfixpro.com"
+              >
+            </div>
+          </div>
+
+          <!-- Meja Lab Workshop -->
+          <div class="auth-input-wrapper">
+            <label for="regDesk">Meja Lab Workshop</label>
+            <div class="auth-input-inner">
+              <span class="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M21 9H3"/><path d="M9 21V9"/></svg>
+              </span>
+              <select id="regDesk" class="auth-input-control" style="appearance: auto; color: #000000; font-weight: 700; padding-left: 44px;">
+                <option value="Meja Lab Workshop - Teknisi Utama">Meja Lab Workshop - Teknisi Utama</option>
+                <option value="Meja Lab 2 - Hardware & Micro Soldering">Meja Lab 2 - Hardware & Micro Soldering</option>
+                <option value="Meja Lab 3 - LCD & Display Assembly">Meja Lab 3 - LCD & Display Assembly</option>
+                <option value="Meja Lab 4 - Software & Flashing Room">Meja Lab 4 - Software & Flashing Room</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Spesialisasi -->
+          <div class="auth-input-wrapper">
+            <label for="regSpecialty">Spesialisasi Keahlian</label>
+            <span class="auth-input-icon">🔬</span>
+            <select id="regSpecialty" class="auth-input-control" style="appearance: auto; color: #000000; font-weight: 700;">
+              <option value="Spesialis Servis Smartphone & Hardware Lab">Spesialis Servis Smartphone & Hardware Lab</option>
+              <option value="Spesialis Ganti LCD OLED, Touchscreen & Baterai">Spesialis Ganti LCD OLED, Touchscreen & Baterai</option>
+              <option value="Spesialis IC Power, CPU, eMMC & Micro Soldering">Spesialis IC Power, CPU, eMMC & Micro Soldering</option>
+              <option value="Spesialis Bypass, Bootloop, Unbrick & Software OS">Spesialis Bypass, Bootloop, Unbrick & Software OS</option>
+            </select>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="regSubmitBtn" class="btn" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; border-radius: 12px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25); display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer;">
+            <span>Daftarkan Akun Teknisi Lab 🚀</span>
+          </button>
+        </form>
+
+        <!-- Cross-Navigation Notice -->
+        <div style="margin-top: 20px; padding: 12px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; text-align: center; font-size: 0.82rem; color: #000000; font-weight: 600;">
+          <span>Bukan teknisi lab? </span>
+          <a href="../login/index.html" style="color: #000000; text-decoration: underline; font-weight: 800; margin: 0 4px;">👤 Login Pelanggan</a>
+          <span>atau</span>
+          <a href="../admin/login.html" style="color: #000000; text-decoration: underline; font-weight: 800; margin: 0 4px;">👩‍💼 Login Admin &amp; Kasir</a>
         </div>
-
-        <!-- Email (Optional) -->
-        <div class="auth-input-wrapper">
-          <label for="regEmail">Email Kerja (Opsional)</label>
-          <span class="auth-input-icon">✉️</span>
-          <input
-            type="email"
-            id="regEmail"
-            class="auth-input-control"
-            placeholder="Contoh: budi@ngalamfixpro.com"
-          >
-        </div>
-
-        <!-- Meja Lab Workshop -->
-        <div class="auth-input-wrapper">
-          <label for="regDesk">Meja Lab Workshop</label>
-          <span class="auth-input-icon">🪑</span>
-          <select id="regDesk" class="auth-input-control" style="appearance: auto;">
-            <option value="Meja Lab Workshop - Teknisi Utama">Meja Lab Workshop - Teknisi Utama</option>
-            <option value="Meja Lab 2 - Hardware & Micro Soldering">Meja Lab 2 - Hardware & Micro Soldering</option>
-            <option value="Meja Lab 3 - LCD & Display Assembly">Meja Lab 3 - LCD & Display Assembly</option>
-            <option value="Meja Lab 4 - Software & Flashing Room">Meja Lab 4 - Software & Flashing Room</option>
-          </select>
-        </div>
-
-        <!-- Spesialisasi -->
-        <div class="auth-input-wrapper">
-          <label for="regSpecialty">Spesialisasi Keahlian</label>
-          <span class="auth-input-icon">🔬</span>
-          <select id="regSpecialty" class="auth-input-control" style="appearance: auto;">
-            <option value="Spesialis Servis Smartphone & Hardware Lab">Spesialis Servis Smartphone & Hardware Lab</option>
-            <option value="Spesialis Ganti LCD OLED, Touchscreen & Baterai">Spesialis Ganti LCD OLED, Touchscreen & Baterai</option>
-            <option value="Spesialis IC Power, CPU, eMMC & Micro Soldering">Spesialis IC Power, CPU, eMMC & Micro Soldering</option>
-            <option value="Spesialis Bypass, Bootloop, Unbrick & Software OS">Spesialis Bypass, Bootloop, Unbrick & Software OS</option>
-          </select>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" id="regSubmitBtn" class="btn" style="width: 100%; padding: 15px; font-size: 1.05rem; font-weight: 700; border-radius: 14px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25); display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <span>Daftarkan Akun & Sinkronkan ke Spreadsheet 🚀</span>
-        </button>
-      </form>
-
-      <!-- Notice at Bottom -->
-      <div style="margin-top: 24px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-align: center; font-size: 0.84rem; color: #64748b;">
-        <span>Bukan teknisi lab? </span>
-        <a href="../login/index.html" style="color: #0284c7; text-decoration: none; font-weight: 700; margin: 0 4px;">👤 Login Pelanggan</a>
-        <span>atau</span>
-        <a href="../admin/login.html" style="color: #7c3aed; text-decoration: none; font-weight: 700; margin: 0 4px;">👩‍💼 Login Admin & Kasir</a>
       </div>
 
-    </div>
-  </section>
+      <!-- Right Panel Footer -->
+      <footer style="text-align: center; color: #000000; font-size: 0.8rem; margin-top: 20px; font-weight: 600;">
+        <div>© 2026 Ngalam Fix Pro • Portal Khusus Teknisi Lab Workshop.</div>
+      </footer>
+    </main>
+  </div>
 
   <!-- LOGIN SUCCESS ANIMATION OVERLAY -->
   <div id="loginAnimationOverlay" class="auth-anim-overlay">
     <div class="auth-anim-card">
       <div class="auth-anim-circle" id="animCircleIcon">🔬</div>
-      <h3 style="font-size: 1.4rem; color: #0f172a; font-weight: 800; margin: 0 0 6px;" id="animTitle">
+      <h3 style="font-size: 1.35rem; color: #000000; font-weight: 800; margin: 0 0 6px;" id="animTitle">
         Otentikasi Berhasil!
       </h3>
-      <p style="font-size: 0.9rem; color: #475569; margin: 0 0 14px;" id="animSubtitle">
-        Selamat datang di meja kerja, Ferdinand!
+      <p style="font-size: 0.9rem; color: #000000; margin: 0 0 14px;" id="animSubtitle">
+        Selamat datang di meja kerja teknisi!
       </p>
       <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 999px; background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #047857; font-size: 0.82rem; font-weight: 800;">
         <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
@@ -433,23 +861,68 @@
         <div class="auth-progress-fill" id="animProgressFill"></div>
       </div>
 
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; color: #0284c7; font-weight: 700;">
-        <span class="anim-spinner" style="display: inline-block; width: 14px; height: 14px; border: 2px solid #bae6fd; border-top-color: #0284c7; border-radius: 50%; animation: spinWheel 0.8s linear infinite;"></span>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; color: #b45309; font-weight: 700;">
+        <span class="anim-spinner" style="display: inline-block; width: 14px; height: 14px; border: 2px solid #bae6fd; border-top-color: #b45309; border-radius: 50%; animation: spinWheel 0.8s linear infinite;"></span>
         <span id="animStatusStepText">Mempersiapkan meja kerja lab...</span>
       </div>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="wrap copyright" style="text-align: center; color: #64748b; font-size: 0.85rem; padding: 24px 0;">
-      <div>© 2026 Ngalam Fix Pro. Portal Meja Kerja Khusus Teknisi Lab Workshop.</div>
-    </div>
-  </footer>
-
-  <script src="../js/device-sensor.js"></script>
   <script src="../js/api-base.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/auth-feedback.js"></script>
   <script src="teknisi_login.js"></script>
+
+  <!-- Live Clock & Fullscreen API Integration -->
+  <script>
+    // Live WIB Clock
+    function updateLiveClock() {
+      const clockEl = document.getElementById('liveClockDisplay');
+      if (!clockEl) return;
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      clockEl.textContent = `${h}:${m}:${s} WIB`;
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+
+    // Fullscreen Toggle
+    const toggleFsBtn = document.getElementById('toggleFullScreenBtn');
+    const fsIcon = document.getElementById('fsIcon');
+    const fsText = document.getElementById('fsText');
+
+    function updateFsBtnState() {
+      const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+      if (fsIcon) fsIcon.textContent = isFs ? '🗗' : '⛶';
+      if (fsText) fsText.textContent = isFs ? 'Keluar Penuh' : 'Layar Penuh';
+    }
+
+    toggleFsBtn?.addEventListener('click', () => {
+      const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+      if (!isFs) {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen().catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+    });
+
+    document.addEventListener('fullscreenchange', updateFsBtnState);
+    document.addEventListener('webkitfullscreenchange', updateFsBtnState);
+  </script>
 </body>
 </html>

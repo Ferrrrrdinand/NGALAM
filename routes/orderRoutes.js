@@ -10,7 +10,7 @@ const {
   appendOrder,
   updateOrder,
   clearAllOrders,
-} = require('../services/googleSheets');
+} = require('../services/orderService');
 const { handleOrderStepChange } = require('../services/technicianService');
 const { incrementUsage } = require('../services/promoCodeService');
 const { formatCustomerOrder } = require('./customerRoutes');
@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
           orderData.affiliateCommissionRate = rate;
           orderData.affiliateCommission = commissionAmt;
 
-          // Catat komisi afiliasi untuk mitra ke sistem & Google Spreadsheet
+          // Catat komisi afiliasi untuk mitra ke sistem & database
           recordMitraCommission(mitra.referralCode, commissionAmt).catch(e =>
             console.warn('[OrderRoutes] Error awarding affiliate commission:', e.message)
           );
@@ -104,7 +104,7 @@ router.post('/', async (req, res) => {
     const newOrder = await appendOrder(orderData);
     res.status(201).json({
       success: true,
-      message: 'Tiket servis berhasil didaftarkan dan disimpan ke Spreadsheet/Sistem!',
+      message: 'Tiket servis berhasil didaftarkan dan disimpan ke database!',
       data: newOrder,
     });
   } catch (err) {

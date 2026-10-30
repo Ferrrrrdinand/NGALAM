@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
   // 5 Tahapan Resmi Sesuai Permintaan
   const STAGES = [
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
       }
       currentUser = JSON.parse(raw);
-      if (!currentUser || currentUser.role !== 'teknisi' || currentUser.username !== 'ferdinand') {
+      if (!currentUser || (currentUser.role !== 'teknisi' && currentUser.role !== 'admin' && currentUser.role !== 'owner')) {
         localStorage.removeItem('ngalam_tech_session');
         window.location.href = 'login.html';
         return false;
@@ -222,7 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Match on technician string name / username
     if (order.technician) {
       const tStr = order.technician.toLowerCase();
-      if (tStr.includes(uName) || tStr.includes('ferdinand')) return true;
+      const realName = (currentUser.name || '').toLowerCase();
+      if (tStr.includes(uName) || (realName && tStr.includes(realName))) return true;
     }
 
     return false;

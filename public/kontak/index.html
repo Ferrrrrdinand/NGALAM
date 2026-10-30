@@ -3,18 +3,645 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kontak & Lokasi Workshop • Ngalam Fix Pro</title>
-  <meta name="description" content="Hubungi workshop spesialis servis smartphone Ngalam Fix Pro. WhatsApp +62 813-3030-4321, PIC: Liem Hingky Liman. Alamat workshop, jam buka, dan konsultasi gratis.">
-    <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <title>Kontak & Lokasi Workshop Resmi • Ngalam Fix Pro</title>
+  <meta name="description" content="Hubungi workshop spesialis servis smartphone Ngalam Fix Pro Malang. Konsultasi gratis via WhatsApp resmi, lokasi workshop Ngalam FixPro Malang di Google Maps, jam operasional, dan rute lokasi.">
+  <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
   <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
-<link rel="stylesheet" href="../css/style.css?v=6.0">
+  <link rel="stylesheet" href="../css/style.css?v=8.6">
+  <link rel="stylesheet" href="../css/preloader.css?v=2.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
   <script src="../js/device-sensor.js"></script>
+  <script src="../js/preloader.js"></script>
+
+  <style>
+    /* ========================================================== */
+    /* KONTAK & LOKASI WORKSHOP - PREMIUM ENHANCED UI STYLES      */
+    /* ========================================================== */
+
+
+
+    /* Page Hero Overhaul */
+    .kontak-hero {
+      position: relative;
+      padding: 56px 0 44px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 85% 30%, rgba(124, 58, 237, 0.05) 0%, transparent 45%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 1px solid #e2e8f0;
+      overflow: hidden;
+    }
+
+    .kontak-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      padding: 6px 18px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.08);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #15803d;
+    }
+
+    .kontak-badge-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulseGreen 1.8s infinite ease-in-out;
+    }
+
+    .kontak-badge-city {
+      background: #15803d;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+    }
+
+    .kontak-hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      color: #000000;
+      margin: 0 auto 16px;
+      max-width: 820px;
+    }
+
+    .kontak-gradient-title {
+      background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .kontak-hero-desc {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #000000;
+      max-width: 680px;
+      margin: 0 auto 28px;
+    }
+
+    /* Live Status Bar Pills */
+    .kontak-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 auto;
+    }
+
+    .kontak-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #000000;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .kontak-status-pill:hover {
+      border-color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .kontak-status-pill.highlight-open {
+      background: #fffdf5;
+      border-color: #93c5fd;
+      color: #000000;
+    }
+
+    /* Contact Cards Grid */
+    .kontak-cards-section {
+      padding: 50px 0 60px;
+    }
+
+    .kontak-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+
+    @media (max-width: 991px) {
+      .kontak-grid {
+        grid-template-columns: 1fr;
+        max-width: 580px;
+        margin: 0 auto;
+      }
+    }
+
+    .kontak-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px -8px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.02);
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kontak-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.12);
+      border-color: #bfdbfe;
+    }
+
+    .kontak-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .kontak-icon-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .icon-box-wa {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+    }
+
+    .icon-box-map {
+      background: linear-gradient(135deg, #d4af37 0%, #b45309 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    }
+
+    .icon-box-pickup {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.28);
+    }
+
+    .kontak-card-tag {
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .tag-wa {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .tag-map {
+      background: #fffdf5;
+      color: #000000;
+      border: 1px solid #bfdbfe;
+    }
+
+    .tag-pickup {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+
+    .kontak-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #000000;
+      margin: 0 0 10px;
+    }
+
+    .kontak-card-desc {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #000000;
+      margin: 0 0 20px;
+    }
+
+    /* Card Info Box */
+    .kontak-info-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kontak-wa-number {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #16a34a;
+      font-family: 'Outfit', sans-serif;
+      display: block;
+      margin-bottom: 4px;
+      text-decoration: none;
+    }
+
+    .kontak-wa-number:hover {
+      text-decoration: underline;
+    }
+
+    .kontak-address-text {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .kontak-address-hint {
+      font-size: 0.8rem;
+      color: #000000;
+      line-height: 1.45;
+    }
+
+    /* Buttons styling */
+    .btn-wa-action {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff !important;
+      font-weight: 800;
+      font-size: 0.96rem;
+      border-radius: 14px;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(34, 197, 94, 0.32);
+      transition: all 0.2s ease;
+    }
+
+    .btn-wa-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(34, 197, 94, 0.45);
+    }
+
+    .btn-maps-action {
+      padding: 12px 16px;
+      background: #fffdf5;
+      border: 1.5px solid #93c5fd;
+      color: #000000 !important;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border-radius: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+
+    .btn-maps-action:hover {
+      background: #fffbeb;
+      border-color: #60a5fa;
+      transform: translateY(-1px);
+    }
+
+    .btn-copy-action {
+      padding: 12px 16px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      color: #000000;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+
+    .btn-copy-action:hover {
+      background: #f8fafc;
+      border-color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .btn-pickup-action {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #d4af37 0%, #b45309 100%);
+      color: #ffffff !important;
+      font-weight: 800;
+      font-size: 0.96rem;
+      border-radius: 14px;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-pickup-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    /* WORKSHOP MAP & ROUTE SHOWCASE SECTION */
+    .workshop-location-section {
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 64px 0;
+    }
+
+    .location-showcase-box {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 32px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 12px 35px -8px rgba(15, 23, 42, 0.05);
+    }
+
+    @media (max-width: 991px) {
+      .location-showcase-box {
+        grid-template-columns: 1fr;
+        padding: 22px;
+      }
+    }
+
+    .map-embed-wrapper {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      min-height: 380px;
+      height: 100%;
+    }
+
+    .map-embed-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      border: none;
+      display: block;
+    }
+
+    .route-guide-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .route-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .route-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #fffdf5;
+      border: 1px solid #bfdbfe;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    /* FAST WHATSAPP INQUIRY GENERATOR */
+    .quick-consult-section {
+      padding: 60px 0;
+    }
+
+    .quick-consult-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      color: #000000;
+      border-radius: 28px;
+      padding: 44px 40px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 36px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 991px) {
+      .quick-consult-card {
+        grid-template-columns: 1fr;
+        padding: 30px 22px;
+      }
+    }
+
+    .quick-form-control {
+      width: 100%;
+      padding: 13px 16px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      color: #000000;
+      font-size: 0.94rem;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .quick-form-control:focus {
+      background: #ffffff;
+      border-color: #000000;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .quick-form-control::placeholder {
+      color: #64748b;
+    }
+
+    /* Interactive Quick Brand Pills */
+    .quick-brand-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .quick-brand-chip-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #000000;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.18s ease;
+    }
+
+    .quick-brand-chip-btn:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+
+    .quick-brand-chip-btn.active {
+      background: #000000;
+      color: #ffffff;
+      border-color: #000000;
+    }
+
+    /* Modern FAQ Accordion */
+    .faq-accordion-box {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+    }
+
+    .faq-item:hover {
+      border-color: #cbd5e1;
+    }
+
+    .faq-question-btn {
+      width: 100%;
+      padding: 20px 24px;
+      background: transparent;
+      border: none;
+      text-align: left;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+    }
+
+    .faq-icon-toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .faq-item.active .faq-icon-toggle {
+      transform: rotate(45deg);
+      background: #fffdf5;
+      color: #b45309;
+    }
+
+    .faq-answer-panel {
+      display: none;
+      padding: 0 24px 22px;
+      font-size: 0.94rem;
+      line-height: 1.65;
+      color: #000000;
+    }
+
+    .faq-item.active .faq-answer-panel {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    /* TOAST NOTIFICATION */
+    .copy-toast-notification {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .copy-toast-notification.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- HEADER NAVIGATION -->
+  <!-- HEADER NAVIGATION WITH DESKTOP LINKS -->
   <header class="header">
     <div class="wrap nav">
       <a class="logo" href="../index.html">
@@ -24,6 +651,8 @@
         <span>Ngalam <b>Fix Pro</b></span>
       </a>
 
+
+      <!-- Right Header Actions -->
       <div class="navend">
         <a class="navend-login" href="../lacak/index.html" title="Lacak Progres Unit Servis">
           <span>🔍 Lacak Unit</span>
@@ -37,6 +666,7 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
 
+        <!-- Burger Toggle for Mobile / Tablets -->
         <button type="button" class="menu-toggle-btn" id="menuToggleBtn" aria-label="Buka Menu Navigasi">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <line x1="4" y1="7" x2="20" y2="7" />
@@ -45,24 +675,81 @@
           </svg>
         </button>
 
+        <!-- Dropdown Menu for Mobile -->
         <div class="nav-dropdown-menu" id="navDropdownMenu">
           <div class="nav-dropdown-header">
             <span class="nav-dropdown-title">MENU NAVIGASI</span>
             <button type="button" class="nav-dropdown-close" id="navDropdownClose">✕</button>
           </div>
           <div class="nav-dropdown-links">
-            <a href="../index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🏠</span><strong>Beranda</strong></a>
-            <a href="../layanan/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📱</span><strong>Layanan Servis</strong></a>
-            <a href="../pesan-servis/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">📝</span><strong>Pesan Servis</strong></a>
-            <a href="index.html" class="nav-dropdown-item active"><span class="nav-dropdown-item-icon">📍</span><strong>Kontak & Lokasi</strong></a>
-            <a href="../lacak/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🔍</span><strong>Lacak Status Perangkat</strong></a>
-            <a href="../login/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">👤</span><strong>Masuk Akun Pelanggan</strong></a>
+            <a href="../index.html" class="nav-dropdown-item theme-beranda" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+              <span class="nav-dropdown-item-icon" style="background: #f1f5f9;">🏠</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #000000;">Beranda</strong>
+                <small style="color: #000000;">Halaman utama & ringkasan</small>
+              </div>
+            </a>
+            <a href="../layanan/index.html" class="nav-dropdown-item theme-layanan" style="background: #fffdf5; border: 1px solid #fef08a;">
+              <span class="nav-dropdown-item-icon" style="background: #e0f2fe;">📱</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #b45309;">Layanan Servis</strong>
+                <small style="color: #000000;">Servis HP Android & iPhone</small>
+              </div>
+            </a>
+            <a href="../pesan-servis/index.html" class="nav-dropdown-item theme-pesan" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+              <span class="nav-dropdown-item-icon" style="background: #dcfce7;">📝</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #16a34a;">Pesan Servis</strong>
+                <small style="color: #000000;">Booking perbaikan online</small>
+              </div>
+            </a>
+            <a href="index.html" class="nav-dropdown-item active theme-kontak" style="background: #fff1f2; border: 1.5px solid #fda4af; box-shadow: 0 0 0 2px #e11d48;">
+              <span class="nav-dropdown-item-icon" style="background: #ffe4e6;">📍</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #e11d48;">Kontak & Lokasi</strong>
+                <small style="color: #be123c;">Workshop & nomor telepon</small>
+              </div>
+              <span class="nav-dropdown-active-dot" style="background: #e11d48; box-shadow: 0 0 8px #fda4af;"></span>
+            </a>
+            <a href="../lacak/index.html" class="nav-dropdown-item theme-lacak" style="background: #eef2ff; border: 1px solid #c7d2fe;">
+              <span class="nav-dropdown-item-icon" style="background: #e0e7ff;">🔍</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #4f46e5;">Lacak Status Perangkat</strong>
+                <small style="color: #000000;">Cek tiket progres servis real-time</small>
+              </div>
+            </a>
+            <a href="../login/index.html" class="nav-dropdown-item theme-member" style="background: #faf5ff; border: 1px solid #e9d5ff;">
+              <span class="nav-dropdown-item-icon" style="background: #f3e8ff;">👤</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #9333ea;">Masuk Akun Pelanggan</strong>
+                <small style="color: #000000;">Member portal & riwayat HP</small>
+              </div>
+            </a>
           </div>
           <div class="nav-dropdown-divider"></div>
           <div class="nav-dropdown-section">
-            <a href="../mitra/index.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🛵</span><strong>Portal Mitra & QR Afiliasi</strong></a>
-            <a href="../teknisi/login.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">🛠️</span><strong>Login Teknisi Lab</strong></a>
-            <a href="../admin/login.html" class="nav-dropdown-item"><span class="nav-dropdown-item-icon">👩‍💼</span><strong>Login Admin & Kasir</strong></a>
+            <span class="nav-dropdown-subtitle" style="color: #000000; font-weight: 800;">PORTAL MITRA & STAF WORKSHOP</span>
+            <a href="../mitra/index.html" class="nav-dropdown-item theme-mitra" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+              <span class="nav-dropdown-item-icon" style="background: #dcfce7;">🛵</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #059669;">Portal Mitra & QR Afiliasi</strong>
+                <small style="color: #000000;">Komisi 10% & referral QR Code</small>
+              </div>
+            </a>
+            <a href="../teknisi/login.html" class="nav-dropdown-item theme-teknisi" style="background: #fffdf5; border: 1px solid #fef08a;">
+              <span class="nav-dropdown-item-icon" style="background: #fffbeb;">🛠️</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #b45309;">Login Teknisi Lab</strong>
+                <small style="color: #000000;">Meja lab & penanganan unit</small>
+              </div>
+            </a>
+            <a href="../admin/login.html" class="nav-dropdown-item theme-admin" style="background: #f5f3ff; border: 1px solid #ddd6fe;">
+              <span class="nav-dropdown-item-icon" style="background: #ede9fe;">👩‍💼</span>
+              <div class="nav-dropdown-item-text">
+                <strong style="color: #6d28d9;">Login Admin & Kasir</strong>
+                <small style="color: #000000;">Walk-in counter Meja 1 & nota fisik</small>
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -70,130 +757,536 @@
   </header>
   <div class="nav-backdrop" id="navBackdrop"></div>
 
-  <!-- PAGE HERO -->
-  <section class="pagehero">
+  <!-- PAGE HERO SECTION -->
+  <section class="kontak-hero">
     <div class="wrap">
-      <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 16px;">
-        <div style="width: 60px; height: 60px; border-radius: 14px; background: #ffffff; padding: 3px; border: 2px solid #d4af37; box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35); flex-shrink: 0;">
-          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block;">
-        </div>
-        <div class="eyebrow-pill" style="margin: 0;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-          <span>PUSAT BANTUAN & LOKASI WORKSHOP RESMI</span>
-        </div>
+
+      <!-- Glowing Badge Pill -->
+      <div class="kontak-hero-badge">
+        <span class="kontak-badge-dot"></span>
+        <span>PUSAT BANTUAN & LOKASI WORKSHOP RESMI</span>
+        <span class="kontak-badge-city">KOTA MALANG</span>
       </div>
-      <h1>
+
+      <!-- Main Headline -->
+      <h1 class="kontak-hero-title">
         Ada yang Ingin Ditanyakan?<br>
-        <span>Tim Kami Siap Membantu.</span>
+        <span class="kontak-gradient-title">Tim Ahli Kami Siap Membantu.</span>
       </h1>
-      <p>
-        Konsultasikan kendala HP Android atau iPhone Anda secara online atau datang langsung ke workshop kami. Pengecekan awal selalu gratis tanpa biaya bongkar.
+
+      <p class="kontak-hero-desc">
+        Konsultasikan kendala HP Android atau iPhone Anda secara online atau datang langsung ke workshop kami. Pengecekan awal selalu <b>100% Gratis Tanpa Biaya Bongkar</b>.
       </p>
 
-      <div class="pagehero-stats">
-        <div class="pagehero-stat-item">
-          <span class="status-open-badge">🟢 Workshop Buka Sekarang</span>
+      <!-- Operational Status Bar -->
+      <div class="kontak-status-bar">
+        <div class="kontak-status-pill highlight-open">
+          <span style="font-size: 1rem;">🟢</span>
+          <span>Workshop Buka Sekarang</span>
         </div>
-        <div class="pagehero-stat-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="kontak-status-pill">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           <span>Senin – Sabtu: 09.00 – 18.00 WIB</span>
         </div>
+        <div class="kontak-status-pill">
+          <span>⚡</span>
+          <span>Respon Cepat Online < 10 Menit</span>
+        </div>
+        <div class="kontak-status-pill">
+          <span>🛡️</span>
+          <span>Garansi Servis s/d 90 Hari</span>
+        </div>
       </div>
+
     </div>
   </section>
 
-  <!-- CONTACT CHANNELS & CARDS -->
-  <section class="section wrap" style="padding-top: 40px;">
-    <div class="contactgrid">
-      <!-- Card 1: WhatsApp -->
-      <article class="card">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" style="width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid #d4af37; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25); object-fit: cover;">
-          <span style="font-size: 0.72rem; background: #dcfce7; color: #15803d; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
-            Respon Cepat
-          </span>
-        </div>
-        <h2 style="font-size: 1.3rem; color: #0f172a; margin: 14px 0 8px;">WhatsApp Konsultasi</h2>
-        <p style="color: #475569; font-size: 0.9rem;">Hubungi customer service kami untuk cek ketersediaan suku cadang HP, konsultasi kerusakan, atau booking jadwal servis.</p>
-        <b style="font-size: 1.2rem; color: #0284c7; display: block; margin: 12px 0 2px;">+62 813-3030-4321</b>
-        <div style="font-size: 0.82rem; color: #64748b;">PIC / Owner: <b>Liem Hingky Liman</b></div>
-        <div style="margin-top: 20px;">
-          <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kendala%20HP" target="_blank" rel="noopener noreferrer" class="btn small whatsapp full">
-            <span>Chat WhatsApp Langsung</span>
-          </a>
-        </div>
-      </article>
+  <!-- 3 MAIN CONTACT CHANNELS -->
+  <section class="kontak-cards-section wrap">
+    <div class="kontak-grid">
 
-      <!-- Card 2: Alamat Workshop -->
-      <article class="card">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <i style="font-size: 2rem;">📍</i>
-          <span style="font-size: 0.72rem; background: #eff6ff; color: #2563eb; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
-            Workshop Pusat
-          </span>
+      <!-- CARD 1: KONSULTASI SERVIS ONLINE -->
+      <article class="kontak-card">
+        <div>
+          <div class="kontak-card-top">
+            <div class="kontak-icon-box icon-box-map">
+              <span>💬</span>
+            </div>
+            <span class="kontak-card-tag tag-map">Konsultasi Online</span>
+          </div>
+
+          <h2 class="kontak-card-title">Konsultasi Kerusakan &amp; Biaya</h2>
+          <p class="kontak-card-desc">
+            Ingin mengetahui estimasi biaya perbaikan atau ketersediaan suku cadang HP? Gunakan formulir konsultasi kilat online atau tanyakan langsung pada AI Asisten kami.
+          </p>
+
+          <div class="kontak-info-box">
+            <div style="font-weight: 700; color: #b45309; font-size: 0.98rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
+              <span>Diagnosa 100% Gratis</span>
+            </div>
+            <div style="font-size: 0.83rem; color: #000000;">
+              Pengecekan awal tanpa biaya bongkar oleh teknisi lab tersertifikasi.
+            </div>
+          </div>
         </div>
-        <h2 style="font-size: 1.3rem; color: #0f172a; margin: 14px 0 8px;">Alamat Workshop</h2>
-        <p style="color: #0f172a; font-size: 0.95rem; font-weight: 600;" id="workshopAddressText">
-          Jl. Soekarno Hatta No. 88, Lowokwaru, Kota Malang, Jawa Timur 65141
-        </p>
-        <b style="color: #64748b; font-size: 0.82rem; font-weight: 400; display: block; margin-top: 6px;">
-          Petunjuk: Kawasan Suhat Malang, Gedung Workshop Lantai 1 (Tersedia Parkir Mobil & Motor Luas)
-        </b>
-        <div style="margin-top: 20px; display: flex; gap: 8px;">
-          <button type="button" class="btn small outline darkoutline" id="copyAddressBtn" style="flex: 1;">
-            <span>Salin Alamat 📋</span>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20servis%20HP" target="_blank" rel="noopener noreferrer" class="btn-wa-action" style="padding: 12px 18px; font-size: 0.92rem; flex: 1.2;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            <span>Hubungi WhatsApp Kami ↗</span>
+          </a>
+          <button type="button" class="btn-copy-action" id="openChatbotCardBtn" style="background: #fffdf5; border-color: #93c5fd; color: #b45309; font-weight: 700; flex: 1;">
+            <span>Tanya AI Bot 🤖</span>
           </button>
-          <a href="https://maps.google.com/?q=Soekarno+Hatta+Malang" target="_blank" rel="noopener noreferrer" class="btn small" style="flex: 1;">
-            <span>Buka Google Maps ↗</span>
+        </div>
+      </article>
+
+      <!-- CARD 2: ALAMAT WORKSHOP -->
+      <article class="kontak-card">
+        <div>
+          <div class="kontak-card-top">
+            <div class="kontak-icon-box icon-box-map">
+              <span>📍</span>
+            </div>
+            <span class="kontak-card-tag tag-map">Workshop Pusat</span>
+          </div>
+
+          <h2 class="kontak-card-title">Kunjungi Workshop Langsung</h2>
+          <p class="kontak-card-desc">
+            Datang langsung ke bengkel reparasi spesialis kami. Pengecekan awal unit dapat ditunggu dan ditonton langsung di depan meja lab teknisi.
+          </p>
+
+          <div class="kontak-info-box">
+            <div class="kontak-address-text" id="workshopAddressText">
+              Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang, Jawa Timur 65115
+            </div>
+            <div class="kontak-address-hint">
+              Petunjuk: Workshop Resmi Ngalam FixPro Malang (Tersedia Parkir Mobil & Motor).
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-copy-action" id="copyAddressBtn">
+            <span>📋 Salin Alamat</span>
+          </button>
+          <a href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7" target="_blank" rel="noopener noreferrer" class="btn-maps-action">
+            <span>Buka Maps ↗</span>
           </a>
         </div>
       </article>
 
-      <!-- Card 3: Layanan Pickup -->
-      <article class="card">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <i style="font-size: 2rem;">🛵</i>
-          <span style="font-size: 0.72rem; background: #fef3c7; color: #b45309; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
-            Antar-Jemput
-          </span>
+      <!-- CARD 3: LAYANAN ANTAR JEMPUT -->
+      <article class="kontak-card">
+        <div>
+          <div class="kontak-card-top">
+            <div class="kontak-icon-box icon-box-pickup">
+              <span>🛵</span>
+            </div>
+            <span class="kontak-card-tag tag-pickup">Gratis Kota Malang</span>
+          </div>
+
+          <h2 class="kontak-card-title">Layanan Antar-Jemput HP</h2>
+          <p class="kontak-card-desc">
+            Sibuk bekerja atau tidak sempat datang? Kurir workshop kami siap mengambil dan mengantarkan kembali HP Anda dengan tanda terima & asuransi resmi.
+          </p>
+
+          <div class="kontak-info-box">
+            <div style="font-weight: 700; color: #000000; font-size: 0.95rem; margin-bottom: 4px;">
+              Jangkauan Seluruh Kota Malang
+            </div>
+            <div style="font-size: 0.82rem; color: #000000;">
+              Lowokwaru • Klojen • Blimbing • Sukun • Kedungkandang
+            </div>
+          </div>
         </div>
-        <h2 style="font-size: 1.3rem; color: #0f172a; margin: 14px 0 8px;">Layanan Pickup Khusus</h2>
-        <p style="color: #475569; font-size: 0.9rem;">Sibuk bekerja atau tidak sempat datang? Kurir workshop kami siap mengambil dan mengantarkan kembali HP Anda dengan asuransi keamanan.</p>
-        <b style="font-size: 0.9rem; color: #16a34a; display: block; margin-top: 10px;">Area Malang & Sekitarnya</b>
-        <div style="margin-top: 20px;">
-          <a href="../pesan-servis/index.html" class="btn small outline full">
-            <span>Pesan Antar-Jemput HP ↗</span>
-          </a>
-        </div>
+
+        <a href="../pesan-servis/index.html" class="btn-pickup-action">
+          <span>Booking Servis & Pickup 🚀</span>
+        </a>
       </article>
+
     </div>
   </section>
 
-  <!-- FAQ SECTION -->
-  <section class="section wrap" style="padding-top: 20px; max-width: 860px;">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <div class="eyebrow blue">PERTANYAAN UMUM</div>
-      <h2>FAQ Seputar Reparasi HP di Ngalam Fix Pro</h2>
+  <!-- OFFICIAL SOCIAL MEDIA CHANNELS HUB -->
+  <section class="kontak-social-section wrap">
+    <div class="kontak-social-header">
+      <div class="eyebrow blue" style="justify-content: center; margin-bottom: 8px;">KOMUNITAS &amp; MEDIA SOSIAL</div>
+      <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: #000000; margin: 0 0 10px; font-weight: 800;">
+        Ikuti Kanal Resmi Ngalam Fix Pro
+      </h2>
+      <p style="color: #000000; font-size: 0.95rem; margin: 0; max-width: 640px; margin-inline: auto;">
+        Pantau dokumentasi reparasi live di meja lab terbuka, tips &amp; trik baterai/layar, informasi promo suku cadang original, dan ulasan pelanggan secara transparan.
+      </p>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 14px;">
-      <div class="card" style="padding: 20px;">
-        <h4 style="color: #0f172a; font-size: 1.05rem; margin-bottom: 6px;">Apakah data foto dan chat di HP saya aman?</h4>
-        <p style="color: #475569; font-size: 0.9rem; margin: 0;">Sangat aman 100%. Untuk perbaikan hardware seperti layar, baterai, kamera, atau konektor cas, Anda tidak perlu memberikan sandi atau PIN layar HP. Privasi Anda terjaga sepenuhnya.</p>
+    <div class="kontak-social-grid">
+      <!-- 1. Instagram -->
+      <a href="https://www.instagram.com/ngalam_fixpro?utm_source=ig_web_button_share_sheet&srtk=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="social-channel-card ig" title="Instagram Resmi Ngalam Fix Pro">
+        <div class="social-card-body">
+          <div class="social-card-top">
+            <div class="social-icon-box ig-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </div>
+            <span class="social-tag ig-tag">Instagram Feed &amp; Story</span>
+          </div>
+          <span class="social-handle">@ngalam_fixpro</span>
+          <span class="social-type">Galeri Lab &amp; Portofolio Servis</span>
+          <p class="social-desc">
+            Lihat hasil pengerjaan ganti layar OLED, rekondisi IC board, daily story pengerjaan teknisi, dan testimoni kepuasan pelanggan Malang.
+          </p>
+        </div>
+        <div class="social-card-cta ig-cta">
+          <span>Kunjungi Instagram&nbsp;↗</span>
+        </div>
+      </a>
+
+      <!-- 2. TikTok -->
+      <a href="https://www.tiktok.com/@ngalam_fix_pro" target="_blank" rel="noopener noreferrer" class="social-channel-card tiktok" title="TikTok Resmi Ngalam Fix Pro">
+        <div class="social-card-body">
+          <div class="social-card-top">
+            <div class="social-icon-box tiktok-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
+            </div>
+            <span class="social-tag tiktok-tag">Video Edukasi Servis</span>
+          </div>
+          <span class="social-handle">@ngalam_fix_pro</span>
+          <span class="social-type">Live Reparasi &amp; Tips Baterai</span>
+          <p class="social-desc">
+            Video bedah kerusakan gadget, tips cegah layar green screen, dan tutorial cerdas merawat baterai smartphone agar tetap prima.
+          </p>
+        </div>
+        <div class="social-card-cta tiktok-cta">
+          <span>Tonton di TikTok&nbsp;↗</span>
+        </div>
+      </a>
+
+      <!-- 3. Google Maps & Reviews -->
+      <a href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7" target="_blank" rel="noopener noreferrer" class="social-channel-card maps" title="Google Maps & Review Ngalam FixPro">
+        <div class="social-card-body">
+          <div class="social-card-top">
+            <div class="social-icon-box maps-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+            </div>
+            <span class="social-tag maps-tag">Bintang 5 &bull; Ulasan Nyata</span>
+          </div>
+          <span class="social-handle">Ngalam FixPro</span>
+          <span class="social-type">Google Maps Profil Bisnis</span>
+          <p class="social-desc">
+            Baca ulasan riil ribuan pelanggan, foto suasana workshop, jam buka operasional, dan navigasi rute tercepat via Google Maps.
+          </p>
+        </div>
+        <div class="social-card-cta maps-cta">
+          <span>Buka Google Maps&nbsp;↗</span>
+        </div>
+      </a>
+
+      <!-- 4. YouTube Channel -->
+      <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="social-channel-card yt" title="YouTube Channel Ngalam Fix Pro">
+        <div class="social-card-body">
+          <div class="social-card-top">
+            <div class="social-icon-box yt-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </div>
+            <span class="social-tag yt-tag">Kanal Video Lab</span>
+          </div>
+          <span class="social-handle">Ngalam Fix Pro TV</span>
+          <span class="social-type">Dokumentasi Teknologi Lab</span>
+          <p class="social-desc">
+            Vlog pembongkaran perangkat flagship, review keaslian sparepart, dan proses perbaikan mesin mikrosolder secara mendalam.
+          </p>
+        </div>
+        <div class="social-card-cta yt-cta">
+          <span>Tonton di YouTube&nbsp;↗</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- WORKSHOP MAP & ROUTE SHOWCASE SECTION -->
+  <section class="workshop-location-section">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 36px;">
+        <div class="eyebrow blue" style="justify-content: center; margin-bottom: 8px;">PETA & LOKASI STRATEGIS</div>
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: #000000; margin: 0 0 10px; font-weight: 800;">
+          Lokasi Workshop Mudah Dijangkau
+        </h2>
+        <p style="color: #000000; font-size: 0.95rem; margin: 0;">
+          Terletak di lokasi strategis kawasan Klojen Kota Malang, mudah dijangkau dari seluruh penjuru Malang Raya.
+        </p>
       </div>
-      <div class="card" style="padding: 20px;">
-        <h4 style="color: #0f172a; font-size: 1.05rem; margin-bottom: 6px;">Berapa lama proses pengerjaan bisa ditunggu?</h4>
-        <p style="color: #475569; font-size: 0.9rem; margin: 0;">Untuk pergantian baterai membutuhkan waktu 30–45 menit. Penggantian layar LCD/OLED berkisar 45–60 menit. Anda bisa menunggu langsung di depan meja teknisi kami.</p>
+
+      <div class="location-showcase-box">
+        <!-- Interactive Google Maps Embed -->
+        <div class="map-embed-wrapper">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.334223717115!2d112.613619!3d-7.9643699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78830032e606af%3A0xe761ea6fcc986944!2sNgalam%20FixPro!5e0!3m2!1sid!2sid!4v1730000000000!5m2!1sid!2sid"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Peta Lokasi Workshop Ngalam FixPro Malang">
+          </iframe>
+        </div>
+
+        <!-- Route Guidance & Amenities -->
+        <div class="route-guide-panel">
+          <div>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #000000; margin: 0 0 16px;">
+              Petunjuk Akses & Fasilitas Workshop
+            </h3>
+
+            <div class="route-item">
+              <div class="route-icon">🚗</div>
+              <div>
+                <strong style="color: #000000; font-size: 0.94rem; display: block;">Akses Sangat Mudah di Jalan Utama</strong>
+                <p style="color: #000000; font-size: 0.85rem; margin: 2px 0 0; line-height: 1.45;">
+                  Terletak di kawasan Galunggung, Klojen, Kota Malang, dekat poros pusat kota dan kampus.
+                </p>
+              </div>
+            </div>
+
+            <div class="route-item">
+              <div class="route-icon">🅿️</div>
+              <div>
+                <strong style="color: #000000; font-size: 0.94rem; display: block;">Parkir Luas Mobil & Sepeda Motor</strong>
+                <p style="color: #000000; font-size: 0.85rem; margin: 2px 0 0; line-height: 1.45;">
+                  Lahan parkir aman tepat di depan gedung workshop, bebas repot putar balik.
+                </p>
+              </div>
+            </div>
+
+            <div class="route-item">
+              <div class="route-icon">❄️</div>
+              <div>
+                <strong style="color: #000000; font-size: 0.94rem; display: block;">Ruang Tunggu Dingin Ber-AC & Free Wi-Fi</strong>
+                <p style="color: #000000; font-size: 0.85rem; margin: 2px 0 0; line-height: 1.45;">
+                  Tersedia fasilitas air mineral gratis, meja charger smartphone, dan kursi santai.
+                </p>
+              </div>
+            </div>
+
+            <div class="route-item" style="margin-bottom: 0;">
+              <div class="route-icon">🔬</div>
+              <div>
+                <strong style="color: #000000; font-size: 0.94rem; display: block;">Konsep Meja Lab Terbuka (Open-Lab)</strong>
+                <p style="color: #000000; font-size: 0.85rem; margin: 2px 0 0; line-height: 1.45;">
+                  Anda dapat melihat langsung proses pembongkaran dan perbaikan HP tanpa ditutup-tutupi.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Social & Live Lab Box -->
+          <div class="location-social-box">
+            <div class="location-social-header">
+              <span class="location-social-dot"></span>
+              <strong style="color: #000000; font-size: 0.88rem;">Update Live Workshop &amp; Sosial Media:</strong>
+            </div>
+            <div class="location-social-badges">
+              <a href="https://www.instagram.com/ngalam_fixpro?utm_source=ig_web_button_share_sheet&srtk=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="loc-social-badge" title="Instagram Ngalam Fix Pro">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <span>Instagram: @ngalam_fixpro</span>
+              </a>
+              <a href="https://www.tiktok.com/@ngalam_fix_pro" target="_blank" rel="noopener noreferrer" class="loc-social-badge" title="TikTok Ngalam Fix Pro">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#000000"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
+                <span>TikTok: @ngalam_fix_pro</span>
+              </a>
+              <a href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7" target="_blank" rel="noopener noreferrer" class="loc-social-badge" title="Google Maps Ulasan Ngalam FixPro">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                <span>Google Review &bull; ⭐ 5.0</span>
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+            <a href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7" target="_blank" rel="noopener noreferrer" class="btn small" style="flex: 1; text-align: center; justify-content: center;">
+              <span>Petunjuk Arah Google Maps ↗</span>
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="card" style="padding: 20px;">
-        <h4 style="color: #0f172a; font-size: 1.05rem; margin-bottom: 6px;">Bagaimana syarat klaim garansi?</h4>
-        <p style="color: #475569; font-size: 0.9rem; margin: 0;">Cukup tunjukkan nomor tiket atau tanda terima nota fisik Anda. Kami memberikan garansi 30 hingga 90 hari untuk suku cadang yang diganti (bebas biaya servis ulang).</p>
+    </div>
+  </section>
+
+  <!-- QUICK CONSULTATION BUILDER -->
+  <section id="quickConsultSection" class="quick-consult-section wrap">
+    <div class="quick-consult-card">
+      <div>
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: #eff6ff; border: 1px solid #bae6fd; padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; color: #0284c7; margin-bottom: 14px;">
+          <span>⚡ KONSULTASI KILAT</span>
+        </div>
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.9rem; color: #000000; margin: 0 0 12px; font-weight: 800; line-height: 1.25;">
+          Tanya Estimasi Biaya &amp; Stok Suku Cadang
+        </h2>
+        <p style="color: #334155; font-size: 0.92rem; line-height: 1.6; margin: 0 0 20px;">
+          Pilih merek smartphone dan sebutkan gejalanya. Sistem akan menyiapkan data konsultasi secara rapi agar teknisi lab kami dapat langsung memberikan analisa awal!
+        </p>
+
+        <div style="display: flex; gap: 16px; font-size: 0.84rem; color: #000000;">
+          <span style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #16a34a; font-weight: 800;">✔</span> <strong style="color: #000000;">Gratis Konsultasi</strong>
+          </span>
+          <span style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #16a34a; font-weight: 800;">✔</span> <strong style="color: #000000;">Tanpa Biaya Bongkar</strong>
+          </span>
+        </div>
       </div>
+
+      <!-- Quick Form -->
+      <form id="quickWaForm" style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- 1. Quick Brand Pills -->
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #000000; margin-bottom: 6px;">
+            Pilih Cepat Merek Smartphone *
+          </label>
+          <div class="quick-brand-chips" id="quickBrandChips">
+            <button type="button" class="quick-brand-chip-btn active" data-brand="Apple iPhone">🍎 Apple</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Samsung Galaxy">📱 Samsung</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Xiaomi / Redmi">⚡ Xiaomi</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="POCO">🚀 POCO</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="OPPO">🟢 OPPO</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Vivo">🔵 Vivo</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Realme">🟡 Realme</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Infinix">♾️ Infinix</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="iQOO">🏎️ iQOO</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Tecno">⚡ Tecno</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="ASUS ROG / Zenfone">🎮 ASUS</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Google Pixel">🌐 Pixel</button>
+            <button type="button" class="quick-brand-chip-btn" data-brand="Merek Lainnya">✨ Lainnya</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #000000; margin-bottom: 6px;">
+              Daftar Lengkap Merek HP *
+            </label>
+            <select id="quickBrandSelect" class="quick-form-control" style="cursor: pointer; font-weight: 600;" required>
+              <optgroup label="Merek Paling Populer di Indonesia">
+                <option value="Apple iPhone" selected>🍎 Apple iPhone (iOS)</option>
+                <option value="Samsung Galaxy">📱 Samsung Galaxy (S, Z, A, M)</option>
+                <option value="Xiaomi / Redmi">⚡ Xiaomi &amp; Redmi Series</option>
+                <option value="POCO">🚀 POCO Series (F, X, M, C)</option>
+                <option value="OPPO">🟢 OPPO (Find X/N, Reno, A)</option>
+                <option value="Vivo">🔵 Vivo (X, V, Y Series)</option>
+                <option value="Realme">🟡 Realme (GT, Angka Pro, C)</option>
+                <option value="Infinix">♾️ Infinix (GT, Zero, Note, Hot)</option>
+                <option value="iQOO">🏎️ iQOO Series (12, Neo, Z)</option>
+                <option value="Tecno">⚡ Tecno Mobile (Camon, Pova)</option>
+              </optgroup>
+              <optgroup label="Merek Flagship, Gaming &amp; Global">
+                <option value="ASUS ROG / Zenfone">🎮 ASUS (ROG Phone &amp; Zenfone)</option>
+                <option value="Google Pixel">🌐 Google Pixel (Pixel 8, 7, 6, Fold)</option>
+                <option value="Huawei / Honor">🔴 Huawei &amp; Honor (Pura, Mate, Nova)</option>
+                <option value="Sony Xperia">📷 Sony Xperia (1, 5, 10 Series)</option>
+                <option value="itel Mobile">📱 itel Mobile Series</option>
+                <option value="Nothing Phone">💡 Nothing Phone (1, 2, 2a)</option>
+                <option value="Black Shark">🦈 Black Shark Gaming Phone</option>
+                <option value="Tablet &amp; iPad">💻 Apple iPad &amp; Tablet Android</option>
+                <option value="Merek Lainnya">✨ Merek Lainnya / Custom Unit</option>
+              </optgroup>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #000000; margin-bottom: 6px;">
+              Tipe / Seri HP *
+            </label>
+            <input type="text" id="quickModelInput" class="quick-form-control" placeholder="Contoh: iPhone 15 Pro / 14 / 13" list="quickModelDatalist" autocomplete="off" required>
+            <datalist id="quickModelDatalist">
+              <!-- Dynamically populated by kontak.js?v=7.9 based on selected brand -->
+            </datalist>
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #000000; margin-bottom: 6px;">
+            Kerusakan / Keluhan Utama *
+          </label>
+          <input type="text" id="quickIssueInput" class="quick-form-control" placeholder="Contoh: Layar retak bergaris, baterai kembung drop, mati total" required>
+        </div>
+
+        <button type="submit" class="btn-wa-action" style="padding: 15px; margin-top: 6px; font-size: 1rem;">
+          <span>Kirim Formulir Konsultasi 🚀</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE FAQ SECTION -->
+  <section class="section wrap" style="padding-top: 20px; padding-bottom: 90px; max-width: 860px;">
+    <div style="text-align: center; margin-bottom: 36px;">
+      <div class="eyebrow blue" style="justify-content: center; margin-bottom: 8px;">PERTANYAAN UMUM</div>
+      <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: #000000; margin: 0 0 10px; font-weight: 800;">
+        FAQ Seputar Reparasi HP di Ngalam Fix Pro
+      </h2>
+      <p style="color: #000000; font-size: 0.95rem; margin: 0;">
+        Jawaban transparan untuk pertanyaan yang paling sering diajukan pelanggan kami.
+      </p>
+    </div>
+
+    <div class="faq-accordion-box">
+
+      <!-- FAQ 1 -->
+      <div class="faq-item active">
+        <button type="button" class="faq-question-btn">
+          <span>Apakah data foto, chat WhatsApp, dan privasi saya aman?</span>
+          <span class="faq-icon-toggle">+</span>
+        </button>
+        <div class="faq-answer-panel">
+          <b>Sangat aman 100%.</b> Untuk perbaikan hardware seperti penggantian layar LCD/OLED, baterai, speaker, konektor charger, atau kamera, Anda <b>tidak perlu memberikan PIN atau kata sandi layar</b> HP Anda. Kerahasiaan privasi dan dokumen pribadi Anda terlindungi penuh.
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question-btn">
+          <span>Berapa lama proses pengerjaan bisa ditunggu di workshop?</span>
+          <span class="faq-icon-toggle">+</span>
+        </button>
+        <div class="faq-answer-panel">
+          Untuk pergantian baterai biasanya membutuhkan waktu <b>30–45 menit</b>. Penggantian layar LCD/OLED original berkisar <b>45–60 menit</b>. Anda dapat menunggu langsung di ruang tunggu ber-AC sembari melihat teknisi lab kami bekerja.
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question-btn">
+          <span>Bagaimana ketentuan dan cara klaim garansi resminya?</span>
+          <span class="faq-icon-toggle">+</span>
+        </button>
+        <div class="faq-answer-panel">
+          Klaim garansi sangat mudah dan tanpa ribet. Anda cukup menyebutkan nomor WhatsApp atau menunjukkan nomor tiket servis digital Anda. Kami memberikan garansi resmi <b>30 hingga 90 hari</b> untuk suku cadang yang diganti (bebas biaya servis ulang jika terjadi kendala).
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question-btn">
+          <span>Apakah ada biaya pengecekan jika HP tidak jadi diperbaiki?</span>
+          <span class="faq-icon-toggle">+</span>
+        </button>
+        <div class="faq-answer-panel">
+          <b>Pengecekan awal dan konsultasi 100% Bebas Biaya (Gratis)</b>. Jika setelah dianalisa oleh teknisi biaya perbaikan melebihi anggaran Anda dan Anda memutuskan untuk tidak lanjut servis, Anda bebas membawa pulang HP Anda tanpa dipungut biaya sepeser pun.
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="faq-item">
+        <button type="button" class="faq-question-btn">
+          <span>Apakah tersedia layanan antar-jemput HP jika saya tidak sempat datang?</span>
+          <span class="faq-icon-toggle">+</span>
+        </button>
+        <div class="faq-answer-panel">
+          Ya, kami menyediakan layanan <b>Antar-Jemput Khusus Area Malang</b>. Kurir resmi workshop kami akan datang menjemput HP Anda dengan membawa bukti tanda terima resmi, dan mengantarkannya kembali setelah selesai diperbaiki.
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="footer" style="margin-top: 60px;">
+  <footer class="footer" style="margin-top: 40px;">
     <div class="wrap footgrid">
       <div class="foot-col">
         <a class="logo" href="../index.html">
@@ -202,46 +1295,70 @@
           </div>
           <span>Ngalam<b>Fix Pro</b></span>
         </a>
-        <p style="margin-top: 8px;">Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya.</p>
+        <p style="margin-top: 8px;">Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya di Kota Malang.</p>
+        <!-- Footer Social Links -->
+        <div class="foot-social-links">
+          <a href="https://www.instagram.com/ngalam_fixpro?utm_source=ig_web_button_share_sheet&srtk=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="foot-social-btn ig" title="Instagram Resmi Ngalam Fix Pro (@ngalam_fixpro)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+          <a href="https://www.tiktok.com/@ngalam_fix_pro" target="_blank" rel="noopener noreferrer" class="foot-social-btn tiktok" title="TikTok Resmi Ngalam Fix Pro (@ngalam_fix_pro)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
+          </a>
+          <a href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7" target="_blank" rel="noopener noreferrer" class="foot-social-btn maps" title="Google Maps & Review Ngalam FixPro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+          </a>
+          <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="foot-social-btn yt" title="YouTube Channel Ngalam Fix Pro TV">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
       </div>
       <div class="foot-col">
         <strong>Layanan Utama HP</strong>
         <a href="../layanan/index.html">Servis Apple iPhone</a>
-        <a href="../layanan/index.html">Servis Android</a>
-        <a href="../layanan/index.html">Ganti Layar OLED</a>
+        <a href="../layanan/index.html">Servis Android Samsung</a>
+        <a href="../layanan/index.html">Ganti Layar OLED / LCD</a>
       </div>
       <div class="foot-col">
-        <strong>Bantuan & Info</strong>
+        <strong>Bantuan & Akses</strong>
         <a href="../lacak/index.html">Lacak Status Pengerjaan</a>
         <a href="../login/index.html">Masuk Akun Pelanggan</a>
         <a href="../admin/login.html">Login Admin & Kasir</a>
-        <a href="../teknisi/login.html">Login Teknisi & Mitra</a>
-        <a href="index.html">Hubungi Workshop</a>
+        <a href="../teknisi/login.html">Login Teknisi Lab</a>
+        <a href="index.html">Kontak & Workshop</a>
       </div>
       <div class="foot-col">
-        <strong>Kontak Workshop</strong>
-        <p style="color:#ffffff;font-weight:600;">WhatsApp Resmi:</p>
-        <p>+62 813-3030-4321 (Liem Hingky Liman)</p>
+        <strong>Hubungi Workshop</strong>
+        <div class="foot-contact-item">
+          <div>
+            <span style="color: #ffffff; font-weight: 700; margin-bottom: 8px; display: block;">Konsultasi &amp; Tanya Servis:</span>
+            <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20seputar%20servis%20HP" target="_blank" rel="noopener noreferrer" class="btn-wa-simple-footer" title="Chat WhatsApp Workshop">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+              <span>Hubungi WhatsApp Kami ↗</span>
+            </a>
+          </div>
+        </div>
+        <div class="foot-contact-item" style="margin-top: 10px;">
+          <i>🕒</i>
+          <div>
+            <span style="color: #ffffff; font-weight: 700;">Jam Operasional:</span>
+            <p style="margin: 2px 0 0; color: #94a3b8; font-size: 0.85rem;">Senin – Sabtu, 09.00 – 18.00 WIB</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="wrap copyright">
-      <div>© 2026 Ngalam Fix Pro. Hak Cipta Dilindungi.</div>
+      <div>© 2026 Ngalam Fix Pro. Hak Cipta Dilindungi • Kota Malang.</div>
     </div>
   </footer>
 
-  <!-- FLOATING CHATBOT WIDGET (BOTTOM-LEFT LUXURY AI ASSISTANT) -->
+  <!-- FLOATING CHATBOT WIDGET -->
   <div class="chatbot-container">
     <button type="button" class="chatbot-trigger" id="chatbotTrigger" aria-label="Buka NgalamBot AI">
-      <!-- ANIMATED AI PROFILE AVATAR FROM NGALAM FIX PRO LOGO -->
-      <div class="ai-avatar-animated" style="width: 44px; height: 44px;">
-        <div class="ai-avatar-glow"></div>
-        <div class="ai-avatar-ring-outer"></div>
-        <div class="ai-avatar-ring-inner"></div>
-        <div class="ai-avatar-core">
-          <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar" class="ai-avatar-img">
-          <div class="ai-scanner-line"></div>
+      <div class="chatbot-trigger-avatar">
+        <div class="chatbot-avatar-frame">
+          <img src="../images/ngalambot-avatar.jpg" alt="NgalamBot AI" class="chatbot-avatar-img">
         </div>
-        <span class="ai-status-dot"></span>
+        <span class="chatbot-online-dot"></span>
       </div>
       <div class="chatbot-trigger-text">
         <span class="chatbot-trigger-title">Tanya NgalamBot</span>
@@ -256,16 +1373,9 @@
     <div class="chatbot-panel" id="chatbotPanel">
       <div class="chatbot-header">
         <div class="chatbot-title-box">
-          <!-- ANIMATED AI PROFILE AVATAR IN HEADER -->
-          <div class="ai-avatar-animated" style="width: 42px; height: 42px;">
-            <div class="ai-avatar-glow"></div>
-            <div class="ai-avatar-ring-outer"></div>
-            <div class="ai-avatar-ring-inner"></div>
-            <div class="ai-avatar-core">
-              <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI Avatar" class="ai-avatar-img">
-              <div class="ai-scanner-line"></div>
-            </div>
-            <span class="ai-status-dot"></span>
+          <div class="chatbot-header-avatar">
+            <img src="../images/ngalambot-avatar.jpg" alt="NgalamBot AI" class="chatbot-avatar-img">
+            <span class="chatbot-online-dot"></span>
           </div>
           <div class="chatbot-header-text">
             <strong>NgalamBot <span class="chatbot-pill-tag">AI PRO</span></strong>
@@ -282,8 +1392,19 @@
 
       <div class="chatbot-body" id="chatbotMessages">
         <div class="chatbot-bubble-row bot">
-          <div class="ai-bubble-avatar">
-            <img src="../images/ngalam-bot-ai.jpg" alt="NgalamBot AI">
+          <div class="ai-bubble-avatar" title="NgalamBot AI Assistant">
+            <div class="ai-mini-orb-plasma"></div>
+            <svg class="ai-mini-orb-svg" viewBox="0 0 24 24" fill="none">
+              <defs>
+                <linearGradient id="aiOrbGradWelcomeKontak" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="50%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#d4af37"/>
+                </linearGradient>
+              </defs>
+              <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#aiOrbGradWelcomeKontak)"/>
+              <circle cx="12" cy="12" r="2.8" fill="#ffffff"/>
+            </svg>
           </div>
           <div class="chatbot-bubble bot">
             Halo! Ada yang ingin Anda tanyakan seputar rute lokasi workshop atau jam operasional kami?
@@ -296,7 +1417,7 @@
         <button type="button" class="chatbot-chip" data-query="Berapa biaya ganti LCD?">📱 Biaya Layar</button>
         <button type="button" class="chatbot-chip" data-query="Berapa biaya ganti baterai?">🔋 Ganti Baterai</button>
         <button type="button" class="chatbot-chip" data-query="Bagaimana cara klaim garansi?">🛡️ Klaim Garansi</button>
-        <button type="button" class="chatbot-chip" data-query="Nomor kontak Mas Liem Hingky Liman?">👨‍🔧 Kontak Mas Hingky</button>
+        <button type="button" class="chatbot-chip" data-query="Bagaimana cara hubungi WhatsApp workshop?">💬 Kontak WhatsApp</button>
       </div>
 
       <div class="chatbot-input-area">
@@ -310,10 +1431,15 @@
     </div>
   </div>
 
-  <script src="../js/device-sensor.js"></script>
+  <!-- TOAST FEEDBACK NOTIFICATION -->
+  <div class="copy-toast-notification" id="copyToastNotification">
+    <span>📋</span>
+    <span>Alamat workshop berhasil disalin ke clipboard!</span>
+  </div>
+
   <script src="../js/api-base.js"></script>
   <script src="../js/main.js"></script>
-  <script src="kontak.js"></script>
-  <script src="../js/chatbot.js"></script>
+  <script src="kontak.js?v=7.9"></script>
+  <script src="../js/chatbot.js?v=8.0"></script>
 </body>
 </html>

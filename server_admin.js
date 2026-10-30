@@ -9,17 +9,18 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-
-const { initSheetHeaders } = require('./services/googleSheets');
 const { loginUser, verifySession, logoutUser, getUsers } = require('./services/authService');
 
 // Modular Route Handlers
+const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const technicianRoutes = require('./routes/technicianRoutes');
 const financeRoutes = require('./routes/financeRoutes');
 const promoRoutes = require('./routes/promoRoutes');
 const chatbotRoutes = require('./routes/chatbotRoutes');
+const mitraRoutes = require('./routes/mitraRoutes');
+const exportRoutes = require('./routes/exportRoutes');
 
 const app = express();
 const ADMIN_PORT = process.env.ADMIN_PORT || 3001;
@@ -141,6 +142,10 @@ app.get(['/kontak', '/kontak.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'kontak', 'index.html'));
 });
 
+app.get(['/export', '/export.html', '/admin/export', '/admin/export.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'export.html'));
+});
+
 app.get(['/', '/index.html', '/admin', '/admin/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
 });
@@ -150,20 +155,20 @@ app.get(['/', '/index.html', '/admin', '/admin/index.html'], (req, res) => {
 // ==========================================
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { identifier, password, role } = req.body;
-    const result = await loginUser({ identifier, password, role });
+    const { identifier, password, role, referralCode } = req.body;
+    const result = await loginUser({ identifier, password, role, referralCode });
 
-    if (result.user.role !== 'admin' && result.user.role !== 'owner') {
+    if (result.user.role !== 'admin' && result.user.role !== 'owner' && result.user.role !== 'kasir') {
       return res.status(403).json({
         success: false,
-        error: 'Akses Ditolak: Server ini khusus dihosting untuk Admin Meja 1 dan Workshop Manager.',
+        error: 'Akses Ditolak: Server ini khusus dihosting untuk Admin Meja 1, Kasir, dan Workshop Manager.',
       });
     }
 
     res.setHeader('Set-Cookie', `ngalam_token=${result.user.token}; Path=/; Max-Age=86400; SameSite=Lax`);
     res.json(result);
   } catch (err) {
-    res.status(401).json({ success: false, error: err.message });
+    res.status(401).json({ success: false, error: err.message, message: err.message });
   }
 });
 
@@ -199,12 +204,38 @@ app.post('/api/auth/logout', (req, res) => {
 // ==========================================
 // MOUNT MODULAR API ROUTERS
 // ==========================================
+app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/customer', customerRoutes);
 app.use('/api/technicians', technicianRoutes);
 app.use('/api/finance', financeRoutes);
+app.use('/api/export', exportRoutes);
+app.use('/api/mitra', mitraRoutes);
 app.use('/api', promoRoutes);
 app.use('/api', chatbotRoutes);
+
+const db = require('./services/db');
+
+// Database status badge endpoint (Dynamic live PostgreSQL status)
+app.get('/api/database/status', async (req, res) => {
+  try {
+    const status = await db.testConnection();
+    res.json({
+      success: true,
+      ...status,
+      message: status.connected 
+        ? `Terhubung ke database PostgreSQL "${status.database}".` 
+        : `PostgreSQL belum terhubung (${status.error || 'Cek kredensial .env'}). Sistem berjalan dengan penyimpanan lokal.`
+    });
+  } catch (err) {
+    res.json({
+      success: true,
+      connected: false,
+      mode: 'fallback',
+      message: 'Sistem aktif dalam mode penyimpanan data lokal.'
+    });
+  }
+});
 
 // Fallback for API 404
 app.use('/api', (req, res) => {
@@ -219,12 +250,6 @@ function startAdminServer(portToTry) {
     console.log(`📑 Dashboard Admin URL: http://localhost:${portToTry}`);
     console.log(`🔐 Admin Login URL:     http://localhost:${portToTry}/login.html`);
     console.log(`================================================================\n`);
-
-    try {
-      await initSheetHeaders();
-    } catch (e) {
-      console.warn('[Admin Server] Google Sheets init warning:', e.message);
-    }
   });
 
   server.on('error', (err) => {

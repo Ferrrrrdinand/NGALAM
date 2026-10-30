@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekspor Riwayat Transaksi ke Excel • Ngalam Fix Pro (Khusus Admin)</title>
+  <meta name="description" content="Halaman khusus Super Admin & Owner untuk mengekspor riwayat transaksi kasir 1-3 bulan terakhir ke format Microsoft Excel (.xlsx).">
+  <link rel="icon" type="image/jpeg" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="apple-touch-icon" href="../images/logo-ngalam-fix-pro.jpg">
+  <link rel="stylesheet" href="../css/style.css?v=7.8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../js/device-sensor.js"></script>
+
+  <!-- AUTH GUARD KHUSUS SUPER ADMIN & OWNER -->
+  <script>
+    (function () {
+      'use strict';
+      try {
+        const raw = localStorage.getItem('ngalam_auth_user') || sessionStorage.getItem('ngalam_auth_user');
+        if (!raw) {
+          window.location.replace('login.html?reason=required&redirect=' + encodeURIComponent(window.location.pathname));
+          return;
+        }
+        const user = JSON.parse(raw);
+        if (!user || !user.token) {
+          window.location.replace('login.html?reason=required');
+          return;
+        }
+        // STRICT ROLE CHECK: Hanya Admin & Owner
+        const role = (user.role || '').toLowerCase();
+        if (role !== 'admin' && role !== 'owner') {
+          alert('⚠️ Akses Terbatas: Halaman Ekspor Riwayat Transaksi ini hanya dapat diakses oleh Role Admin (Owner / Super User). Anda akan dialihkan ke dashboard.');
+          window.location.replace('index.html');
+          return;
+        }
+        document.cookie = 'ngalam_token=' + user.token + '; path=/; max-age=86400; SameSite=Lax';
+      } catch (_) {
+        window.location.replace('login.html?reason=required');
+      }
+    })();
+  </script>
+
+  <style>
+    body {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .export-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    /* Preset Chip Buttons */
+    .preset-chip-btn {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      user-select: none;
+    }
+    .preset-chip-btn:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+    .preset-chip-btn.active {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-color: #047857;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Stat Cards */
+    .kpi-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    }
+    .kpi-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .kpi-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .kpi-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Primary Action Buttons */
+    .btn-export-download {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-export-download:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+      background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+    }
+    .btn-export-download:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Table Styles */
+    .export-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      font-size: 0.88rem;
+    }
+    .export-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 800;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 12px 14px;
+      border-bottom: 2px solid #e2e8f0;
+      text-align: left;
+    }
+    .export-table td {
+      background: #ffffff;
+      padding: 12px 14px;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+      color: #1e293b;
+    }
+    .export-table tr:hover td {
+      background: #f8fafc;
+    }
+    .export-table tr td:first-child {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-left: 1px solid #f1f5f9;
+    }
+    .export-table tr td:last-child {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      border-right: 1px solid #f1f5f9;
+    }
+
+    /* Badges */
+    .badge-method {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-method.qris {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .badge-method.tunai {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    .badge-method.transfer {
+      background: #faf5ff;
+      color: #7e22ce;
+      border: 1px solid #e9d5ff;
+    }
+
+    .badge-status-lunas {
+      background: #dcfce7;
+      color: #15803d;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid #86efac;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @media (max-width: 900px) {
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+    @media (max-width: 600px) {
+      .kpi-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER NAVIGASI KHUSUS -->
+  <header style="background: #ffffff; border-bottom: 1.5px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);">
+    <div class="wrap" style="min-height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px;">
+      
+      <!-- Brand & Page Title -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
+          <img src="../images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" style="width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid #d4af37;">
+          <div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a; line-height: 1.2;">Ngalam <b>Fix Pro</b></div>
+            <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; letter-spacing: 0.5px;">MODUL EKSPOR LAPORAN KEUANGAN</div>
+          </div>
+        </a>
+        <span style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; padding: 4px 12px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.6px;">
+          📊 EXCEL .XLSX RESMI
+        </span>
+      </div>
+
+      <!-- Action Buttons & User Badge -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <!-- User Badge -->
+        <div style="display: flex; align-items: center; gap: 8px; background: #fffdf5; border: 1.5px solid #fde68a; padding: 6px 14px; border-radius: 999px; font-size: 0.84rem; font-weight: 700; color: #92400e;">
+          <span>👑</span>
+          <span id="pageAdminName">Ferdinand (Owner & Super Admin)</span>
+        </div>
+
+        <!-- Tombol Kembali ke Dashboard -->
+        <a href="index.html" class="btn small" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #0f172a; font-weight: 700; text-decoration: none; border-radius: 10px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <span>← Kembali ke Dashboard</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- KONTEN UTAMA HALAMAN EKSPOR -->
+  <main class="wrap" style="padding-top: 28px; padding-bottom: 70px;">
+
+    <!-- HERO TITLE BANNER -->
+    <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 style="font-size: 1.65rem; color: #0f172a; margin: 0 0 6px; font-weight: 800;">
+          Ekspor Riwayat Transaksi & Pembukuan
+        </h1>
+        <p style="color: #64748b; font-size: 0.92rem; margin: 0; line-height: 1.5; max-width: 780px;">
+          Pilih periode transaksi <b>1 s/d 3 bulan terakhir</b> atau tentukan rentang tanggal kustom Anda sendiri. File Microsoft Excel (<code style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; color: #0f172a;">.xlsx</code>) yang dihasilkan memuat 18 kolom detail lengkap, rumus kalkulasi otomatis, dan siap diaudit.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" id="btnPageRefresh" class="btn small" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #334155; font-weight: 700; border-radius: 10px; padding: 10px 16px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+          <span>🔄 Muat Ulang Data</span>
+        </button>
+        <button type="button" id="btnTopDownloadExcel" class="btn-export-download" style="padding: 10px 22px; font-size: 0.88rem;">
+          <span>📥 Unduh Excel (.xlsx)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PANEL FILTER & KONTROL PERIODE (DEDICATED CONTROLS) -->
+    <div class="export-card" style="margin-bottom: 24px;">
+      
+      <!-- Bagian 1: Preset Cepat 1-3 Bulan -->
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 0.84rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px;">
+          ⚡ Opsi Cepat Periode Riwayat Transaksi:
+        </label>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+          <button type="button" class="preset-chip-btn active" data-preset="1m">
+            📅 1 Bulan Terakhir (30 Hari)
+          </button>
+          <button type="button" class="preset-chip-btn" data-preset="2m">
+            📅 2 Bulan Terakhir (60 Hari)
+          </button>
+          <button type="button" class="preset-chip-btn" data-preset="3m">
+            📅 3 Bulan Terakhir (90 Hari)
+          </button>
+          <button type="button" class="preset-chip-btn" data-preset="cur_month">
+            🗓️ Bulan Berjalan (Bulan Ini)
+          </button>
+          <button type="button" class="preset-chip-btn" data-preset="all">
+            📆 Seluruh Riwayat Database
+          </button>
+        </div>
+      </div>
+
+      <!-- Bagian 2: Rentang Tanggal Kustom & Filter Tambahan -->
+      <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: flex-end;">
+          
+          <!-- Tanggal Mulai -->
+          <div>
+            <label for="exportStartDate" style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">
+              Dari Tanggal (Mulai):
+            </label>
+            <input type="date" id="exportStartDate" class="form-control" style="width: 100%; padding: 10px 14px; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600;">
+          </div>
+
+          <!-- Tanggal Selesai -->
+          <div>
+            <label for="exportEndDate" style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">
+              Sampai Tanggal (Selesai):
+            </label>
+            <input type="date" id="exportEndDate" class="form-control" style="width: 100%; padding: 10px 14px; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600;">
+          </div>
+
+          <!-- Metode Pembayaran -->
+          <div>
+            <label for="filterPaymentMethod" style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">
+              Metode Pembayaran:
+            </label>
+            <select id="filterPaymentMethod" class="form-control" style="width: 100%; padding: 10px 14px; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600;">
+              <option value="all">Semua Metode Pembayaran</option>
+              <option value="qris">📱 QRIS BCA / E-Wallet</option>
+              <option value="tunai">💵 Tunai (Cash)</option>
+              <option value="transfer">🏦 Transfer Bank</option>
+            </select>
+          </div>
+
+          <!-- Cari Faktur / Pelanggan -->
+          <div>
+            <label for="searchFilterInput" style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">
+              Cari Cepat (Faktur / Nama / Unit):
+            </label>
+            <input type="text" id="searchFilterInput" placeholder="Ketik kata kunci pencarian..." class="form-control" style="width: 100%; padding: 10px 14px; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #0f172a;">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 4 KPI SUMMARY CARDS (REAL-TIME METRICS) -->
+    <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+      
+      <!-- Total Faktur -->
+      <div class="kpi-card" style="border-left: 4px solid #3b82f6;">
+        <div class="kpi-icon-box" style="background: #eff6ff; color: #2563eb;">
+          🧾
+        </div>
+        <div>
+          <div class="kpi-title">Total Transaksi</div>
+          <div class="kpi-value" id="kpiTotalCount">0 Faktur</div>
+        </div>
+      </div>
+
+      <!-- Total Omset Nett -->
+      <div class="kpi-card" style="border-left: 4px solid #10b981;">
+        <div class="kpi-icon-box" style="background: #ecfdf5; color: #059669;">
+          💵
+        </div>
+        <div>
+          <div class="kpi-title">Total Omset Bersih (Nett)</div>
+          <div class="kpi-value" id="kpiTotalOmset" style="color: #059669;">Rp 0</div>
+        </div>
+      </div>
+
+      <!-- Total Diskon -->
+      <div class="kpi-card" style="border-left: 4px solid #ef4444;">
+        <div class="kpi-icon-box" style="background: #fef2f2; color: #dc2626;">
+          🏷️
+        </div>
+        <div>
+          <div class="kpi-title">Total Diskon & Promo</div>
+          <div class="kpi-value" id="kpiTotalDiscount" style="color: #dc2626;">Rp 0</div>
+        </div>
+      </div>
+
+      <!-- Rata-rata Transaksi (AOV) -->
+      <div class="kpi-card" style="border-left: 4px solid #f59e0b;">
+        <div class="kpi-icon-box" style="background: #fffbeb; color: #d97706;">
+          📊
+        </div>
+        <div>
+          <div class="kpi-title">Rata-rata per Nota (AOV)</div>
+          <div class="kpi-value" id="kpiAverageValue">Rp 0</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TABEL PRATINJAU TRANSAKSI (INTERACTIVE PREVIEW TABLE) -->
+    <div class="export-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h3 style="font-size: 1.15rem; color: #0f172a; margin: 0 0 4px; font-weight: 800;">
+            Pratinjau Data Transaksi Sesuai Filter
+          </h3>
+          <p id="tableFilterSummaryText" style="font-size: 0.84rem; color: #64748b; margin: 0;">
+            Menampilkan faktur transaksi pada rentang tanggal yang dipilih.
+          </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" id="btnPrintReport" class="btn small" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #334155; font-weight: 700; border-radius: 10px; padding: 10px 18px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+            <span>🖨️ Cetak Tampilan Halaman</span>
+          </button>
+          <button type="button" id="btnMainDownloadExcel" class="btn-export-download">
+            <span>📥 Unduh Laporan Excel (.xlsx)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="tableLoadingState" style="display: none; padding: 48px; text-align: center;">
+        <svg class="spin" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" style="margin: 0 auto 12px; display: block;">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <div style="font-weight: 700; color: #475569;">Memuat data transaksi dari server...</div>
+      </div>
+
+      <!-- Tabel Konten -->
+      <div style="overflow-x: auto;" id="tableContainer">
+        <table class="export-table">
+          <thead>
+            <tr>
+              <th style="width: 140px;">No. Faktur</th>
+              <th style="width: 130px;">No. Tiket</th>
+              <th style="width: 150px;">Waktu Bayar</th>
+              <th>Pelanggan</th>
+              <th>Perangkat & Servis</th>
+              <th style="text-align: right; width: 130px;">Total Nett</th>
+              <th style="text-align: center; width: 120px;">Metode</th>
+              <th style="width: 130px;">Kasir Staf</th>
+              <th style="text-align: center; width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody">
+            <!-- Diisi secara dinamis oleh JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="tableEmptyState" style="display: none; padding: 48px 20px; text-align: center; background: #f8fafc; border-radius: 14px; border: 1.5px dashed #cbd5e1; margin-top: 10px;">
+        <div style="font-size: 2.2rem; margin-bottom: 8px;">📭</div>
+        <div style="font-size: 1rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Tidak Ada Transaksi Ditemukan</div>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 0; max-width: 460px; margin-left: auto; margin-right: auto;">
+          Tidak ada riwayat transaksi pada rentang tanggal atau kriteria filter yang Anda pilih. Coba pilih preset lain seperti "3 Bulan Terakhir" atau "Semua Transaksi".
+        </p>
+      </div>
+
+    </div>
+
+    <!-- KETERANGAN FORMAT LAPORAN EXCEL -->
+    <div style="margin-top: 24px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; align-items: flex-start; gap: 14px;">
+      <div style="font-size: 1.8rem; line-height: 1;">💡</div>
+      <div style="font-size: 0.85rem; color: #475569; line-height: 1.6;">
+        <strong style="color: #0f172a; display: block; font-size: 0.92rem; margin-bottom: 4px;">Spesifikasi Format File Excel (.xlsx):</strong>
+        File yang diunduh disusun dengan struktur 18 kolom berstandar pembukuan akuntansi: <i>Nomor Faktur, ID Tiket, Tanggal & Jam, Nama Pelanggan, Nomor HP/WhatsApp, Tipe Unit HP, Teknisi Pelaksana, Biaya Dasar/Pokok Servis, Diskon Promo, Nama Promo, Biaya Antar-Jemput, Total Omset Bersih (Nett), Metode Pembayaran, Uang Diterima, Kembalian, Status Bayar, Kasir Penanggung Jawab, dan Catatan Transaksi</i>. Dilengkapi baris rekapitulasi total otomatis dengan format Rupiah resmi.
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/api-base.js"></script>
+  <script src="export_page.js"></script>
+</body>
+</html>

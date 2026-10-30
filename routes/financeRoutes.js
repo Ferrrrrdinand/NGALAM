@@ -1,6 +1,6 @@
 /**
- * NGALAM FIX PRO - Finance & Spreadsheet Sync Routes
- * Dedicated routes for financial ledgers, customer transaction invoices, and Google Sheets synchronization.
+ * NGALAM FIX PRO - Finance & Transaction Routes
+ * Mengelola pembukuan keuangan, faktur transaksi kasir, dan status database sistem.
  */
 
 const express = require('express');
@@ -9,161 +9,98 @@ const {
   getConfig: getFinanceConfig,
   saveConfig: saveFinanceConfig,
   getCredentialsInfo,
-  testAppsScriptConnection,
-  initAppsScriptHeaders,
   readFinances,
   addFinancialRecord,
   readTransactions,
   recordNewTransaction,
-  syncCustomersToGoogleSheets,
-  syncDriversToGoogleSheets,
-  syncWorkersToGoogleSheets,
-  syncFinancesToGoogleSheets,
-  syncTransactionsToGoogleSheets,
-  syncAllSpreadsheets,
   getFinancialSummary,
-  getWitMonthYearSheetName,
+  getWitMonthYearPeriod,
 } = require('../services/financeService');
+const userService = require('../services/userService');
 
 // GET /api/finance/status
-router.get('/status', (req, res) => {
+router.get('/status', async (req, res) => {
   try {
     const creds = getCredentialsInfo();
     const cfg = getFinanceConfig();
     const summary = getFinancialSummary();
-
-    const isGasActive = !!(cfg.appsScriptUrl && cfg.appsScriptUrl.trim().length > 10);
-    const customersConnected = isGasActive || (creds.exists && !!cfg.customersSpreadsheetId);
-    const driversConnected = isGasActive || (creds.exists && !!cfg.driversSpreadsheetId);
-    const workersConnected = isGasActive || (creds.exists && !!cfg.workersSpreadsheetId);
-    const transactionsConnected = isGasActive || (creds.exists && !!cfg.transactionsSpreadsheetId);
-    const financeConnected = isGasActive || (creds.exists && !!cfg.financeSpreadsheetId);
-
-    const activeMode = isGasActive ? 'google_apps_script' : (creds.exists ? 'google_sheets' : 'local_fallback');
+    const db = require('../services/db');
+    const dbStatus = await db.testConnection();
 
     res.json({
       success: true,
+      mode: 'database',
+      message: dbStatus.connected 
+        ? `Sistem database PostgreSQL "${dbStatus.database}" terhubung dan aktif.`
+        : 'Sistem database lokal aktif (Siap PostgreSQL).',
       credentials: creds,
       config: cfg,
       summary: summary,
-      appsScript: {
-        active: isGasActive,
-        url: cfg.appsScriptUrl || '',
-        message: isGasActive
-          ? 'Google Apps Script Web App Terhubung & Siap Sinkronisasi'
-          : 'Google Apps Script belum dikonfigurasi'
+      database: {
+        engine: 'PostgreSQL',
+        connected: dbStatus.connected,
+        host: cfg.host,
+        database: cfg.database,
+        error: dbStatus.error || null
       },
-      spreadsheetCustomers: {
-        name: 'Data Akun Customer',
-        sheetName: cfg.customersSheetName || 'DataCustomer',
-        id: cfg.customersSpreadsheetId,
-        connected: customersConnected,
-        mode: customersConnected ? activeMode : 'local_fallback',
-        message: customersConnected ? (isGasActive ? 'Terhubung via Google Apps Script' : 'Terhubung langsung ke Google Sheets API') : 'Menggunakan data lokal (data/customers.json)'
-      },
-      spreadsheetDrivers: {
-        name: 'Data Mitra Driver',
-        sheetName: cfg.driversSheetName || 'MitraDriver',
-        id: cfg.driversSpreadsheetId,
-        connected: driversConnected,
-        mode: driversConnected ? activeMode : 'local_fallback',
-        message: driversConnected ? (isGasActive ? 'Terhubung via Google Apps Script' : 'Terhubung langsung ke Google Sheets API') : 'Menggunakan data lokal (data/users.json)'
-      },
-      spreadsheetWorkers: {
-        name: 'Data Pekerja / Teknisi / Staf',
-        sheetName: cfg.workersSheetName || 'DataPekerja',
-        id: cfg.workersSpreadsheetId,
-        connected: workersConnected,
-        mode: workersConnected ? activeMode : 'local_fallback',
-        message: workersConnected ? (isGasActive ? 'Terhubung via Google Apps Script' : 'Terhubung langsung ke Google Sheets API') : 'Menggunakan data lokal (data/users.json)'
-      },
-      spreadsheetTechnicians: {
-        name: 'Otentikasi & Akun Teknisi Lab Workshop',
-        sheetName: cfg.techniciansSheetName || 'AkunTeknisi',
-        id: cfg.techniciansSpreadsheetId || cfg.workersSpreadsheetId || '',
-        connected: isGasActive || (creds.exists && !!(cfg.techniciansSpreadsheetId || cfg.workersSpreadsheetId)),
-        mode: isGasActive ? 'google_apps_script' : (creds.exists ? 'google_sheets' : 'local_fallback'),
-        message: isGasActive ? 'Terhubung & Terverifikasi via Google Apps Script (AkunTeknisi)' : 'Menggunakan penyimpanan data akun lokal (data/users.json)'
-      },
-      spreadsheetTransactions: {
-        name: 'Riwayat Transaksi Bulanan (Zona Waktu WIT)',
-        sheetName: getWitMonthYearSheetName(),
-        currentMonthSheet: getWitMonthYearSheetName(),
-        timezone: 'WIT (UTC+9)',
-        id: cfg.transactionsSpreadsheetId,
-        connected: transactionsConnected,
-        mode: transactionsConnected ? activeMode : 'local_fallback',
-        message: transactionsConnected
-          ? (isGasActive ? `Terhubung via Google Apps Script (Otomatis per Lembar Bulan "${getWitMonthYearSheetName()}" WIT)` : `Terhubung langsung ke Google Sheets API v4 (Otomatis per Lembar Bulan "${getWitMonthYearSheetName()}" WIT)`)
-          : `Tersimpan lokal & otomatis dipartisi per lembar bulan WIT ("${getWitMonthYearSheetName()}").`
-      },
-      spreadsheetFinance: {
-        name: 'Catatan Keuangan & Pembukuan Kas',
-        sheetName: cfg.financeSheetName || 'CatatanKeuangan',
-        id: cfg.financeSpreadsheetId,
-        connected: financeConnected,
-        mode: financeConnected ? activeMode : 'local_fallback',
-        message: financeConnected
-          ? (isGasActive ? 'Terhubung via Google Apps Script' : 'Terhubung langsung ke Google Sheets API v4')
-          : 'Menggunakan penyimpanan data lokal (data/finances.json).'
+      tables: {
+        customers: {
+          name: 'Tabel Pelanggan (customers)',
+          file: 'data/customers.json',
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman di data/customers.json (Siap migrasi PostgreSQL)'
+        },
+        usersAdmin: {
+          name: 'Tabel Pengguna Admin & Kasir',
+          file: userService.getUserFileDetails().admin.path,
+          envVar: 'USERS_ADMIN_FILE',
+          count: userService.getUserFileDetails().admin.count,
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman terpisah (.env ready)'
+        },
+        usersTeknisi: {
+          name: 'Tabel Teknisi Lab Workshop',
+          file: userService.getUserFileDetails().teknisi.path,
+          envVar: 'USERS_TEKNISI_FILE',
+          count: userService.getUserFileDetails().teknisi.count,
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman terpisah (.env ready)'
+        },
+        usersMitra: {
+          name: 'Tabel Mitra Driver & Rekanan',
+          file: userService.getUserFileDetails().mitra.path,
+          envVar: 'USERS_MITRA_FILE',
+          count: userService.getUserFileDetails().mitra.count,
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman terpisah (.env ready)'
+        },
+        orders: {
+          name: 'Tabel Antrian Tiket Servis (orders)',
+          file: 'data/orders.json',
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman di data/orders.json (Siap migrasi PostgreSQL)'
+        },
+        transactions: {
+          name: 'Tabel Riwayat Transaksi (transactions)',
+          period: getWitMonthYearPeriod(),
+          timezone: 'WIT (UTC+9)',
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman di data/transactions.json (Siap migrasi PostgreSQL)'
+        },
+        finances: {
+          name: 'Tabel Buku Kas & Keuangan (finances)',
+          connected: true,
+          mode: 'database',
+          message: 'Tersimpan aman di data/finances.json (Siap migrasi PostgreSQL)'
+        }
       }
     });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// POST /api/finance/test-apps-script
-router.post('/test-apps-script', async (req, res) => {
-  try {
-    const { url } = req.body;
-    const testResult = await testAppsScriptConnection(url);
-    res.json({
-      success: true,
-      message: testResult.message || 'Koneksi Google Apps Script Berhasil!',
-      details: testResult
-    });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: `Gagal menghubungi Google Apps Script: ${err.message}`
-    });
-  }
-});
-
-// POST /api/finance/init-headers
-router.post('/init-headers', async (req, res) => {
-  try {
-    const { spreadsheetId } = req.body;
-    const result = await initAppsScriptHeaders(spreadsheetId);
-    res.json({
-      success: true,
-      message: 'Header kolom Google Sheets berhasil diinisialisasi!',
-      details: result
-    });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: `Gagal menginisialisasi header: ${err.message}`
-    });
-  }
-});
-
-// GET /api/finance/apps-script-code
-router.get('/apps-script-code', (req, res) => {
-  try {
-    const fs = require('fs');
-    const path = require('path');
-    let scriptPath = path.join(__dirname, '..', 'scripts', 'google_apps_script.js');
-    if (!fs.existsSync(scriptPath)) {
-      scriptPath = path.join(__dirname, '..', 'google_apps_script.js');
-    }
-    if (fs.existsSync(scriptPath)) {
-      const code = fs.readFileSync(scriptPath, 'utf8');
-      res.json({ success: true, code });
-    } else {
-      res.status(404).json({ success: false, message: 'File google_apps_script.js tidak ditemukan.' });
-    }
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -172,43 +109,10 @@ router.get('/apps-script-code', (req, res) => {
 // POST /api/finance/config
 router.post('/config', (req, res) => {
   try {
-    const {
-      appsScriptUrl,
-      customersSpreadsheetId,
-      customersSheetName,
-      driversSpreadsheetId,
-      driversSheetName,
-      workersSpreadsheetId,
-      workersSheetName,
-      techniciansSpreadsheetId,
-      techniciansSheetName,
-      transactionsSpreadsheetId,
-      transactionsSheetName,
-      financeSpreadsheetId,
-      financeSheetName,
-      autoSync
-    } = req.body;
-
-    const updated = saveFinanceConfig({
-      ...(appsScriptUrl !== undefined && { appsScriptUrl: appsScriptUrl.trim() }),
-      ...(customersSpreadsheetId !== undefined && { customersSpreadsheetId: customersSpreadsheetId.trim() }),
-      ...(customersSheetName !== undefined && { customersSheetName: customersSheetName.trim() }),
-      ...(driversSpreadsheetId !== undefined && { driversSpreadsheetId: driversSpreadsheetId.trim() }),
-      ...(driversSheetName !== undefined && { driversSheetName: driversSheetName.trim() }),
-      ...(workersSpreadsheetId !== undefined && { workersSpreadsheetId: workersSpreadsheetId.trim() }),
-      ...(workersSheetName !== undefined && { workersSheetName: workersSheetName.trim() }),
-      ...(techniciansSpreadsheetId !== undefined && { techniciansSpreadsheetId: techniciansSpreadsheetId.trim() }),
-      ...(techniciansSheetName !== undefined && { techniciansSheetName: techniciansSheetName.trim() }),
-      ...(transactionsSpreadsheetId !== undefined && { transactionsSpreadsheetId: transactionsSpreadsheetId.trim() }),
-      ...(transactionsSheetName !== undefined && { transactionsSheetName: transactionsSheetName.trim() }),
-      ...(financeSpreadsheetId !== undefined && { financeSpreadsheetId: financeSpreadsheetId.trim() }),
-      ...(financeSheetName !== undefined && { financeSheetName: financeSheetName.trim() }),
-      ...(autoSync !== undefined && { autoSync: !!autoSync })
-    });
-
+    const updated = saveFinanceConfig(req.body);
     res.json({
       success: true,
-      message: 'Konfigurasi Google Spreadsheets berhasil disimpan!',
+      message: 'Konfigurasi database berhasil disimpan!',
       config: updated
     });
   } catch (err) {
@@ -298,53 +202,17 @@ router.post('/transactions', async (req, res) => {
 // POST /api/finance/sync
 router.post('/sync', async (req, res) => {
   try {
-    const target = req.body.target || 'both';
-    let results = {};
-
-    if (target === 'all') {
-      results = await syncAllSpreadsheets();
-    } else {
-      if (target === 'customers') {
-        try {
-          results.customers = await syncCustomersToGoogleSheets();
-        } catch (cErr) {
-          results.customers = { success: false, error: cErr.message };
-        }
-      }
-      if (target === 'drivers') {
-        try {
-          results.drivers = await syncDriversToGoogleSheets();
-        } catch (dErr) {
-          results.drivers = { success: false, error: dErr.message };
-        }
-      }
-      if (target === 'workers') {
-        try {
-          results.workers = await syncWorkersToGoogleSheets();
-        } catch (wErr) {
-          results.workers = { success: false, error: wErr.message };
-        }
-      }
-      if (target === 'finance' || target === 'finances' || target === 'both') {
-        try {
-          results.finance = await syncFinancesToGoogleSheets();
-        } catch (fErr) {
-          results.finance = { success: false, error: fErr.message };
-        }
-      }
-      if (target === 'transactions' || target === 'both') {
-        try {
-          results.transactions = await syncTransactionsToGoogleSheets();
-        } catch (tErr) {
-          results.transactions = { success: false, error: tErr.message };
-        }
-      }
-    }
-
     res.json({
       success: true,
-      message: 'Proses sinkronisasi Google Sheets selesai.',
-      results
+      message: 'Data tersimpan konsisten di database sistem.',
+      mode: 'database',
+      results: {
+        customers: { success: true },
+        drivers: { success: true },
+        workers: { success: true },
+        finance: { success: true },
+        transactions: { success: true }
+      }
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

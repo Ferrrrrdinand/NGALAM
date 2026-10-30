@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
   const trackForm = document.getElementById('trackForm');
   const ticketInput = document.getElementById('ticketInput');
@@ -32,6 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const query = ticketInput?.value.trim();
     if (!query) return;
     performTrack(query);
+  });
+
+  // Handle Quick Chip Example Clicks
+  document.querySelectorAll('.quick-chip-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const ticket = btn.getAttribute('data-ticket');
+      if (ticket && ticketInput) {
+        ticketInput.value = ticket;
+        performTrack(ticket);
+      }
+    });
   });
 
   // Core tracking request

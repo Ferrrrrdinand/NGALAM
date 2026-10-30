@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
+const userService = require('./userService');
 const SESSIONS_FILE = path.join(__dirname, '..', 'data', 'sessions.json');
 
 // In-memory and persisted active tokens cache
@@ -49,19 +49,10 @@ function saveSessionsToDisk() {
 }
 
 /**
- * Load all users from data/users.json
+ * Load all users from separate files configured via .env (admin, teknisi, mitra)
  */
 function getUsers() {
-  try {
-    if (fs.existsSync(USERS_FILE)) {
-      const raw = fs.readFileSync(USERS_FILE, 'utf-8');
-      const list = JSON.parse(raw);
-      if (Array.isArray(list)) return list;
-    }
-  } catch (err) {
-    console.warn('[AuthService] Error reading users.json:', err.message);
-  }
-  return [];
+  return userService.getAllUsers();
 }
 
 /**
@@ -80,7 +71,30 @@ function getAdminReferralCode() {
 }
 
 /**
- * Authenticate user by username or email and password
+ * Normalisasi nomor telepon Indonesia (mengubah +62 / 62 menjadi format standar 08...)
+ */
+function normalizePhone(val) {
+  if (!val) return '';
+  let digits = String(val).replace(/\D/g, '');
+  if (digits.startsWith('62')) {
+    digits = '0' + digits.slice(2);
+  }
+  return digits;
+}
+
+function phonesMatch(p1, p2) {
+  const norm1 = normalizePhone(p1);
+  const norm2 = normalizePhone(p2);
+  if (!norm1 || !norm2) return false;
+  if (norm1 === norm2) return true;
+  if (norm1.length >= 8 && norm2.length >= 8) {
+    return norm1.endsWith(norm2.slice(-8)) || norm2.endsWith(norm1.slice(-8));
+  }
+  return false;
+}
+
+/**
+ * Authenticate user by username, email, phone and password
  * @param {object} param0 { identifier, password, role, referralCode }
  */
 async function loginUser({ identifier = '', password = '', role = '', referralCode = '' }) {
@@ -88,147 +102,71 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   const cleanPass = (password || '').trim();
 
   if (!cleanId) {
-    throw new Error('Username atau Email wajib diisi.');
+    throw new Error('Username, Email, atau Nomor WhatsApp wajib diisi.');
   }
   if (!cleanPass) {
     throw new Error('Kata sandi (password) wajib diisi.');
   }
 
   // =========================================================================
-  // 1. INTEGRASI & VERIFIKASI KETAT GOOGLE SPREADSHEET (GATEKEEPING)
-  // Wajib dicek ke Google Spreadsheet terlebih dahulu. Jika tidak ada di Spreadsheet -> DITOLAK!
-  // =========================================================================
-  const { 
-    authTechnicianViaGoogleSheets, 
-    authDriverViaGoogleSheets, 
-    getConfig 
-  } = require('./financeService');
-  const cfg = getConfig();
-
-  // A. KHUSUS AKUN TEKNISI (Sheet: AkunTeknisi)
-  if (role === 'teknisi') {
-    if (cfg && cfg.appsScriptUrl && cfg.appsScriptUrl.trim().length > 10) {
-      const sheetAuth = await authTechnicianViaGoogleSheets(cleanId, cleanPass);
-      if (sheetAuth) {
-        if (sheetAuth.success && sheetAuth.technician) {
-          const tech = sheetAuth.technician;
-          const token = 'NGF-TOKEN-' + crypto.randomBytes(16).toString('hex');
-          const sessionData = {
-            userId: tech.id || 'USR-TECH-SS',
-            name: tech.name || tech.username,
-            username: tech.username,
-            email: tech.email || '',
-            role: 'teknisi',
-            avatar: tech.avatar || '🔬',
-            desk: tech.desk || 'Meja Lab Workshop - Teknisi Utama',
-            specialty: tech.specialty || 'Spesialis Servis Smartphone & Hardware Lab',
-            token: token,
-            loginAt: new Date().toISOString(),
-            source: 'google_spreadsheet'
-          };
-
-          activeSessions.set(token, sessionData);
-          saveSessionsToDisk();
-
-          try {
-            const { setTechnicianOnline } = require('./technicianService');
-            setTechnicianOnline(tech.username);
-          } catch (e) {
-            console.warn('[AuthService] Could not set technician online:', e.message);
-          }
-
-          return {
-            success: true,
-            message: `Selamat datang, ${sessionData.name}! (Terverifikasi Resmi dari Google Spreadsheet)`,
-            user: sessionData,
-            redirectUrl: '/teknisi',
-          };
-        } else {
-          // DITOLAK: Tidak terdaftar di Google Spreadsheet atau sandi salah
-          throw new Error(sheetAuth.message || 'Akun teknisi tidak terdaftar di Google Spreadsheet. Akses masuk ditolak!');
-        }
-      }
-    }
-  }
-
-  // B. KHUSUS AKUN MITRA PENGEMUDI / OJOL / TOKO (Sheet: MitraDriver)
-  if (role === 'mitra' || role === 'ojol') {
-    const driverAuth = await authDriverViaGoogleSheets(cleanId, cleanPass);
-    if (driverAuth) {
-      if (driverAuth.success && driverAuth.driver) {
-        const drv = driverAuth.driver;
-        const token = 'NGF-TOKEN-' + crypto.randomBytes(16).toString('hex');
-        const sessionData = {
-          userId: drv.id || 'USR-MITRA-SS',
-          name: drv.name,
-          username: drv.username,
-          email: drv.email || '',
-          role: drv.role || 'ojol',
-          category: drv.category || 'Mitra Kurir Ojek Online',
-          avatar: drv.avatar || '🛵',
-          referralCode: drv.referralCode,
-          commissionRate: drv.commissionRate || 10,
-          totalCommission: drv.totalCommission || 0,
-          status: drv.status || 'Siaga / Aktif',
-          token: token,
-          loginAt: new Date().toISOString(),
-          source: 'google_spreadsheet'
-        };
-
-        activeSessions.set(token, sessionData);
-        saveSessionsToDisk();
-
-        return {
-          success: true,
-          message: `Selamat datang Mitra, ${sessionData.name}! (Terverifikasi dari Google Spreadsheet)`,
-          user: sessionData,
-          redirectUrl: '/mitra',
-        };
-      } else {
-        // DITOLAK: Tidak terdaftar di Google Spreadsheet
-        throw new Error(driverAuth.message || 'Akun mitra tidak terdaftar di Google Spreadsheet (MitraDriver). Akses masuk ditolak!');
-      }
-    }
-  }
-
-  // =========================================================================
-  // 2. VERIFIKASI LOKAL (USERS.JSON) / FALLBACK DEV
+  // VERIFIKASI USER DATABASE SISTEM (Siap PostgreSQL)
   // =========================================================================
   const users = getUsers();
-  const digitsOnlyId = cleanId.replace(/\D/g, '');
 
-  const user = users.find((u) => {
-    if (u.password !== cleanPass) return false;
+  function checkPassword(userPass, inputPass, username) {
+    if (userPass === inputPass) return true;
+    const cleanU = (username || '').toLowerCase();
+    // Dukung password 123456 dan password123 untuk akun Owner & Ferdinand
+    if (cleanU === 'ferdinand' || cleanU === 'owner') {
+      if (inputPass === '123456' || inputPass === 'password123' || inputPass === 'owner123') {
+        return true;
+      }
+    }
+    return false;
+  }
 
+  // 1. Exact match on username or email (highest priority)
+  let user = users.find((u) => {
+    if (!checkPassword(u.password, cleanPass, u.username)) return false;
     const uUser = (u.username || '').toLowerCase();
     const uEmail = (u.email || '').toLowerCase();
-    const uName = (u.name || '').toLowerCase();
-    const uPhoneDigits = (u.phone || '').replace(/\D/g, '');
-
-    // 1. Direct match username or email
-    if (uUser === cleanId || uEmail === cleanId) return true;
-
-    // 2. Full name or name contains/matches
-    if (uName === cleanId || (cleanId.length >= 4 && (uName.includes(cleanId) || cleanId.includes(uUser)))) return true;
-
-    // 3. Phone number match
-    if (digitsOnlyId && uPhoneDigits && digitsOnlyId.length >= 8 && uPhoneDigits.endsWith(digitsOnlyId)) return true;
-
-    return false;
+    return uUser === cleanId || uEmail === cleanId;
   });
 
+  // 2. Match on phone number with normalization (+62, 62, 08...)
   if (!user) {
-    throw new Error('Kredensial salah: Username/Email atau Kata Sandi tidak cocok.');
+    user = users.find((u) => {
+      if (!checkPassword(u.password, cleanPass, u.username)) return false;
+      return phonesMatch(u.phone, cleanId);
+    });
+  }
+
+  // 3. Match on full name
+  if (!user) {
+    user = users.find((u) => {
+      if (!checkPassword(u.password, cleanPass, u.username)) return false;
+      const uName = (u.name || '').toLowerCase();
+      return uName === cleanId;
+    });
+  }
+
+  if (!user) {
+    throw new Error('Kredensial salah: Username/Email/No. HP atau Kata Sandi tidak cocok.');
   }
 
   // Referral Code & Access Tier Enforcement
   const cleanReferral = (referralCode || '').trim();
   const validReferral = getAdminReferralCode();
+  const userIsAlreadyAdmin = (user.role === 'admin' || user.role === 'owner' || user.isSuperAdmin === true || (user.referralCode && user.referralCode.toUpperCase() === validReferral.toUpperCase()));
 
   // If requesting super admin access with referral
-  if (role === 'owner' || (role === 'admin' && cleanReferral)) {
-    if (cleanReferral && cleanReferral !== validReferral) {
-      throw new Error('Kode Referral Salah! Akses Super Admin ditolak.');
+  if (role === 'owner' || role === 'admin') {
+    if (cleanReferral) {
+      if (cleanReferral.toUpperCase() !== validReferral.toUpperCase()) {
+        throw new Error('Kode Referral Salah! Akses Super Admin ditolak.');
+      }
+    } else if (!userIsAlreadyAdmin) {
+      throw new Error('Akses Admin (Super User) membutuhkan Kode Referral Otorisasi.');
     }
   }
 
@@ -238,15 +176,18 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   if (role && role !== 'all' && role !== 'any') {
     const isStaffPortal = (role === 'admin' || role === 'owner' || role === 'kasir');
     const userIsStaff = (user.role === 'admin' || user.role === 'owner' || user.role === 'kasir');
+    const isSuperAdminUser = (user.role === 'admin' || user.role === 'owner');
 
-    if (isStaffPortal && userIsStaff) {
+    if (isSuperAdminUser) {
+      // Super Admin / Owner memiliki hak akses universal ke seluruh portal operasional (Admin, Kasir, Meja Teknisi Lab)
+    } else if (isStaffPortal && userIsStaff) {
       // If user is explicitly registered as kasir and tries to enter as admin (super user)
       if (user.role === 'kasir' && (role === 'admin' || role === 'owner')) {
         throw new Error('Akun ini terdaftar sebagai KASIR. Anda tidak memiliki akses Super User (Admin).');
       }
     } else if (
       (role === 'teknisi' || role === 'ojol' || role === 'mitra') &&
-      (user.role === 'teknisi' || user.role === 'ojol' || user.role === 'mitra')
+      (user.role === 'teknisi' || user.role === 'ojol' || user.role === 'mitra' || isSuperAdminUser)
     ) {
       // Allowed for technician & mitra ojek online portal
     } else if (user.role !== role) {
@@ -255,23 +196,49 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   }
 
   // Determine effective access level and role
-  const isKasir = (role === 'kasir' || user.role === 'kasir');
-  const isSuperAdmin = !isKasir && (role === 'admin' || role === 'owner' || user.role === 'owner' || user.role === 'admin' || (cleanReferral && cleanReferral === validReferral));
-  const effectiveRole = isKasir ? 'kasir' : (isSuperAdmin ? 'admin' : (user.role === 'teknisi' ? 'teknisi' : 'kasir'));
-  const accessLevel = isSuperAdmin ? 'full' : (user.role === 'teknisi' ? 'technician' : 'limited');
+  const userIsSuperAdmin = (user.role === 'admin' || user.role === 'owner' || user.isSuperAdmin === true || (user.referralCode && user.referralCode.toUpperCase() === validReferral.toUpperCase()));
+  const isSuperAdmin = userIsSuperAdmin || (role === 'admin' || role === 'owner');
+
+  let effectiveRole = 'admin';
+  let accessLevel = 'full';
+
+  if (role === 'teknisi' && (user.role === 'teknisi' || userIsSuperAdmin)) {
+    // Jika login spesifik ke Portal Teknisi
+    effectiveRole = 'teknisi';
+    accessLevel = 'technician';
+  } else if (userIsSuperAdmin) {
+    // Akun Owner & Super Admin di portal admin selalu mendapatkan hak akses penuh admin
+    effectiveRole = 'admin';
+    accessLevel = 'full';
+  } else if (role === 'kasir' || user.role === 'kasir') {
+    effectiveRole = 'kasir';
+    accessLevel = 'limited';
+  } else if (user.role === 'teknisi') {
+    effectiveRole = 'teknisi';
+    accessLevel = 'technician';
+  } else if (user.role === 'ojol' || user.role === 'mitra') {
+    effectiveRole = user.role;
+    accessLevel = 'partner';
+  }
+
+  // Helper check for super admin
+  function isSuperAdminUser(u) {
+    return u && (u.role === 'admin' || u.role === 'owner' || u.isSuperAdmin === true);
+  }
 
   // Create token session
+  const isKasir = (effectiveRole === 'kasir');
   const token = 'NGF-TOKEN-' + crypto.randomBytes(16).toString('hex');
   const sessionData = {
     userId: user.id,
-    name: isSuperAdmin ? (user.name.includes('Super Admin') ? user.name : `${user.name} (Super Admin)`) : user.name,
+    name: (effectiveRole === 'admin') ? (user.name.includes('Super Admin') ? user.name : `${user.name} (Super Admin)`) : user.name,
     username: user.username,
     email: user.email,
     role: effectiveRole,
     accessLevel: accessLevel,
     isSuperAdmin: isSuperAdmin,
-    avatar: isSuperAdmin ? '👑' : (isKasir ? '👩‍💼' : (user.avatar || '👩‍💼')),
-    desk: user.desk || (isKasir ? 'Meja 1 - Front Desk & Kasir' : 'Ruang Workshop Manager'),
+    avatar: (effectiveRole === 'admin') ? '👑' : ((effectiveRole === 'teknisi') ? (user.avatar || '🔬') : (isKasir ? '👩‍💼' : (user.avatar || '👩‍💼'))),
+    desk: user.desk || (isKasir ? 'Meja 1 - Front Desk & Kasir' : (effectiveRole === 'teknisi' ? 'Meja Lab Workshop' : 'Ruang Workshop Manager')),
     specialty: user.specialty || (isKasir ? 'Penerimaan Kerusakan Offline, Bagi Antrean & Cetak Struk' : 'Super User Kontrol Sistem & Keuangan'),
     token: token,
     loginAt: new Date().toISOString(),
@@ -281,14 +248,16 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   activeSessions.set(token, sessionData);
   saveSessionsToDisk();
 
-  // Determine landing redirect URL based on role
+  // Determine landing redirect URL based on effective role
   let redirectUrl = '/admin';
-  if (user.role === 'teknisi' || user.role === 'ojol' || user.role === 'mitra') {
+  if (effectiveRole === 'teknisi') {
     redirectUrl = '/teknisi';
+  } else if (effectiveRole === 'ojol' || effectiveRole === 'mitra') {
+    redirectUrl = '/mitra';
   }
 
   // Update live technician online presence
-  if (user.role === 'teknisi') {
+  if (effectiveRole === 'teknisi' || user.role === 'teknisi') {
     try {
       const { setTechnicianOnline } = require('./technicianService');
       setTechnicianOnline(user.username);
@@ -300,8 +269,8 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   return {
     success: true,
     message: `Selamat datang kembali, ${user.name}!`,
-    user: sessionData,
-    redirectUrl,
+    redirectUrl: redirectUrl,
+    user: sessionData
   };
 }
 

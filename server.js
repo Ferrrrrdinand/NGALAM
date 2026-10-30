@@ -2,9 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-
-const { initSheetHeaders } = require('./services/googleSheets');
 const { verifySession } = require('./services/authService');
+const { initPostgresDatabase } = require('./services/postgresService');
 
 // Modular Route Handlers (Separated per domain)
 const authRoutes = require('./routes/authRoutes');
@@ -15,6 +14,7 @@ const financeRoutes = require('./routes/financeRoutes');
 const promoRoutes = require('./routes/promoRoutes');
 const chatbotRoutes = require('./routes/chatbotRoutes');
 const mitraRoutes = require('./routes/mitraRoutes');
+const exportRoutes = require('./routes/exportRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -140,6 +140,11 @@ app.get(['/admin', '/admin.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
 });
 
+// 8b. Halaman Khusus Ekspor Riwayat Transaksi ke Excel (Khusus Role Admin Super User)
+app.get(['/admin/export', '/admin/export.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'export.html'));
+});
+
 // 9. Khusus Login Teknisi Lab & Kurir Ojol (Dedicated Technician Login)
 app.get(['/teknisi/login', '/teknisi/login.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'teknisi', 'login.html'));
@@ -163,9 +168,33 @@ app.use('/api/customer', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/technicians', technicianRoutes);
 app.use('/api/finance', financeRoutes);
+app.use('/api/export', exportRoutes);
 app.use('/api/mitra', mitraRoutes);
 app.use('/api', promoRoutes);
 app.use('/api', chatbotRoutes);
+
+const db = require('./services/db');
+
+// Database status badge endpoint (Dynamic live PostgreSQL status)
+app.get('/api/database/status', async (req, res) => {
+  try {
+    const status = await db.testConnection();
+    res.json({
+      success: true,
+      ...status,
+      message: status.connected 
+        ? `Terhubung ke database PostgreSQL "${status.database}".` 
+        : `PostgreSQL belum terhubung (${status.error || 'Cek kredensial .env'}). Sistem berjalan dengan penyimpanan lokal.`
+    });
+  } catch (err) {
+    res.json({
+      success: true,
+      connected: false,
+      mode: 'fallback',
+      message: 'Sistem aktif dalam mode penyimpanan data lokal.'
+    });
+  }
+});
 
 // Fallback for API 404
 app.use('/api', (req, res) => {
@@ -201,10 +230,11 @@ function startServer(portToTry) {
     console.log(`👤 Login Pelanggan: http://localhost:${portToTry}/login`);
     console.log(`======================================================\n`);
 
+    // Inisialisasi Database PostgreSQL & Skema Tabel
     try {
-      await initSheetHeaders();
-    } catch (e) {
-      console.warn('[Google Sheets] Init warning:', e.message);
+      await initPostgresDatabase();
+    } catch (pgErr) {
+      console.warn('[PostgreSQL] Inisialisasi awal database:', pgErr.message);
     }
   });
 

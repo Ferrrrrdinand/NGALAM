@@ -12,13 +12,13 @@
     "image": "images/promo-banner-1.jpg",
     "active": true,
     "createdAt": "2026-10-23T08:00:00.000Z",
-    "updatedAt": "2026-10-23T04:10:49.212Z"
+    "updatedAt": "2026-10-29T14:45:00.000Z"
   },
   {
     "id": "PROMO-002",
     "title": "Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA",
     "description": "Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal.",
-    "badgeTag": "🟢 WORKSHOP MEJA TERBUKA & TRANSPARAN",
+    "badgeTag": "🟢 WORKSHOP MEJA TERBUKA",
     "badgePill": "⚡ BISA DITUNGGU (30–60 MENIT)",
     "theme": "green",
     "promoCode": "🛡️ GARANSI S/D 90 HARI",
@@ -27,7 +27,7 @@
     "image": "images/spesialis-hp-banner.jpg",
     "active": true,
     "createdAt": "2026-10-23T08:05:00.000Z",
-    "updatedAt": "2026-10-26T15:35:05.399Z"
+    "updatedAt": "2026-10-29T14:45:00.000Z"
   },
   {
     "id": "PROMO-003",
@@ -39,9 +39,9 @@
     "promoCode": "FREEGLASS9H",
     "buttonText": "Pesan Ganti Layar ↗",
     "buttonLink": "pesan-servis/index.html?promo=FREEGLASS9H",
-    "image": "images/promo-banner-1.jpg",
+    "image": "images/promo-banner-tempered-glass.jpg",
     "active": true,
     "createdAt": "2026-10-23T08:10:00.000Z",
-    "updatedAt": "2026-10-26T15:35:14.802Z"
+    "updatedAt": "2026-10-29T14:45:00.000Z"
   }
 ]

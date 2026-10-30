@@ -1,1 +1,162 @@
-﻿[]
+[
+  {
+    "id": "CUST-20261029-4414",
+    "name": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 00.29",
+    "registeredVia": "Portal Pelanggan Web"
+  },
+  {
+    "id": "CUST-20261029-7465",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.00",
+    "registeredVia": "Pemesanan Servis Smartphone"
+  },
+  {
+    "id": "CUST-20261029-4116",
+    "name": "Pelanggan Uji Coba",
+    "whatsapp": "081299988877",
+    "email": "",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 12.16",
+    "registeredVia": "Portal Pelanggan Web"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Budi Test",
+    "whatsapp": "081234567890",
+    "email": "",
+    "district": "Malang",
+    "pin": "123456",
+    "registeredAt": "29 Okt 2026, 01.03",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "28 Okt 2026, 14.30 WIB",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "28 Okt 2026, 14.30 WIB",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "28 Okt 2026, 14.30 WIB",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "28 Okt 2026, 14.30 WIB",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-202610282993",
+    "name": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "registeredAt": "28 Okt 2026, 14.30 WIB",
+    "registeredVia": "Otomatisasi Tiket Servis"
+  }
+]

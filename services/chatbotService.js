@@ -3,7 +3,7 @@
  * Handles intelligent query understanding, ticket lookups, and auto-reply generation.
  */
 
-const { getAllOrders } = require('./googleSheets');
+const { getAllOrders } = require('./orderService');
 
 const PIC_CONTACT = {
   name: 'Liem Hingky Liman',
@@ -12,9 +12,17 @@ const PIC_CONTACT = {
 };
 
 const WORKSHOP_INFO = {
-  address: 'Jl. Boulevard Digital No. 88, Tebet, Jakarta Selatan (Seberang Stasiun)',
+  address: 'Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang, Jawa Timur 65115 (Ngalam FixPro)',
   hours: 'Senin – Sabtu: 09.00 – 18.00 WIB (Minggu Janji Temu)',
-  pickup: 'Tersedia layanan antar-jemput (Pickup) bergaransi & berasuransi di area kota',
+  pickup: 'Tersedia layanan antar-jemput (Pickup) bergaransi & berasuransi di area Malang Raya',
+  mapsUrl: 'https://maps.app.goo.gl/q7oQM5TJbKacRHKj7',
+};
+
+const SOCIAL_INFO = {
+  instagram: 'https://www.instagram.com/ngalam_fixpro?utm_source=ig_web_button_share_sheet&srtk=ZDNlZDc0MzIxNw==',
+  handle: '@ngalam_fixpro',
+  tiktok: 'https://www.tiktok.com/@ngalam_fix_pro',
+  youtube: 'https://www.youtube.com',
 };
 
 /**
@@ -41,12 +49,12 @@ async function processChatMessage(rawMessage = '') {
             `• Teknisi: <b>${found.technician || 'Meja Pengerjaan'}</b><br/>` +
             `• Status: <span style="color:#38bdf8;font-weight:700;">${found.status || 'Diproses'} (Step ${found.step || 1} dari 5)</span><br/>` +
             `• Catatan Teknisi: <i>"${found.diagnoseNote || 'Unit dalam observasi'}"</i><br/><br/>` +
-            `👉 <a href="login/index.html?track=${encodeURIComponent(found.id)}" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Buka 5-Step Tracker Lengkap ↗</a>`,
+            `👉 <a href="lacak/index.html?track=${encodeURIComponent(found.id)}" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Buka 5-Step Tracker Lengkap ↗</a>`,
           chips: ['Cek Status Tiket Lain', 'Hubungi Teknisi', 'Lokasi Workshop'],
         };
       } else {
         return {
-          reply: `⚠️ Nomor tiket <b>${searchedTicket}</b> belum terdaftar di antrian sistem. Pastikan format nomor tiket benar (contoh: NGF-20261023-0001) atau masukkan nomor WhatsApp Anda di halaman <a href="login/index.html" style="color:#38bdf8;text-decoration:underline;"><b>Lacak Tiket</b></a>.`,
+          reply: `⚠️ Nomor tiket <b>${searchedTicket}</b> belum terdaftar di antrian sistem. Pastikan format nomor tiket benar (contoh: NGF-20261023-0001) atau masukkan nomor WhatsApp Anda di halaman <a href="lacak/index.html" style="color:#38bdf8;text-decoration:underline;"><b>Lacak Tiket</b></a>.`,
           chips: ['Lacak Tiket', 'Tanya PIC Mas Hingky', 'Biaya Servis'],
         };
       }
@@ -116,12 +124,13 @@ async function processChatMessage(rawMessage = '') {
   // 7. Lokasi Workshop, Alamat & Jam Operasional
   if (q.includes('lokasi') || q.includes('alamat') || q.includes('buka') || q.includes('tutup') || q.includes('jam') || q.includes('dimana') || q.includes('posisi')) {
     return {
-      reply: `📍 <b>Lokasi Workshop Ngalam Fix Pro:</b><br/>` +
+      reply: `📍 <b>Lokasi Workshop Ngalam FixPro:</b><br/>` +
         `<b>${WORKSHOP_INFO.address}</b><br/><br/>` +
+        `👉 <a href="${WORKSHOP_INFO.mapsUrl}" target="_blank" style="color:#38bdf8;font-weight:700;text-decoration:underline;">Buka Petunjuk Arah di Google Maps ↗</a><br/><br/>` +
         `🕒 <b>Jam Operasional:</b><br/>` +
         `• ${WORKSHOP_INFO.hours}<br/><br/>` +
         `🛵 <i>${WORKSHOP_INFO.pickup}</i>`,
-      chips: ['WhatsApp PIC Mas Hingky', 'Pesan Servis Sekarang', 'Biaya Servis'],
+      chips: ['💬 Kontak WhatsApp', 'Pesan Servis Sekarang', 'Biaya Servis'],
     };
   }
 
@@ -139,21 +148,32 @@ async function processChatMessage(rawMessage = '') {
   // 9. Kontak PIC, Owner & WhatsApp
   if (q.includes('hingky') || q.includes('kontak') || q.includes('wa') || q.includes('nomor') || q.includes('telepon') || q.includes('owner') || q.includes('admin')) {
     return {
-      reply: `👨‍💼 <b>Kontak Langsung PIC Ngalam Fix Pro:</b><br/>` +
-        `• Nama PIC: <b>${PIC_CONTACT.name}</b><br/>` +
-        `• WhatsApp: <a href="${PIC_CONTACT.waUrl}?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20servis%20HP" target="_blank" style="color:#22c55e;font-weight:bold;text-decoration:underline;">${PIC_CONTACT.phone}</a><br/>` +
-        `• Konsultasi teknis, cek ketersediaan stok komponen tipe HP Anda, dan diagnosa awal selalu gratis!`,
-      chips: ['Chat WhatsApp Sekarang', 'Biaya Ganti Layar', 'Lokasi Workshop'],
+      reply: `👨‍💼 <b>Layanan Pelanggan Ngalam Fix Pro:</b><br/>` +
+        `• Konsultasi teknis kerusakan, cek ketersediaan suku cadang HP Anda, dan diagnosa awal selalu <b>100% Gratis</b>.<br/>` +
+        `• Klik tombol di bawah untuk langsung terhubung dengan admin workshop kami:<br/>` +
+        `<a href="${PIC_CONTACT.waUrl}?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20servis%20HP" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#22c55e;color:#ffffff;padding:7px 16px;border-radius:999px;font-weight:700;font-size:0.86rem;text-decoration:none;margin-top:8px;box-shadow:0 4px 12px rgba(34,197,94,0.3);">💬 Chat WhatsApp Workshop ↗</a>`,
+      chips: ['Lokasi Workshop', 'Biaya Layar', 'Ganti Baterai'],
     };
   }
 
-  // 10. Status Tracking Progres Servis
+  // 10. Sosial Media & Instagram
+  if (q.includes('instagram') || q.includes('ig') || q.includes('sosmed') || q.includes('sosial') || q.includes('media') || q.includes('tiktok') || q.includes('youtube')) {
+    return {
+      reply: `📸 <b>Kanal Resmi & Media Sosial Ngalam Fix Pro:</b><br/>` +
+        `• <b>Instagram:</b> <a href="${SOCIAL_INFO.instagram}" target="_blank" style="color:#e11d48;font-weight:700;text-decoration:underline;">@ngalam_fixpro ↗</a> (Galeri hasil pengerjaan, story harian lab & testimoni)<br/>` +
+        `• <b>TikTok:</b> <a href="${SOCIAL_INFO.tiktok}" target="_blank" style="color:#0f172a;font-weight:700;text-decoration:underline;">@ngalam_fix_pro ↗</a> (Video live reparasi & edukasi baterai)<br/>` +
+        `• <b>Google Maps:</b> <a href="${WORKSHOP_INFO.mapsUrl}" target="_blank" style="color:#1d4ed8;font-weight:700;text-decoration:underline;">Ngalam FixPro (⭐ 5.0) ↗</a>`,
+      chips: ['📍 Lokasi Workshop', '💬 Kontak WhatsApp', '📱 Biaya Servis'],
+    };
+  }
+
+  // 11. Status Tracking Progres Servis
   if (q.includes('status') || q.includes('lacak') || q.includes('tiket') || q.includes('progres') || q.includes('cek')) {
     return {
       reply: `🔍 <b>Lacak Progres Pengerjaan Real-Time:</b><br/>` +
         `Anda dapat memantau setiap langkah (Step 1 s/d 5) unit Anda secara langsung.<br/>` +
         `Silakan ketik nomor tiket Anda di sini (contoh: <code>NGF-20261023-0001</code>) atau buka halaman <a href="login/index.html" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Lacak Tiket Servis ↗</a>.`,
-      chips: ['Lokasi Workshop', 'Biaya Ganti Baterai', 'Tanya Mas Hingky'],
+      chips: ['Lokasi Workshop', 'Biaya Ganti Baterai', 'Kontak WhatsApp'],
     };
   }
 
@@ -161,8 +181,9 @@ async function processChatMessage(rawMessage = '') {
   return {
     reply: `Halo! Saya <b>NgalamBot</b> dari Ngalam Fix Pro.<br/>` +
       `Ada kendala pada smartphone Android atau iPhone Anda?<br/>` +
-      `Anda dapat menanyakan estimasi biaya LCD/baterai, lokasi workshop, atau langsung terhubung dengan PIC kami <b>${PIC_CONTACT.name}</b> di WhatsApp: <a href="${PIC_CONTACT.waUrl}?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20HP" target="_blank" style="color:#22c55e;font-weight:700;">${PIC_CONTACT.phone}</a>.`,
-    chips: ['📱 Biaya Layar', '🔋 Ganti Baterai', '📍 Lokasi Workshop', '🔍 Lacak Tiket', '👨‍🔧 Kontak PIC'],
+      `Anda dapat menanyakan estimasi biaya LCD/baterai, lokasi workshop, atau langsung konsultasi via WhatsApp:<br/>` +
+      `<a href="${PIC_CONTACT.waUrl}?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20HP" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#22c55e;color:#ffffff;padding:7px 16px;border-radius:999px;font-weight:700;font-size:0.86rem;text-decoration:none;margin-top:8px;box-shadow:0 4px 12px rgba(34,197,94,0.3);">💬 Chat WhatsApp Workshop ↗</a>`,
+    chips: ['📱 Biaya Layar', '🔋 Ganti Baterai', '📍 Lokasi Workshop', '🔍 Lacak Tiket', '💬 Kontak WhatsApp'],
   };
 }
 

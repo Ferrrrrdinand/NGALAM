@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
   // DOM Elements - Mode Toggle
   const btnCustModeLogin = document.getElementById('btnCustModeLogin');
@@ -24,13 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const custLoginSubmitBtn = document.getElementById('custLoginSubmitBtn');
   const customerLoginAlert = document.getElementById('customerLoginAlert');
 
-  // Keamanan Ketat: Selalu bersihkan sesi & form saat halaman login dibuka dari beranda / mana pun
-  try {
-    localStorage.removeItem('ngalam_customer_session');
-    sessionStorage.removeItem('ngalam_customer_session');
-  } catch (_) {}
-  if (custIdentifier) custIdentifier.value = '';
-  if (custPin) custPin.value = '';
+  // Periksa apakah pelanggan sudah memiliki sesi tersimpan
+  const urlParams = new URLSearchParams(window.location.search);
+  const isCustLoggedOut = urlParams.get('action') === 'logout';
+  if (isCustLoggedOut) {
+    try {
+      localStorage.removeItem('ngalam_customer_session');
+      sessionStorage.removeItem('ngalam_customer_session');
+    } catch (_) {}
+  }
 
   // DOM Elements - Register
   const customerRegisterForm = document.getElementById('customerRegisterForm');
@@ -110,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Check URL parameters for tab
-  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('mode') === 'register') {
     switchToRegisterMode();
   }
@@ -139,21 +140,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Toggle PIN visibility
   toggleCustPinBtn?.addEventListener('click', () => {
     if (!custPin) return;
-    if (custPin.type === 'password') {
-      custPin.type = 'text';
-      toggleCustPinBtn.textContent = '🔒';
+    const isPass = (custPin.type === 'password');
+    custPin.type = isPass ? 'text' : 'password';
+    const eyeOpen = toggleCustPinBtn.querySelector('.eye-icon-open');
+    const eyeClosed = toggleCustPinBtn.querySelector('.eye-icon-closed');
+    if (eyeOpen && eyeClosed) {
+      eyeOpen.style.display = isPass ? 'none' : 'block';
+      eyeClosed.style.display = isPass ? 'block' : 'none';
     } else {
-      custPin.type = 'password';
-      toggleCustPinBtn.textContent = '👁️';
+      toggleCustPinBtn.textContent = isPass ? '🔒' : '👁️';
     }
   });
 
   toggleRegPinBtn?.addEventListener('click', () => {
     if (!regCustPin) return;
-    const isPass = regCustPin.type === 'password';
+    const isPass = (regCustPin.type === 'password');
     regCustPin.type = isPass ? 'text' : 'password';
     if (regCustPinConfirm) regCustPinConfirm.type = isPass ? 'text' : 'password';
-    toggleRegPinBtn.textContent = isPass ? '🔒' : '👁️';
+    const eyeOpen = toggleRegPinBtn.querySelector('.eye-icon-open');
+    const eyeClosed = toggleRegPinBtn.querySelector('.eye-icon-closed');
+    if (eyeOpen && eyeClosed) {
+      eyeOpen.style.display = isPass ? 'none' : 'block';
+      eyeClosed.style.display = isPass ? 'block' : 'none';
+    } else {
+      toggleRegPinBtn.textContent = isPass ? '🔒' : '👁️';
+    }
   });
 
   function showCustLoginAlert(msg, isSuccess = false) {
@@ -195,6 +206,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pin = custPin?.value.trim();
 
     if (!identifier) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Nomor WhatsApp / Identitas Wajib Diisi',
+          message: 'Silakan masukkan nomor WhatsApp atau email Anda untuk membuka riwayat servis.',
+          targetInputId: 'custIdentifier'
+        });
+      }
       showCustLoginAlert('Silakan masukkan nomor WhatsApp atau nomor tiket Anda.');
       return;
     }
@@ -207,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
         ? window.getNgalamApiBase()
-        : 'http://localhost:3000';
+        : '';
       if (window.resolveNgalamApiBase) {
         try {
           apiBase = await window.resolveNgalamApiBase();
@@ -227,20 +245,74 @@ document.addEventListener('DOMContentLoaded', () => {
           ...data.customer,
           savedOrders: data.orders || []
         }));
+
+        if (window.showAuthSuccessModal) {
+          window.showAuthSuccessModal({
+            title: 'Login Berhasil!',
+            subtitle: `Selamat datang kembali, ${data.customer.name}!`,
+            user: {
+              name: data.customer.name,
+              role: 'customer',
+              roleText: '📱 Pelanggan Member Terdaftar',
+              avatar: '📱'
+            },
+            duration: 1300,
+            onComplete: () => {
+              renderCustomerDashboard(data.customer, data.orders || []);
+            }
+          });
+          return;
+        }
+
         setTimeout(() => {
           renderCustomerDashboard(data.customer, data.orders || []);
         }, 600);
       } else if (data.needRegister) {
-        showCustLoginAlert(data.message || 'Nomor WhatsApp belum terdaftar. Silakan registrasi terlebih dahulu.');
+        const needMsg = data.message || 'Nomor WhatsApp belum terdaftar di database pelanggan kami.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Nomor Belum Terdaftar',
+            message: needMsg,
+            hints: [
+              'Pastikan nomor WhatsApp yang Anda ketik sesuai saat menyerahkan unit HP.',
+              'Jika ini servis pertama Anda, silakan tekan tombol di bawah untuk mendaftar baru.'
+            ],
+            targetInputId: 'custIdentifier',
+            onRetry: () => {
+              switchToRegisterMode(identifier);
+            }
+          });
+        }
+        showCustLoginAlert(needMsg);
         setTimeout(() => {
           switchToRegisterMode(identifier);
         }, 1200);
       } else {
-        showCustLoginAlert(data.message || 'Gagal masuk akun pelanggan.');
+        const errMsg = data.message || 'Nomor WhatsApp atau PIN Anda tidak cocok.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Login Pelanggan Gagal!',
+            message: errMsg,
+            hints: [
+              'PIN standar akun pelanggan baru adalah <b>123456</b> jika belum pernah diubah.',
+              'Periksa kembali nomor WhatsApp dan ketelitian penulisan angka.',
+              'Jika lupa PIN, hubungi CS Workshop melalui WhatsApp untuk verifikasi tiket.'
+            ],
+            targetInputId: 'custPin'
+          });
+        }
+        showCustLoginAlert(errMsg);
       }
     } catch (err) {
       console.warn('[Customer Login] Server fetch error:', err);
-      showCustLoginAlert('Gagal terhubung ke server: ' + (err.message || 'Periksa koneksi jaringan Anda.'));
+      const errMsg = 'Gagal terhubung ke server: ' + (err.message || 'Periksa koneksi jaringan Anda.');
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Koneksi Server Gagal',
+          message: errMsg
+        });
+      }
+      showCustLoginAlert(errMsg);
     } finally {
       if (custLoginSubmitBtn) {
         custLoginSubmitBtn.disabled = false;
@@ -260,6 +332,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pinConfirm = regCustPinConfirm?.value.trim();
 
     if (!name || !whatsapp) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Kolom Wajib Diisi',
+          message: 'Nama lengkap dan nomor WhatsApp aktif wajib diisi untuk pendaftaran member.',
+          targetInputId: !name ? 'regCustName' : 'regCustWa'
+        });
+      }
       showCustRegisterAlert('Nama lengkap dan nomor WhatsApp wajib diisi.');
       return;
     }
@@ -267,6 +346,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (district === 'Luar Malang Raya') {
       const customCity = document.getElementById('regCustCustomCity')?.value.trim();
       if (!customCity) {
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Kota Domisili Diperlukan',
+            message: 'Silakan tuliskan nama kota atau kabupaten domisili Anda.',
+            targetInputId: 'regCustCustomCity'
+          });
+        }
         showCustRegisterAlert('Silakan tuliskan nama kota / kabupaten domisili Anda.');
         document.getElementById('regCustCustomCity')?.focus();
         return;
@@ -275,6 +361,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (pin && pinConfirm && pin !== pinConfirm) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Konfirmasi PIN Tidak Cocok',
+          message: 'Konfirmasi PIN yang Anda masukkan tidak sama dengan PIN yang dibuat.',
+          targetInputId: 'regCustPinConfirm'
+        });
+      }
       showCustRegisterAlert('Konfirmasi PIN tidak cocok dengan PIN yang dibuat.');
       return;
     }
@@ -287,17 +380,18 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
         ? window.getNgalamApiBase()
-        : 'http://localhost:3000';
+        : '';
       if (window.resolveNgalamApiBase) {
         try {
           apiBase = await window.resolveNgalamApiBase();
         } catch (_) {}
       }
 
+      const referredByMitra = localStorage.getItem('ngalam_affiliate_ref') || '';
       const res = await fetch(`${apiBase}/api/customer/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, whatsapp, email, district, pin }),
+        body: JSON.stringify({ name, whatsapp, email, district, pin, referredByMitra }),
       });
       const data = await res.json();
 
@@ -307,14 +401,48 @@ document.addEventListener('DOMContentLoaded', () => {
           ...data.customer,
           savedOrders: data.orders || []
         }));
+
+        if (window.showAuthSuccessModal) {
+          window.showAuthSuccessModal({
+            title: 'Registrasi Member Berhasil!',
+            subtitle: `Selamat datang di keluarga Ngalam Fix Pro, ${data.customer.name}!`,
+            user: {
+              name: data.customer.name,
+              role: 'customer',
+              roleText: '📱 Pelanggan Member Terdaftar (Garansi 90 Hari)',
+              avatar: '📱'
+            },
+            duration: 1350,
+            onComplete: () => {
+              renderCustomerDashboard(data.customer, data.orders || []);
+            }
+          });
+          return;
+        }
+
         setTimeout(() => {
           renderCustomerDashboard(data.customer, data.orders || []);
         }, 800);
       } else {
-        showCustRegisterAlert(data.message || 'Gagal mendaftarkan akun pelanggan.');
+        const errMsg = data.message || 'Gagal mendaftarkan akun pelanggan.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Pendaftaran Gagal!',
+            message: errMsg,
+            targetInputId: 'regCustWa'
+          });
+        }
+        showCustRegisterAlert(errMsg);
       }
     } catch (err) {
-      showCustRegisterAlert('Terjadi kesalahan jaringan saat registrasi.');
+      const errMsg = 'Terjadi kesalahan jaringan saat registrasi: ' + err.message;
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Koneksi Server Gagal',
+          message: errMsg
+        });
+      }
+      showCustRegisterAlert(errMsg);
     } finally {
       if (custRegSubmitBtn) {
         custRegSubmitBtn.disabled = false;
@@ -325,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // DOM Elements - Warranty & Metrics
   const custWarrantyCount = document.getElementById('custWarrantyCount');
-  const btnSyncSpreadsheetManual = document.getElementById('btnSyncSpreadsheetManual');
+  const btnSyncDatabaseManual = document.getElementById('btnSyncDatabaseManual');
   const warrantyModal = document.getElementById('warrantyModal');
   const closeWarrantyModalBtn = document.getElementById('closeWarrantyModalBtn');
   const printWarrantyBtn = document.getElementById('printWarrantyBtn');
@@ -390,6 +518,17 @@ document.addEventListener('DOMContentLoaded', () => {
     unloggedCustomerView.style.display = 'none';
     loggedInCustomerView.style.display = 'block';
 
+    const customerPortalContainer = document.getElementById('customerPortalContainer');
+    if (customerPortalContainer) {
+      customerPortalContainer.classList.add('is-dashboard');
+      customerPortalContainer.classList.add('expanded');
+    }
+
+    const customerHeroTitle = document.getElementById('customerHeroTitle');
+    const customerHeroDesc = document.getElementById('customerHeroDesc');
+    if (customerHeroTitle) customerHeroTitle.textContent = 'Dashboard Layanan & Garansi Pelanggan';
+    if (customerHeroDesc) customerHeroDesc.textContent = `Selamat datang kembali, ${customer.name || 'Pelanggan'}! Pantau status unit servis dan sertifikat garansi resmi 90 hari Anda.`;
+
     if (custProfileName) custProfileName.textContent = customer.name || 'Pelanggan Setia';
     if (custProfileWa) custProfileWa.textContent = customer.whatsapp || '-';
     if (custProfileDistrict) custProfileDistrict.textContent = customer.district || 'Malang';
@@ -415,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="font-size: 2.8rem; margin-bottom: 8px;">📦✨</div>
           <strong style="color: #0f172a; font-size: 1.1rem; display: block;">Belum Ada Riwayat Servis Aktif</strong>
           <p style="color: #64748b; font-size: 0.88rem; max-width: 440px; margin: 6px auto 18px;">
-            Akun Anda telah terdaftar dan terhubung ke Google Spreadsheet <b>DataCustomer</b>. Tekan tombol di bawah untuk memesan servis HP baru dengan jaminan garansi 90 hari.
+            Akun Anda telah terdaftar aktif di database sistem workshop. Tekan tombol di bawah untuk memesan servis HP baru dengan jaminan garansi 90 hari.
           </p>
           <a href="../pesan-servis/index.html" class="btn small" style="background: #0284c7; text-decoration: none; border-radius: 10px;">
             <span>Booking Servis HP Sekarang 🚀</span>
@@ -612,35 +751,22 @@ document.addEventListener('DOMContentLoaded', () => {
     window.print();
   });
 
-  // Manual Google Spreadsheet Sync Trigger Button
-  btnSyncSpreadsheetManual?.addEventListener('click', async () => {
-    if (btnSyncSpreadsheetManual) {
-      btnSyncSpreadsheetManual.disabled = true;
-      btnSyncSpreadsheetManual.innerHTML = '<span>⏳ Menyinkronkan...</span>';
+  // Refresh Customer Status & Data
+  btnSyncDatabaseManual?.addEventListener('click', async () => {
+    if (btnSyncDatabaseManual) {
+      btnSyncDatabaseManual.disabled = true;
+      btnSyncDatabaseManual.innerHTML = '<span>⏳ Memuat...</span>';
     }
 
     try {
-      let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
-        ? window.getNgalamApiBase()
-        : 'http://localhost:3000';
-      if (window.resolveNgalamApiBase) {
-        try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
-      }
-
-      const res = await fetch(`${apiBase}/api/customer/sync-spreadsheet`, { method: 'POST' });
-      const data = await res.json();
-
-      if (data.success) {
-        alert('🎉 Berhasil! Seluruh data akun pelanggan dan riwayat servis telah tersinkronkan ke Google Spreadsheet sheet "DataCustomer".');
-      } else {
-        alert('Info: ' + (data.message || 'Gagal sinkron'));
-      }
+      await loadCustomerOrders();
+      alert('🎉 Status akun dan riwayat servis berhasil diperbarui dari database sistem.');
     } catch (err) {
-      alert('Gagal menghubungi server untuk sinkronisasi Google Spreadsheet.');
+      alert('Gagal memperbarui data: ' + err.message);
     } finally {
-      if (btnSyncSpreadsheetManual) {
-        btnSyncSpreadsheetManual.disabled = false;
-        btnSyncSpreadsheetManual.innerHTML = '<span>🔄 Sinkron Sheets</span>';
+      if (btnSyncDatabaseManual) {
+        btnSyncDatabaseManual.disabled = false;
+        btnSyncDatabaseManual.innerHTML = '<span>🔄 Perbarui Status</span>';
       }
     }
   });
@@ -652,11 +778,35 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.removeItem('ngalam_customer_session');
       if (loggedInCustomerView) loggedInCustomerView.style.display = 'none';
       if (unloggedCustomerView) unloggedCustomerView.style.display = 'block';
+
+      const customerPortalContainer = document.getElementById('customerPortalContainer');
+      if (customerPortalContainer) {
+        customerPortalContainer.classList.remove('is-dashboard');
+        customerPortalContainer.classList.remove('expanded');
+      }
+
+      const customerHeroTitle = document.getElementById('customerHeroTitle');
+      const customerHeroDesc = document.getElementById('customerHeroDesc');
+      if (customerHeroTitle) customerHeroTitle.textContent = 'Masuk Akun Member Pelanggan';
+      if (customerHeroDesc) customerHeroDesc.textContent = 'Pantau progres unit smartphone, catatan diagnosa teknisi, dan invoice garansi resmi 90 hari dalam satu dashboard.';
+
       switchToLoginMode();
     }
   });
 
-  // Tampilkan selalu form login bersih (tanpa auto-login demi mencegah penipuan & pencurian akun)
+  // Restore customer session automatically jika sesi valid tersedia
+  try {
+    const rawSaved = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+    if (rawSaved && !isCustLoggedOut) {
+      const savedCust = JSON.parse(rawSaved);
+      if (savedCust && (savedCust.phone || savedCust.whatsapp || savedCust.name)) {
+        renderCustomerDashboard(savedCust, savedCust.savedOrders || []);
+        return;
+      }
+    }
+  } catch (_) {}
+
+  // Tampilkan form login jika belum login
   switchToLoginMode();
 });
 

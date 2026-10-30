@@ -1,1 +1,34 @@
-﻿[]
+[
+  {
+    "id": "NGF-20261028-2993",
+    "customerName": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "phoneType": "iPhone 15 Pro Max",
+    "damageDescription": "Layar OLED Blank Hitam (Ganti Kaca OCA Original)",
+    "district": "Klojen, Kota Malang",
+    "technician": "Mas Rian (Spesialis iPhone & Layar)",
+    "cost": "Rp 1.450.000",
+    "duration": "2 - 3 Jam",
+    "status": "Sedang Dikerjakan Teknisi",
+    "step": 3,
+    "diagnoseNote": "Komponen kaca luar retak rambut, sensor touchscreen & TrueTone aman. Sedang proses laminasi vacuum OCA.",
+    "createdAt": "28 Okt 2026, 14.30 WIB"
+  },
+  {
+    "id": "NGF-20261029-1488",
+    "customerName": "Ferdinand",
+    "whatsapp": "082335493176",
+    "email": "ferdinandleandro12@gmail.com",
+    "phoneType": "🍎 Apple (iPhone, iPad, Watch) - iPhone 16 Pro / 16 Pro Max",
+    "damageDescription": "Pengecekan IC Power & Baterai Health",
+    "district": "Klojen, Kota Malang",
+    "technician": "Ferdinand (Teknisi Lab Workshop)",
+    "cost": "Rp 650.000",
+    "duration": "1 Hari",
+    "status": "Antrean Lab",
+    "step": 2,
+    "diagnoseNote": "Unit diterima di front desk, sedang menunggu giliran meja lab micro soldering.",
+    "createdAt": "29 Okt 2026, 13.41 WIB"
+  }
+]

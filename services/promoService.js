@@ -214,13 +214,21 @@ function addPromo({
 
   promos.push(newPromo);
   savePromos(promos);
+
+  // Sinkronkan banner baru ke PostgreSQL banners
+  try {
+    const { syncBannerToPostgres } = require('./bannerPgSync');
+    syncBannerToPostgres(newPromo.id, newPromo).catch(() => {});
+  } catch (_) {}
+
   return newPromo;
 }
 
 /**
  * Update an existing promo banner
+ * Saat foto banner diubah, otomatis mengeksekusi UPDATE banners SET image_url = ... di PostgreSQL.
  */
-function updatePromo(id, updates = {}) {
+async function updatePromo(id, updates = {}) {
   const promos = getAllPromos(false);
   const idx = promos.findIndex((p) => p.id === id);
   if (idx === -1) {
@@ -238,13 +246,22 @@ function updatePromo(id, updates = {}) {
   };
 
   savePromos(promos);
+
+  // Eksekusi UPDATE banners SET image_url = ... secara otomatis di PostgreSQL
+  try {
+    const { syncBannerToPostgres } = require('./bannerPgSync');
+    await syncBannerToPostgres(id, updates);
+  } catch (err) {
+    console.warn('[PromoService] PostgreSQL update error:', err.message);
+  }
+
   return promos[idx];
 }
 
 /**
  * Toggle active status of a promo banner
  */
-function togglePromoStatus(id) {
+async function togglePromoStatus(id) {
   const promos = getAllPromos(false);
   const promo = promos.find((p) => p.id === id);
   if (!promo) {
@@ -253,13 +270,19 @@ function togglePromoStatus(id) {
   promo.active = !promo.active;
   promo.updatedAt = new Date().toISOString();
   savePromos(promos);
+
+  try {
+    const { syncBannerToPostgres } = require('./bannerPgSync');
+    await syncBannerToPostgres(id, { active: promo.active });
+  } catch (_) {}
+
   return promo;
 }
 
 /**
  * Delete a promo banner
  */
-function deletePromo(id) {
+async function deletePromo(id) {
   let promos = getAllPromos(false);
   const target = promos.find((p) => p.id === id);
   if (!target) {
@@ -280,14 +303,24 @@ function deletePromo(id) {
 
   promos = promos.filter((p) => p.id !== id);
   savePromos(promos);
+
+  try {
+    const { deleteBannerFromPostgres } = require('./bannerPgSync');
+    await deleteBannerFromPostgres(id);
+  } catch (_) {}
+
   return { success: true, deletedId: id };
 }
 
 /**
  * Reset back to initial default promos
  */
-function resetPromos() {
+async function resetPromos() {
   savePromos(DEFAULT_PROMOS);
+  try {
+    const { syncAllBannersToPostgres } = require('./bannerPgSync');
+    await syncAllBannersToPostgres();
+  } catch (_) {}
   return DEFAULT_PROMOS;
 }
 

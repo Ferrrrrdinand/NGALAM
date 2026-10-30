@@ -57,10 +57,10 @@ router.post('/promos', (req, res) => {
 });
 
 // PUT /api/promos/:id
-router.put('/promos/:id', (req, res) => {
+router.put('/promos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = updatePromo(id, req.body);
+    const updated = await updatePromo(id, req.body);
     res.json({
       success: true,
       message: `Banner promo "${updated.title}" berhasil diperbarui.`,
@@ -71,11 +71,31 @@ router.put('/promos/:id', (req, res) => {
   }
 });
 
-// PATCH /api/promos/:id/toggle
-router.patch('/promos/:id/toggle', (req, res) => {
+// PATCH /api/promos/:id/image
+// Dedicated endpoint for instant banner photo replacement (UPDATE banners SET image_url = ...)
+router.patch('/promos/:id/image', async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = togglePromoStatus(id);
+    const { image } = req.body;
+    if (!image) {
+      return res.status(400).json({ success: false, error: 'Data gambar banner (image) wajib dikirimkan.' });
+    }
+    const updated = await updatePromo(id, { image });
+    res.json({
+      success: true,
+      message: `Foto banner #${id} berhasil diperbarui dan disinkronkan ke tabel banners PostgreSQL!`,
+      data: updated
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// PATCH /api/promos/:id/toggle
+router.patch('/promos/:id/toggle', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await togglePromoStatus(id);
     res.json({
       success: true,
       message: `Status banner promo "${updated.title}" diubah menjadi: ${updated.active ? 'Aktif' : 'Nonaktif'}.`,
@@ -87,10 +107,10 @@ router.patch('/promos/:id/toggle', (req, res) => {
 });
 
 // DELETE /api/promos/:id
-router.delete('/promos/:id', (req, res) => {
+router.delete('/promos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = deletePromo(id);
+    const result = await deletePromo(id);
     res.json({
       success: true,
       message: `Banner promo berhasil dihapus.`,
@@ -102,9 +122,9 @@ router.delete('/promos/:id', (req, res) => {
 });
 
 // POST /api/promos/reset
-router.post('/promos/reset', (req, res) => {
+router.post('/promos/reset', async (req, res) => {
   try {
-    const list = resetPromos();
+    const list = await resetPromos();
     res.json({
       success: true,
       message: 'Semua banner promo telah direset ke template default.',

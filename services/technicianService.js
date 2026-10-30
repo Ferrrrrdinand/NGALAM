@@ -7,35 +7,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
+const userService = require('./userService');
 const LOGS_FILE = path.join(__dirname, '..', 'data', 'technician_logs.json');
 
 /**
- * Load all users from disk
+ * Load technician users from USERS_TEKNISI_FILE (.env)
  */
 function readUsers() {
-  try {
-    if (fs.existsSync(USERS_FILE)) {
-      const raw = fs.readFileSync(USERS_FILE, 'utf-8');
-      return JSON.parse(raw);
-    }
-  } catch (err) {
-    console.error('[TechnicianService] Error reading users.json:', err.message);
-  }
-  return [];
+  return userService.getTeknisiUsers();
 }
 
 /**
- * Write users to disk safely
+ * Write technician users safely to USERS_TEKNISI_FILE (.env)
  */
 function writeUsers(users) {
-  try {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
-    return true;
-  } catch (err) {
-    console.error('[TechnicianService] Error writing users.json:', err.message);
-    return false;
-  }
+  return userService.saveTeknisiUsers(users);
 }
 
 /**
@@ -45,7 +31,7 @@ function readLogs() {
   try {
     if (fs.existsSync(LOGS_FILE)) {
       const raw = fs.readFileSync(LOGS_FILE, 'utf-8');
-      return JSON.parse(raw);
+      return JSON.parse(raw.replace(/^\uFEFF/, ''));
     }
   } catch (err) {
     console.error('[TechnicianService] Error reading technician_logs.json:', err.message);
@@ -115,7 +101,7 @@ const WORKSHOP_REGISTRATION_CODE = '082335493176-082335493176';
  */
 function getAllTechnicians(includeAlias = false) {
   const users = readUsers();
-  return users
+  const techs = users
     .filter((u) => u.role === 'teknisi' && (includeAlias || u.id !== 'USR-TECH-ALIAS'))
     .map((u) => ({
       id: u.id,
@@ -133,6 +119,27 @@ function getAllTechnicians(includeAlias = false) {
       handledToday: typeof u.handledToday === 'number' ? u.handledToday : 0,
       lastActive: u.lastActive || new Date().toISOString()
     }));
+
+  if (techs.length === 0) {
+    return [{
+      id: 'USR-TECH-FERDINAND',
+      username: 'ferdinand',
+      name: 'Ferdinand (Teknisi Lab Workshop)',
+      role: 'teknisi',
+      avatar: '🔬',
+      phone: '082335493176',
+      email: 'ferdinandleandro12@gmail.com',
+      desk: 'Meja Lab Workshop - Teknisi Utama',
+      specialty: 'Spesialis Servis Smartphone & Hardware Lab',
+      onlineStatus: 'online',
+      workStatus: 'standby',
+      currentJob: null,
+      handledToday: 0,
+      lastActive: new Date().toISOString()
+    }];
+  }
+
+  return techs;
 }
 
 /**
@@ -164,7 +171,7 @@ function setTechnicianOnline(identifier) {
       if (u.currentJob && u.currentJob.orderId) {
         try {
           const ordersRaw = fs.readFileSync(path.join(__dirname, '..', 'data', 'orders.json'), 'utf-8');
-          const ordersList = JSON.parse(ordersRaw);
+          const ordersList = JSON.parse(ordersRaw.replace(/^\uFEFF/, ''));
           const activeOrder = ordersList.find(o => o.id === u.currentJob.orderId);
           if (!activeOrder || activeOrder.step === 5) {
             u.currentJob = null;
@@ -449,15 +456,6 @@ async function createTechnician(payload = {}, { isAdmin = false } = {}) {
     statusBadge: 'standby'
   });
 
-  // 6. Sinkronisasi otomatis ke Google Spreadsheet (Sheet: AkunTeknisi)
-  try {
-    const { syncTechniciansToGoogleSheets } = require('./financeService');
-    syncTechniciansToGoogleSheets().catch(err => {
-      console.warn('[TechnicianService] Background Google Sheets sync warning:', err.message);
-    });
-  } catch (syncErr) {
-    console.warn('[TechnicianService] Could not invoke syncTechniciansToGoogleSheets:', syncErr.message);
-  }
 
   return {
     id: newTech.id,
@@ -538,15 +536,6 @@ async function updateTechnician(idOrUsername, updates = {}) {
     statusBadge: tech.onlineStatus || 'standby'
   });
 
-  // Sinkronisasi otomatis ke Google Spreadsheet (Sheet: AkunTeknisi)
-  try {
-    const { syncTechniciansToGoogleSheets } = require('./financeService');
-    syncTechniciansToGoogleSheets().catch(err => {
-      console.warn('[TechnicianService] Background Google Sheets sync warning:', err.message);
-    });
-  } catch (syncErr) {
-    console.warn('[TechnicianService] Could not invoke syncTechniciansToGoogleSheets:', syncErr.message);
-  }
 
   return {
     id: tech.id,
@@ -599,15 +588,6 @@ async function deleteTechnician(idOrUsername) {
     statusBadge: 'offline'
   });
 
-  // Sinkronisasi otomatis ke Google Spreadsheet (Sheet: AkunTeknisi)
-  try {
-    const { syncTechniciansToGoogleSheets } = require('./financeService');
-    syncTechniciansToGoogleSheets().catch(err => {
-      console.warn('[TechnicianService] Background Google Sheets sync warning:', err.message);
-    });
-  } catch (syncErr) {
-    console.warn('[TechnicianService] Could not invoke syncTechniciansToGoogleSheets:', syncErr.message);
-  }
 
   return { success: true, deleted: target.username, name: target.name };
 }

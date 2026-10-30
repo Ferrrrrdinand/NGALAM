@@ -1,0 +1,564 @@
+/**
+ * NGALAM FIX PRO - Initial Website Preloader Stylesheet
+ * Displays a stunning, high-tech introductory splash screen ONCE on first entry.
+ * Completely bypassed on subsequent visits in the session to prevent repeated loading.
+ * Also includes the Welcome Promo Offer Modal displayed immediately after preloader finishes.
+ */
+
+/* Instant suppression when already shown in this session (prevents any flash) */
+html.splash-already-shown #ngalamInitialPreloader,
+body.splash-already-shown #ngalamInitialPreloader {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Preloader Fullscreen Container */
+#ngalamInitialPreloader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999999;
+  background:
+    radial-gradient(circle at 50% 32%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 20% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 45%),
+    #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+  overflow: hidden;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.6s ease;
+  box-sizing: border-box;
+}
+
+#ngalamInitialPreloader.fade-out {
+  opacity: 0;
+  transform: scale(1.035);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Decorative Ambient Rings */
+.preloader-ambient-glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.22) 0%, rgba(16, 185, 129, 0.14) 45%, transparent 70%);
+  filter: blur(45px);
+  pointer-events: none;
+  animation: preloaderPulseGlow 3s infinite alternate ease-in-out;
+}
+
+@keyframes preloaderPulseGlow {
+  0% { transform: scale(0.92); opacity: 0.6; }
+  100% { transform: scale(1.18); opacity: 0.95; }
+}
+
+/* Card Wrap */
+.preloader-card {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+}
+
+/* Brand Logo with Rotating Aura */
+.preloader-logo-wrapper {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preloader-logo-aura {
+  position: absolute;
+  inset: -8px;
+  border-radius: 32px;
+  background: conic-gradient(from 0deg, #d4af37, #10b981, #f59e0b, #d4af37);
+  animation: preloaderAuraRotate 3.5s linear infinite;
+  filter: blur(6px);
+  opacity: 0.9;
+}
+
+@keyframes preloaderAuraRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.preloader-logo-badge {
+  position: relative;
+  z-index: 1;
+  width: 92px;
+  height: 92px;
+  border-radius: 28px;
+  background: #ffffff;
+  border: 2px solid #f1f5f9;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1), 0 0 25px rgba(212, 175, 55, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 6px;
+}
+
+.preloader-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 22px;
+}
+
+/* Brand Title */
+.preloader-brand-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0 0 8px;
+  letter-spacing: -0.025em;
+  font-family: 'Outfit', sans-serif;
+  color: #0f172a;
+}
+
+.preloader-gold-text {
+  background: linear-gradient(135deg, #b45309 0%, #d4af37 60%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle Pill */
+.preloader-subtitle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #78350f;
+  margin-bottom: 26px;
+}
+
+.preloader-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: preloaderDotPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes preloaderDotPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+/* Progress Section */
+.preloader-progress-box {
+  width: 100%;
+  max-width: 340px;
+}
+
+.preloader-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  position: relative;
+  border: 1px solid #cbd5e1;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.preloader-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #d4af37, #10b981, #059669);
+  background-size: 200% 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.55);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Status Text & Counter Row */
+.preloader-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.84rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.preloader-status-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0f172a;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+
+.preloader-spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid #cbd5e1;
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: preloaderSpin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes preloaderSpin {
+  to { transform: rotate(360deg); }
+}
+
+.preloader-counter {
+  font-family: 'JetBrains Mono', monospace, inherit;
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: #b45309;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* Feature Micro Badges at Bottom */
+.preloader-perks {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.preloader-perk-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+
+/* ========================================================
+   WELCOME PROMO OFFER MODAL (AFTER PRELOADER COMPLETES)
+   ======================================================== */
+.welcome-promo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+}
+
+.welcome-promo-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.welcome-promo-card {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.16) 0%, transparent 65%), #ffffff;
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
+  border-radius: 28px;
+  padding: 32px 28px 26px;
+  text-align: center;
+  box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.45), 0 0 35px rgba(212, 175, 55, 0.28);
+  transform: scale(0.92) translateY(16px);
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.welcome-promo-overlay.active .welcome-promo-card {
+  transform: scale(1) translateY(0);
+}
+
+.welcome-promo-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  z-index: 2;
+}
+
+.welcome-promo-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: rotate(90deg);
+}
+
+/* Header Tags */
+.welcome-promo-tags {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.welcome-promo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #d4af37, #b45309);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
+}
+
+.welcome-promo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+/* Titles */
+.welcome-promo-title {
+  font-size: 1.48rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #0f172a;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.welcome-promo-title span {
+  background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-promo-desc {
+  font-size: 0.88rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+
+/* Voucher Code Highlight Card */
+.welcome-promo-code-card {
+  background: #fffdf5;
+  border: 1.5px dashed #d4af37;
+  border-radius: 18px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.welcome-code-left {
+  text-align: left;
+}
+
+.welcome-code-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #b45309;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.welcome-code-value {
+  font-family: monospace;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: 0.1em;
+}
+
+.welcome-btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #d4af37;
+  color: #b45309;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.welcome-btn-copy:hover {
+  background: #fffbeb;
+  transform: translateY(-1px);
+}
+
+/* Toast Message */
+.welcome-copy-toast {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  display: none;
+}
+
+/* Perks Grid */
+.welcome-promo-perks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+  text-align: left;
+}
+
+.welcome-perk-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.welcome-perk-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.welcome-perk-text strong {
+  display: block;
+  font-size: 0.8rem;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.welcome-perk-text small {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+/* Actions */
+.welcome-promo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.welcome-btn-primary {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d4af37, #b45309);
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.38);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.welcome-btn-primary:hover {
+  background: linear-gradient(135deg, #b45309, #78350f);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.48);
+}
+
+.welcome-btn-secondary {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s ease;
+}
+
+.welcome-btn-secondary:hover {
+  color: #0f172a;
+}

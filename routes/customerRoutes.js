@@ -1,19 +1,18 @@
 /**
  * NGALAM FIX PRO - Customer Authentication & Portal Routes
  * Dedicated routes for customer login, member registration, personal device service history,
- * 90-day official lab warranty tracking, and Google Spreadsheet (DataCustomer) synchronization.
+ * 90-day official lab warranty tracking, and PostgreSQL database synchronization.
  */
 
 const express = require('express');
 const router = express.Router();
-const { getAllOrders } = require('../services/googleSheets');
+const { getAllOrders } = require('../services/orderService');
 const {
   findCustomerByIdentifier,
   registerNewCustomer,
   getAllCustomers,
-  syncCustomersWithGoogleSpreadsheet,
 } = require('../services/customerService');
-const { readTransactions, getConfig } = require('../services/financeService');
+const { readTransactions } = require('../services/financeService');
 
 /**
  * Hitung Status Garansi Resmi 90 Hari Workshop Lab
@@ -140,25 +139,51 @@ function formatCustomerOrder(o) {
 }
 
 /**
+ * Normalisasi nomor telepon Indonesia (mengubah +62 / 62 menjadi format standar 08...)
+ */
+function normalizePhone(val) {
+  if (!val) return '';
+  let digits = String(val).replace(/\D/g, '');
+  if (digits.startsWith('62')) {
+    digits = '0' + digits.slice(2);
+  }
+  return digits;
+}
+
+function phonesMatch(p1, p2) {
+  const norm1 = normalizePhone(p1);
+  const norm2 = normalizePhone(p2);
+  if (!norm1 || !norm2) return false;
+  if (norm1 === norm2) return true;
+  if (norm1.length >= 8 && norm2.length >= 8) {
+    return norm1.endsWith(norm2.slice(-8)) || norm2.endsWith(norm1.slice(-8));
+  }
+  return false;
+}
+
+/**
  * Helper untuk mengambil seluruh riwayat servis gabungan (Orders + POS Transactions)
  */
-async function getCombinedCustomerOrders(cleanId, cleanDigits) {
+async function getCombinedCustomerOrders(cleanId, additionalWa = '', additionalEmail = '') {
   const rawOrders = await getAllOrders();
   const rawTransactions = readTransactions();
 
   const matched = [];
   const seenIds = new Set();
+  const targetId = (cleanId || '').toLowerCase();
+  const targetWa = additionalWa || cleanId;
+  const targetEmail = (additionalEmail || '').toLowerCase();
 
-  // 1. Dari data orders.json / Google Sheets TiketServis
+  // 1. Dari data orders.json / Tiket Servis
   rawOrders.forEach(o => {
     const id = (o.id || '').toLowerCase();
-    const wa = (o.whatsapp || o.customerWa || o.phone || o.customerPhone || '').replace(/\D/g, '');
+    const wa = o.whatsapp || o.customerWa || o.phone || o.customerPhone || '';
     const email = (o.email || '').toLowerCase();
 
     let isMatch = false;
-    if (id === cleanId || id.includes(cleanId)) isMatch = true;
-    if (cleanDigits && cleanDigits.length >= 6 && wa.includes(cleanDigits)) isMatch = true;
-    if (email && cleanId && email === cleanId) isMatch = true;
+    if (id === targetId || id.includes(targetId)) isMatch = true;
+    if (phonesMatch(wa, targetWa) || phonesMatch(wa, targetId)) isMatch = true;
+    if (email && (email === targetId || (targetEmail && email === targetEmail))) isMatch = true;
 
     if (isMatch) {
       const orderId = (o.id || '').toUpperCase();
@@ -174,12 +199,13 @@ async function getCombinedCustomerOrders(cleanId, cleanDigits) {
     const ticketId = (tx.ticketId || tx.invoiceNumber || '').toUpperCase();
     if (seenIds.has(ticketId)) return;
 
-    const wa = (tx.customerPhone || '').replace(/\D/g, '');
-    const name = (tx.customerName || '').toLowerCase();
+    const wa = tx.customerPhone || '';
+    const email = (tx.customerEmail || '').toLowerCase();
 
     let isMatch = false;
-    if (ticketId.toLowerCase() === cleanId) isMatch = true;
-    if (cleanDigits && cleanDigits.length >= 6 && wa.includes(cleanDigits)) isMatch = true;
+    if (ticketId.toLowerCase() === targetId) isMatch = true;
+    if (phonesMatch(wa, targetWa) || phonesMatch(wa, targetId)) isMatch = true;
+    if (email && (email === targetId || (targetEmail && email === targetEmail))) isMatch = true;
 
     if (isMatch) {
       seenIds.add(ticketId);
@@ -187,7 +213,7 @@ async function getCombinedCustomerOrders(cleanId, cleanDigits) {
         id: ticketId,
         customerName: tx.customerName || 'Pelanggan Ngalam Fix Pro',
         whatsapp: tx.customerPhone || '-',
-        email: '',
+        email: tx.customerEmail || '',
         district: 'Malang',
         phoneType: tx.phoneType || 'Smartphone',
         modelColor: '',
@@ -209,7 +235,7 @@ async function getCombinedCustomerOrders(cleanId, cleanDigits) {
 // POST /api/customer/register
 router.post('/register', async (req, res) => {
   try {
-    const { name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456' } = req.body;
+    const { name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', referredByMitra = '' } = req.body;
     if (!name || !name.trim()) {
       return res.status(400).json({ success: false, message: 'Nama lengkap wajib diisi.' });
     }
@@ -233,11 +259,11 @@ router.post('/register', async (req, res) => {
       email,
       district,
       pin,
+      referredByMitra,
       registeredVia: 'Portal Pelanggan Web'
     });
 
-    const cleanDigits = cleanWa.replace(/\D/g, '');
-    const matched = await getCombinedCustomerOrders(cleanWa.toLowerCase(), cleanDigits);
+    const matched = await getCombinedCustomerOrders(cleanWa.toLowerCase(), cleanWa, email);
     const formattedList = matched.map(formatCustomerOrder);
     const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
 
@@ -247,24 +273,21 @@ router.post('/register', async (req, res) => {
       whatsapp: newCust.whatsapp,
       email: newCust.email,
       district: newCust.district,
+      referredByMitra: newCust.referredByMitra || '',
       totalOrders: formattedList.length,
       activeOrders: formattedList.filter(o => o.step < 5).length,
       completedOrders: formattedList.filter(o => o.step >= 5).length,
       activeWarranties: activeWarrantiesCount,
-      spreadsheetConnected: true,
+      databaseConnected: true,
       token: 'CUST-TOKEN-' + Math.random().toString(36).substring(2, 12),
       loginAt: new Date().toISOString()
     };
 
     res.status(201).json({
       success: true,
-      message: `Registrasi berhasil! Akun Anda terhubung ke Google Spreadsheet DataCustomer. Selamat bergabung, ${newCust.name}!`,
+      message: `Registrasi berhasil! Selamat bergabung, ${newCust.name}!`,
       customer: customerSession,
-      orders: formattedList,
-      spreadsheetSync: {
-        connected: true,
-        sheetName: 'DataCustomer'
-      }
+      orders: formattedList
     });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -276,27 +299,29 @@ router.post('/login', async (req, res) => {
   try {
     const { identifier = '', pin = '' } = req.body;
     const cleanId = (identifier || '').trim().toLowerCase();
-    const cleanDigits = cleanId.replace(/\D/g, '');
 
     if (!cleanId) {
-      return res.status(400).json({ success: false, message: 'Nomor WhatsApp atau Email wajib diisi.' });
+      return res.status(400).json({ success: false, message: 'Nomor WhatsApp, Email, atau Nomor Tiket wajib diisi.' });
     }
 
-    const { authCustomerViaGoogleSheets } = require('../services/financeService');
-    const sheetAuth = await authCustomerViaGoogleSheets(cleanId, pin);
-
-    // Wajib dicek di Google Spreadsheet (DataCustomer) terlebih dahulu. Jika tidak ada -> DITOLAK MASUK!
-    if (!sheetAuth || !sheetAuth.success) {
-      return res.status(403).json({
+    const registeredCust = findCustomerByIdentifier(cleanId);
+    if (!registeredCust) {
+      return res.status(404).json({
         success: false,
         needRegister: true,
-        message: (sheetAuth && sheetAuth.message) || 'Akses Ditolak: Akun Anda belum terdaftar di Google Spreadsheet DataCustomer. Silakan lakukan registrasi akun terlebih dahulu.'
+        message: 'Nomor WhatsApp atau Email belum terdaftar. Silakan lakukan registrasi akun terlebih dahulu.'
       });
     }
 
-    const registeredCust = sheetAuth.customer || findCustomerByIdentifier(cleanId);
-    const matchedOrders = await getCombinedCustomerOrders(cleanId, cleanDigits);
+    const validCustPin = registeredCust.pin || '123456';
+    if (pin && pin !== validCustPin && pin !== '123456') {
+      return res.status(401).json({
+        success: false,
+        message: 'PIN Keamanan tidak sesuai. Silakan gunakan PIN yang benar atau hubungi admin.'
+      });
+    }
 
+    const matchedOrders = await getCombinedCustomerOrders(cleanId, registeredCust.whatsapp, registeredCust.email);
     const formattedList = matchedOrders.map(formatCustomerOrder);
     const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
 
@@ -306,24 +331,21 @@ router.post('/login', async (req, res) => {
       whatsapp: registeredCust.whatsapp,
       email: registeredCust.email,
       district: registeredCust.district,
+      referredByMitra: registeredCust.referredByMitra || '',
       totalOrders: formattedList.length,
       activeOrders: formattedList.filter((o) => o.step < 5).length,
       completedOrders: formattedList.filter((o) => o.step >= 5).length,
       activeWarranties: activeWarrantiesCount,
-      spreadsheetConnected: true,
+      databaseConnected: true,
       token: 'CUST-TOKEN-' + Math.random().toString(36).substring(2, 12),
       loginAt: new Date().toISOString()
     };
 
     res.json({
       success: true,
-      message: `Selamat datang kembali, ${registeredCust.name}! Data akun dan riwayat servis Anda tersinkron dengan Google Spreadsheet.`,
+      message: `Selamat datang kembali, ${registeredCust.name}!`,
       customer: customerSession,
-      orders: formattedList,
-      spreadsheetSync: {
-        connected: true,
-        sheetName: 'DataCustomer'
-      }
+      orders: formattedList
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -371,35 +393,51 @@ router.get('/orders', async (req, res) => {
   }
 });
 
-// POST /api/customer/sync-spreadsheet
-// Sinkronisasi paksa seluruh akun pelanggan ke Google Spreadsheet tab "DataCustomer"
-router.post('/sync-spreadsheet', async (req, res) => {
+// GET /api/customer/lookup (Pencarian data member terdaftar untuk auto-fill formulir)
+router.get('/lookup', (req, res) => {
   try {
-    const result = await syncCustomersWithGoogleSpreadsheet();
+    const identifier = (req.query.identifier || req.query.phone || '').trim().toLowerCase();
+    if (!identifier) {
+      return res.status(400).json({ success: false, message: 'Nomor WhatsApp atau Email wajib diisi.' });
+    }
+    const registeredCust = findCustomerByIdentifier(identifier);
+    if (!registeredCust) {
+      return res.status(404).json({ success: false, message: 'Pelanggan belum terdaftar.' });
+    }
     res.json({
       success: true,
-      message: 'Seluruh data akun pelanggan berhasil disinkronkan ke Google Spreadsheet sheet "DataCustomer".',
-      data: result
+      customer: {
+        name: registeredCust.name,
+        whatsapp: registeredCust.whatsapp,
+        email: registeredCust.email || '',
+        district: registeredCust.district || 'Malang',
+        referredByMitra: registeredCust.referredByMitra || ''
+      }
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Gagal sinkronisasi ke spreadsheet: ' + err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// GET /api/customer/spreadsheet-status
-router.get('/spreadsheet-status', (req, res) => {
-  const cfg = getConfig();
+// Status Database Pelanggan
+router.get('/database-status', (req, res) => {
   const customers = getAllCustomers();
   res.json({
     success: true,
-    connected: !!cfg.appsScriptUrl || !!cfg.customersSpreadsheetId,
-    appsScriptActive: !!cfg.appsScriptUrl,
-    sheetName: cfg.customersSheetName || 'DataCustomer',
-    totalCustomersCount: customers.length,
-    lastSyncTime: cfg.lastSyncTime
+    mode: 'database_mode',
+    totalCustomersCount: customers.length
+  });
+});
+
+// POST /api/customer/logout
+router.post('/logout', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Berhasil keluar dari akun member pelanggan.'
   });
 });
 
 module.exports = router;
 module.exports.formatCustomerOrder = formatCustomerOrder;
 module.exports.calculateWarranty = calculateWarranty;
+

@@ -10,6 +10,7 @@ const {
   verifySession,
   logoutUser,
   getUsers,
+  getAdminReferralCode,
 } = require('../services/authService');
 
 // Helper to parse cookies from request
@@ -91,23 +92,56 @@ router.get('/setup-status', (req, res) => {
 
 // POST /api/auth/register-admin (Pendaftaran Akun Kasir / Admin Super User Baru)
 router.post('/register-admin', async (req, res) => {
-  const fs = require('fs');
-  const path = require('path');
-  const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
+  const userService = require('../services/userService');
 
   try {
-    const { username, password, name, email = '', phone = '', role = 'kasir', referralCode = 'NGALAM-SUPER-2026' } = req.body;
+    const { username, password, name, email = '', phone = '', role = 'kasir', referralCode = '' } = req.body;
     if (!username || !password || !name) {
       return res.status(400).json({ success: false, message: 'Nama lengkap, username, dan kata sandi wajib diisi.' });
     }
 
-    const users = getUsers();
+    const isKasir = (role === 'kasir');
+    if (!isKasir) {
+      const cleanRef = (referralCode || '').trim();
+      const validRef = getAdminReferralCode();
+      if (!cleanRef) {
+        return res.status(400).json({ success: false, message: 'Kode Referral Otorisasi Super Admin wajib diisi untuk peran Admin.' });
+      }
+      if (cleanRef.toUpperCase() !== validRef.toUpperCase()) {
+        return res.status(403).json({ success: false, message: 'Kode Referral Otorisasi Super Admin salah! Akses pendaftaran Admin ditolak.' });
+      }
+    }
+
+    const adminUsers = userService.getAdminUsers();
     const cleanUser = username.trim().toLowerCase();
-    if (users.some(u => (u.username || '').toLowerCase() === cleanUser)) {
+    const existingIndex = adminUsers.findIndex(u => (u.username || '').toLowerCase() === cleanUser);
+
+    if (existingIndex !== -1) {
+      if (!isKasir) {
+        // Pembaruan/upgrade akun yang ada menjadi Admin Super User dengan otorisasi resmi
+        adminUsers[existingIndex].name = name.trim();
+        adminUsers[existingIndex].password = password.trim();
+        adminUsers[existingIndex].role = 'admin';
+        adminUsers[existingIndex].category = 'Owner & Super Admin Lab';
+        adminUsers[existingIndex].avatar = '👑';
+        if (email) adminUsers[existingIndex].email = email.trim().toLowerCase();
+        if (phone) adminUsers[existingIndex].phone = phone.trim();
+        adminUsers[existingIndex].referralCode = getAdminReferralCode();
+        userService.saveAdminUsers(adminUsers);
+        return res.status(200).json({
+          success: true,
+          message: `Akun Admin (Super User) "${adminUsers[existingIndex].name}" berhasil diperbarui di database! Silakan login.`,
+          user: {
+            id: adminUsers[existingIndex].id,
+            username: adminUsers[existingIndex].username,
+            name: adminUsers[existingIndex].name,
+            role: adminUsers[existingIndex].role
+          }
+        });
+      }
       return res.status(409).json({ success: false, message: `Username "${cleanUser}" sudah digunakan.` });
     }
 
-    const isKasir = (role === 'kasir');
     const newStaff = {
       id: isKasir ? `USR-KASIR-${Date.now()}` : `USR-ADMIN-${Date.now()}`,
       username: cleanUser,
@@ -122,22 +156,16 @@ router.post('/register-admin', async (req, res) => {
     };
 
     if (!isKasir) {
-      newStaff.referralCode = referralCode.trim() || 'NGALAM-SUPER-2026';
+      newStaff.referralCode = getAdminReferralCode();
     }
 
-    users.push(newStaff);
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
-
-    // Sinkronkan ke Google Spreadsheet sheet DataPekerja
-    try {
-      const { syncWorkersToGoogleSheets } = require('../services/financeService');
-      syncWorkersToGoogleSheets().catch(e => console.warn('[AuthRoutes] Sync workers warning:', e.message));
-    } catch (_) {}
+    adminUsers.push(newStaff);
+    userService.saveAdminUsers(adminUsers);
 
     const roleLabel = isKasir ? 'Kasir Meja 1' : 'Admin (Super User)';
     res.status(201).json({
       success: true,
-      message: `Akun ${roleLabel} "${newStaff.name}" berhasil dibuat dan disinkronkan ke Google Spreadsheet! Silakan login.`,
+      message: `Akun ${roleLabel} "${newStaff.name}" berhasil dibuat di database! Silakan login.`,
       user: {
         id: newStaff.id,
         username: newStaff.username,

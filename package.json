@@ -1,7 +1,7 @@
 {
   "name": "ngalam-fix-pro",
   "version": "1.0.0",
-  "description": "Website Spesialis Servis HP Ngalam Fix Pro - HTML, CSS & Node.js dengan Integrasi Google Sheets API",
+  "description": "Website Spesialis Servis HP Ngalam Fix Pro - HTML, CSS & Node.js dengan Dukungan Database PostgreSQL",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -14,14 +14,16 @@
     "html",
     "css",
     "node",
-    "google-sheets-api"
+    "postgresql",
+    "database"
   ],
   "author": "Liem Hingky Liman",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
     "express": "^4.21.2",
-    "googleapis": "^144.0.0"
+    "pg": "^8.23.1"
   }
 }

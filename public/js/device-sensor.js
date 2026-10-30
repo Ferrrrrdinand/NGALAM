@@ -76,7 +76,8 @@
       'is-mobile', 'is-tablet', 'is-desktop',
       'device-touch', 'device-mouse',
       'screen-portrait', 'screen-landscape',
-      'mobile-lite-perf', 'high-perf-mode'
+      'mobile-lite-perf', 'high-perf-mode',
+      'mobile-screen-detected'
     ];
 
     classesToRemove.forEach(cls => {
@@ -92,16 +93,23 @@
       info.enableLitePerf ? 'mobile-lite-perf' : 'high-perf-mode'
     ];
 
+    if (info.isMobile) {
+      newClasses.push('mobile-screen-detected');
+    }
+
     newClasses.forEach(cls => {
       docEl.classList.add(cls);
       if (body) body.classList.add(cls);
     });
 
-    // Pasang atribut data untuk query CSS presisi
+    // Pasang atribut data & CSS variable untuk styling responsif presisi
     docEl.setAttribute('data-device', info.type);
     docEl.setAttribute('data-orientation', info.orientation);
     docEl.setAttribute('data-touch', info.isTouch ? 'true' : 'false');
     docEl.setAttribute('data-perf', info.enableLitePerf ? 'lite' : 'full');
+    docEl.style.setProperty('--screen-width', `${info.width}px`);
+    docEl.style.setProperty('--screen-height', `${info.height}px`);
+    docEl.style.setProperty('--is-mobile-ui', info.isMobile ? '1' : '0');
   }
 
   // State sensor aktif
@@ -123,6 +131,15 @@
    * Optimasi Khusus UI HP Real-Time
    */
   function initMobileUiOptimizer() {
+    // 0. Pastikan viewport meta memiliki viewport-fit=cover untuk safe-area notch iPhone
+    const vpMeta = document.querySelector('meta[name="viewport"]');
+    if (vpMeta) {
+      let content = vpMeta.getAttribute('content') || '';
+      if (!content.includes('viewport-fit')) {
+        vpMeta.setAttribute('content', `${content}, viewport-fit=cover`);
+      }
+    }
+
     if (!currentInfo.isMobile) return;
 
     // 1. Pastikan input pada HP tidak memicu auto-zoom Safari/iOS (font minimal 16px)
@@ -138,10 +155,23 @@
     document.documentElement.style.overflowX = 'hidden';
     if (document.body) document.body.style.overflowX = 'hidden';
 
-    // 3. Log sensor status di console
+    // 3. Sensor deteksi menu navigasi terbuka: Sembunyikan chatbot agar tidak tumpang tindih
+    const dropdownMenu = document.getElementById('navDropdownMenu');
+    if (dropdownMenu) {
+      const observer = new MutationObserver(() => {
+        if (dropdownMenu.classList.contains('show')) {
+          document.body.classList.add('nav-menu-open');
+        } else {
+          document.body.classList.remove('nav-menu-open');
+        }
+      });
+      observer.observe(dropdownMenu, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // 4. Log sensor status di console
     console.log(
-      `%c[Ngalam Fix Pro Sensor]%c Perangkat Terdeteksi: %c${currentInfo.type.toUpperCase()}%c (Layar: ${currentInfo.width}x${currentInfo.height}px) • %cMode Ringan HP Aktif`,
-      'background:#0284c7;color:#fff;font-weight:bold;padding:2px 6px;border-radius:4px;',
+      `%c[Ngalam Fix Pro Screen Detector]%c Layar HP Terdeteksi: %c${currentInfo.width}x${currentInfo.height}px (${currentInfo.orientation.toUpperCase()})%c • %cUI Handphone Siap Aktif!`,
+      'background:#0284c7;color:#fff;font-weight:bold;padding:2px 8px;border-radius:4px;',
       'color:#64748b;font-weight:normal;',
       'color:#0284c7;font-weight:bold;',
       'color:#64748b;',

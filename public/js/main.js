@@ -24,12 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownMenu?.classList.add('show');
     backdrop?.classList.add('show');
     toggleBtn?.classList.add('active');
+    document.body.classList.add('nav-menu-open');
   }
 
   function closeMenu() {
     dropdownMenu?.classList.remove('show');
     backdrop?.classList.remove('show');
     toggleBtn?.classList.remove('active');
+    document.body.classList.remove('nav-menu-open');
   }
 
   if (toggleBtn) {
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Intersep seluruh tombol / link login agar kredensial selalu bersih & wajib input ulang
   const loginLinkTargets = document.querySelectorAll(
-    'a[href*="login"], a[href*="admin/login"], a[href*="teknisi/login"], a[href*="mitra"], #navLoginBtn'
+    'a[href*="login"], a[href*="admin/login"], a[href*="teknisi/login"], #navLoginBtn'
   );
   loginLinkTargets.forEach((link) => {
     link.addEventListener('click', () => {
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
   const estimatorBrand = document.getElementById('estBrand');
   const estimatorModel = document.getElementById('estModel');
@@ -406,16 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
           btnStyle: 'background: linear-gradient(135deg, #d97706, #b45309);',
         };
       case 'blue':
-        return {
-          pillStyle: 'background: linear-gradient(135deg, #2563eb, #3b82f6);',
-          codeStyle: 'color: #60a5fa; border-color: #2563eb;',
-          btnStyle: 'background: linear-gradient(135deg, #2563eb, #1d4ed8);',
-        };
       case 'cyan':
+      case 'gold':
         return {
-          pillStyle: 'background: linear-gradient(135deg, #06b6d4, #0284c7);',
-          codeStyle: 'color: #38bdf8; border-color: #0284c7;',
-          btnStyle: 'background: linear-gradient(135deg, #0284c7, #2563eb);',
+          pillStyle: 'background: linear-gradient(135deg, #d4af37, #b45309);',
+          codeStyle: 'color: #b45309; border-color: #d4af37;',
+          btnStyle: 'background: linear-gradient(135deg, #d4af37, #b45309);',
         };
       case 'purple':
       default:
@@ -746,6 +744,12 @@ document.addEventListener('DOMContentLoaded', () => {
       slide.setAttribute('data-link', btnLink);
       slide.setAttribute('data-btn-text', promo.buttonText || 'Klaim Promo Servis Sekarang ↗');
 
+      const hintText = promo.theme === 'green'
+        ? '✨ Klik Banner untuk Fasilitas &amp; Garansi'
+        : (promo.theme === 'purple' ? '✨ Klik Banner untuk Bonus Tempered Glass' : '✨ Klik Banner untuk Info Promo &amp; Klaim');
+      const ctaText = promo.theme === 'green' ? 'Konsultasi ↗' : 'Klaim Promo ↗';
+      const pulseColor = promo.theme === 'green' ? '#10b981' : (promo.theme === 'purple' ? '#c084fc' : '#ef4444');
+
       slide.innerHTML = `
         <img
           src="${imgSrc}"
@@ -755,17 +759,17 @@ document.addEventListener('DOMContentLoaded', () => {
         >
         <div class="promo-slide-overlay">
           <div class="promo-top-row">
-            <div class="promo-badge-tag">
+            <div class="promo-badge-tag" style="color: #ffffff !important;">
               <span class="pulse-indicator"></span>
-              <span>${promo.badgeTag || '🔥 PROMO SPESIAL BULAN INI'}</span>
+              <span style="color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);">${promo.badgeTag || '🔥 PROMO SPESIAL BULAN INI'}</span>
             </div>
-            ${promo.badgePill ? `<div class="promo-discount-pill" style="${themeStyles.pillStyle}"><span>${promo.badgePill}</span></div>` : ''}
+            ${promo.badgePill ? `<div class="promo-discount-pill" style="${themeStyles.pillStyle}; color: #ffffff !important;"><span style="color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);">${promo.badgePill}</span></div>` : ''}
           </div>
           <div class="promo-bottom-hint-row">
-            <div class="promo-click-hint">
-              <span class="hint-pulse" style="${promo.theme === 'green' ? 'background:#10b981; box-shadow:0 0 10px #10b981;' : (promo.theme === 'purple' ? 'background:#c084fc; box-shadow:0 0 10px #c084fc;' : '')}"></span>
-              <span>✨ Klik Banner untuk Info Promo &amp; Klaim</span>
-              <span class="hint-arrow">↗</span>
+            <div class="promo-click-hint" style="color: #ffffff !important;">
+              <span class="hint-pulse" style="background: ${pulseColor}; box-shadow: 0 0 10px ${pulseColor};"></span>
+              <span class="hint-text" style="color: #ffffff !important; font-weight: 700; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);">${hintText}</span>
+              <span class="hint-cta-badge" style="color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);">${ctaText}</span>
             </div>
           </div>
         </div>
@@ -988,45 +992,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 6. Navigation Auth Status
   function checkNavAuth() {
-    const rawUser = localStorage.getItem('ngalam_auth_user') || sessionStorage.getItem('ngalam_auth_user');
+    const rawStaff = localStorage.getItem('ngalam_auth_user') || sessionStorage.getItem('ngalam_auth_user');
+    const rawTech = localStorage.getItem('ngalam_tech_session') || sessionStorage.getItem('ngalam_tech_session');
+    const rawMitra = localStorage.getItem('ngalam_mitra_session') || sessionStorage.getItem('ngalam_mitra_session');
+    const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+
     const loginLink = document.getElementById('navLoginBtn') || 
                       document.querySelector('a.navend-login[href*="login"]') || 
                       document.querySelectorAll('.navend-login')[document.querySelectorAll('.navend-login').length - 1];
     if (!loginLink) return;
 
-    if (rawUser) {
-      try {
-        const user = JSON.parse(rawUser);
-        if (user && user.name) {
-          const shortName = user.name.split('(')[0].trim().split(' ')[0];
-          const isSubdir = window.location.pathname.includes('/layanan') ||
-                           window.location.pathname.includes('/pesan-servis') ||
-                           window.location.pathname.includes('/kontak') ||
-                           window.location.pathname.includes('/login') ||
-                           window.location.pathname.includes('/admin') ||
-                           window.location.pathname.includes('/teknisi');
-          const prefix = isSubdir ? '../' : '';
-          
-          let dest = 'login/index.html';
-          let roleDisplay = 'MEMBER';
-          let avatar = user.avatar || '👤';
+    const path = window.location.pathname.toLowerCase();
+    const isSubdir = path.includes('/layanan') ||
+                     path.includes('/pesan-servis') ||
+                     path.includes('/kontak') ||
+                     path.includes('/login') ||
+                     path.includes('/admin') ||
+                     path.includes('/teknisi') ||
+                     path.includes('/mitra') ||
+                     path.includes('/lacak');
+    const prefix = isSubdir ? '../' : '';
 
-          if (user.role === 'teknisi') {
+    try {
+      // 1. Staff Priority (Admin / Kasir / Owner)
+      if (rawStaff) {
+        const user = JSON.parse(rawStaff);
+        if (user && (user.name || user.username)) {
+          const shortName = (user.name || user.username).split('(')[0].trim().split(' ')[0];
+          let dest = 'admin/index.html';
+          let roleDisplay = 'KASIR';
+          let avatar = user.avatar || '👩‍💼';
+
+          if (user.role === 'admin' || user.role === 'owner') {
+            roleDisplay = user.isSuperAdmin ? 'SUPER ADMIN' : 'OWNER';
+            avatar = '👑';
+          } else if (user.role === 'teknisi') {
             dest = 'teknisi/index.html';
             roleDisplay = 'TEKNISI';
             avatar = user.avatar || '🔬';
-          } else if (user.role === 'admin' || user.role === 'owner') {
-            dest = 'admin/index.html';
-            roleDisplay = user.isSuperAdmin ? 'SUPER ADMIN' : (user.role === 'owner' ? 'OWNER' : 'KASIR');
-            avatar = user.isSuperAdmin ? '👑' : (user.avatar || '👩‍💼');
           }
 
           loginLink.href = `${prefix}${dest}`;
           loginLink.innerHTML = `<span>${avatar} ${shortName} (${roleDisplay})</span>`;
-          loginLink.title = `Buka Dashboard: ${user.name}`;
+          loginLink.title = `Buka Dashboard: ${user.name || user.username}`;
+          return;
         }
-      } catch (e) { }
-    }
+      }
+
+      // 2. Teknisi Session Priority
+      if (rawTech) {
+        const tech = JSON.parse(rawTech);
+        if (tech && (tech.name || tech.username)) {
+          const shortName = (tech.name || tech.username).split('(')[0].trim().split(' ')[0];
+          loginLink.href = `${prefix}teknisi/index.html`;
+          loginLink.innerHTML = `<span>${tech.avatar || '🔬'} ${shortName} (TEKNISI)</span>`;
+          loginLink.title = `Meja Kerja Teknisi: ${tech.name || tech.username}`;
+          return;
+        }
+      }
+
+      // 3. Mitra Session Priority
+      if (rawMitra) {
+        const mitra = JSON.parse(rawMitra);
+        if (mitra && (mitra.name || mitra.username)) {
+          const shortName = (mitra.name || mitra.username).split('(')[0].trim().split(' ')[0];
+          loginLink.href = `${prefix}mitra/index.html`;
+          loginLink.innerHTML = `<span>${mitra.avatar || '🛵'} ${shortName} (MITRA)</span>`;
+          loginLink.title = `Portal Afiliasi Mitra: ${mitra.name || mitra.username}`;
+          return;
+        }
+      }
+
+      // 4. Customer Member Priority
+      if (rawCust) {
+        const cust = JSON.parse(rawCust);
+        if (cust && (cust.name || cust.whatsapp)) {
+          const shortName = (cust.name || 'Pelanggan').split('(')[0].trim().split(' ')[0];
+          loginLink.href = `${prefix}login/index.html`;
+          loginLink.innerHTML = `<span>👤 ${shortName} (MEMBER)</span>`;
+          loginLink.title = `Portal Servis Member: ${cust.name || cust.whatsapp}`;
+          return;
+        }
+      }
+    } catch (_) {}
   }
   checkNavAuth();
 });

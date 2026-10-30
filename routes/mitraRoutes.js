@@ -1,7 +1,7 @@
 /**
  * NGALAM FIX PRO - Mitra Driver, Ojol & Toko Rekanan Affiliate Routes
  * Handles Mitra registration, automatic unique affiliate code generation,
- * dynamic scannable QR Codes, and commission tracking integrated with Google Sheets.
+ * dynamic scannable QR Codes, and commission tracking.
  */
 
 const express = require('express');
@@ -10,25 +10,42 @@ const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 
+const userService = require('../services/userService');
+
 const {
-  readUsers,
-  authDriverViaGoogleSheets,
   generateMitraCode,
-  syncDriversToGoogleSheets,
-  readOrders,
-  getConfig
+  readOrders
 } = require('../services/financeService');
 
-const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
+function readUsers() {
+  return userService.getMitraUsers();
+}
 
 function saveUsers(users) {
-  try {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
-    return true;
-  } catch (err) {
-    console.error('[MitraRoutes] Error writing users.json:', err.message);
-    return false;
+  return userService.saveMitraUsers(users);
+}
+
+/**
+ * Normalisasi nomor telepon Indonesia (mengubah +62 / 62 menjadi format standar 08...)
+ */
+function normalizePhone(val) {
+  if (!val) return '';
+  let digits = String(val).replace(/\D/g, '');
+  if (digits.startsWith('62')) {
+    digits = '0' + digits.slice(2);
   }
+  return digits;
+}
+
+function phonesMatch(p1, p2) {
+  const norm1 = normalizePhone(p1);
+  const norm2 = normalizePhone(p2);
+  if (!norm1 || !norm2) return false;
+  if (norm1 === norm2) return true;
+  if (norm1.length >= 8 && norm2.length >= 8) {
+    return norm1.endsWith(norm2.slice(-8)) || norm2.endsWith(norm1.slice(-8));
+  }
+  return false;
 }
 
 /**
@@ -156,7 +173,7 @@ router.post('/register', async (req, res) => {
     // Cek apakah username atau no telp sudah ada
     const existing = users.find(u =>
       (u.username || '').toLowerCase() === cleanUser ||
-      (u.phone || '').replace(/\D/g, '') === cleanPhone.replace(/\D/g, '')
+      phonesMatch(u.phone, cleanPhone)
     );
 
     if (existing) {
@@ -200,18 +217,11 @@ router.post('/register', async (req, res) => {
     users.push(newMitra);
     saveUsers(users);
 
-    // Sinkronkan langsung akun mitra baru ke Google Spreadsheet (Sheet: MitraDriver)
-    try {
-      await syncDriversToGoogleSheets();
-    } catch (sheetSyncErr) {
-      console.warn('[MitraRoutes] Background sync driver to Google Sheets warning:', sheetSyncErr.message);
-    }
-
     const details = buildMitraAffiliateDetails(req, refCode);
 
     res.status(201).json({
       success: true,
-      message: `Pendaftaran Mitra berhasil! Kode unik afiliasi Anda "${refCode}" telah aktif dan tersinkronkan ke Google Spreadsheet MitraDriver.`,
+      message: `Pendaftaran Mitra berhasil! Kode unik afiliasi Anda "${refCode}" telah aktif.`,
       mitra: {
         ...newMitra,
         affiliateUrl: details.affiliateUrl,
@@ -223,31 +233,68 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// POST /api/mitra/login - Login Mitra dengan Verifikasi Ketat ke Google Spreadsheet
+// POST /api/mitra/login - Login Mitra Driver & Toko Rekanan
 router.post('/login', async (req, res) => {
   try {
     const { identifier = '', password = '' } = req.body;
     const cleanId = (identifier || '').trim();
     const cleanPass = (password || '').trim();
 
-    if (!cleanId) {
-      return res.status(400).json({ success: false, message: 'Username, WhatsApp, atau Email wajib diisi.' });
-    }
-    if (!cleanPass) {
-      return res.status(400).json({ success: false, message: 'Kata sandi wajib diisi.' });
-    }
-
-    // Cek ke Google Spreadsheet (MitraDriver)
-    const authResult = await authDriverViaGoogleSheets(cleanId, cleanPass);
-
-    if (!authResult || !authResult.success) {
-      return res.status(403).json({
+    if (!cleanId || !cleanPass) {
+      return res.status(400).json({
         success: false,
-        message: (authResult && authResult.message) || 'Akses Ditolak: Akun mitra tidak ditemukan di Google Spreadsheet (MitraDriver).'
+        message: 'Username / Nomor WhatsApp dan kata sandi wajib diisi.'
       });
     }
 
-    const driver = authResult.driver;
+    const users = readUsers();
+    const digitsOnly = cleanId.replace(/\D/g, '');
+    const cleanLower = cleanId.toLowerCase();
+
+    let driver = users.find(u => {
+      if (u.role !== 'ojol' && u.role !== 'mitra') return false;
+      const uUser = (u.username || '').toLowerCase();
+      const uEmail = (u.email || '').toLowerCase();
+      const matchId = (uUser === cleanLower || uEmail === cleanLower || phonesMatch(u.phone, cleanId));
+      return matchId && u.password === cleanPass;
+    });
+
+    // Fallback: Jika pemilik/admin workshop ingin masuk ke portal mitra
+    if (!driver) {
+      const allStaff = userService.getAllUsers();
+      const staffUser = allStaff.find(u => {
+        const uUser = (u.username || '').toLowerCase();
+        const uEmail = (u.email || '').toLowerCase();
+        const matchId = (uUser === cleanLower || uEmail === cleanLower || phonesMatch(u.phone, cleanId));
+        return matchId && u.password === cleanPass && (u.role === 'admin' || u.role === 'owner');
+      });
+
+      if (staffUser) {
+        driver = {
+          id: `USR-MITRA-${staffUser.id || 'ADMIN'}`,
+          username: staffUser.username,
+          name: staffUser.name,
+          role: 'ojol',
+          category: 'Mitra Prioritas Workshop',
+          avatar: '👑',
+          phone: staffUser.phone || '',
+          email: staffUser.email || '',
+          referralCode: staffUser.referralCode || 'NGALAM-SUPER-2026',
+          commissionRate: 10,
+          totalCommission: 0,
+          status: 'Siaga / Aktif',
+          lastActive: 'Hari ini'
+        };
+      }
+    }
+
+    if (!driver) {
+      return res.status(401).json({
+        success: false,
+        message: 'Kredensial tidak valid: Username / No HP atau kata sandi salah.'
+      });
+    }
+
     const details = buildMitraAffiliateDetails(req, driver.referralCode);
 
     // Ambil riwayat order yang menggunakan kode afiliasi mitra ini
@@ -259,7 +306,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       success: true,
-      message: authResult.message || `Selamat datang Mitra, ${driver.name}!`,
+      message: `Selamat datang Mitra, ${driver.name}!`,
       token: 'MTR-TOKEN-' + crypto.randomBytes(16).toString('hex'),
       driver: {
         ...driver,
@@ -327,6 +374,11 @@ router.get('/dashboard', (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+// POST /api/mitra/logout
+router.post('/logout', (req, res) => {
+  res.json({ success: true, message: 'Berhasil keluar dari akun mitra.' });
 });
 
 module.exports = router;

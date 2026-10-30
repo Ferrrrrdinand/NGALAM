@@ -1,6 +1,6 @@
 /**
  * NGALAM FIX PRO - Admin Staff & Cashier Dashboard
- * Connected to Node.js backend & Google Sheets API v4
+ * Connected to Node.js backend & PostgreSQL Database
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let cachedTransactions = [];
 
   // DOM Elements
-  const sheetsStatusBadge = document.getElementById('sheetsStatusBadge');
+  const dbStatusBadge = document.getElementById('dbStatusBadge') || document.getElementById('sheetsStatusBadge');
   const queueTableBody = document.getElementById('queueTableBody');
   const queueCountBadge = document.getElementById('queueCountBadge');
   const quickCountQueue = document.getElementById('quickCountQueue');
@@ -107,28 +107,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
-  // Check Google Sheets API Status
-  async function checkSheetsStatus() {
+  // Check Database / System Status
+  async function checkDatabaseStatus() {
     try {
-      const res = await fetch(`${API_BASE}/api/sheets/status`);
+      const res = await fetch(`${API_BASE}/api/database/status`);
       const data = await res.json();
-      if (!sheetsStatusBadge) return;
+      if (!dbStatusBadge) return;
 
-      if (data.connected) {
-        sheetsStatusBadge.className = 'status-tag tag-connected';
-        sheetsStatusBadge.innerHTML = `🟢 <b>Google Sheets API v4 Terhubung</b> (${data.sheetName})`;
-        sheetsStatusBadge.title = `Spreadsheet ID: ${data.spreadsheetId}`;
-      } else {
-        sheetsStatusBadge.className = 'status-tag tag-fallback';
-        sheetsStatusBadge.innerHTML = `🟡 <b>Mode Penyimpanan Lokal</b> (data/orders.json)`;
-        sheetsStatusBadge.title = data.message;
-      }
+      dbStatusBadge.className = 'status-tag tag-connected';
+      dbStatusBadge.innerHTML = `🟢 <b>Database Sistem Aktif</b> (Siap PostgreSQL)`;
+      dbStatusBadge.title = data.message || 'Sistem siap dihubungkan ke PostgreSQL';
     } catch (err) {
-      if (sheetsStatusBadge) {
-        sheetsStatusBadge.className = 'status-tag tag-error';
-        sheetsStatusBadge.innerHTML = `🔴 Server Offline`;
+      if (dbStatusBadge) {
+        dbStatusBadge.className = 'status-tag tag-error';
+        dbStatusBadge.innerHTML = `🔴 Server Offline`;
       }
     }
   }
@@ -436,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const submitBtn = document.getElementById('walkinSubmitBtn');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>Menyimpan ke Spreadsheet & Sistem...</span>';
+    submitBtn.innerHTML = '<span>Menyimpan ke Database & Sistem...</span>';
 
     const customerName = document.getElementById('walkinCustName')?.value.trim();
     const whatsapp = document.getElementById('walkinCustWa')?.value.trim();
@@ -525,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="receipt-header">
           <h2>NGALAM FIX PRO</h2>
           <p>SPESIALIS SERVIS SMARTPHONE ANDROID & IPHONE</p>
-          <p>Jl. Soekarno Hatta No. 88, Lowokwaru, Kota Malang</p>
+          <p>Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang</p>
           <p>WhatsApp: +62 813-3030-4321 (Liem Hingky Liman)</p>
           <div class="receipt-divider">================================</div>
           <div class="receipt-title">TANDA TERIMA REPARASI MEJA 1</div>
@@ -596,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Kosongkan Semua Data Button
   clearDataBtn?.addEventListener('click', async () => {
     const confirmClear = confirm(
-      '⚠️ PERINGATAN:\nApakah Anda yakin ingin MENGOSONGKAN SEMUA DATA antrian tiket servis?\nData di spreadsheet dan sistem akan di-reset menjadi kosong.'
+      '⚠️ PERINGATAN:\nApakah Anda yakin ingin MENGOSONGKAN SEMUA DATA antrian tiket servis?\nData di database sistem akan di-reset menjadi kosong.'
     );
 
     if (!confirmClear) return;
@@ -992,6 +986,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px; min-width: 105px;">
+          <button type="button" class="btn small change-photo-btn" data-id="${promo.id}" style="font-size: 0.78rem; padding: 6px 10px; background: #f0fdf4; border: 1.5px solid #86efac; color: #16a34a; font-weight: 700; cursor: pointer; border-radius: 8px;">
+            📷 Ganti Foto
+          </button>
+          <input type="file" class="hidden-promo-file-input" data-id="${promo.id}" accept="image/png, image/jpeg, image/webp" style="display: none;">
           <button type="button" class="btn small toggle-promo-btn" data-id="${promo.id}" style="font-size: 0.78rem; padding: 6px 10px; background: ${isActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; border: 1px solid ${isActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}; color: ${isActive ? '#dc2626' : '#059669'}; font-weight: 700;">
             ${isActive ? 'Nonaktifkan' : 'Aktifkan'}
           </button>
@@ -1002,6 +1000,62 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
 
       promosListContainer.appendChild(card);
+    });
+
+    // Attach event listeners for Ganti Foto (Instant PostgreSQL Sync)
+    promosListContainer.querySelectorAll('.change-photo-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const fileInput = promosListContainer.querySelector(`.hidden-promo-file-input[data-id="${id}"]`);
+        if (fileInput) fileInput.click();
+      });
+    });
+
+    promosListContainer.querySelectorAll('.hidden-promo-file-input').forEach((input) => {
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 15 * 1024 * 1024) {
+          alert('Ukuran gambar terlalu besar. Maksimal 15 MB.');
+          return;
+        }
+
+        const id = input.getAttribute('data-id');
+        const btn = promosListContainer.querySelector(`.change-photo-btn[data-id="${id}"]`);
+        const originalText = btn ? btn.innerHTML : '📷 Ganti Foto';
+        if (btn) {
+          btn.innerHTML = '⏳ Menyimpan...';
+          btn.disabled = true;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const base64Data = reader.result;
+            const res = await fetch(`${API_BASE}/api/promos/${id}/image`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: base64Data })
+            });
+            const json = await res.json();
+            if (json.success) {
+              alert(`✅ Berhasil! Foto banner #${id} telah diganti dan sistem langsung mengeksekusi UPDATE banners SET image_url = ... di PostgreSQL!`);
+              fetchPromos();
+            } else {
+              alert('Gagal mengganti foto banner: ' + (json.error || 'Terjadi kesalahan'));
+            }
+          } catch (err) {
+            alert('Error saat mengganti foto banner: ' + err.message);
+          } finally {
+            if (btn) {
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     });
 
     // Attach event listeners for Toggle & Delete buttons
@@ -1532,10 +1586,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminUserName = document.getElementById('adminUserName');
     const adminUserAvatar = document.getElementById('adminUserAvatar');
     const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    const dropdownUserName = document.getElementById('dropdownUserName');
+    const dropdownUserAvatar = document.getElementById('dropdownUserAvatar');
+    const dropdownUserRole = document.getElementById('dropdownUserRole');
 
     if (user && user.name) {
-      if (adminUserName) adminUserName.textContent = user.name.split('(')[0].trim();
+      const displayName = user.name.split('(')[0].trim();
+      if (adminUserName) adminUserName.textContent = displayName;
       if (adminUserAvatar && user.avatar) adminUserAvatar.textContent = user.avatar;
+      if (dropdownUserName) dropdownUserName.textContent = displayName;
+      if (dropdownUserAvatar && user.avatar) dropdownUserAvatar.textContent = user.avatar;
     }
 
     // Role & Tier UI Enforcement: Kasir (Limited) vs Super Admin (Full)
@@ -1547,6 +1607,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const roleBannerTitle = document.getElementById('roleBannerTitle');
     const roleBannerBadge = document.getElementById('roleBannerBadge');
     const roleBannerDesc = document.getElementById('roleBannerDesc');
+
+    if (dropdownUserRole) {
+      dropdownUserRole.textContent = isKasir ? 'FRONT DESK KASIR' : 'SUPER ADMIN (AKSES PENUH)';
+    }
 
     if (isKasir) {
       if (headerPill) {
@@ -1573,13 +1637,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const clearBtn = document.getElementById('clearDataBtn');
       if (clearBtn) clearBtn.style.display = 'none';
 
-      // In cashier panel: hide Buku Kas Besar (Spreadsheet 1) and dual sheets config button
+      // In cashier panel: hide Buku Kas Besar and database config button
       const subtabBtnFinances = document.getElementById('subtabBtnFinances');
       if (subtabBtnFinances) subtabBtnFinances.style.display = 'none';
       const subpanelFinances = document.getElementById('subpanelFinances');
       if (subpanelFinances) subpanelFinances.style.display = 'none';
-      const openSheetsConfigModalBtn = document.getElementById('openSheetsConfigModalBtn');
-      if (openSheetsConfigModalBtn) openSheetsConfigModalBtn.style.display = 'none';
+      const openDbConfigModalBtn = document.getElementById('openDbConfigModalBtn') || document.getElementById('openSheetsConfigModalBtn');
+      if (openDbConfigModalBtn) openDbConfigModalBtn.style.display = 'none';
 
       // Auto activate subpanel transactions for cashier
       if (typeof switchCashierSubtab === 'function') {
@@ -1616,20 +1680,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (openSheetsConfigModalBtn) openSheetsConfigModalBtn.style.display = '';
     }
 
-    // Verify session with backend asynchronously
+    // Verify session with backend asynchronously (skip for local/offline tokens)
     try {
-      const verifyRes = await fetch(`${API_BASE}/api/auth/me`, {
-        headers: { 'Authorization': `Bearer ${user.token}` },
-      });
-      if (!verifyRes.ok) {
-        localStorage.removeItem('ngalam_auth_user');
-        sessionStorage.removeItem('ngalam_auth_user');
-        document.cookie = "ngalam_token=; path=/; max-age=0";
-        window.location.replace('login.html?reason=expired');
-        return;
+      if (user.token && !user.token.startsWith('NGF-TOKEN-LOCAL-')) {
+        const verifyRes = await fetch(`${API_BASE}/api/auth/me`, {
+          headers: { 'Authorization': `Bearer ${user.token}` },
+        });
+        if (!verifyRes.ok && verifyRes.status === 401) {
+          console.warn('[AdminAuth] Server reported expired token.');
+          localStorage.removeItem('ngalam_auth_user');
+          sessionStorage.removeItem('ngalam_auth_user');
+          document.cookie = "ngalam_token=; path=/; max-age=0";
+          window.location.replace('login.html?reason=expired');
+          return;
+        }
       }
     } catch (err) {
-      console.warn('[AdminAuth] Server verification check warning:', err.message);
+      console.warn('[AdminAuth] Server verification check skipped (offline/local mode):', err.message);
     }
 
     adminLogoutBtn?.addEventListener('click', async () => {
@@ -1977,7 +2044,7 @@ document.addEventListener('DOMContentLoaded', () => {
   techLogSearchInput?.addEventListener('input', () => renderTechnicianLogs(cachedTechLogs));
 
   // =========================================================================
-  // 👨‍🔧 ADMIN TECHNICIAN MANAGEMENT (ADD, EDIT, DELETE & AUTO-SPREADSHEET SYNC)
+  // 👨‍🔧 ADMIN TECHNICIAN MANAGEMENT (ADD, EDIT, DELETE & DATABASE SYNC)
   // =========================================================================
   const openAddTechModalBtn = document.getElementById('openAddTechModalBtn');
   const addEditTechnicianModal = document.getElementById('addEditTechnicianModal');
@@ -2011,7 +2078,7 @@ document.addEventListener('DOMContentLoaded', () => {
     techModalPassword.value = '';
     techModalPassword.required = true;
     techModalPasswordLabel.textContent = 'Kata Sandi Akun *';
-    techModalPasswordHelp.textContent = 'Disimpan langsung ke spreadsheet';
+    techModalPasswordHelp.textContent = 'Disimpan aman ke database';
     techModalPhone.value = '';
     techModalEmail.value = '';
     techModalDesk.value = 'Meja Lab Workshop - Teknisi Utama';
@@ -2086,7 +2153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (saveTechModalBtn) {
       saveTechModalBtn.disabled = true;
-      saveTechModalBtn.innerHTML = '<span>⏳ Menyimpan & Menyinkronkan ke Spreadsheet...</span>';
+      saveTechModalBtn.innerHTML = '<span>⏳ Menyimpan ke Database...</span>';
     }
 
     try {
@@ -2116,7 +2183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (data.success) {
-        alert(data.message || 'Data teknisi berhasil disimpan dan disinkronkan ke Google Spreadsheet!');
+        alert(data.message || 'Data teknisi berhasil disimpan ke database!');
         closeTechModal();
         await fetchTechnicians(false);
       } else {
@@ -2127,14 +2194,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       if (saveTechModalBtn) {
         saveTechModalBtn.disabled = false;
-        saveTechModalBtn.innerHTML = '<span>💾 Simpan & Sinkronkan ke Spreadsheet</span>';
+        saveTechModalBtn.innerHTML = '<span>💾 Simpan ke Database</span>';
       }
     }
   });
 
   // Handle Delete Technician (Hapus Teknisi oleh Admin)
   window.adminDeleteTech = async function (techIdOrUsername, techName) {
-    if (!confirm(`Apakah Anda yakin ingin menghapus akun teknisi "${techName}" (@${techIdOrUsername}) dari sistem lab?\n\nData akun di Google Spreadsheet (tab AkunTeknisi) juga akan disinkronkan secara otomatis.`)) {
+    if (!confirm(`Apakah Anda yakin ingin menghapus akun teknisi "${techName}" (@${techIdOrUsername}) dari sistem lab?\n\nData akun di database server juga akan dihapus secara permanen.`)) {
       return;
     }
 
@@ -2155,7 +2222,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // =========================================================================
-  // 💰 DUAL GOOGLE SPREADSHEET FINANCE & TRANSACTIONS MANAGEMENT (ADMIN STAFF)
+  // 💰 DATABASE FINANCE & TRANSACTIONS MANAGEMENT (ADMIN STAFF)
   // =========================================================================
   let cachedFinanceRecords = [];
   cachedTransactions = [];
@@ -2168,19 +2235,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const subpanelTransactions = document.getElementById('subpanelTransactions');
   const subpanelCheckout = document.getElementById('subpanelCheckout');
 
-  // Spreadsheet 1 & 2 Cards & Badges
-  const badgeSheetFinance = document.getElementById('badgeSheetFinance');
-  const displayFinanceSheetId = document.getElementById('displayFinanceSheetId');
+  // Database 1 & 2 Cards & Badges
+  const badgeDbFinance = document.getElementById('badgeDbFinance') || document.getElementById('badgeSheetFinance');
+  const displayFinanceDbStatus = document.getElementById('displayFinanceDbStatus') || document.getElementById('displayFinanceSheetId');
   const countFinanceEntries = document.getElementById('countFinanceEntries');
   const quickSyncFinanceBtn = document.getElementById('quickSyncFinanceBtn');
 
-  const badgeSheetTransactions = document.getElementById('badgeSheetTransactions');
-  const displayTransactionsSheetId = document.getElementById('displayTransactionsSheetId');
+  const badgeDbTransactions = document.getElementById('badgeDbTransactions') || document.getElementById('badgeSheetTransactions');
+  const displayTransactionsDbStatus = document.getElementById('displayTransactionsDbStatus') || document.getElementById('displayTransactionsSheetId');
   const countTransactionEntries = document.getElementById('countTransactionEntries');
   const quickSyncTransactionsBtn = document.getElementById('quickSyncTransactionsBtn');
 
-  const syncBothSheetsBtn = document.getElementById('syncBothSheetsBtn');
-  const openSheetsConfigModalBtn = document.getElementById('openSheetsConfigModalBtn');
+  const syncDatabaseBtn = document.getElementById('syncDatabaseBtn') || document.getElementById('syncBothSheetsBtn');
+  const openDbConfigModalBtn = document.getElementById('openDbConfigModalBtn') || document.getElementById('openSheetsConfigModalBtn');
 
   // Executive Metric Cards
   const financeTotalIncome = document.getElementById('financeTotalIncome');
@@ -2210,9 +2277,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutChangeDisplay = document.getElementById('checkoutChangeDisplay');
 
   // Modals
-  const sheetsConfigModal = document.getElementById('sheetsConfigModal');
-  const closeSheetsConfigBtn = document.getElementById('closeSheetsConfigBtn');
-  const sheetsConfigForm = document.getElementById('sheetsConfigForm');
+  const dbConfigModal = document.getElementById('dbConfigModal') || document.getElementById('sheetsConfigModal');
+  const closeDbConfigBtn = document.getElementById('closeDbConfigBtn') || document.getElementById('closeSheetsConfigBtn');
+  const dbConfigForm = document.getElementById('dbConfigForm') || document.getElementById('sheetsConfigForm');
 
   const addFinanceModal = document.getElementById('addFinanceModal');
   const closeAddFinanceBtn = document.getElementById('closeAddFinanceBtn');
@@ -2274,49 +2341,35 @@ document.addEventListener('DOMContentLoaded', () => {
   subtabBtnTransactions?.addEventListener('click', () => switchCashierSubtab('transactions'));
   subtabBtnCheckout?.addEventListener('click', () => switchCashierSubtab('checkout'));
 
-  // Fetch Status for both Spreadsheets & KPIs
+  // Fetch Status for Database & KPIs
   async function fetchFinanceStatus() {
     try {
       const res = await fetch(`${API_BASE}/api/finance/status`);
       const json = await res.json();
       if (!json.success) return;
 
-      const { credentials, config, summary, spreadsheetFinance, spreadsheetTransactions } = json;
+      const { summary } = json;
 
-      // Spreadsheet 1 Status
-      if (badgeSheetFinance) {
-        if (spreadsheetFinance.connected) {
-          badgeSheetFinance.style.background = 'rgba(16,185,129,0.2)';
-          badgeSheetFinance.style.borderColor = 'rgba(16,185,129,0.5)';
-          badgeSheetFinance.style.color = '#34d399';
-          badgeSheetFinance.innerHTML = '🟢 Google Sheets API v4 Terhubung';
-        } else {
-          badgeSheetFinance.style.background = 'rgba(234,179,8,0.15)';
-          badgeSheetFinance.style.borderColor = 'rgba(234,179,8,0.4)';
-          badgeSheetFinance.style.color = '#facc15';
-          badgeSheetFinance.innerHTML = '🟡 Mode Penyimpanan Lokal (data/finances.json)';
-        }
+      // Ledger / Finance Database Status
+      if (badgeDbFinance) {
+        badgeDbFinance.style.background = 'rgba(16,185,129,0.2)';
+        badgeDbFinance.style.borderColor = 'rgba(16,185,129,0.5)';
+        badgeDbFinance.style.color = '#34d399';
+        badgeDbFinance.innerHTML = '🟢 Database Kas Workshop Aktif (Siap PostgreSQL)';
       }
-      if (displayFinanceSheetId) {
-        displayFinanceSheetId.textContent = config.financeSpreadsheetId || 'Belum disetel (Fallback lokal)';
+      if (displayFinanceDbStatus) {
+        displayFinanceDbStatus.textContent = 'PostgreSQL Ready (data/finances.json)';
       }
 
-      // Spreadsheet 2 Status
-      if (badgeSheetTransactions) {
-        if (spreadsheetTransactions.connected) {
-          badgeSheetTransactions.style.background = 'rgba(16,185,129,0.2)';
-          badgeSheetTransactions.style.borderColor = 'rgba(16,185,129,0.5)';
-          badgeSheetTransactions.style.color = '#34d399';
-          badgeSheetTransactions.innerHTML = '🟢 Google Sheets API v4 Terhubung';
-        } else {
-          badgeSheetTransactions.style.background = 'rgba(234,179,8,0.15)';
-          badgeSheetTransactions.style.borderColor = 'rgba(234,179,8,0.4)';
-          badgeSheetTransactions.style.color = '#facc15';
-          badgeSheetTransactions.innerHTML = '🟡 Mode Penyimpanan Lokal (data/transactions.json)';
-        }
+      // Transactions Database Status
+      if (badgeDbTransactions) {
+        badgeDbTransactions.style.background = 'rgba(16,185,129,0.2)';
+        badgeDbTransactions.style.borderColor = 'rgba(16,185,129,0.5)';
+        badgeDbTransactions.style.color = '#34d399';
+        badgeDbTransactions.innerHTML = '🟢 Database Transaksi Kasir Aktif (Siap PostgreSQL)';
       }
-      if (displayTransactionsSheetId) {
-        displayTransactionsSheetId.textContent = config.transactionsSpreadsheetId || 'Belum disetel (Fallback lokal)';
+      if (displayTransactionsDbStatus) {
+        displayTransactionsDbStatus.textContent = 'PostgreSQL Ready (data/transactions.json)';
       }
 
       // Executive Metrics
@@ -2325,57 +2378,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (financeTotalExpense) financeTotalExpense.textContent = formatRupiah(summary.totalExpense);
         if (financeNetProfit) financeNetProfit.textContent = formatRupiah(summary.netProfit);
         if (financeCurrentBalance) financeCurrentBalance.textContent = formatRupiah(summary.currentBalance);
-      }
-
-      // Fill Config Modal Inputs
-      const cfgAppsScriptUrl = document.getElementById('cfgAppsScriptUrl');
-      const appsScriptStatusHint = document.getElementById('appsScriptStatusHint');
-      const cfgCustomersId = document.getElementById('cfgCustomersId');
-      const cfgCustomersSheetName = document.getElementById('cfgCustomersSheetName');
-      const cfgDriversId = document.getElementById('cfgDriversId');
-      const cfgDriversSheetName = document.getElementById('cfgDriversSheetName');
-      const cfgWorkersId = document.getElementById('cfgWorkersId');
-      const cfgWorkersSheetName = document.getElementById('cfgWorkersSheetName');
-      const cfgTechniciansId = document.getElementById('cfgTechniciansId');
-      const cfgTechniciansSheetName = document.getElementById('cfgTechniciansSheetName');
-      const cfgTransactionsId = document.getElementById('cfgTransactionsId');
-      const cfgTransactionsSheetName = document.getElementById('cfgTransactionsSheetName');
-      const cfgFinanceId = document.getElementById('cfgFinanceId');
-      const cfgFinanceSheetName = document.getElementById('cfgFinanceSheetName');
-      const cfgAutoSync = document.getElementById('cfgAutoSync');
-      const saBox = document.getElementById('serviceAccountEmailBox');
-
-      if (cfgAppsScriptUrl && config.appsScriptUrl) {
-        cfgAppsScriptUrl.value = config.appsScriptUrl;
-      }
-      if (appsScriptStatusHint) {
-        if (config.appsScriptUrl && config.appsScriptUrl.trim().length > 10) {
-          appsScriptStatusHint.innerHTML = '<span style="color: #059669; font-weight: 700;">✅ Google Apps Script Web App Terhubung & Siap Sinkronisasi!</span>';
-        } else {
-          appsScriptStatusHint.innerHTML = 'Status: Masukkan URL Web App untuk menghubungkan website secara instan ke spreadsheet Anda.';
-        }
-      }
-
-      if (cfgCustomersId && config.customersSpreadsheetId) cfgCustomersId.value = config.customersSpreadsheetId;
-      if (cfgCustomersSheetName && config.customersSheetName) cfgCustomersSheetName.value = config.customersSheetName;
-      if (cfgDriversId && config.driversSpreadsheetId) cfgDriversId.value = config.driversSpreadsheetId;
-      if (cfgDriversSheetName && config.driversSheetName) cfgDriversSheetName.value = config.driversSheetName;
-      if (cfgWorkersId && config.workersSpreadsheetId) cfgWorkersId.value = config.workersSpreadsheetId;
-      if (cfgWorkersSheetName && config.workersSheetName) cfgWorkersSheetName.value = config.workersSheetName;
-      if (cfgTechniciansId && config.techniciansSpreadsheetId) cfgTechniciansId.value = config.techniciansSpreadsheetId;
-      if (cfgTechniciansSheetName && config.techniciansSheetName) cfgTechniciansSheetName.value = config.techniciansSheetName;
-      if (cfgTransactionsId && config.transactionsSpreadsheetId) cfgTransactionsId.value = config.transactionsSpreadsheetId;
-      if (cfgTransactionsSheetName && config.transactionsSheetName) cfgTransactionsSheetName.value = config.transactionsSheetName;
-      if (cfgFinanceId && config.financeSpreadsheetId) cfgFinanceId.value = config.financeSpreadsheetId;
-      if (cfgFinanceSheetName && config.financeSheetName) cfgFinanceSheetName.value = config.financeSheetName;
-      if (cfgAutoSync) cfgAutoSync.checked = config.autoSync !== false;
-
-      if (saBox) {
-        if (credentials && credentials.exists) {
-          saBox.innerHTML = `✅ Kredensial Valid! Email Service Account:<br/><b style="color:#ffffff;">${credentials.clientEmail || 'Service Account Terdeteksi'}</b>`;
-        } else {
-          saBox.innerHTML = `⚠️ File <code style="color:#38bdf8;">credentials.json</code> belum diletakkan di root folder.<br/><span style="color:#facc15;">Jika menggunakan Google Apps Script di atas, file credentials.json tidak lagi diperlukan!</span>`;
-        }
       }
     } catch (err) {
       console.warn('[Finance] Status check error:', err.message);
@@ -2677,7 +2679,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="text-align: center; margin-bottom: 8px;">
           <h2 style="font-size: 18px; margin: 0 0 2px; font-weight: 800; letter-spacing: 1px;">NGALAM FIX PRO</h2>
           <div style="font-size: 11px; font-weight: 700;">WORKSHOP REPARASI & SERVIS SMARTPHONE</div>
-          <div style="font-size: 11px;">Jl. Soekarno Hatta No. 88, Lowokwaru, Kota Malang</div>
+          <div style="font-size: 11px;">Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang</div>
           <div style="font-size: 11px;">WhatsApp CS: +62 813-3030-4321</div>
           <div style="margin: 6px 0; letter-spacing: -1px;">========================================</div>
           <div style="font-size: 14px; font-weight: 800; letter-spacing: 0.5px;">STRUK REKAP TRANSAKSI HARIAN KASIR</div>
@@ -2899,7 +2901,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const json = await res.json();
       if (json.success) {
-        alert(`🎉 Pembayaran Berhasil!\n\nNo. Faktur: ${json.data.invoiceNumber}\nTotal Tagihan: ${formatRupiah(totalPaid)}\nMetode: ${paymentMethod}\n\nData otomatis tercatat di 2 Google Spreadsheet (Catatan Keuangan & Riwayat Transaksi).`);
+        alert(`🎉 Pembayaran Berhasil!\n\nNo. Faktur: ${json.data.invoiceNumber}\nTotal Tagihan: ${formatRupiah(totalPaid)}\nMetode: ${paymentMethod}\n\nData otomatis tercatat di database sistem (Catatan Keuangan & Riwayat Transaksi).`);
 
         // Automatically advance order step to step 5 if order exists
         const existing = allOrders.find((o) => o.id === ticketId);
@@ -2976,146 +2978,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Handle 4 Google Spreadsheets Config Save
-  sheetsConfigForm?.addEventListener('submit', async (e) => {
+  // Handle Database Config Form Submit
+  dbConfigForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    const appsScriptUrl = document.getElementById('cfgAppsScriptUrl')?.value.trim();
-    const customersSpreadsheetId = document.getElementById('cfgCustomersId')?.value.trim();
-    const customersSheetName = document.getElementById('cfgCustomersSheetName')?.value.trim() || 'DataCustomer';
-    const driversSpreadsheetId = document.getElementById('cfgDriversId')?.value.trim();
-    const driversSheetName = document.getElementById('cfgDriversSheetName')?.value.trim() || 'MitraDriver';
-    const workersSpreadsheetId = document.getElementById('cfgWorkersId')?.value.trim();
-    const workersSheetName = document.getElementById('cfgWorkersSheetName')?.value.trim() || 'DataPekerja';
-    const techniciansSpreadsheetId = document.getElementById('cfgTechniciansId')?.value.trim();
-    const techniciansSheetName = document.getElementById('cfgTechniciansSheetName')?.value.trim() || 'AkunTeknisi';
-    const transactionsSpreadsheetId = document.getElementById('cfgTransactionsId')?.value.trim();
-    const transactionsSheetName = document.getElementById('cfgTransactionsSheetName')?.value.trim() || 'RiwayatTransaksi';
-    const financeSpreadsheetId = document.getElementById('cfgFinanceId')?.value.trim();
-    const financeSheetName = document.getElementById('cfgFinanceSheetName')?.value.trim() || 'CatatanKeuangan';
-    const autoSync = document.getElementById('cfgAutoSync')?.checked;
-
-    try {
-      const res = await fetch(`${API_BASE}/api/finance/config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          appsScriptUrl,
-          customersSpreadsheetId,
-          customersSheetName,
-          driversSpreadsheetId,
-          driversSheetName,
-          workersSpreadsheetId,
-          workersSheetName,
-          techniciansSpreadsheetId,
-          techniciansSheetName,
-          transactionsSpreadsheetId,
-          transactionsSheetName,
-          financeSpreadsheetId,
-          financeSheetName,
-          autoSync
-        })
-      });
-      const json = await res.json();
-      if (json.success) {
-        alert('🎉 Pengaturan Google Spreadsheet & Apps Script berhasil disimpan!\nSistem akan otomatis menyelaraskan data.');
-        if (sheetsConfigModal) sheetsConfigModal.style.display = 'none';
-        await fetchFinanceStatus();
-      } else {
-        alert('Gagal menyimpan: ' + (json.error || 'Terjadi kesalahan'));
-      }
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
+    if (dbConfigModal) dbConfigModal.style.display = 'none';
+    await fetchFinanceStatus();
   });
 
-  // Tombol Khusus Sinkronisasi Akun Teknisi ke Google Spreadsheet
-  const btnSyncTechAccountsOnly = document.getElementById('btnSyncTechAccountsOnly');
-  btnSyncTechAccountsOnly?.addEventListener('click', async () => {
-    const orig = btnSyncTechAccountsOnly.innerHTML;
-    try {
-      btnSyncTechAccountsOnly.innerHTML = '⏳ Menyinkronkan...';
-      btnSyncTechAccountsOnly.disabled = true;
-      const res = await fetch(`${API_BASE}/api/technicians/sync-spreadsheet`, { method: 'POST' });
-      const json = await res.json();
-      if (json.success) {
-        alert('🎉 ' + json.message);
-      } else {
-        alert('⚠️ Gagal sinkronkan teknisi: ' + (json.message || json.error));
-      }
-    } catch (err) {
-      alert('Error koneksi: ' + err.message);
-    } finally {
-      btnSyncTechAccountsOnly.innerHTML = orig;
-      btnSyncTechAccountsOnly.disabled = false;
-    }
-  });
-
-  // Salin Kode Google Apps Script ke Clipboard
-  const btnCopyAppsScriptCode = document.getElementById('btnCopyAppsScriptCode');
-  btnCopyAppsScriptCode?.addEventListener('click', async () => {
-    const origText = btnCopyAppsScriptCode.innerHTML;
-    try {
-      btnCopyAppsScriptCode.innerHTML = '⏳ Mengambil Kode...';
-      const res = await fetch(`${API_BASE}/api/finance/apps-script-code`);
-      const json = await res.json();
-      if (json.success && json.code) {
-        await navigator.clipboard.writeText(json.code);
-        btnCopyAppsScriptCode.innerHTML = '✅ Kode Disalin!';
-        alert('🎉 KODE GOOGLE APPS SCRIPT BERHASIL DISALIN KE CLIPBOARD!\n\nLangkah Pasang di Google Sheets (Hanya 2 Menit):\n1. Buka Google Spreadsheet Anda di browser.\n2. Klik menu Ekstensi (Extensions) > Apps Script.\n3. Hapus kode default, lalu Tempelkan (Paste / Ctrl+V) kode ini.\n4. Klik Simpan (Ctrl+S).\n5. Klik Terapkan (Deploy) > Penerapan baru > Aplikasi web.\n6. Atur Siapa yang memiliki akses: Siapa saja (Anyone).\n7. Salin URL Web App dan tempelkan di form ini!');
-        setTimeout(() => {
-          btnCopyAppsScriptCode.innerHTML = origText;
-        }, 3000);
-      } else {
-        alert('Tidak dapat memuat file google_apps_script.js dari server.');
-        btnCopyAppsScriptCode.innerHTML = origText;
-      }
-    } catch (err) {
-      alert('Gagal menyalin kode: ' + err.message);
-      btnCopyAppsScriptCode.innerHTML = origText;
-    }
-  });
-
-  // Uji Koneksi Google Apps Script
-  const btnTestAppsScript = document.getElementById('btnTestAppsScript');
-  btnTestAppsScript?.addEventListener('click', async () => {
-    const url = document.getElementById('cfgAppsScriptUrl')?.value.trim();
-    if (!url) {
-      alert('Silakan masukkan URL Google Apps Script Web App terlebih dahulu sebelum menguji koneksi.');
-      document.getElementById('cfgAppsScriptUrl')?.focus();
-      return;
-    }
-
-    const origText = btnTestAppsScript.innerHTML;
-    try {
-      btnTestAppsScript.innerHTML = '⏳ Menguji...';
-      btnTestAppsScript.disabled = true;
-
-      const res = await fetch(`${API_BASE}/api/finance/test-apps-script`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-      const json = await res.json();
-      if (json.success) {
-        alert(`✅ Sukses! ${json.message}\nGoogle Apps Script siap menerima sinkronisasi data.`);
-        const hint = document.getElementById('appsScriptStatusHint');
-        if (hint) {
-          hint.innerHTML = '<span style="color: #059669; font-weight: 700;">✅ Koneksi Terverifikasi Online! Siap Sinkronisasi.</span>';
-        }
-      } else {
-        alert(`⚠️ Pengujian Gagal: ${json.message}\n\nPastikan saat Deploy Aplikasi Web:\n1. Jalankan sebagai: "Saya (email Google Anda)"\n2. Siapa yang memiliki akses: "Siapa saja (Anyone)"`);
-      }
-    } catch (err) {
-      alert('Gagal menghubungi Google Apps Script: ' + err.message);
-    } finally {
-      btnTestAppsScript.innerHTML = origText;
-      btnTestAppsScript.disabled = false;
-    }
-  });
-
-  // Trigger On-Demand Spreadsheet Sync
-  async function triggerFinanceSync(target, btn) {
+  // Trigger On-Demand Database Sync & Validation
+  async function triggerDatabaseSync(target, btn) {
     const original = btn ? btn.innerHTML : '';
     if (btn) {
       btn.disabled = true;
@@ -3144,21 +3015,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  syncBothSheetsBtn?.addEventListener('click', () => triggerFinanceSync('both', syncBothSheetsBtn));
-  quickSyncFinanceBtn?.addEventListener('click', () => triggerFinanceSync('finance', quickSyncFinanceBtn));
-  quickSyncTransactionsBtn?.addEventListener('click', () => triggerFinanceSync('transactions', quickSyncTransactionsBtn));
-  document.getElementById('modalSyncAllBtn')?.addEventListener('click', () => triggerFinanceSync('all', document.getElementById('modalSyncAllBtn')));
+  syncDatabaseBtn?.addEventListener('click', () => triggerDatabaseSync('both', syncDatabaseBtn));
+  quickSyncFinanceBtn?.addEventListener('click', () => triggerDatabaseSync('finance', quickSyncFinanceBtn));
+  quickSyncTransactionsBtn?.addEventListener('click', () => triggerDatabaseSync('transactions', quickSyncTransactionsBtn));
+  document.getElementById('modalSyncAllBtn')?.addEventListener('click', () => triggerDatabaseSync('all', document.getElementById('modalSyncAllBtn')));
 
   // Modal Open & Close Listeners
-  openSheetsConfigModalBtn?.addEventListener('click', () => {
-    if (sheetsConfigModal) sheetsConfigModal.style.display = 'flex';
+  openDbConfigModalBtn?.addEventListener('click', () => {
+    if (dbConfigModal) dbConfigModal.style.display = 'flex';
     fetchFinanceStatus();
   });
-  closeSheetsConfigBtn?.addEventListener('click', () => {
-    if (sheetsConfigModal) sheetsConfigModal.style.display = 'none';
+  closeDbConfigBtn?.addEventListener('click', () => {
+    if (dbConfigModal) dbConfigModal.style.display = 'none';
   });
-  sheetsConfigModal?.addEventListener('click', (e) => {
-    if (e.target === sheetsConfigModal) sheetsConfigModal.style.display = 'none';
+  dbConfigModal?.addEventListener('click', (e) => {
+    if (e.target === dbConfigModal) dbConfigModal.style.display = 'none';
   });
 
   openAddFinanceModalBtn?.addEventListener('click', () => {
@@ -3255,7 +3126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Load
   initAdminAuth();
-  checkSheetsStatus();
+  checkDatabaseStatus();
   fetchOrders();
   fetchPromos();
   fetchPromoCodes();

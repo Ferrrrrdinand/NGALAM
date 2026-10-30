@@ -50,7 +50,7 @@ function getAllTestimonials() {
   try {
     if (fs.existsSync(TESTIMONIALS_FILE)) {
       const raw = fs.readFileSync(TESTIMONIALS_FILE, 'utf-8');
-      const list = JSON.parse(raw);
+      const list = JSON.parse(raw.replace(/^\uFEFF/, ''));
       if (Array.isArray(list) && list.length > 0) return list;
     }
   } catch (err) {
@@ -86,7 +86,8 @@ function addTestimonial({ ticketId = '', name = '', device = '', rating = 5, tex
   if (cleanTicket) {
     try {
       if (fs.existsSync(ORDERS_FILE)) {
-        const orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf-8'));
+        const rawOrders = fs.readFileSync(ORDERS_FILE, 'utf-8');
+        const orders = JSON.parse(rawOrders.replace(/^\uFEFF/, ''));
         const found = orders.find((o) => o.id && o.id.toUpperCase() === cleanTicket);
         if (found) {
           isVerified = true;

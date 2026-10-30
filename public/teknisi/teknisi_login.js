@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const API_BASE = (typeof window !== 'undefined' && window.getNgalamApiBase)
     ? window.getNgalamApiBase()
-    : ((window.location.port === '3000' || window.location.port === '3001' || window.location.port === '3002') ? '' : 'http://localhost:3000');
+    : '';
 
   const techLoginForm = document.getElementById('techLoginForm');
   const loginIdentifier = document.getElementById('loginIdentifier');
@@ -15,25 +15,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginSubmitBtn = document.getElementById('loginSubmitBtn');
   const togglePasswordBtn = document.getElementById('togglePasswordBtn');
 
-  // Keamanan Ketat: Selalu bersihkan sesi login & input saat halaman login dibuka dari beranda / mana pun
-  try {
-    localStorage.removeItem('ngalam_tech_session');
-    sessionStorage.clear();
-    document.cookie = 'ngalam_token=; path=/; max-age=0; SameSite=Lax';
-  } catch (_) {}
-
-  if (loginIdentifier) loginIdentifier.value = '';
-  if (loginPassword) loginPassword.value = '';
+  function resolveSafeRedirect(raw) {
+    if (!raw) return 'index.html';
+    const decoded = decodeURIComponent(raw).trim();
+    if (
+      decoded === '/teknisi' ||
+      decoded === '/teknisi/' ||
+      decoded === '/teknisi/index.html' ||
+      decoded === '/public/teknisi' ||
+      decoded === '/public/teknisi/' ||
+      decoded === '/public/teknisi/index.html' ||
+      decoded.endsWith('/teknisi/index.html') ||
+      decoded.endsWith('/teknisi')
+    ) {
+      return 'index.html';
+    }
+    return decoded;
+  }
 
   // Check URL query parameters
   const urlParams = new URLSearchParams(window.location.search);
   const isLoggedOut = urlParams.get('logged_out') === '1' || urlParams.get('action') === 'logout';
 
   if (isLoggedOut) {
+    try {
+      localStorage.removeItem('ngalam_tech_session');
+      sessionStorage.clear();
+      document.cookie = 'ngalam_token=; path=/; max-age=0; SameSite=Lax';
+    } catch (_) {}
     showAlert('Anda telah berhasil keluar (logout). Silakan isi kembali username dan kata sandi untuk masuk ke meja kerja.', true);
     if (window.history && window.history.replaceState) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+  } else {
+    // Cek apakah ada sesi meja kerja teknisi aktif
+    try {
+      const raw = localStorage.getItem('ngalam_tech_session');
+      if (raw) {
+        const savedUser = JSON.parse(raw);
+        if (savedUser && (savedUser.role === 'teknisi' || savedUser.role === 'admin' || savedUser.role === 'owner')) {
+          showAlert(`Sesi meja kerja teknisi aktif (${savedUser.name}). Mengalihkan ke meja lab...`, true);
+          const target = resolveSafeRedirect(urlParams.get('redirect'));
+          setTimeout(() => {
+            window.location.href = target;
+          }, 350);
+        }
+      }
+    } catch (_) {}
   }
 
   // Toggle Password
@@ -41,39 +69,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!loginPassword) return;
     const isPass = loginPassword.type === 'password';
     loginPassword.type = isPass ? 'text' : 'password';
-    togglePasswordBtn.textContent = isPass ? '🔒' : '👁️';
+    const eyeOpen = togglePasswordBtn.querySelector('.eye-icon-open');
+    const eyeClosed = togglePasswordBtn.querySelector('.eye-icon-closed');
+    if (eyeOpen && eyeClosed) {
+      eyeOpen.style.display = isPass ? 'none' : 'block';
+      eyeClosed.style.display = isPass ? 'block' : 'none';
+    } else {
+      togglePasswordBtn.textContent = isPass ? '🔒' : '👁️';
+    }
   });
 
-  // Check Spreadsheet Connection Status
-  async function checkSpreadsheetStatus() {
-    const pill = document.getElementById('spreadsheetSyncPill');
-    const pillText = document.getElementById('spreadsheetSyncPillText');
-    const dot = document.getElementById('spreadsheetSyncDot');
+  // Check Database Connection Status
+  async function checkDbStatus() {
+    const pill = document.getElementById('techDbSyncPill');
+    const pillText = document.getElementById('techDbSyncPillText');
+    const dot = document.getElementById('techDbSyncDot');
     if (!pill || !pillText) return;
 
     try {
       let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
         ? window.getNgalamApiBase()
-        : 'http://localhost:3000';
+        : '';
       if (window.resolveNgalamApiBase) {
         try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
       }
 
-      const res = await fetch(`${apiBase}/api/technicians/spreadsheet-status`);
+      const res = await fetch(`${apiBase}/api/technicians/database-status`);
       const data = await res.json();
 
-      if (data.success && data.connected) {
+      if (data && data.success) {
         pill.style.background = '#f0fdf4';
         pill.style.borderColor = '#bbf7d0';
         pill.style.color = '#15803d';
         if (dot) dot.style.background = '#22c55e';
-        pillText.innerHTML = `Terhubung: Google Spreadsheet (Tab: <b>${data.sheetName || 'AkunTeknisi'}</b>)`;
+        pillText.innerHTML = `Terhubung: Database Lab Workshop (<b>Siap PostgreSQL</b>)`;
       } else {
-        pill.style.background = '#f8fafc';
-        pill.style.borderColor = '#e2e8f0';
-        pill.style.color = '#64748b';
-        if (dot) dot.style.background = '#94a3b8';
-        pillText.textContent = 'Database: Penyimpanan Akun Lokal Lab';
+        pill.style.background = '#fef2f2';
+        pill.style.borderColor = '#fecaca';
+        pill.style.color = '#b91c1c';
+        if (dot) dot.style.background = '#ef4444';
+        pillText.innerHTML = `Database: Mode Penyimpanan Lokal`;
       }
     } catch (_) {
       pill.style.background = '#f8fafc';
@@ -83,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pillText.textContent = 'Database: Penyimpanan Akun Lokal Lab';
     }
   }
-  checkSpreadsheetStatus();
+  checkDbStatus();
 
   function showAlert(message, isSuccess = false) {
     if (!loginAlertBox) return;
@@ -147,7 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!regPassword) return;
     const isPass = regPassword.type === 'password';
     regPassword.type = isPass ? 'text' : 'password';
-    toggleRegPasswordBtn.textContent = isPass ? '🔒' : '👁️';
+    const eyeOpen = toggleRegPasswordBtn.querySelector('.eye-icon-open');
+    const eyeClosed = toggleRegPasswordBtn.querySelector('.eye-icon-closed');
+    if (eyeOpen && eyeClosed) {
+      eyeOpen.style.display = isPass ? 'none' : 'block';
+      eyeClosed.style.display = isPass ? 'block' : 'none';
+    } else {
+      toggleRegPasswordBtn.textContent = isPass ? '🔒' : '👁️';
+    }
   });
 
   // Handle Technician Registration Submit
@@ -164,10 +206,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const regSubmitBtn = document.getElementById('regSubmitBtn');
 
     if (!registrationCode) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Kode Workshop Wajib Diisi',
+          message: 'Kode otorisasi workshop wajib diisi untuk mendaftar sebagai teknisi lab.',
+          targetInputId: 'regAccessCode'
+        });
+      }
       showAlert('Kode otorisasi workshop wajib diisi.');
       return;
     }
     if (!name || !username || !password || !phone) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Lengkapi Data Registrasi',
+          message: 'Harap lengkapi semua kolom wajib bertanda bintang (*) sebelum mendaftar.',
+          targetInputId: !name ? 'regFullName' : (!username ? 'regTechUsername' : (!phone ? 'regTechPhone' : 'regPassword'))
+        });
+      }
       showAlert('Harap lengkapi semua kolom wajib bertanda bintang (*).');
       return;
     }
@@ -181,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
         ? window.getNgalamApiBase()
-        : 'http://localhost:3000';
+        : '';
       if (window.resolveNgalamApiBase) {
         try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
       }
@@ -203,23 +259,57 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (data.success) {
-        showAlert(`Registrasi teknisi "${name}" berhasil! Akun Anda telah aktif dan tersinkronisasi ke Google Spreadsheet. Silakan login.`, true);
+        showAlert(`Registrasi teknisi "${name}" berhasil! Akun Anda telah aktif di database sistem lab. Silakan login.`, true);
         techRegisterForm.reset();
         switchToLoginTab();
         if (loginIdentifier) loginIdentifier.value = username;
         if (loginPassword) {
           loginPassword.value = '';
-          loginPassword.focus();
         }
+
+        if (window.showAuthSuccessModal) {
+          window.showAuthSuccessModal({
+            title: 'Pendaftaran Teknisi Berhasil!',
+            subtitle: `Akun teknisi "${name}" telah terdaftar resmi di lab. Silakan masukkan kata sandi untuk masuk ke meja kerja.`,
+            user: {
+              name,
+              role: 'teknisi',
+              roleText: '🔬 Teknisi Meja Kerja Lab',
+              avatar: '🔬'
+            },
+            duration: 1600,
+            onComplete: () => {
+              if (loginPassword) loginPassword.focus();
+            }
+          });
+          return;
+        }
+
+        if (loginPassword) loginPassword.focus();
       } else {
-        showAlert(data.error || data.message || 'Pendaftaran teknisi gagal. Periksa kembali kode workshop Anda.');
+        const errMsg = data.error || data.message || 'Pendaftaran teknisi gagal. Periksa kembali kode workshop Anda.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Registrasi Teknisi Ditolak',
+            message: errMsg,
+            targetInputId: 'regAccessCode'
+          });
+        }
+        showAlert(errMsg);
       }
     } catch (err) {
-      showAlert('Terjadi kesalahan jaringan saat mendaftarkan teknisi: ' + err.message);
+      const errMsg = 'Terjadi kesalahan jaringan saat mendaftarkan teknisi: ' + err.message;
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Koneksi Server Gagal',
+          message: errMsg
+        });
+      }
+      showAlert(errMsg);
     } finally {
       if (regSubmitBtn) {
         regSubmitBtn.disabled = false;
-        regSubmitBtn.innerHTML = '<span>Daftarkan Akun & Sinkronkan ke Spreadsheet 🚀</span>';
+        regSubmitBtn.innerHTML = '<span>Daftarkan Akun Teknisi Lab 🚀</span>';
         regSubmitBtn.style.opacity = '1';
       }
     }
@@ -232,6 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = loginPassword?.value.trim();
 
     if (!identifier || !password) {
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Kolom Wajib Diisi',
+          message: 'Silakan isi username akun teknisi dan kata sandi Anda untuk mengakses meja kerja lab.',
+          targetInputId: !identifier ? 'loginIdentifier' : 'loginPassword'
+        });
+      }
       showAlert('Username teknisi dan kata sandi wajib diisi.');
       return;
     }
@@ -246,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       let apiBase = (typeof window !== 'undefined' && window.getNgalamApiBase)
         ? window.getNgalamApiBase()
-        : 'http://localhost:3000';
+        : '';
       if (window.resolveNgalamApiBase) {
         try {
           apiBase = await window.resolveNgalamApiBase();
@@ -261,9 +358,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (data.success && data.user) {
-        // Enforce technician role only
-        if (data.user.role !== 'teknisi') {
-          showAlert('Akun ini bukan akun teknisi workshop lab.');
+        // Enforce authorized workshop technical role
+        if (data.user.role !== 'teknisi' && data.user.role !== 'admin' && data.user.role !== 'owner') {
+          const rejectMsg = 'Akun ini tidak memiliki hak akses meja kerja lab teknisi. Silakan hubungi Super Admin.';
+          if (window.showAuthErrorModal) {
+            window.showAuthErrorModal({
+              title: 'Akses Meja Lab Ditolak',
+              message: rejectMsg,
+              targetInputId: 'loginIdentifier'
+            });
+          }
+          showAlert(rejectMsg);
           if (loginSubmitBtn) {
             loginSubmitBtn.disabled = false;
             loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab 🚀</span>';
@@ -277,7 +382,25 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('ngalam_tech_session', JSON.stringify(data.user));
         document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=86400; SameSite=Lax`;
 
-        // Trigger Futuristic Login Animation Overlay
+        const redirectUrl = resolveSafeRedirect(urlParams.get('redirect'));
+
+        if (window.showAuthSuccessModal) {
+          window.showAuthSuccessModal({
+            title: 'Otentikasi Berhasil!',
+            subtitle: `Selamat datang di Meja Kerja Lab, ${data.user.name}!`,
+            user: {
+              name: data.user.name,
+              role: 'teknisi',
+              roleText: '🔬 Teknisi Meja Kerja Lab Workshop',
+              avatar: '🔬'
+            },
+            redirectUrl: redirectUrl,
+            duration: 1350
+          });
+          return;
+        }
+
+        // Fallback Trigger Futuristic Login Animation Overlay if present
         const overlay = document.getElementById('loginAnimationOverlay');
         const fill = document.getElementById('animProgressFill');
         const icon = document.getElementById('animCircleIcon');
@@ -288,48 +411,47 @@ document.addEventListener('DOMContentLoaded', () => {
           overlay.style.display = 'flex';
           if (subtitle) subtitle.textContent = `Selamat datang, ${data.user.name}!`;
 
-          // Step 1: 20%
           setTimeout(() => {
             if (fill) fill.style.width = '35%';
             if (icon) icon.textContent = '⚡';
-            if (stepText) {
-              stepText.textContent = data.user.source === 'google_spreadsheet'
-                ? 'Memverifikasi kredensial di Google Spreadsheet (AkunTeknisi)...'
-                : 'Menghubungkan meja kerja lab real-time...';
-            }
+            if (stepText) stepText.textContent = 'Memverifikasi kredensial di database lab workshop...';
           }, 250);
 
-          // Step 2: 70%
           setTimeout(() => {
             if (fill) fill.style.width = '80%';
             if (icon) icon.textContent = '🔬';
-            if (stepText) {
-              stepText.textContent = data.user.source === 'google_spreadsheet'
-                ? 'Akun terverifikasi dari Spreadsheet! Menyiapkan antrean unit HP...'
-                : 'Menyiapkan antrean unit HP servis lab...';
-            }
+            if (stepText) stepText.textContent = 'Akun terverifikasi! Menyiapkan antrean unit HP servis...';
           }, 650);
 
-          // Step 3: 100% and Launch
           setTimeout(() => {
             if (fill) fill.style.width = '100%';
             if (icon) icon.textContent = '🚀';
             if (stepText) stepText.textContent = 'Meja lab siap! Membuka workbench...';
           }, 1050);
 
-          // Redirect
-          const redirectUrl = urlParams.get('redirect') || 'index.html';
           setTimeout(() => {
             window.location.href = redirectUrl;
           }, 1450);
         } else {
-          const redirectUrl = urlParams.get('redirect') || 'index.html';
           setTimeout(() => {
             window.location.href = redirectUrl;
           }, 400);
         }
       } else {
-        showAlert(data.error || data.message || 'Username atau kata sandi teknisi tidak cocok.');
+        const errMsg = data.error || data.message || 'Username atau kata sandi teknisi tidak cocok.';
+        if (window.showAuthErrorModal) {
+          window.showAuthErrorModal({
+            title: 'Login Teknisi Gagal!',
+            message: errMsg,
+            hints: [
+              'Periksa apakah tombol <b>Caps Lock</b> sedang aktif pada keyboard.',
+              'Pastikan username akun teknisi lab Anda sudah didaftarkan.',
+              'Jika lupa kata sandi, hubungi Admin / Super User untuk mereset kredensial Anda.'
+            ],
+            targetInputId: 'loginPassword'
+          });
+        }
+        showAlert(errMsg);
         if (loginSubmitBtn) {
           loginSubmitBtn.disabled = false;
           loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab 🚀</span>';
@@ -338,7 +460,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
-      showAlert('Terjadi gangguan koneksi ke server database: ' + err.message);
+      const errMsg = 'Terjadi gangguan koneksi ke server database: ' + err.message;
+      if (window.showAuthErrorModal) {
+        window.showAuthErrorModal({
+          title: 'Koneksi Database Terputus',
+          message: errMsg
+        });
+      }
+      showAlert(errMsg);
       if (loginSubmitBtn) {
         loginSubmitBtn.disabled = false;
         loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab 🚀</span>';
