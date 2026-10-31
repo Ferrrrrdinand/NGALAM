@@ -1,0 +1,1382 @@
+/**
+ * ============================================================================
+ * 📱 NGALAM FIX PRO - UNIFIED MOBILE SYSTEM & RESPONSIVE ENGINE
+ * ============================================================================
+ * Sistem UI Mobile Modern & Bersih untuk Setiap Halaman:
+ * - Terintegrasi dengan Sensor Layar (device-sensor.js) via data-screen-mode="mobile"
+ * - Teraktivasi otomatis pada resolusi HP (max-width: 768px)
+ * - Mencegah layout berantakan, teks patah canggung, tombol bertabrakan
+ * ============================================================================
+ */
+
+/* ==========================================================================
+   1. UNIVERSAL MOBILE FOUNDATION & RESET (<= 768px & [data-screen-mode="mobile"])
+   ========================================================================== */
+@media (max-width: 768px),
+[data-screen-mode="mobile"],
+.screen-mobile {
+
+  /* Pencegah horizontal scrollbar liar & goyang */
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    position: relative !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: manipulation;
+  }
+
+  body {
+    padding-bottom: 40px !important;
+  }
+
+  /* Container lebar penuh dengan margin aman kiri-kanan */
+  .wrap,
+  .main-wrap,
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ukuran font input aman (mencegah auto-zoom Safari iOS) */
+  input, select, textarea, .form-control {
+    font-size: 16px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Tipografi Umum di HP */
+  h1 {
+    font-size: clamp(1.65rem, 6.8vw, 2.25rem) !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  h2 {
+    font-size: clamp(1.35rem, 5.5vw, 1.85rem) !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  h3 {
+    font-size: clamp(1.15rem, 4.5vw, 1.45rem) !important;
+    line-height: 1.3 !important;
+  }
+
+  .lead {
+    font-size: 0.94rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* ==========================================================================
+     2. NAVIGATION & HEADER SYSTEM (UNIVERSAL DI HP)
+     ========================================================================== */
+  .header {
+    min-height: 62px !important;
+  }
+
+  .header .nav {
+    min-height: 62px !important;
+    padding: 8px 0 !important;
+    gap: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .logo {
+    gap: 8px !important;
+  }
+
+  .logo-badge {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+    border-width: 1.5px !important;
+  }
+
+  .logo span:not(.logo-pill) {
+    font-size: 1.1rem !important;
+    white-space: nowrap !important;
+  }
+
+  .logo-pill {
+    display: none !important;
+  }
+
+  /* Sembunyikan tombol teks desktop di navend agar tidak sempit/tumpuk */
+  .navend .navend-login,
+  .navend .navend-lacak,
+  .home-page-body .navend-login,
+  .home-page-body .navend-lacak {
+    display: none !important;
+  }
+
+  .navend {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  /* Tombol CTA Pesan Servis di Header Mobile: Compact & Elegant */
+  .navend .btn.small {
+    padding: 7px 12px !important;
+    font-size: 0.8rem !important;
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    gap: 4px !important;
+  }
+
+  .menu-toggle-btn {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Dropdown Menu Modal di HP: Rapi & Mudah disentuh */
+  .nav-dropdown-menu {
+    position: fixed !important;
+    top: 68px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: 84vh !important;
+    overflow-y: auto !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3) !important;
+  }
+
+  .nav-dropdown-item {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  /* ==========================================================================
+     3. PROMO HERO BANNER SLIDER (PERBAIKAN KHUSUS SCREENSHOT 1)
+     ========================================================================== */
+  .hero-banner-wrap {
+    margin: 12px auto 22px !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .hero-banner-card {
+    aspect-ratio: 16 / 10.5 !important;
+    min-height: 235px !important;
+    max-height: 295px !important;
+    border-radius: 20px !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12) !important;
+  }
+
+  .promo-slide-overlay {
+    padding: 12px 14px !important;
+    justify-content: space-between !important;
+  }
+
+  /* Top row badges: Rapi, satu baris, tidak menutupi gambar */
+  .promo-top-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+  }
+
+  .promo-badge-tag,
+  .hero-banner-card .promo-badge-tag {
+    font-size: 0.64rem !important;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+    gap: 5px !important;
+    max-width: 60% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .promo-badge-tag .pulse-indicator {
+    width: 6px !important;
+    height: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .promo-discount-pill,
+  .hero-banner-card .promo-discount-pill {
+    font-size: 0.64rem !important;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Tombol panah Prev / Next: Ramping & Transparan di Pinggir (Tidak menghalangi foto) */
+  .promo-nav-btn {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 5 !important;
+  }
+
+  .promo-nav-btn.prev {
+    left: 6px !important;
+  }
+
+  .promo-nav-btn.next {
+    right: 6px !important;
+  }
+
+  /* Hint Klik & Tombol Klaim di Bawah Banner (Solusi Teks Pecah 2 Baris) */
+  .promo-bottom-hint-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    gap: 8px !important;
+  }
+
+  .promo-click-hint,
+  .hero-banner-card .promo-click-hint {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: auto !important;
+    max-width: calc(100% - 64px) !important;
+    padding: 5px 10px 5px 10px !important;
+    border-radius: 999px !important;
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(212, 175, 55, 0.6) !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .promo-click-hint .hint-pulse {
+    width: 6px !important;
+    height: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .promo-click-hint .hint-text {
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 145px !important;
+    display: inline-block !important;
+  }
+
+  .promo-click-hint .hint-cta-badge {
+    font-size: 0.68rem !important;
+    padding: 3px 8px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    border-radius: 999px !important;
+    margin-left: 2px !important;
+  }
+
+  /* Dots Slider di HP */
+  .promo-dots {
+    position: absolute !important;
+    bottom: 12px !important;
+    right: 12px !important;
+    margin: 0 !important;
+    display: flex !important;
+    gap: 5px !important;
+    z-index: 10 !important;
+  }
+
+  .promo-dot {
+    width: 7px !important;
+    height: 7px !important;
+  }
+
+  .promo-dot.active {
+    width: 18px !important;
+    border-radius: 999px !important;
+  }
+
+  /* ==========================================================================
+     4. HERO TEXT & STATS TIMELINE
+     ========================================================================== */
+  .hero-centered {
+    padding: 10px 0 20px !important;
+    text-align: center !important;
+  }
+
+  .hero-centered h1 {
+    margin-bottom: 14px !important;
+  }
+
+  .hero-centered .lead {
+    margin-bottom: 20px !important;
+  }
+
+  .hero-centered .actions {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .hero-centered .actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 13px 20px !important;
+    font-size: 0.95rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-centered .trust {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-top: 18px !important;
+  }
+
+  .trust-item {
+    font-size: 0.82rem !important;
+  }
+
+  /* 4-Step Timeline di HP */
+  .wrap.stats {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-top: 24px !important;
+  }
+
+  @media (max-width: 480px) {
+    .wrap.stats {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  .stats-step {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  /* ==========================================================================
+     5. SECTIONHEAD & SERVICE CARDS (PERBAIKAN KHUSUS SCREENSHOT 2)
+     ========================================================================== */
+  .sectionhead {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 24px !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  .sectionhead > div {
+    width: 100% !important;
+  }
+
+  .sectionhead h2 {
+    font-size: clamp(1.45rem, 6.2vw, 1.95rem) !important;
+    line-height: 1.25 !important;
+    margin: 6px 0 0 !important;
+  }
+
+  .sectionhead .eyebrow {
+    font-size: 0.72rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* Tombol Lihat Semua Layanan di Bawah Judul (Tidak lagi terjepit di samping) */
+  .sectionhead .textlink {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+    padding: 9px 18px !important;
+    border-radius: 999px !important;
+    background: #fffdf5 !important;
+    border: 1.5px solid #fef08a !important;
+    color: #b45309 !important;
+    font-weight: 700 !important;
+    font-size: 0.84rem !important;
+    white-space: nowrap !important;
+    margin-top: 4px !important;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.12) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  /* Kartu Layanan Dual (iPhone & Android) */
+  .services.services-dual {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    width: 100% !important;
+  }
+
+  .servicecard {
+    padding: 22px 18px !important;
+    border-radius: 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  .service-card-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 14px !important;
+  }
+
+  .service-dual-title {
+    font-size: 1.35rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .service-dual-desc {
+    font-size: 0.88rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .service-dual-features {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    margin-bottom: 18px !important;
+  }
+
+  .service-dual-features li {
+    font-size: 0.84rem !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .service-dual-features li svg {
+    flex-shrink: 0 !important;
+    margin-top: 2px !important;
+  }
+
+  .service-dual-meta {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 16px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .service-dual-meta .price {
+    font-size: 1.25rem !important;
+  }
+
+  .service-dual-meta .speed,
+  .service-dual-meta .warranty {
+    font-size: 0.78rem !important;
+  }
+
+  .btn-dual-iphone,
+  .btn-dual-android {
+    width: 100% !important;
+    padding: 13px 18px !important;
+    font-size: 0.94rem !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ==========================================================================
+     6. ESTIMATOR WIDGET & CHATBOT ANTI-COLLISION (PERBAIKAN KHUSUS SCREENSHOT 3)
+     ========================================================================== */
+  .estimator-section-wrap {
+    padding: 24px 0 30px !important;
+  }
+
+  .estimator-section-head h2 {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .estimator-section-head p {
+    font-size: 0.86rem !important;
+  }
+
+  .est-modern-card {
+    padding: 20px 14px !important;
+    border-radius: 20px !important;
+  }
+
+  .est-grid-layout {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* Brand Tabs Grid di HP */
+  .est-brand-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  @media (max-width: 480px) {
+    .est-brand-tabs {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  .est-brand-tab {
+    padding: 8px 6px !important;
+    font-size: 0.74rem !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+  }
+
+  /* Damage Chips Grid di HP */
+  .est-damage-chips {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .est-damage-chip {
+    padding: 8px 10px !important;
+    font-size: 0.76rem !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+  }
+
+  .est-result-card {
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  /* Price Container & Perbaikan Teks Angka Pecah */
+  .est-price-container {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+    margin: 12px 0 16px !important;
+    text-align: center !important;
+  }
+
+  .est-price-label {
+    font-size: 0.74rem !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+  }
+
+  /* Angka Harga Responsif & Bebas Patah Canggung */
+  .est-price-val {
+    font-size: clamp(1.1rem, 4.6vw, 1.35rem) !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    display: block !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.5px !important;
+    color: #b45309 !important;
+  }
+
+  .est-price-sub {
+    font-size: 0.7rem !important;
+    margin-top: 4px !important;
+    line-height: 1.35 !important;
+  }
+
+  .est-perks-list {
+    gap: 8px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .est-perk-item {
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+    gap: 10px !important;
+  }
+
+  .est-perk-item strong {
+    font-size: 0.84rem !important;
+  }
+
+  .est-perk-item small {
+    font-size: 0.72rem !important;
+  }
+
+  .est-actions-box {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .btn-est-whatsapp,
+  .btn-est-booking {
+    width: 100% !important;
+    padding: 13px 16px !important;
+    font-size: 0.9rem !important;
+    font-weight: 800 !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* CHATBOT FLOATING ANTI-COLLISION PADA LAYAR HP */
+  /* Pindahkan dari kiri ke kanan bawah, agar tidak menutupi tombol Booking */
+  .chatbot-container,
+  .chatbot-container.mobile-docked {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 16px !important;
+    left: auto !important;
+    z-index: 9990 !important;
+  }
+
+  .chatbot-trigger {
+    width: 50px !important;
+    height: 50px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
+    border: 2px solid #d4af37 !important;
+  }
+
+  .chatbot-trigger-text {
+    display: none !important; /* Di HP hanya tampilkan avatar bulat mewah */
+  }
+
+  .chatbot-trigger-avatar {
+    margin: 0 !important;
+  }
+
+  .chatbot-panel {
+    position: fixed !important;
+    bottom: 12px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: calc(100vw - 20px) !important;
+    max-width: 440px !important;
+    height: min(520px, 80vh) !important;
+    border-radius: 20px !important;
+    z-index: 10000 !important;
+  }
+
+  /* Sembunyikan floating chatbot saat menu navigasi mobile terbuka */
+  body.nav-menu-open .chatbot-container {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  /* ==========================================================================
+     7. HALAMAN BOOKING / PESAN SERVIS (public/pesan-servis/index.html)
+     ========================================================================== */
+  .formpage {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 16px 0 50px !important;
+    margin: 10px auto 40px !important;
+  }
+
+  .formpage > div:first-child {
+    position: static !important;
+  }
+
+  .booking-hero-pill {
+    font-size: 0.72rem !important;
+    padding: 4px 12px !important;
+  }
+
+  .booking-title {
+    font-size: 1.55rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .booking-subtitle {
+    font-size: 0.88rem !important;
+  }
+
+  .booking-benefit-card {
+    padding: 18px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .booking-benefit-list {
+    gap: 12px !important;
+  }
+
+  .booking-form-card {
+    padding: 22px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .form-grid-3 {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .b-form-group {
+    margin-bottom: 18px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .btn-booking-submit {
+    width: 100% !important;
+    padding: 15px !important;
+    font-size: 0.98rem !important;
+  }
+
+  /* ==========================================================================
+     8. HALAMAN LACAK STATUS (public/lacak/index.html)
+     ========================================================================== */
+  .tracking-direct-section {
+    margin: 16px auto 40px !important;
+    padding: 0 12px !important;
+  }
+
+  .tracking-taskbar-wrapper {
+    flex-direction: column !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+    gap: 12px !important;
+  }
+
+  .tracking-taskbar-input {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 1rem !important;
+  }
+
+  .tracking-taskbar-submit {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px !important;
+  }
+
+  .tracking-sub-hints {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+
+  /* Stepper Timeline di HP: Horizontal swipe yang rapi */
+  .tracking-timeline {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+  }
+
+  .tracking-step {
+    min-width: 125px !important;
+    flex: 0 0 125px !important;
+    padding: 10px 6px !important;
+  }
+
+  .tracking-details-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .tracking-card-actions {
+    flex-direction: column !important;
+  }
+
+  .tracking-card-actions a,
+  .tracking-card-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ==========================================================================
+     9. HALAMAN KONTAK & LOKASI (public/kontak/index.html)
+     ========================================================================== */
+  .kontak-hero {
+    padding: 32px 0 24px !important;
+  }
+
+  .kontak-hero-title {
+    font-size: 1.7rem !important;
+  }
+
+  .kontak-hero-desc {
+    font-size: 0.92rem !important;
+    padding: 0 8px !important;
+  }
+
+  .kontak-status-bar {
+    gap: 8px !important;
+  }
+
+  .kontak-status-pill {
+    padding: 6px 12px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .kontak-cards-section {
+    padding: 24px 0 40px !important;
+  }
+
+  .kontak-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .kontak-card {
+    padding: 22px 18px !important;
+    border-radius: 18px !important;
+  }
+
+  .social-channels-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* ==========================================================================
+     10. HALAMAN KATALOG LAYANAN (public/layanan/index.html)
+     ========================================================================== */
+  .layanan-hero {
+    padding: 28px 0 20px !important;
+  }
+
+  .layanan-hero-title {
+    font-size: 1.65rem !important;
+  }
+
+  .layanan-hero-desc {
+    font-size: 0.9rem !important;
+  }
+
+  .layanan-filter-bar {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding: 8px 4px !important;
+    scrollbar-width: none !important;
+  }
+
+  .layanan-filter-btn {
+    min-width: max-content !important;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .layanan-cards-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* ==========================================================================
+     11. PORTAL MEMBER PELANGGAN (public/login/index.html)
+     ========================================================================== */
+  .customer-portal-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 12px !important;
+    margin: 12px auto 40px !important;
+  }
+
+  .customer-portal-card {
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .customer-profile-banner {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+
+  .customer-logout-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .customer-tabs-nav {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+  }
+
+  /* ==========================================================================
+     12. PORTAL MITRA AFILIASI (public/mitra/index.html)
+     ========================================================================== */
+  .mitra-container {
+    padding: 0 12px !important;
+    margin: 16px auto 50px !important;
+  }
+
+  .mitra-banner-card {
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .mitra-banner-card > div {
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  .mitra-logout-btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .mitra-stats-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .mitra-qr-card {
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  /* ==========================================================================
+     13. DASHBOARD ADMIN MEJA 1 (public/admin/index.html)
+     ========================================================================== */
+  .admin-header .nav {
+    min-height: 58px !important;
+  }
+
+  .admin-header-user-badge {
+    display: none !important;
+  }
+
+  #dbStatusBadge {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+    max-width: 130px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #roleWelcomeBanner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 14px !important;
+    gap: 10px !important;
+  }
+
+  #roleFastSummary {
+    flex-direction: column !important;
+  }
+
+  /* Tab Navigation Admin di HP: Horizontal Scroll Rapi */
+  .admin-nav-tabs {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding: 4px 2px 10px !important;
+    scrollbar-width: none !important;
+  }
+
+  .admin-nav-tab {
+    min-width: max-content !important;
+    padding: 9px 14px !important;
+    font-size: 0.82rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Form Walk-in Meja 1: 1 Kolom Penuh */
+  #tab-register > div {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  #tab-register form > div > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Pembungkus Tabel Responsif di Admin */
+  .admin-table-wrapper,
+  .mobile-table-scroll-wrap {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .admin-table,
+  .table {
+    min-width: 600px !important;
+  }
+
+  /* Modal Struk & Dialog di HP */
+  .receipt-modal-container {
+    width: calc(100vw - 20px) !important;
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    padding: 16px !important;
+    overflow-y: auto !important;
+  }
+
+  /* ==========================================================================
+     14. DASHBOARD KASIR MEJA 1 (public/kasir/index.html)
+     ========================================================================== */
+  .kasir-nav-container {
+    padding: 8px 14px !important;
+    gap: 8px !important;
+  }
+
+  .kasir-profile-widget {
+    padding: 4px 10px !important;
+  }
+
+  .kasir-metrics-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .kasir-tab-nav {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 4px !important;
+  }
+
+  .kasir-tab-btn {
+    min-width: 140px !important;
+    padding: 10px 14px !important;
+    font-size: 0.84rem !important;
+  }
+
+  .kasir-panel-card {
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* ==========================================================================
+     15. DASHBOARD TEKNISI LAB (public/teknisi/index.html)
+     ========================================================================== */
+  .lab-nav-container {
+    padding: 8px 14px !important;
+    min-height: 60px !important;
+  }
+
+  .tech-profile-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 18px 14px !important;
+    gap: 14px !important;
+  }
+
+  .tech-profile-left {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+
+  .tech-profile-header-line {
+    justify-content: center !important;
+  }
+
+  .tech-stats-group {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .tech-stat-box {
+    min-width: auto !important;
+    padding: 10px 8px !important;
+  }
+
+  .workbench-section-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+
+  .workbench-search-wrapper {
+    min-width: auto !important;
+    width: 100% !important;
+  }
+
+  /* 5-Stage Stepper di Meja Teknisi: Horizontal Touch Scroll */
+  .stepper-pipeline {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding: 10px !important;
+    scrollbar-width: none !important;
+  }
+
+  .step-pipeline-item {
+    min-width: 105px !important;
+    flex: 0 0 105px !important;
+    padding: 8px 6px !important;
+  }
+
+  .workbench-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  /* ==========================================================================
+     16. SPLIT-SCREEN LOGIN PAGES (ADMIN, KASIR, TEKNISI)
+     ========================================================================== */
+  .admin-fullscreen-container,
+  .kasir-fullscreen-container,
+  .teknisi-fullscreen-container {
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    width: 100% !important;
+  }
+
+  /* Header Showcase di HP dibuat ringkas & elegan */
+  .admin-showcase-panel,
+  .kasir-showcase-panel,
+  .teknisi-showcase-panel {
+    flex: none !important;
+    min-height: auto !important;
+    padding: 22px 18px 16px !important;
+    border-right: none !important;
+    border-bottom: 1.5px solid #e2e8f0 !important;
+  }
+
+  .showcase-header {
+    margin-bottom: 12px !important;
+  }
+
+  .showcase-hero-title {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .showcase-desc,
+  .showcase-cards,
+  .showcase-footer {
+    display: none !important; /* Di HP hemat tempat, fokus langsung ke login */
+  }
+
+  .showcase-status-bar {
+    padding: 8px 12px !important;
+  }
+
+  /* Panel Form Login di HP */
+  .admin-auth-panel,
+  .kasir-auth-panel,
+  .teknisi-auth-panel {
+    flex: 1 !important;
+    min-height: auto !important;
+    padding: 20px 14px 40px !important;
+  }
+
+  .auth-card-container {
+    padding: 22px 18px !important;
+    border-radius: 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .auth-role-group {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* ==========================================================================
+     17. HALAMAN EKSPOR EXCEL (public/admin/export.html)
+     ========================================================================== */
+  .export-card {
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .export-filter-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+}
+
+/* ==========================================================================
+   18. MODE DESKTOP / LAPTOP ENFORCEMENT (> 768px & [data-screen-mode="desktop"])
+   ========================================================================== */
+@media (min-width: 769px) {
+  /* Pulihkan layout komputer jika layar seukuran laptop */
+  .home-page-body .hero-banner-card {
+    aspect-ratio: 16 / 8.2;
+    min-height: 380px;
+  }
+
+  .home-page-body .sectionhead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .home-page-body .services-dual {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chatbot-container {
+    left: 24px !important;
+    right: auto !important;
+    bottom: 24px !important;
+  }
+
+  .chatbot-trigger-text {
+    display: flex !important;
+  }
+}
+
+
+/* ==================== Mobile Modal Enhancements ==================== */
+/* Testimonial Modal (Post‑Repair Review) */
+.receipt-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.6) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+  z-index: 1000 !important;
+}
+.receipt-modal-container {
+  width: 100% !important;
+  max-width: 540px !important;
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+#closeTestimonialModalBtn {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  font-size: 1.6rem !important;
+  line-height: 1 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #555 !important;
+}
+/* Ensure form fields take full width on mobile */
+.receipt-modal-container .b-input {
+  width: 100% !important;
+  max-width: none !important;
+}
+/* Star rating layout */
+#modalStarRating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+#modalStarRating .star-btn {
+  font-size: 1.4rem !important;
+  cursor: pointer !important;
+}
+#modalStarRating .rating-label-text {
+  font-size: 0.9rem !important;
+  margin-left: 8px !important;
+}
+/* Promo Detail Modal */
+.promo-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.6) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+  z-index: 1000 !important;
+}
+.promo-modal-card {
+  width: 100% !important;
+  max-width: 560px !important;
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+.promo-modal-close {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  font-size: 1.6rem !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #555 !important;
+}
+/* Adjust modal header spacing */
+.promo-modal-header {
+  margin-bottom: 16px !important;
+}
+.promo-modal-body,
+.promo-modal-footer {
+  margin-top: 12px !important;
+}
+/* Buttons full width on mobile */
+.btn-modal-cancel,
+.btn-modal-claim {
+  width: 100% !important;
+  padding: 12px !important;
+  font-size: 0.95rem !important;
+  margin-top: 8px !important;
+}
+/* Ensure any dialog respects viewport margins */
+[role="dialog"] {
+  max-width: 100% !important;
+  margin: 0 12px !important;
+}
+/* End of Mobile Modal Enhancements */

@@ -1,137 +1,122 @@
 /**
  * ============================================================================
- * 📱 NGALAM FIX PRO - ADVANCED SCREEN & DEVICE SENSOR (ANTI-LAG & MOBILE OPTIMIZER)
+ * 📱 NGALAM FIX PRO - ADVANCED SCREEN SENSOR & RESPONSIVE ENGINE
  * ============================================================================
- * Sensor Cerdas & Pendeteksi Perangkat Real-Time:
- * 1. Mendeteksi apakah user membuka website menggunakan HP (Smartphone), Tablet, atau Laptop/Komputer.
- * 2. Mengaktifkan 'Mobile Lite Performance Mode' secara otomatis agar HP tidak terasa berat/lemot.
- * 3. Menghindari layout berantakan, teks tumpang tindih, dan memposisikan tombol melayang (chatbot)
- *    ke sudut yang ergonomis (bottom-right) agar tidak menutupi isi konten & judul penting.
- * 4. Menyediakan API Global: window.NgalamSensor
+ * Sistem Sensor Layar Cerdas Real-Time (Otomatis Deteksi Layar HP vs Komputer):
+ * 1. Mendeteksi ukuran layar secara real-time (Resize, Orientation Change, Touch).
+ * 2. Mengaktifkan 'Mode Tampilan Mobile' jika layar seukuran HP (<= 768px),
+ *    menjadikan seluruh tampilan rapi, proporsional, bebas horizontal overflow,
+ *    dan tombol-tombol tidak saling bertabrakan atau menutupi konten.
+ * 3. Mengaktifkan 'Mode Tampilan Komputer' jika layar seukuran Laptop/PC (> 768px).
+ * 4. Touch swipe gesture support untuk banner slider di layar HP.
+ * 5. Anti-collision floating chatbot: memposisikan chatbot di titik aman pada HP
+ *    agar tidak menutupi tombol Booking Jadwal atau formulir penting.
+ * 6. Global API: window.NgalamSensor
  * ============================================================================
  */
 
 (function () {
   'use strict';
 
-  // Breakpoints Standar Internasional
+  // Breakpoints Standar Layar HP & Laptop
   const BREAKPOINTS = {
     MOBILE_MAX: 768,
     TABLET_MAX: 1024
   };
 
   /**
-   * Evaluasi Tipe Perangkat Berdasarkan Dimensi Layar & User Agent
+   * Evaluasi Sensor Layar Terkini
    */
-  function detectDeviceType() {
-    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  function detectScreenInfo() {
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 360;
+    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 640;
     const ua = navigator.userAgent || navigator.vendor || window.opera || '';
     const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua);
     const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
 
-    let type = 'desktop';
+    let screenMode = 'desktop'; // 'mobile' | 'tablet' | 'desktop'
     if (width <= BREAKPOINTS.MOBILE_MAX || (isMobileUA && width < 900)) {
-      type = 'mobile';
-    } else if (width <= BREAKPOINTS.TABLET_MAX || (hasTouch && width <= 1024)) {
-      type = 'tablet';
+      screenMode = 'mobile';
+    } else if (width <= BREAKPOINTS.TABLET_MAX) {
+      screenMode = 'tablet';
+    } else {
+      screenMode = 'desktop';
     }
 
-    const orientation = (window.innerHeight > window.innerWidth) ? 'portrait' : 'landscape';
+    const isMobile = screenMode === 'mobile';
+    const isDesktop = screenMode === 'desktop';
+    const isTablet = screenMode === 'tablet';
+    const orientation = height > width ? 'portrait' : 'landscape';
     const dpr = window.devicePixelRatio || 1;
 
-    // Sensor Kemampuan Hardware & Kapasitas Memori (Mendeteksi apakah perlu mode hemat beban)
-    let isLowTierHardware = false;
-    if (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory < 4) {
-      isLowTierHardware = true;
-    }
-    if (typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 4) {
-      isLowTierHardware = true;
-    }
-
     return {
-      type: type, // 'mobile' | 'tablet' | 'desktop'
-      isMobile: type === 'mobile',
-      isTablet: type === 'tablet',
-      isDesktop: type === 'desktop',
+      mode: screenMode, // 'mobile' | 'tablet' | 'desktop'
+      isMobile: isMobile,
+      isDesktop: isDesktop,
+      isTablet: isTablet,
       isTouch: hasTouch,
       orientation: orientation,
       width: width,
-      height: window.innerHeight || document.documentElement.clientHeight,
-      dpr: dpr,
-      isLowTierHardware: isLowTierHardware,
-      // HP otomatis menggunakan mode performa ringan agar tidak panas & baterai awet
-      enableLitePerf: type === 'mobile' || isLowTierHardware
+      height: height,
+      dpr: dpr
     };
   }
 
   /**
-   * Terapkan Kelas CSS Dinamis ke Tag <html> dan <body>
+   * Terapkan Atribut & Kelas Sensor ke DOM (HTML & Body)
    */
-  function applyDeviceClasses(info) {
+  function applyScreenSensor(info) {
     const docEl = document.documentElement;
     const body = document.body;
 
-    // Bersihkan kelas perangkat sebelumnya
-    const classesToRemove = [
-      'is-mobile', 'is-tablet', 'is-desktop',
-      'device-touch', 'device-mouse',
+    // Bersihkan kelas lama
+    const staleClasses = [
+      'screen-mobile', 'screen-desktop', 'screen-tablet',
+      'mode-mobile', 'mode-desktop', 'mode-tablet',
+      'is-mobile', 'is-desktop', 'is-tablet',
+      'device-mobile', 'device-desktop',
       'screen-portrait', 'screen-landscape',
-      'mobile-lite-perf', 'high-perf-mode',
-      'mobile-screen-detected'
+      'mobile-screen-detected', 'computer-screen-detected'
     ];
 
-    classesToRemove.forEach(cls => {
+    staleClasses.forEach(cls => {
       docEl.classList.remove(cls);
       if (body) body.classList.remove(cls);
     });
 
-    // Tambahkan kelas perangkat terkini
-    const newClasses = [
-      `is-${info.type}`,
-      info.isTouch ? 'device-touch' : 'device-mouse',
+    // Pasang atribut data untuk selector CSS presisi
+    docEl.setAttribute('data-screen-mode', info.mode);
+    docEl.setAttribute('data-device', info.mode);
+    docEl.setAttribute('data-orientation', info.orientation);
+    docEl.setAttribute('data-touch', info.isTouch ? 'true' : 'false');
+
+    // Variabel CSS dinamis
+    docEl.style.setProperty('--viewport-w', `${info.width}px`);
+    docEl.style.setProperty('--viewport-h', `${info.height}px`);
+    docEl.style.setProperty('--is-mobile-ui', info.isMobile ? '1' : '0');
+
+    // Tambahkan kelas baru
+    const activeClasses = [
+      `screen-${info.mode}`,
+      `mode-${info.mode}`,
+      `is-${info.mode}`,
+      info.isMobile ? 'mobile-screen-detected' : 'computer-screen-detected',
+      info.isMobile ? 'device-mobile' : 'device-desktop',
       `screen-${info.orientation}`,
-      info.enableLitePerf ? 'mobile-lite-perf' : 'high-perf-mode'
+      info.isTouch ? 'has-touch' : 'no-touch'
     ];
 
-    if (info.isMobile) {
-      newClasses.push('mobile-screen-detected');
-    }
-
-    newClasses.forEach(cls => {
+    activeClasses.forEach(cls => {
       docEl.classList.add(cls);
       if (body) body.classList.add(cls);
     });
-
-    // Pasang atribut data & CSS variable untuk styling responsif presisi
-    docEl.setAttribute('data-device', info.type);
-    docEl.setAttribute('data-orientation', info.orientation);
-    docEl.setAttribute('data-touch', info.isTouch ? 'true' : 'false');
-    docEl.setAttribute('data-perf', info.enableLitePerf ? 'lite' : 'full');
-    docEl.style.setProperty('--screen-width', `${info.width}px`);
-    docEl.style.setProperty('--screen-height', `${info.height}px`);
-    docEl.style.setProperty('--is-mobile-ui', info.isMobile ? '1' : '0');
-  }
-
-  // State sensor aktif
-  let currentInfo = detectDeviceType();
-  applyDeviceClasses(currentInfo);
-
-  // Jalankan lagi saat DOM siap agar body juga terpasangi kelas
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      currentInfo = detectDeviceType();
-      applyDeviceClasses(currentInfo);
-      initMobileUiOptimizer();
-    });
-  } else {
-    initMobileUiOptimizer();
   }
 
   /**
-   * Optimasi Khusus UI HP Real-Time
+   * Optimasi Khusus Mode Mobile (Phone UI Optimizer)
    */
-  function initMobileUiOptimizer() {
-    // 0. Pastikan viewport meta memiliki viewport-fit=cover untuk safe-area notch iPhone
+  function optimizeMobileUI(info) {
+    // 1. Pastikan meta viewport fit=cover untuk notch iPhone & HP modern
     const vpMeta = document.querySelector('meta[name="viewport"]');
     if (vpMeta) {
       let content = vpMeta.getAttribute('content') || '';
@@ -140,26 +125,134 @@
       }
     }
 
-    if (!currentInfo.isMobile) return;
+    // 2. Mencegah auto-zoom Safari/iOS dengan memastikan input minimal 16px di HP
+    if (info.isMobile) {
+      const inputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="radio"]), select, textarea');
+      inputs.forEach(el => {
+        const computed = window.getComputedStyle(el).fontSize;
+        if (parseFloat(computed) < 16) {
+          el.style.fontSize = '16px';
+        }
+      });
+    }
 
-    // 1. Pastikan input pada HP tidak memicu auto-zoom Safari/iOS (font minimal 16px)
-    const inputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="radio"]), select, textarea');
-    inputs.forEach(el => {
-      const computedFont = window.getComputedStyle(el).fontSize;
-      if (parseFloat(computedFont) < 16) {
-        el.style.fontSize = '16px';
+    // 3. Sensor Banner Slider Swipe Touch Gesture (Khusus Layar HP)
+    initBannerTouchSwipe();
+
+    // 4. Sensor Anti-Collision Chatbot (Pindahkan dari tombol utama di HP)
+    repositionMobileChatbot(info);
+
+    // 5. Wrap tabel yang belum responsive
+    wrapUnresponsiveTables();
+  }
+
+  /**
+   * Touch Gesture Swipe untuk Banner Slider di HP
+   */
+  let touchSwipeInitialized = false;
+  function initBannerTouchSwipe() {
+    const bannerCard = document.querySelector('.hero-banner-card');
+    if (!bannerCard || bannerCard._hasSwipeListener) return;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    bannerCard.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    bannerCard.addEventListener('touchend', (e) => {
+      if (e.changedTouches && e.changedTouches.length === 1) {
+        touchEndX = e.changedTouches[0].clientX;
+        touchEndY = e.changedTouches[0].clientY;
+        handleSwipeGesture();
+      }
+    }, { passive: true });
+
+    function handleSwipeGesture() {
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      // Pastikan gerakan horizontal lebih dominan daripada vertikal (bukan scrolling)
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          // Geser ke kiri -> Slide selanjutnya
+          const nextBtn = document.getElementById('promoNextBtn');
+          if (nextBtn) nextBtn.click();
+        } else {
+          // Geser ke kanan -> Slide sebelumnya
+          const prevBtn = document.getElementById('promoPrevBtn');
+          if (prevBtn) prevBtn.click();
+        }
+      }
+    }
+
+    bannerCard._hasSwipeListener = true;
+  }
+
+  /**
+   * Reposisi Chatbot Cerdas di HP agar Tidak Menutupi Tombol
+   */
+  function repositionMobileChatbot(info) {
+    const chatbot = document.querySelector('.chatbot-container');
+    if (!chatbot) return;
+
+    if (info.isMobile) {
+      // Di layar HP: Posisikan di kanan bawah secara ergonomis, tidak menutupi tombol sebelah kiri
+      chatbot.classList.add('mobile-docked');
+      chatbot.style.left = 'auto';
+      chatbot.style.right = '16px';
+      chatbot.style.bottom = '20px';
+    } else {
+      chatbot.classList.remove('mobile-docked');
+      chatbot.style.left = '24px';
+      chatbot.style.right = 'auto';
+      chatbot.style.bottom = '24px';
+    }
+  }
+
+  /**
+   * Bungkus Tabel agar Memiliki Horizontal Scroll yang Rapi di HP
+   */
+  function wrapUnresponsiveTables() {
+    const tables = document.querySelectorAll('table:not(.wrapped-mobile)');
+    tables.forEach(table => {
+      // Jika parent-nya belum memiliki overflow-x
+      const parent = table.parentElement;
+      if (parent && !parent.classList.contains('table-responsive') && !parent.classList.contains('kasir-table-wrapper') && !parent.classList.contains('admin-table-wrapper')) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mobile-table-scroll-wrap';
+        parent.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+        table.classList.add('wrapped-mobile');
       }
     });
+  }
 
-    // 2. Cegah jitter / scroll lag pada scrolling horizontal
-    document.documentElement.style.overflowX = 'hidden';
-    if (document.body) document.body.style.overflowX = 'hidden';
+  // Inisialisasi Sensor Seketika
+  let currentInfo = detectScreenInfo();
+  applyScreenSensor(currentInfo);
 
-    // 3. Sensor deteksi menu navigasi terbuka: Sembunyikan chatbot agar tidak tumpang tindih
-    const dropdownMenu = document.getElementById('navDropdownMenu');
+  // Jalankan lagi saat DOM siap
+  function onDOMLoaded() {
+    currentInfo = detectScreenInfo();
+    applyScreenSensor(currentInfo);
+    optimizeMobileUI(currentInfo);
+
+    // Sensor monitor dropdown navigasi
+    const menuToggle = document.getElementById('menuToggleBtn') || document.getElementById('adminMenuToggleBtn');
+    const dropdownMenu = document.getElementById('navDropdownMenu') || document.getElementById('adminNavDropdownMenu');
+    const backdrop = document.getElementById('navBackdrop') || document.getElementById('adminNavBackdrop');
+
     if (dropdownMenu) {
       const observer = new MutationObserver(() => {
-        if (dropdownMenu.classList.contains('show')) {
+        const isOpen = dropdownMenu.classList.contains('show');
+        if (isOpen) {
           document.body.classList.add('nav-menu-open');
         } else {
           document.body.classList.remove('nav-menu-open');
@@ -168,60 +261,60 @@
       observer.observe(dropdownMenu, { attributes: true, attributeFilter: ['class'] });
     }
 
-    // 4. Log sensor status di console
+    // Log sensor aktif di console
     console.log(
-      `%c[Ngalam Fix Pro Screen Detector]%c Layar HP Terdeteksi: %c${currentInfo.width}x${currentInfo.height}px (${currentInfo.orientation.toUpperCase()})%c • %cUI Handphone Siap Aktif!`,
-      'background:#0284c7;color:#fff;font-weight:bold;padding:2px 8px;border-radius:4px;',
-      'color:#64748b;font-weight:normal;',
-      'color:#0284c7;font-weight:bold;',
+      `%c[Ngalam Fix Pro Sensor Layar]%c Mode Aktif: %c${currentInfo.mode.toUpperCase()}%c (${currentInfo.width}x${currentInfo.height}px, ${currentInfo.orientation}) • Tampilan ${currentInfo.isMobile ? 'HP Siap & Rapi' : 'Komputer Aktif'}`,
+      'background:#b45309;color:#fff;font-weight:bold;padding:2px 8px;border-radius:4px;',
       'color:#64748b;',
+      'color:#0284c7;font-weight:bold;',
       'color:#10b981;font-weight:bold;'
     );
   }
 
-  // Listener resize & orientationchange dengan debouncing hemat CPU
-  let resizeTimeout = null;
-  function handleResize() {
-    if (resizeTimeout) cancelAnimationFrame(resizeTimeout);
-    resizeTimeout = requestAnimationFrame(() => {
-      const prevType = currentInfo.type;
-      const prevOrientation = currentInfo.orientation;
-      currentInfo = detectDeviceType();
-      applyDeviceClasses(currentInfo);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onDOMLoaded);
+  } else {
+    onDOMLoaded();
+  }
 
-      if (prevType !== currentInfo.type || prevOrientation !== currentInfo.orientation) {
-        initMobileUiOptimizer();
-        // Dispatch event kustom jika ada modul UI lain yang ingin bereaksi
-        window.dispatchEvent(new CustomEvent('ngalam:device-changed', {
+  // Listener Resize & Orientasi Dinamis Real-Time
+  let resizeTimer = null;
+  function handleScreenResize() {
+    if (resizeTimer) cancelAnimationFrame(resizeTimer);
+    resizeTimer = requestAnimationFrame(() => {
+      const prevMode = currentInfo.mode;
+      const prevOrient = currentInfo.orientation;
+      currentInfo = detectScreenInfo();
+      applyScreenSensor(currentInfo);
+
+      if (prevMode !== currentInfo.mode || prevOrient !== currentInfo.orientation) {
+        optimizeMobileUI(currentInfo);
+
+        // Dispatch Custom Event agar modul lain dapat merespons perubahan mode layar
+        window.dispatchEvent(new CustomEvent('ngalam:screen-mode', {
           detail: currentInfo
         }));
       }
     });
   }
 
-  window.addEventListener('resize', handleResize, { passive: true });
-  window.addEventListener('orientationchange', handleResize, { passive: true });
+  window.addEventListener('resize', handleScreenResize, { passive: true });
+  window.addEventListener('orientationchange', handleScreenResize, { passive: true });
 
-  /**
-   * Expose API Publik Sensor ke Window
-   */
+  // Expose Global Sensor API
   window.NgalamSensor = {
     isMobile: () => currentInfo.isMobile,
-    isTablet: () => currentInfo.isTablet,
     isDesktop: () => currentInfo.isDesktop,
-    isTouch: () => currentInfo.isTouch,
-    isPortrait: () => currentInfo.orientation === 'portrait',
+    isTablet: () => currentInfo.isTablet,
+    getMode: () => currentInfo.mode,
+    getWidth: () => currentInfo.width,
+    getHeight: () => currentInfo.height,
     getOrientation: () => currentInfo.orientation,
-    getDeviceType: () => currentInfo.type,
-    getScreenWidth: () => currentInfo.width,
-    getScreenHeight: () => currentInfo.height,
-    getDpr: () => currentInfo.dpr,
-    isLitePerfActive: () => currentInfo.enableLitePerf,
-    getDeviceInfo: () => Object.assign({}, currentInfo),
+    getInfo: () => Object.assign({}, currentInfo),
     refresh: () => {
-      currentInfo = detectDeviceType();
-      applyDeviceClasses(currentInfo);
-      initMobileUiOptimizer();
+      currentInfo = detectScreenInfo();
+      applyScreenSensor(currentInfo);
+      optimizeMobileUI(currentInfo);
       return currentInfo;
     }
   };
