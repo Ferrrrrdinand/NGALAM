@@ -249,4 +249,8 @@ function startServer(portToTry) {
   });
 }
 
-startServer(PORT);
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  startServer(PORT);
+}
+
+module.exports = app;
