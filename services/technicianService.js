@@ -78,21 +78,7 @@ function addAuditLog({ technicianName, username, action, details, statusBadge })
 /**
  * Initialize default logs if file doesn't exist
  */
-if (!fs.existsSync(LOGS_FILE)) {
-  writeLogs([
-    {
-      id: 'LOG-INIT-01',
-      timestamp: new Date().toISOString(),
-      displayTime: '08:30:00',
-      displayDate: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-      technicianName: 'Mas Rian (Spesialis iPhone & Layar)',
-      username: 'rian',
-      action: 'Sistem Diaktifkan',
-      details: 'Sistem monitoring meja lab teknisi aktif dan siap menerima data sesi.',
-      statusBadge: 'standby'
-    }
-  ]);
-}
+try { if (!fs.existsSync(LOGS_FILE)) { writeLogs([{ id: "LOG-INIT-01", timestamp: new Date().toISOString(), displayTime: "08:30:00", displayDate: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }), technicianName: "Mas Rian (Spesialis iPhone & Layar)", username: "rian", action: "Sistem Diaktifkan", details: "Sistem monitoring meja lab teknisi aktif dan siap menerima data sesi.", statusBadge: "standby" }]); } } catch (_) {}
 
 const WORKSHOP_REGISTRATION_CODE = '082335493176-082335493176';
 
@@ -607,3 +593,4 @@ module.exports = {
   deleteTechnician,
   WORKSHOP_REGISTRATION_CODE
 };
+

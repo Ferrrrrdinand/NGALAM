@@ -10,14 +10,12 @@ const db = require('./db');
 
 const LOCAL_DATA_FILE = path.join(__dirname, '..', 'data', 'orders.json');
 
-// Pastikan folder data dan orders.json tersedia
-const dataDir = path.join(__dirname, '..', 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-if (!fs.existsSync(LOCAL_DATA_FILE)) {
-  fs.writeFileSync(LOCAL_DATA_FILE, JSON.stringify([], null, 2), 'utf-8');
-}
+// Pastikan folder data dan orders.json tersedia (aman di serverless read-only)
+const dataDir = path.join(__dirname, "..", "data");
+try {
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+  if (!fs.existsSync(LOCAL_DATA_FILE)) fs.writeFileSync(LOCAL_DATA_FILE, JSON.stringify([], null, 2), "utf-8");
+} catch (_) {}
 
 /**
  * Baca seluruh data pesanan servis (prioritas PostgreSQL)
@@ -307,3 +305,5 @@ module.exports = {
   updateOrder,
   clearAllOrders
 };
+
+

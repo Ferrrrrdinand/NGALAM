@@ -10,9 +10,7 @@ const PROMOS_FILE = path.join(__dirname, '..', 'data', 'promos.json');
 const UPLOADS_DIR = path.join(__dirname, '..', 'public', 'images', 'uploads');
 
 // Ensure uploads directory exists
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-}
+try { if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true }); } catch (_) {}
 
 // Initial default banners in case file is absent
 const DEFAULT_PROMOS = [
@@ -333,3 +331,4 @@ module.exports = {
   resetPromos,
   getThemeStyles,
 };
+
