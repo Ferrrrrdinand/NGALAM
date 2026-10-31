@@ -158,5 +158,26 @@
     "pin": "123456",
     "registeredAt": "28 Okt 2026, 14.30 WIB",
     "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-20261031-7461",
+    "name": "test",
+    "whatsapp": "+6285791609482",
+    "email": "mr6945425@gmail.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "referredByMitra": "",
+    "registeredAt": "31 Okt 2026, 12.35",
+    "registeredVia": "Portal Pelanggan Web"
+  },
+  {
+    "id": "CUST-202610311389",
+    "name": "13 Muhammad Raihan",
+    "whatsapp": "081234567891",
+    "email": "",
+    "district": "totot",
+    "pin": "123456",
+    "registeredAt": "31 Okt 2026, 12.38",
+    "registeredVia": "Otomatisasi Tiket Servis"
   }
 ]
