@@ -10,6 +10,7 @@ const {
   appendOrder,
   updateOrder,
   clearAllOrders,
+  getOrderByAttemptId,
 } = require('../services/orderService');
 const { handleOrderStepChange } = require('../services/technicianService');
 const { incrementUsage } = require('../services/promoCodeService');
@@ -51,6 +52,21 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const orderData = { ...req.body };
+    const attemptId = (orderData.attemptId || req.headers['x-attempt-id'] || '').trim();
+
+    // 1. Idempotency Check: Jika attemptId ini sudah pernah berhasil diproses, kembalikan order lama
+    if (attemptId) {
+      const existingOrder = await getOrderByAttemptId(attemptId);
+      if (existingOrder) {
+        return res.status(200).json({
+          success: true,
+          isIdempotentReplay: true,
+          message: 'Pesanan sebelumnya telah berhasil diverifikasi. Membuka tiket aktif...',
+          data: existingOrder
+        });
+      }
+      orderData.attemptId = attemptId;
+    }
     if (!orderData.customerName && (orderData.buyerName || orderData.name)) {
       orderData.customerName = orderData.buyerName || orderData.name;
     }
@@ -154,3 +170,6 @@ router.post('/clear', async (req, res) => {
 });
 
 module.exports = router;
+
+
+

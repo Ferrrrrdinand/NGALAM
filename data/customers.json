@@ -179,5 +179,16 @@
     "pin": "123456",
     "registeredAt": "31 Okt 2026, 12.38",
     "registeredVia": "Otomatisasi Tiket Servis"
+  },
+  {
+    "id": "CUST-20261031-4735",
+    "name": "Tes Async",
+    "whatsapp": "089998881234",
+    "email": "tes@async.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "123456",
+    "referredByMitra": "",
+    "registeredAt": "31 Okt 2026, 13.29",
+    "registeredVia": "Portal Pelanggan Web"
   }
 ]
