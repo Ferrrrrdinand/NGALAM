@@ -5,6 +5,7 @@
  */
 
 const { Pool } = require('pg');
+const { upsertRecord } = require('./localStore');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
@@ -200,13 +201,21 @@ async function initDb() {
 initDb().catch(() => {});
 
 /**
- * Eksekusi query dengan penanganan error aman
+ * Eksekusi query dengan penanganan error aman dan sinkronisasi ke storage lokal
  */
-async function query(text, params) {
+async function query(text, params, syncTable = null) {
   if (!pool || !isConnected) {
     throw new Error('Database PostgreSQL belum terhubung.');
   }
-  return pool.query(text, params);
+  const res = await pool.query(text, params);
+  if (syncTable && res && res.rows && res.rows[0]) {
+    try {
+      upsertRecord(syncTable, res.rows[0]);
+    } catch (e) {
+      console.warn('[local sync] Gagal menyimpan ke local store:', e.message);
+    }
+  }
+  return res;
 }
 
 /**
