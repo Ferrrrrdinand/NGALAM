@@ -99,7 +99,7 @@
     docEl.style.setProperty('--viewport-w', `${info.width}px`);
     docEl.style.setProperty('--viewport-h', `${info.height}px`);
     docEl.style.setProperty('--is-mobile-ui', info.isMobile ? '1' : '0');
-    docEl.style.setProperty('--banner-aspect-ratio', info.isPhone ? '16 / 9.2' : '16 / 8.2');
+    docEl.style.setProperty('--banner-aspect-ratio', info.isPhone ? '16 / 8.5' : '16 / 8.2');
 
     // Bersihkan kelas lama
     const staleClasses = [
