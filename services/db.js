@@ -5,7 +5,7 @@
  */
 
 const { Pool } = require('pg');
-const { upsertRecord } = require('./localStore');
+const { upsertRecord, appendActivityLog } = require('./localStore');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
@@ -21,7 +21,7 @@ let connectionDetails = {
 };
 
 function createPool() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL || process.env.PG_CONNECTION_STRING;
 
   if (connectionString) {
     try {
@@ -36,13 +36,21 @@ function createPool() {
       // Keep defaults
     }
 
+    const isNeonOrSsl =
+      connectionString.includes('neon.tech') ||
+      connectionString.includes('sslmode=require') ||
+      process.env.PG_SSL === 'true';
+
     return new Pool({
       connectionString: connectionString,
-      connectionTimeoutMillis: 4000,
+      ssl: isNeonOrSsl ? { rejectUnauthorized: false } : undefined,
+      connectionTimeoutMillis: 5000,
       idleTimeoutMillis: 10000,
       max: 10
     });
   }
+
+  const isSslLocal = process.env.PG_SSL === 'true';
 
   return new Pool({
     host: process.env.PGHOST || 'localhost',
@@ -50,7 +58,8 @@ function createPool() {
     database: process.env.PGDATABASE || 'ngalam_fix_pro',
     user: process.env.PGUSER || 'postgres',
     password: process.env.PGPASSWORD || '',
-    connectionTimeoutMillis: 4000,
+    ssl: isSslLocal ? { rejectUnauthorized: false } : undefined,
+    connectionTimeoutMillis: 5000,
     idleTimeoutMillis: 10000,
     max: 10
   });
@@ -241,31 +250,27 @@ async function query(text, params, syncTable = null) {
   return res;
 }
 
-// Helper to log activity actions
+// Helper to log activity actions (Dual persistence: Neon PostgreSQL + local data/activity_logs.json)
 async function logActivity(action, table_name, record_id, payload) {
-  if (!pool || !isConnected) return;
-  const logQuery = `
-    INSERT INTO activity_logs (action, table_name, record_id, payload)
-    VALUES ($1, $2, $3, $4)
-  `;
+  // 1. Selalu rekam ke penyimpanan lokal
   try {
-    await pool.query(logQuery, [action, table_name, record_id, JSON.stringify(payload)]);
+    appendActivityLog(action, table_name, record_id, payload);
   } catch (e) {
-    console.warn('[activity log] Gagal mencatat aktivitas:', e.message);
+    console.warn('[activity log local] Gagal mencatat aktivitas lokal:', e.message);
   }
-}
-  if (!pool || !isConnected) {
-    throw new Error('Database PostgreSQL belum terhubung.');
-  }
-  const res = await pool.query(text, params);
-  if (syncTable && res && res.rows && res.rows[0]) {
+
+  // 2. Rekam ke Neon PostgreSQL jika terhubung
+  if (pool && isConnected) {
+    const logQuery = `
+      INSERT INTO activity_logs (action, table_name, record_id, payload)
+      VALUES ($1, $2, $3, $4)
+    `;
     try {
-      upsertRecord(syncTable, res.rows[0]);
+      await pool.query(logQuery, [action, table_name, record_id ? String(record_id) : null, JSON.stringify(payload || {})]);
     } catch (e) {
-      console.warn('[local sync] Gagal menyimpan ke local store:', e.message);
+      console.warn('[activity log postgres] Gagal mencatat aktivitas ke PostgreSQL:', e.message);
     }
   }
-  return res;
 }
 
 /**
@@ -339,6 +344,7 @@ function getConnectionDetails() {
 module.exports = {
   initDb,
   query,
+  logActivity,
   testConnection,
   isDbConnected,
   getLastError,

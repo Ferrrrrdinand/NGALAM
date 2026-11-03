@@ -1,0 +1,12 @@
+[
+  {
+    "id": "LOG-INIT-001",
+    "action": "SYSTEM_INITIALIZE",
+    "table_name": "system",
+    "record_id": "INIT",
+    "payload": {
+      "message": "Sistem log aktivitas dan sinkronisasi ganda Neon PostgreSQL & data lokal diaktifkan."
+    },
+    "performed_at": "2026-11-03T03:00:00.000Z"
+  }
+]
