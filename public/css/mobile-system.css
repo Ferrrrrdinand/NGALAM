@@ -1380,3 +1380,167 @@
   margin: 0 12px !important;
 }
 /* End of Mobile Modal Enhancements */
+
+/* ==========================================================================
+   ADVANCED MOBILE IMAGE UI & SENSOR DETECTION ENGINE
+   (Diaktifkan saat sensor mendeteksi layar HP / ukuran viewport mengecil)
+   ========================================================================== */
+@media (max-width: 768px),
+[data-screen-mode="mobile"],
+[data-is-phone="true"],
+.screen-mobile {
+
+  /* 1. Universal Image Anti-Distortion & Scaling */
+  img {
+    max-width: 100% !important;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+  }
+
+  /* 2. Hero Banner Slider Images (Clean Proportional Ratio) */
+  .hero-banner-wrap {
+    margin: 10px auto 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .hero-banner-card {
+    aspect-ratio: 16 / 9.2 !important;
+    min-height: 200px !important;
+    max-height: 280px !important;
+    width: 100% !important;
+    border-radius: 18px !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.45) !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.15) !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .promo-slide-image,
+  .hero-banner-card img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    transition: transform 0.4s ease !important;
+  }
+
+  .promo-slide-overlay {
+    padding: 12px 14px !important;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0.05) 45%, rgba(15, 23, 42, 0.85) 100%) !important;
+  }
+
+  /* 3. Pop-up Welcome Promo Modal Images & UI (Screenshot 1 Perfection) */
+  .welcome-promo-overlay {
+    padding: 14px !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+  }
+
+  .welcome-promo-card {
+    max-width: 440px !important;
+    width: 100% !important;
+    border-radius: 24px !important;
+    padding: 22px 18px 20px !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .welcome-promo-title {
+    font-size: clamp(1.2rem, 5.2vw, 1.45rem) !important;
+    line-height: 1.25 !important;
+    margin: 0 0 8px !important;
+  }
+
+  .welcome-promo-desc {
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+    margin: 0 0 14px !important;
+  }
+
+  .welcome-promo-code-card {
+    padding: 10px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .welcome-code-value {
+    font-size: 1.05rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .welcome-btn-copy {
+    padding: 7px 12px !important;
+    font-size: 0.78rem !important;
+    border-radius: 10px !important;
+  }
+
+  .welcome-promo-perks {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .welcome-perk-item {
+    padding: 8px 10px !important;
+    border-radius: 10px !important;
+    gap: 8px !important;
+  }
+
+  .welcome-perk-icon {
+    font-size: 1.15rem !important;
+  }
+
+  .welcome-perk-text strong {
+    font-size: 0.78rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .welcome-perk-text small {
+    font-size: 0.68rem !important;
+    margin-top: 1px !important;
+  }
+
+  .welcome-btn-primary {
+    padding: 13px 18px !important;
+    font-size: 0.94rem !important;
+    border-radius: 12px !important;
+    font-weight: 800 !important;
+  }
+
+  /* 4. Brand Logo & Floating Mascot Chatbot */
+  .logo-badge {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .brand-logo-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 8px !important;
+  }
+
+  .chatbot-container {
+    right: 16px !important;
+    bottom: 20px !important;
+    left: auto !important;
+  }
+
+  .chatbot-avatar-btn {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 50% !important;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.45) !important;
+  }
+
+  .chatbot-avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+  }
+}
+
