@@ -5,11 +5,8 @@
  */
 
 const { Pool } = require('pg');
-const { upsertRecord, saveTable } = require('./localStore');
-const fs = require('fs');
-const path = require('path');
-const { upsertRecord, saveTable } = require('./localStore');
 const { upsertRecord } = require('./localStore');
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
