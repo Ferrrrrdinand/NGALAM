@@ -639,11 +639,20 @@
               
               <!-- Quick Damage Chips -->
               <div class="est-damage-chips" id="estDamageChips">
-                <button type="button" class="est-damage-chip active" data-damage="lcd">
-                  <span>📱</span> Ganti Layar / OLED
+                <button type="button" class="est-damage-chip" data-damage="garis_lightsaber">
+                  <span>⚡</span> Hilangkan Garis (Light Saber)
+                </button>
+                <button type="button" class="est-damage-chip" data-damage="flex_fold">
+                  <span>🔄</span> Flexibel Z Flip / Fold
                 </button>
                 <button type="button" class="est-damage-chip" data-damage="baterai">
-                  <span>🔋</span> Baterai Health Drop
+                  <span>🔋</span> Pergantian Baterai
+                </button>
+                <button type="button" class="est-damage-chip" data-damage="software_virus">
+                  <span>🛡️</span> Software &amp; Virus HP
+                </button>
+                <button type="button" class="est-damage-chip active" data-damage="lcd">
+                  <span>📱</span> Ganti Layar / OLED
                 </button>
                 <button type="button" class="est-damage-chip" data-damage="kaca">
                   <span>💎</span> Ganti Kaca OCA
@@ -661,8 +670,11 @@
 
               <!-- Synced select for robust data handling -->
               <select id="estDamage" style="display: none;">
-                <option value="lcd">Ganti Layar / LCD / OLED Pecah</option>
-                <option value="baterai">Ganti Baterai Original (Health Drop)</option>
+                <option value="garis_lightsaber">Menghilangkan Garis Layar (Light Saber)</option>
+                <option value="flex_fold">Pergantian Fleksibel Z Flip &amp; Z Fold</option>
+                <option value="baterai">Pergantian Baterai Original</option>
+                <option value="software_virus">Software, Menghilangkan Virus HP &amp; Flash</option>
+                <option value="lcd" selected>Ganti Layar / LCD / OLED Pecah</option>
                 <option value="kaca">Ganti Kaca Saja (Glass OCA Laminating)</option>
                 <option value="charging">Port Cas / Konektor Charger Rusak</option>
                 <option value="kamera">Kamera Getar (OIS) / Kaca Kamera Pecah</option>

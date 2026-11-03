@@ -121,7 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const problems = Array.from(selectedProblems);
     if (problems.length > 0) {
       const pStr = problems.join(' ').toLowerCase();
-      if (pStr.includes('lcd') || pStr.includes('layar') || pStr.includes('oled')) {
+      if (pStr.includes('flexibel') || pStr.includes('flip') || pStr.includes('fold')) {
+        price = 750000;
+      } else if (pStr.includes('garis') || pStr.includes('light saber')) {
+        price = 350000;
+      } else if (pStr.includes('lcd') || pStr.includes('layar') || pStr.includes('oled')) {
         price = 450000;
       } else if (pStr.includes('kaca') || pStr.includes('oca')) {
         price = 350000;
@@ -131,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
         price = 300000;
       } else if (pStr.includes('baterai') || pStr.includes('air')) {
         price = 250000;
+      } else if (pStr.includes('virus') || pStr.includes('software')) {
+        price = 150000;
       } else if (pStr.includes('port') || pStr.includes('speaker') || pStr.includes('bootloop')) {
         price = 175000;
       }
@@ -489,7 +495,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const probLower = requestedProblem.toLowerCase();
     problemTagButtons.forEach((btn) => {
       const tagText = (btn.getAttribute('data-tag') || btn.textContent).toLowerCase();
-      if (tagText.includes(probLower) || probLower.includes(tagText)) {
+      if (
+        tagText.includes(probLower) ||
+        probLower.includes(tagText) ||
+        (probLower === 'garis_lightsaber' && (tagText.includes('garis') || tagText.includes('light saber'))) ||
+        (probLower === 'flex_fold' && (tagText.includes('flexibel') || tagText.includes('flip') || tagText.includes('fold'))) ||
+        (probLower === 'baterai' && tagText.includes('baterai')) ||
+        (probLower === 'software_virus' && (tagText.includes('virus') || tagText.includes('software')))
+      ) {
         selectedProblems.add(btn.getAttribute('data-tag') || btn.textContent.trim());
         btn.classList.add('selected');
       }
