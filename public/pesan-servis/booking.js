@@ -551,6 +551,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       if (data.success && data.mitra) {
         setLockedReferral(data.mitra.referralCode, data.mitra);
+        // Simpan sesi referral ke server (Database Sessions)
+        fetch(\/api/mitra/session/lock, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ attemptId: getOrCreateAttemptId(), referralCode: data.mitra.referralCode })
+        }).catch(() => {});
         renderAffiliateBadge(data.mitra);
       }
     } catch (err) {
@@ -805,6 +811,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadQuickPromos();
   autofillMemberData();
 });
+
+
 
 
 

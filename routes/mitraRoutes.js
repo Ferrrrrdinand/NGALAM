@@ -64,6 +64,61 @@ function buildMitraAffiliateDetails(req, refCode) {
   };
 }
 
+// POST /api/mitra/session/lock - Kunci sesi referral di sisi server
+router.post('/session/lock', async (req, res) => {
+  try {
+    const { attemptId, referralCode, customerName = '', customerPhone = '' } = req.body;
+    if (!attemptId || !referralCode) {
+      return res.status(400).json({ success: false, message: 'attemptId dan referralCode wajib disertakan.' });
+    }
+
+    const cleanRef = String(referralCode).trim().toUpperCase();
+    const cleanAttempt = String(attemptId).trim();
+
+    const users = readUsers();
+    const mitra = users.find(u => (u.referralCode || '').toUpperCase() === cleanRef);
+
+    const sessionPayload = {
+      attemptId: cleanAttempt,
+      referralCode: cleanRef,
+      mitraName: mitra ? mitra.name : 'Mitra Ojol',
+      customerName,
+      customerPhone,
+      status: 'locked',
+      lockedAt: new Date().toISOString()
+    };
+
+    const db = require('../services/db');
+    if (db.isDbConnected()) {
+      try {
+        await db.query(
+          "INSERT INTO sessions (token, user_id, name, username, role, access_level, raw_data) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (token) DO UPDATE SET raw_data = EXCLUDED.raw_data",
+          [
+            cleanAttempt,
+            mitra ? mitra.id : 'MITRA-GUEST',
+            mitra ? mitra.name : 'Mitra Ojol',
+            cleanRef,
+            'mitra_session',
+            'referral_locked',
+            sessionPayload
+          ]
+        );
+      } catch (dbErr) {
+        console.warn('[MitraRoutes] Simpan server session ke PostgreSQL gagal, tetap simpan respon:', dbErr.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Sesi referral berhasil dikunci di server.',
+      session: sessionPayload,
+      mitra: mitra ? { name: mitra.name, referralCode: mitra.referralCode, avatar: mitra.avatar || '??' } : null
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/mitra/ref/:code - Verifikasi kode afiliasi saat pelanggan membuka link booking / scan QR
 router.get('/ref/:code', (req, res) => {
   try {
@@ -383,3 +438,7 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
