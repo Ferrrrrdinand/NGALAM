@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const db = require('./db');
 
 const ROOT_DIR = path.join(__dirname, '..');
 
@@ -273,6 +274,7 @@ function saveUserByRole(user) {
 
   const role = user.role.toLowerCase();
 
+  let ok = false;
   if (role === 'admin' || role === 'owner' || role === 'superadmin') {
     const list = getAdminUsers();
     const idx = list.findIndex(u => (u.id && u.id === user.id) || (u.username && u.username.toLowerCase() === (user.username || '').toLowerCase()));
@@ -281,10 +283,8 @@ function saveUserByRole(user) {
     } else {
       list.push(user);
     }
-    return saveAdminUsers(list);
-  }
-
-  if (role === 'kasir') {
+    ok = saveAdminUsers(list);
+  } else if (role === 'kasir') {
     const list = getKasirUsers();
     const idx = list.findIndex(u => (u.id && u.id === user.id) || (u.username && u.username.toLowerCase() === (user.username || '').toLowerCase()));
     if (idx !== -1) {
@@ -292,10 +292,8 @@ function saveUserByRole(user) {
     } else {
       list.push(user);
     }
-    return saveKasirUsers(list);
-  }
-
-  if (role === 'teknisi') {
+    ok = saveKasirUsers(list);
+  } else if (role === 'teknisi') {
     const list = getTeknisiUsers();
     const idx = list.findIndex(u => (u.id && u.id === user.id) || (u.username && u.username.toLowerCase() === (user.username || '').toLowerCase()));
     if (idx !== -1) {
@@ -303,10 +301,8 @@ function saveUserByRole(user) {
     } else {
       list.push(user);
     }
-    return saveTeknisiUsers(list);
-  }
-
-  if (role === 'ojol' || role === 'mitra' || role === 'kurir') {
+    ok = saveTeknisiUsers(list);
+  } else if (role === 'ojol' || role === 'mitra' || role === 'kurir') {
     const list = getMitraUsers();
     const idx = list.findIndex(u => (u.id && u.id === user.id) || (u.username && u.username.toLowerCase() === (user.username || '').toLowerCase()));
     if (idx !== -1) {
@@ -314,13 +310,112 @@ function saveUserByRole(user) {
     } else {
       list.push(user);
     }
-    return saveMitraUsers(list);
+    ok = saveMitraUsers(list);
+  } else {
+    // Fallback ke admin users jika role lain
+    const list = getAdminUsers();
+    list.push(user);
+    ok = saveAdminUsers(list);
   }
 
-  // Fallback ke admin users jika role lain
-  const list = getAdminUsers();
-  list.push(user);
-  return saveAdminUsers(list);
+  // Sinkronisasi otomatis ke Neon PostgreSQL dan catat ke activity_logs
+  syncUserToNeon(user, 'USER_UPSERT').catch(() => {});
+  return ok;
+}
+
+/**
+ * Sinkronisasi satu user ke Neon PostgreSQL & activity_logs
+ */
+async function syncUserToNeon(user, action = 'USER_UPSERT') {
+  if (!user || !user.id) return false;
+
+  // 1. Selalu catat di activity_logs (data/activity_logs.json & PostgreSQL)
+  try {
+    await db.logActivity(action, 'users', user.id, {
+      id: user.id,
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      category: user.category || user.role,
+      desk: user.desk || '',
+      phone: user.phone || '',
+      action: action
+    });
+  } catch (err) {
+    console.warn('[UserService] Log activity warning:', err.message);
+  }
+
+  // 2. Jika database PostgreSQL / Neon terhubung, simpan / perbarui ke tabel users
+  if (db.isDbConnected()) {
+    try {
+      const q = `
+        INSERT INTO users (
+          id, username, password, name, role, category, avatar, phone, email, 
+          referral_code, commission_rate, total_commission, status, last_active, desk, specialty, raw_data
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+        ON CONFLICT (id) DO UPDATE SET
+          username = EXCLUDED.username,
+          password = EXCLUDED.password,
+          name = EXCLUDED.name,
+          role = EXCLUDED.role,
+          category = EXCLUDED.category,
+          avatar = EXCLUDED.avatar,
+          phone = EXCLUDED.phone,
+          email = EXCLUDED.email,
+          referral_code = EXCLUDED.referral_code,
+          commission_rate = EXCLUDED.commission_rate,
+          total_commission = EXCLUDED.total_commission,
+          status = EXCLUDED.status,
+          last_active = EXCLUDED.last_active,
+          desk = EXCLUDED.desk,
+          specialty = EXCLUDED.specialty,
+          raw_data = EXCLUDED.raw_data;
+      `;
+      await db.query(q, [
+        user.id,
+        user.username || user.id,
+        user.password || '',
+        user.name || '',
+        user.role || 'staff',
+        user.category || user.role || 'Staff',
+        user.avatar || '👤',
+        user.phone || '',
+        user.email || '',
+        user.referralCode || user.referral_code || '',
+        Number(user.commissionRate || user.commission_rate || 10),
+        Number(user.totalCommission || user.total_commission || 0),
+        user.status || 'Active',
+        user.lastActive || user.last_active || 'Baru Saja',
+        user.desk || '',
+        user.specialty || '',
+        JSON.stringify(user)
+      ], 'users');
+      return true;
+    } catch (err) {
+      console.warn('[UserService] Neon syncUserToNeon error:', err.message);
+      return false;
+    }
+  }
+  return false;
+}
+
+/**
+ * Sinkronisasi seluruh user dari data/ lokal ke database Neon PostgreSQL
+ */
+async function syncAllUsersToPostgres() {
+  if (!db.isDbConnected()) return false;
+  try {
+    const all = getAllUsers();
+    for (const u of all) {
+      await syncUserToNeon(u, 'INITIAL_SYNC');
+    }
+    console.log(`✅ [PostgreSQL/Neon] Sinkronisasi ${all.length} akun ke database Neon selesai.`);
+    return true;
+  } catch (e) {
+    console.warn('[UserService] Gagal sinkronisasi seluruh user ke Neon:', e.message);
+    return false;
+  }
 }
 
 /**
@@ -378,5 +473,7 @@ module.exports = {
   findUser,
   saveUserByRole,
   syncLegacyUsersFile,
-  getUserFileDetails
+  getUserFileDetails,
+  syncUserToNeon,
+  syncAllUsersToPostgres
 };

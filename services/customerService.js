@@ -207,7 +207,11 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
     db.query(`
       INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (id) DO NOTHING
+      ON CONFLICT (id) DO UPDATE SET
+        name = EXCLUDED.name,
+        email = EXCLUDED.email,
+        district = EXCLUDED.district,
+        raw_data = EXCLUDED.raw_data
     `, [
       newCust.id,
       newCust.name,
@@ -218,10 +222,20 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
       newCust.registeredAt,
       newCust.registeredVia,
       JSON.stringify(newCust)
-    ]).catch(err => {
+    ], 'customers').catch(err => {
       console.warn('[CustomerService] PostgreSQL insert customer warning:', err.message);
     });
   }
+
+  // Catat aktivitas registrasi pelanggan
+  try {
+    db.logActivity('CUSTOMER_REGISTER', 'customers', newCust.id, {
+      name: newCust.name,
+      whatsapp: newCust.whatsapp,
+      district: newCust.district,
+      registeredVia: newCust.registeredVia
+    });
+  } catch (_) {}
 
   // 2. Simpan ke lokal
   customers.push(newCust);

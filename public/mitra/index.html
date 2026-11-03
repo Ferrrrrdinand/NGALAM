@@ -486,11 +486,12 @@
           </div>
           <h3 style="font-size: 1.25rem; font-weight: 800; margin: 0 0 8px; color: #064e3b;">QR Code Afiliasi Anda</h3>
           <p style="font-size: 0.84rem; color: #047857; margin: 0 0 18px; line-height: 1.4;">
-            Tunjukkan QR Code ini kepada pelanggan Anda atau tempel di motor/helm/toko Anda. Pelanggan cukup scan dan order!
+            Tunjukkan QR Code ini kepada pelanggan Anda atau tempel di motor/helm/toko Anda. Pelanggan cukup scan untuk masuk ke web Ngalam Fix Pro, dan saat memesan servis kode referral Anda otomatis terpasang!
           </p>
 
-          <div class="qr-image-wrapper">
-            <img id="dashQrImage" src="" alt="QR Code Afiliasi Mitra">
+          <div class="qr-image-wrapper" id="dashQrWrapper" style="display: flex; align-items: center; justify-content: center; min-height: 220px; min-width: 220px; background: #ffffff; padding: 14px; border-radius: 16px; margin: 0 auto 16px;">
+            <div id="dashQrCanvas"></div>
+            <img id="dashQrImage" src="" alt="QR Code Afiliasi Mitra" style="display: none; width: 220px; height: 220px; border-radius: 8px;">
           </div>
 
           <div style="margin-bottom: 18px;">
@@ -598,6 +599,7 @@
   </main>
 
   <script src="../js/api-base.js"></script>
+  <script src="../js/qrcode.min.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/auth-feedback.js"></script>
   <script src="mitra.js?v=2.0"></script>

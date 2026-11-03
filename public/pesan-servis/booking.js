@@ -121,7 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const problems = Array.from(selectedProblems);
     if (problems.length > 0) {
       const pStr = problems.join(' ').toLowerCase();
-      if (pStr.includes('lcd') || pStr.includes('layar') || pStr.includes('oled')) {
+      if (pStr.includes('flexibel') || pStr.includes('flip') || pStr.includes('fold')) {
+        price = 750000;
+      } else if (pStr.includes('garis') || pStr.includes('light saber')) {
+        price = 350000;
+      } else if (pStr.includes('lcd') || pStr.includes('layar') || pStr.includes('oled')) {
         price = 450000;
       } else if (pStr.includes('kaca') || pStr.includes('oca')) {
         price = 350000;
@@ -131,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
         price = 300000;
       } else if (pStr.includes('baterai') || pStr.includes('air')) {
         price = 250000;
+      } else if (pStr.includes('virus') || pStr.includes('software')) {
+        price = 150000;
       } else if (pStr.includes('port') || pStr.includes('speaker') || pStr.includes('bootloop')) {
         price = 175000;
       }
@@ -489,7 +495,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const probLower = requestedProblem.toLowerCase();
     problemTagButtons.forEach((btn) => {
       const tagText = (btn.getAttribute('data-tag') || btn.textContent).toLowerCase();
-      if (tagText.includes(probLower) || probLower.includes(tagText)) {
+      if (
+        tagText.includes(probLower) ||
+        probLower.includes(tagText) ||
+        (probLower === 'garis_lightsaber' && (tagText.includes('garis') || tagText.includes('light saber'))) ||
+        (probLower === 'flex_fold' && (tagText.includes('flexibel') || tagText.includes('flip') || tagText.includes('fold'))) ||
+        (probLower === 'baterai' && tagText.includes('baterai')) ||
+        (probLower === 'software_virus' && (tagText.includes('virus') || tagText.includes('software')))
+      ) {
         selectedProblems.add(btn.getAttribute('data-tag') || btn.textContent.trim());
         btn.classList.add('selected');
       }
@@ -503,107 +516,163 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPromo(requestedPromo.toUpperCase());
   }
 
-  // Affiliate Mitra Referral & QR Code Auto-Lock & Recovery
+  // Affiliate Mitra Referral & QR Code Detection
+  const custAffiliateInput = document.getElementById('custAffiliateInput');
+  const btnApplyAffiliate = document.getElementById('btnApplyAffiliate');
+  const btnRemoveAffiliate = document.getElementById('btnRemoveAffiliate');
+  const affiliateInputAlert = document.getElementById('affiliateInputAlert');
+
   let activeAffiliateRef = '';
-  let activeAffiliateMitra = null;
-  const affiliateBanner = document.getElementById('affiliateBanner');
-  const affiliateMitraName = document.getElementById('affiliateMitraName');
-  const affiliateBadgeCode = document.getElementById('affiliateBadgeCode');
-  const affiliateMitraAvatar = document.getElementById('affiliateMitraAvatar');
 
-  // Load locked referral from session/local storage
-  function getLockedReferral() {
-    return localStorage.getItem('ngalam_locked_mitra_ref') || sessionStorage.getItem('ngalam_locked_mitra_ref') || localStorage.getItem('ngalam_affiliate_ref') || '';
-  }
-
-  function setLockedReferral(refCode, mitraData = null) {
-    if (!refCode) return;
-    const clean = String(refCode).trim().toUpperCase();
-    activeAffiliateRef = clean;
-    localStorage.setItem('ngalam_locked_mitra_ref', clean);
-    sessionStorage.setItem('ngalam_locked_mitra_ref', clean);
-    localStorage.setItem('ngalam_affiliate_ref', clean);
-    if (mitraData) {
-      activeAffiliateMitra = mitraData;
-      localStorage.setItem('ngalam_locked_mitra_data', JSON.stringify(mitraData));
+  async function applyAffiliateCode(rawCode, silent = false) {
+    const code = (rawCode || custAffiliateInput?.value || '').trim().toUpperCase();
+    if (!code) {
+      if (!silent && affiliateInputAlert) {
+        affiliateInputAlert.style.display = 'block';
+        affiliateInputAlert.style.background = '#fef2f2';
+        affiliateInputAlert.style.color = '#b91c1c';
+        affiliateInputAlert.style.border = '1px solid #fecaca';
+        affiliateInputAlert.textContent = 'Silakan masukkan kode referral mitra terlebih dahulu.';
+      }
+      return;
     }
-  }
 
-  async function resolveAndLockAffiliate(rawCode) {
-    const code = String(rawCode || '').trim().toUpperCase();
-    if (!code) return;
+    if (btnApplyAffiliate) {
+      btnApplyAffiliate.disabled = true;
+      btnApplyAffiliate.innerHTML = '<span>⏳ Memeriksa...</span>';
+    }
 
     try {
       if (window.resolveNgalamApiBase) {
         API_BASE = await window.resolveNgalamApiBase();
       }
-      const res = await fetch(\/api/mitra/ref/\);
-      const data = await res.json();
-      if (data.success && data.mitra) {
-        setLockedReferral(data.mitra.referralCode, data.mitra);
-        renderAffiliateBadge(data.mitra);
+      const refRes = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(code)}`);
+      const refData = await refRes.json();
+      if (refData.success && refData.mitra) {
+        activeAffiliateRef = refData.mitra.referralCode;
+        localStorage.setItem('ngalam_affiliate_ref', activeAffiliateRef);
+
+        if (custAffiliateInput) {
+          custAffiliateInput.value = activeAffiliateRef;
+          custAffiliateInput.style.borderColor = '#10b981';
+          custAffiliateInput.style.background = '#f0fdf4';
+        }
+        if (btnRemoveAffiliate) btnRemoveAffiliate.style.display = 'inline-block';
+
+        const banner = document.getElementById('affiliateBanner');
+        const nameEl = document.getElementById('affiliateMitraName');
+        const badgeEl = document.getElementById('affiliateBadgeCode');
+        const avatarEl = document.getElementById('affiliateMitraAvatar');
+
+        if (banner) banner.style.display = 'block';
+        if (nameEl) nameEl.textContent = refData.mitra.name;
+        if (badgeEl) badgeEl.textContent = refData.mitra.referralCode;
+        if (avatarEl) avatarEl.textContent = refData.mitra.avatar || '🛵';
+
+        if (affiliateInputAlert) {
+          affiliateInputAlert.style.display = 'block';
+          affiliateInputAlert.style.background = '#ecfdf5';
+          affiliateInputAlert.style.color = '#047857';
+          affiliateInputAlert.style.border = '1px solid #a7f3d0';
+          affiliateInputAlert.innerHTML = `✅ Terhubung ke mitra resmi: <b>${refData.mitra.name}</b> (${refData.mitra.referralCode}). Komisi otomatis dialokasikan ke mitra!`;
+        }
+      } else {
+        if (code && code.startsWith('MTR-')) {
+          activeAffiliateRef = code;
+          if (custAffiliateInput) {
+            custAffiliateInput.value = code;
+            custAffiliateInput.style.borderColor = '#10b981';
+            custAffiliateInput.style.background = '#f0fdf4';
+          }
+          const banner = document.getElementById('affiliateBanner');
+          const badgeEl = document.getElementById('affiliateBadgeCode');
+          if (banner) banner.style.display = 'block';
+          if (badgeEl) badgeEl.textContent = code;
+        }
+        if (!silent && affiliateInputAlert) {
+          affiliateInputAlert.style.display = 'block';
+          affiliateInputAlert.style.background = '#fef2f2';
+          affiliateInputAlert.style.color = '#b91c1c';
+          affiliateInputAlert.style.border = '1px solid #fecaca';
+          affiliateInputAlert.textContent = refData.message || `Kode mitra "${code}" tidak ditemukan di database.`;
+        }
       }
     } catch (err) {
-      console.warn('[Affiliate] Gagal verifikasi online, menggunakan cache lokal:', err.message);
-      // Fallback cache
-      const cached = localStorage.getItem('ngalam_locked_mitra_data');
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.referralCode === code) {
-            renderAffiliateBadge(parsed);
-          }
-        } catch (_) {}
+      if (code && code.startsWith('MTR-')) {
+        activeAffiliateRef = code;
+        if (custAffiliateInput) {
+          custAffiliateInput.value = code;
+          custAffiliateInput.style.borderColor = '#10b981';
+          custAffiliateInput.style.background = '#f0fdf4';
+        }
+        const banner = document.getElementById('affiliateBanner');
+        const badgeEl = document.getElementById('affiliateBadgeCode');
+        if (banner) banner.style.display = 'block';
+        if (badgeEl) badgeEl.textContent = code;
+      }
+      if (!silent && affiliateInputAlert) {
+        affiliateInputAlert.style.display = 'block';
+        affiliateInputAlert.style.background = '#fef2f2';
+        affiliateInputAlert.style.color = '#b91c1c';
+        affiliateInputAlert.style.border = '1px solid #fecaca';
+        affiliateInputAlert.textContent = 'Gagal memeriksa kode mitra: ' + err.message;
+      }
+    } finally {
+      if (btnApplyAffiliate) {
+        btnApplyAffiliate.disabled = false;
+        btnApplyAffiliate.innerHTML = '<span>Hubungkan Mitra 🛵</span>';
       }
     }
   }
 
-  function renderAffiliateBadge(mitra) {
-    if (!affiliateBanner) return;
-    affiliateBanner.style.display = 'block';
-    if (affiliateMitraName) affiliateMitraName.textContent = mitra.name || 'Mitra Ojol Rekanan';
-    if (affiliateBadgeCode) affiliateBadgeCode.textContent = mitra.referralCode;
-    if (affiliateMitraAvatar) affiliateMitraAvatar.textContent = mitra.avatar || '??';
+  function removeAffiliateCode() {
+    activeAffiliateRef = '';
+    localStorage.removeItem('ngalam_affiliate_ref');
+    if (custAffiliateInput) {
+      custAffiliateInput.value = '';
+      custAffiliateInput.style.borderColor = '';
+      custAffiliateInput.style.background = '';
+    }
+    const banner = document.getElementById('affiliateBanner');
+    if (banner) banner.style.display = 'none';
+    if (btnRemoveAffiliate) btnRemoveAffiliate.style.display = 'none';
+    if (affiliateInputAlert) {
+      affiliateInputAlert.style.display = 'none';
+      affiliateInputAlert.innerHTML = '';
+    }
   }
 
-  // Deteksi otomatis saat scan QR (Prioritas 1: URL ?ref=... / ?referral=...)
-  const urlRef = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('affiliate');
-  if (urlRef) {
-    setLockedReferral(urlRef);
-    resolveAndLockAffiliate(urlRef);
-  } else {
-    // Prioritas 2: Recovery dari locked storage sebelumnya
-    const savedRef = getLockedReferral();
-    if (savedRef) {
-      resolveAndLockAffiliate(savedRef);
-    } else {
-      // Prioritas 3: Akun member pelanggan
-      try {
-        const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
-        if (rawCust) {
-          const custObj = JSON.parse(rawCust);
-          if (custObj && (custObj.referredByMitra || custObj.referralCode)) {
-            const memberRef = custObj.referredByMitra || custObj.referralCode;
-            setLockedReferral(memberRef);
-            resolveAndLockAffiliate(memberRef);
-          }
+  btnApplyAffiliate?.addEventListener('click', () => applyAffiliateCode());
+  btnRemoveAffiliate?.addEventListener('click', removeAffiliateCode);
+  custAffiliateInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      applyAffiliateCode();
+    }
+  });
+
+  // Deteksi kode referral mitra otomatis dari 3 sumber:
+  // 1. URL parameter (?ref=... / ?referral=... / ?affiliate=...)
+  // 2. Akun member pelanggan yang login (cust.referredByMitra)
+  // 3. LocalStorage riwayat kunjungan (ngalam_affiliate_ref)
+  let initialAffiliate = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('affiliate') || '';
+  if (!initialAffiliate) {
+    try {
+      const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+      if (rawCust) {
+        const custObj = JSON.parse(rawCust);
+        if (custObj && (custObj.referredByMitra || custObj.referralCode)) {
+          initialAffiliate = custObj.referredByMitra || custObj.referralCode;
         }
-      } catch (_) {}
-    }
+      }
+    } catch (_) {}
+  }
+  if (!initialAffiliate) {
+    initialAffiliate = localStorage.getItem('ngalam_affiliate_ref') || '';
   }
 
-  // Generator & Recovery Attempt ID (Pencegah duplikasi & retry recovery)
-  function getOrCreateAttemptId() {
-    let attemptId = sessionStorage.getItem('ngalam_booking_attempt_id');
-    if (!attemptId) {
-      attemptId = 'ATT-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      sessionStorage.setItem('ngalam_booking_attempt_id', attemptId);
-    }
-    return attemptId;
-  }
-
-  function clearAttemptId() {
-    sessionStorage.removeItem('ngalam_booking_attempt_id');
+  if (initialAffiliate) {
+    applyAffiliateCode(initialAffiliate, true);
   }
 
   // Problem tags toggle with dynamic promo recalculation
@@ -692,8 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cost: finalCostString,
       promoCode: appliedPromo ? appliedPromo.promo.code : '',
       discountAmount: appliedPromo ? appliedPromo.discountAmount : 0,
-      affiliateRef: activeAffiliateRef || getLockedReferral() || '',
-      attemptId: getOrCreateAttemptId(),
+      affiliateRef: activeAffiliateRef || (custAffiliateInput ? custAffiliateInput.value.trim().toUpperCase() : '') || localStorage.getItem('ngalam_affiliate_ref') || '',
       duration: '30 - 60 Menit',
       status: 'Registrasi & Masuk',
       step: 1,
@@ -725,7 +793,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (result.success && result.data) {
         const order = result.data;
         if (createdTicketBadge) createdTicketBadge.textContent = order.id;
-        clearAttemptId(); // Sukses penuh, bersihkan attemptId agar order berikutnya mendapatkan id baru
 
         // WhatsApp Confirmation Message
         let promoWaText = '';
@@ -815,6 +882,3 @@ document.addEventListener('DOMContentLoaded', () => {
   loadQuickPromos();
   autofillMemberData();
 });
-
-
-

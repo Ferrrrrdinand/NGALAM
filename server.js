@@ -101,62 +101,70 @@ app.use('/:route/js', express.static(path.join(__dirname, 'public', 'js')));
 // ==========================================
 
 // 1. Beranda Publik
-app.get('/', (req, res) => {
+app.get(['/', '/index.html', '/public', '/public/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // 2. Layanan Servis
-app.get(['/layanan', '/layanan.html'], (req, res) => {
+app.get(['/layanan', '/layanan.html', '/public/layanan', '/public/layanan/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'layanan', 'index.html'));
 });
 
 // 3. Pemesanan Servis Online
-app.get(['/pesan-servis', '/pesan-servis.html'], (req, res) => {
+app.get(['/pesan-servis', '/pesan-servis.html', '/public/pesan-servis', '/public/pesan-servis/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pesan-servis', 'index.html'));
 });
 
 // 4. Kontak & Lokasi Workshop
-app.get(['/kontak', '/kontak.html'], (req, res) => {
+app.get(['/kontak', '/kontak.html', '/public/kontak', '/public/kontak/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'kontak', 'index.html'));
 });
 
 // 5. Khusus Pelacakan Status Unit Servis (Dedicated Pure Tracking)
-app.get(['/lacak', '/lacak.html'], (req, res) => {
+app.get(['/lacak', '/lacak.html', '/public/lacak', '/public/lacak/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'lacak', 'index.html'));
 });
 
 // 6. Khusus Login & Registrasi Pelanggan (Dedicated Customer Member Auth)
-app.get(['/login', '/login.html'], (req, res) => {
+app.get(['/login', '/login.html', '/public/login', '/public/login/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login', 'index.html'));
 });
 
 // 7. Khusus Login Staf Admin & Kasir (Dedicated Admin Login)
-app.get(['/admin/login', '/admin/login.html'], (req, res) => {
+app.get(['/admin/login', '/admin/login.html', '/public/admin/login.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'login.html'));
 });
 
+// 7b. Khusus Login & Dashboard Kasir Meja 1
+app.get(['/kasir/login', '/kasir/login.html', '/public/kasir/login.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'kasir', 'login.html'));
+});
+app.get(['/kasir', '/kasir.html', '/kasir/index.html', '/public/kasir/index.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'kasir', 'index.html'));
+});
+
 // 8. Dashboard Admin & Kasir (Protected)
-app.get(['/admin', '/admin.html'], (req, res) => {
+app.get(['/admin', '/admin.html', '/public/admin', '/public/admin/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
 });
 
 // 8b. Halaman Khusus Ekspor Riwayat Transaksi ke Excel (Khusus Role Admin Super User)
-app.get(['/admin/export', '/admin/export.html'], (req, res) => {
+app.get(['/admin/export', '/admin/export.html', '/public/admin/export.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'export.html'));
 });
 
 // 9. Khusus Login Teknisi Lab & Kurir Ojol (Dedicated Technician Login)
-app.get(['/teknisi/login', '/teknisi/login.html'], (req, res) => {
+app.get(['/teknisi/login', '/teknisi/login.html', '/public/teknisi/login.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'teknisi', 'login.html'));
 });
 
 // 10. Dashboard Meja Kerja Teknisi & Armada Ojol
-app.get(['/teknisi', '/teknisi.html'], (req, res) => {
+app.get(['/teknisi', '/teknisi.html', '/public/teknisi', '/public/teknisi/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'teknisi', 'index.html'));
 });
 
 // 11. Portal Khusus Mitra Driver, Ojol & Afiliasi QR Code
-app.get(['/mitra', '/mitra.html'], (req, res) => {
+app.get(['/mitra', '/mitra.html', '/public/mitra', '/public/mitra/index.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mitra', 'index.html'));
 });
 
@@ -193,6 +201,35 @@ app.get('/api/database/status', async (req, res) => {
       mode: 'fallback',
       message: 'Sistem aktif dalam mode penyimpanan data lokal.'
     });
+  }
+});
+
+// Endpoint Log Aktivitas Real-time (Audit Trail Akun & Perubahan Data)
+const { loadTable } = require('./services/localStore');
+app.get('/api/activity-logs', async (req, res) => {
+  try {
+    if (db.isDbConnected()) {
+      const q = await db.query('SELECT * FROM activity_logs ORDER BY performed_at DESC LIMIT 100');
+      if (q && q.rows && q.rows.length > 0) {
+        return res.json({ success: true, source: 'neon_postgresql', logs: q.rows });
+      }
+    }
+    const localLogs = loadTable('activity_logs');
+    return res.json({ success: true, source: 'local_storage', logs: localLogs });
+  } catch (err) {
+    const localLogs = loadTable('activity_logs');
+    return res.json({ success: true, source: 'local_storage_fallback', logs: localLogs });
+  }
+});
+
+// Endpoint Sinkronisasi Penuh ke Neon PostgreSQL
+const { syncAllTablesToNeon } = require('./services/neonSyncService');
+app.all(['/api/database/sync', '/api/sync-neon'], async (req, res) => {
+  try {
+    const result = await syncAllTablesToNeon();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -233,6 +270,8 @@ function startServer(portToTry) {
     // Inisialisasi Database PostgreSQL & Skema Tabel
     try {
       await initPostgresDatabase();
+      // Jalankan sinkronisasi seluruh tabel data/ ke Neon Cloud
+      await syncAllTablesToNeon();
     } catch (pgErr) {
       console.warn('[PostgreSQL] Inisialisasi awal database:', pgErr.message);
     }

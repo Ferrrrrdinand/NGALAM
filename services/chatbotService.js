@@ -63,7 +63,43 @@ async function processChatMessage(rawMessage = '') {
     }
   }
 
-  // 2. Layar / LCD / OLED / Kaca OCA
+  // 2. Menghilangkan Garis Layar (Light Saber / Green Line / White Line)
+  if (q.includes('garis') || q.includes('saber') || q.includes('green line') || q.includes('white line') || q.includes('pink line') || q.includes('laser')) {
+    return {
+      reply: `⚡ <b>Reparasi Menghilangkan Garis Layar (Light Saber OLED / AMOLED):</b><br/>` +
+        `• <b>Teknologi Laser Bonding:</b> Memperbaiki jalur sub-pixel OLED yang putus/short tanpa harus ganti LCD fullset yang mahal!<br/>` +
+        `• <b>Estimasi Biaya:</b> Mulai <b>Rp 250.000 - Rp 650.000</b> (Hemat hingga 70% dibanding ganti layar satu set).<br/>` +
+        `• <b>Waktu Pengerjaan:</b> 1 - 2 Jam di lab khusus bergaransi 60 hari.<br/><br/>` +
+        `<i>Cocok untuk Samsung S20/S21/S22 series, iPhone 13/14 Pro series, Xiaomi & OnePlus yang terkena isu garis hijau pasca update.</i>`,
+      chips: ['Booking Servis Garis', 'Pergantian Baterai', 'Lokasi Workshop', 'WhatsApp PIC'],
+    };
+  }
+
+  // 3. Pergantian Fleksibel Samsung Z Flip & Z Fold
+  if (q.includes('flip') || q.includes('fold') || q.includes('zflip') || q.includes('zfold') || (q.includes('fleksibel') && (q.includes('lipat') || q.includes('layar')))) {
+    return {
+      reply: `🔄 <b>Pergantian Fleksibel Layar Lipat Samsung Galaxy Z Flip & Z Fold:</b><br/>` +
+        `• <b>Gejala Umum:</b> Layar mati saat ditekuk/dibuka, engsel longgar, touch screen bagian tengah tidak merespon, atau suara speaker mati saat posisi lipat.<br/>` +
+        `• <b>Solusi Hemat:</b> Cukup ganti kabel fleksibel hinge (engsel) original tanpa harus ganti layar lipat dalam seharga jutaan!<br/>` +
+        `• <b>Estimasi Biaya:</b> Mulai <b>Rp 650.000 - Rp 1.650.000</b> (Garansi 90 hari).<br/>` +
+        `• <b>Waktu Pengerjaan:</b> 2 - 4 Jam ditangani teknisi spesialis foldable.`,
+      chips: ['Booking Servis Z Flip/Fold', 'Konsultasi WA', 'Lokasi Workshop'],
+    };
+  }
+
+  // 4. Software & Menghilangkan Virus HP
+  if (q.includes('virus') || q.includes('malware') || q.includes('iklan') || q.includes('software') || q.includes('flash') || q.includes('lupa sandi') || q.includes('pola') || q.includes('hang')) {
+    return {
+      reply: `🛡️ <b>Servis Software & Pembersihan Virus HP:</b><br/>` +
+        `• <b>Hapus Virus & Malware Iklan:</b> Membersihkan APK berbahaya, virus trojan perbankan, dan pop-up iklan spam yang sering muncul tiba-tiba.<br/>` +
+        `• <b>Flash Firmware Resmi:</b> Atasi bootloop mentok logo, sistem error, aplikasi sering force close, atau gagal update.<br/>` +
+        `• <b>Estimasi Biaya:</b> Mulai <b>Rp 75.000 - Rp 250.000</b>.<br/>` +
+        `• <b>Waktu Pengerjaan:</b> 30 - 60 Menit (Diupayakan semaksimal mungkin selamatkan data).`,
+      chips: ['Booking Servis Software', 'Biaya Servis Baterai', 'Tanya PIC Mas Hingky'],
+    };
+  }
+
+  // 5. Layar / LCD / OLED / Kaca OCA
   if (q.includes('lcd') || q.includes('layar') || q.includes('oled') || q.includes('kaca') || q.includes('touchscreen') || q.includes('retak') || q.includes('pecah')) {
     return {
       reply: `📱 <b>Estimasi Servis Layar & Kaca Smartphone:</b><br/>` +
@@ -74,14 +110,14 @@ async function processChatMessage(rawMessage = '') {
     };
   }
 
-  // 3. Baterai / Battery / Drop / Health
-  if (q.includes('baterai') || q.includes('battery') || q.includes('drop') || q.includes('health') || q.includes('batre') || q.includes('kembung')) {
+  // 6. Baterai / Battery / Drop / Health / Pergantian Baterai
+  if (q.includes('baterai') || q.includes('battery') || q.includes('drop') || q.includes('health') || q.includes('batre') || q.includes('kembung') || q.includes('batrai')) {
     return {
-      reply: `🔋 <b>Ganti Baterai Original Bergaransi:</b><br/>` +
+      reply: `🔋 <b>Pergantian Baterai Original Bergaransi:</b><br/>` +
         `• <b>Apple iPhone:</b> Mulai <b>Rp 250.000</b> (Health 100%, bebas pop-up unknown part, kalibrasi BMS IC).<br/>` +
-        `• <b>Android (Samsung, Xiaomi, OPPO dll):</b> Mulai <b>Rp 180.000</b> (Sel baterai grade original, support fast charge).<br/><br/>` +
+        `• <b>Android (Samsung, Xiaomi, OPPO, Vivo dll):</b> Mulai <b>Rp 180.000</b> (Sel baterai grade original, support fast charge).<br/><br/>` +
         `⚡ <i>Proses pengerjaan kilat hanya 30–45 menit bergaransi resmi tertulis s/d 90 hari!</i>`,
-      chips: ['Biaya Ganti Layar', 'Booking Servis Baterai', 'Lokasi Workshop', 'Konsultasi WA'],
+      chips: ['Booking Ganti Baterai', 'Hilangkan Garis Layar', 'Lokasi Workshop', 'Konsultasi WA'],
     };
   }
 

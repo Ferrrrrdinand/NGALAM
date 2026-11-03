@@ -9,6 +9,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const userService = require('./userService');
+const db = require('./db');
 const SESSIONS_FILE = path.join(__dirname, '..', 'data', 'sessions.json');
 
 // In-memory and persisted active tokens cache
@@ -271,6 +272,16 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
     }
   }
 
+  // Catat riwayat login akun ke activity logs (dual Neon & local)
+  try {
+    db.logActivity('STAFF_LOGIN', 'users', user.id, {
+      username: user.username,
+      name: user.name,
+      role: effectiveRole,
+      loginAt: sessionData.loginAt
+    });
+  } catch (_) {}
+
   return {
     success: true,
     message: `Selamat datang kembali, ${user.name}!`,
@@ -308,6 +319,17 @@ function logoutUser(token, usernameFallback = '') {
     } catch (e) {
       console.warn('[AuthService] Could not set technician offline:', e.message);
     }
+  }
+
+  if (loggedOutUser) {
+    try {
+      db.logActivity('STAFF_LOGOUT', 'users', loggedOutUser.userId || targetUsername, {
+        username: loggedOutUser.username,
+        name: loggedOutUser.name,
+        role: loggedOutUser.role,
+        logoutAt: new Date().toISOString()
+      });
+    } catch (_) {}
   }
 
   return true;

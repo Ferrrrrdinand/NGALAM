@@ -159,19 +159,40 @@ const MODELS_BY_BRAND = {
 };
 
 const REPAIR_PRICE_MATRIX = {
+  garis_lightsaber: {
+    title: 'Menghilangkan Garis Layar (Light Saber OLED)',
+    price: 'Rp 250.000 - Rp 650.000',
+    time: '1 - 2 Jam',
+    warranty: '60 Hari',
+    detail: 'Laser bonding & perbaikan jalur display OLED green/pink/white line tanpa harus ganti LCD fullset.',
+  },
+  flex_fold: {
+    title: 'Pergantian Fleksibel Z Flip & Z Fold',
+    price: 'Rp 650.000 - Rp 1.650.000',
+    time: '2 - 4 Jam',
+    warranty: '90 Hari',
+    detail: 'Penggantian kabel fleksibel hinge (engsel) original khusus Samsung Galaxy Z Flip / Fold series.',
+  },
+  baterai: {
+    title: 'Pergantian Baterai Original',
+    price: 'Rp 180.000 - Rp 550.000',
+    time: '30 - 45 Menit',
+    warranty: '60 Hari',
+    detail: 'Kapasitas 100%, sel baterai stabil, bebas peringatan unknown part, support fast charging.',
+  },
+  software_virus: {
+    title: 'Software & Menghilangkan Virus HP',
+    price: 'Rp 75.000 - Rp 250.000',
+    time: '30 - 60 Menit',
+    warranty: '30 Hari',
+    detail: 'Pembersihan malware, virus iklan pop-up, flash ulang OS resmi, perbaikan bootloop & lupa sandi.',
+  },
   lcd: {
     title: 'Ganti Layar / LCD / OLED Pecah',
     price: 'Rp 350.000 - Rp 1.850.000',
     time: '30 - 60 Menit',
     warranty: '90 Hari',
     detail: 'Panel Super Retina XDR / Dynamic AMOLED Grade Ori, 120Hz smooth, TrueTone aktif.',
-  },
-  baterai: {
-    title: 'Ganti Baterai Original (Health Drop)',
-    price: 'Rp 180.000 - Rp 550.000',
-    time: '30 - 45 Menit',
-    warranty: '60 Hari',
-    detail: 'Kapasitas 100%, sel baterai stabil, bebas peringatan unknown part, support fast charging.',
   },
   kaca: {
     title: 'Ganti Kaca Saja (Glass OCA Laminating)',

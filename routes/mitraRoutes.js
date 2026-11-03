@@ -54,8 +54,9 @@ function phonesMatch(p1, p2) {
 function buildMitraAffiliateDetails(req, refCode) {
   const host = req.get('host') || 'localhost:3000';
   const protocol = req.protocol || 'http';
-  const affiliateUrl = `${protocol}://${host}/pesan-servis/index.html?ref=${encodeURIComponent(refCode)}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=12&data=${encodeURIComponent(affiliateUrl)}`;
+  // Scan QR mengarahkan langsung ke halaman utama web Ngalam Fix Pro dengan parameter ref
+  const affiliateUrl = `${protocol}://${host}/index.html?ref=${encodeURIComponent(refCode)}`;
+  const qrCodeUrl = `https://quickchart.io/qr?size=350&margin=2&text=${encodeURIComponent(affiliateUrl)}`;
 
   return {
     affiliateUrl,

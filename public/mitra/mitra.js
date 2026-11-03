@@ -304,17 +304,69 @@ document.addEventListener('DOMContentLoaded', () => {
     dashCategory.style.color = '#ecfdf5';
     dashRefCode.textContent = mitra.referralCode;
 
-    // Build URL & QR Image
+    // Build URL & QR Code (Scan barcode masuk ke web utama Ngalam Fix Pro dengan referral mitra)
     const host = window.location.host;
     const protocol = window.location.protocol;
     const hasPublicPrefix = window.location.pathname.includes('/public/');
-    const basePath = hasPublicPrefix ? '/public/pesan-servis/index.html' : '/pesan-servis/index.html';
+    const basePath = hasPublicPrefix ? '/public/index.html' : '/index.html';
     const affiliateUrl = `${protocol}//${host}${basePath}?ref=${encodeURIComponent(mitra.referralCode)}`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=12&data=${encodeURIComponent(affiliateUrl)}`;
 
     dashAffiliateUrl.value = affiliateUrl;
-    dashQrImage.src = qrUrl;
-    btnDownloadQr.href = qrUrl;
+
+    // Render QR Code (Prioritas: Pure Client-side QRCode.js agar 100% tahan banting & tidak pernah broken)
+    const qrCanvasBox = document.getElementById('dashQrCanvas');
+    if (qrCanvasBox && typeof QRCode !== 'undefined') {
+      qrCanvasBox.innerHTML = '';
+      qrCanvasBox.style.display = 'block';
+      if (dashQrImage) dashQrImage.style.display = 'none';
+
+      try {
+        new QRCode(qrCanvasBox, {
+          text: affiliateUrl,
+          width: 220,
+          height: 220,
+          colorDark: '#0f172a',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+          const canvas = qrCanvasBox.querySelector('canvas');
+          if (canvas && btnDownloadQr) {
+            btnDownloadQr.href = canvas.toDataURL('image/png');
+            btnDownloadQr.download = `QR_Mitra_${mitra.referralCode}.png`;
+          }
+        }, 300);
+      } catch (err) {
+        console.warn('QRCode.js render error, using fallback image:', err);
+        renderQrImageFallback(affiliateUrl);
+      }
+    } else {
+      renderQrImageFallback(affiliateUrl);
+    }
+
+    function renderQrImageFallback(url) {
+      if (!dashQrImage) return;
+      if (qrCanvasBox) qrCanvasBox.style.display = 'none';
+      dashQrImage.style.display = 'block';
+
+      const primaryQr = `https://quickchart.io/qr?size=350&margin=2&text=${encodeURIComponent(url)}`;
+      dashQrImage.src = primaryQr;
+      if (btnDownloadQr) {
+        btnDownloadQr.href = primaryQr;
+        btnDownloadQr.download = `QR_Mitra_${mitra.referralCode}.png`;
+      }
+
+      dashQrImage.onerror = function () {
+        if (!this.dataset.fallback1) {
+          this.dataset.fallback1 = 'true';
+          this.src = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=12&data=${encodeURIComponent(url)}`;
+        } else if (!this.dataset.fallback2) {
+          this.dataset.fallback2 = 'true';
+          this.src = `https://chart.googleapis.com/chart?cht=qr&chs=350x350&chl=${encodeURIComponent(url)}`;
+        }
+      };
+    }
 
     dashTotalComm.textContent = 'Rp ' + Number(mitra.totalCommission || 0).toLocaleString('id-ID');
     dashCommRate.textContent = (mitra.commissionRate || 10) + '%';

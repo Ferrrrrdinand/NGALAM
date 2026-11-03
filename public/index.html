@@ -639,11 +639,20 @@
               
               <!-- Quick Damage Chips -->
               <div class="est-damage-chips" id="estDamageChips">
-                <button type="button" class="est-damage-chip active" data-damage="lcd">
-                  <span>📱</span> Ganti Layar / OLED
+                <button type="button" class="est-damage-chip" data-damage="garis_lightsaber">
+                  <span>⚡</span> Hilangkan Garis (Light Saber)
+                </button>
+                <button type="button" class="est-damage-chip" data-damage="flex_fold">
+                  <span>🔄</span> Flexibel Z Flip / Fold
                 </button>
                 <button type="button" class="est-damage-chip" data-damage="baterai">
-                  <span>🔋</span> Baterai Health Drop
+                  <span>🔋</span> Pergantian Baterai
+                </button>
+                <button type="button" class="est-damage-chip" data-damage="software_virus">
+                  <span>🛡️</span> Software &amp; Virus HP
+                </button>
+                <button type="button" class="est-damage-chip active" data-damage="lcd">
+                  <span>📱</span> Ganti Layar / OLED
                 </button>
                 <button type="button" class="est-damage-chip" data-damage="kaca">
                   <span>💎</span> Ganti Kaca OCA
@@ -661,8 +670,11 @@
 
               <!-- Synced select for robust data handling -->
               <select id="estDamage" style="display: none;">
-                <option value="lcd">Ganti Layar / LCD / OLED Pecah</option>
-                <option value="baterai">Ganti Baterai Original (Health Drop)</option>
+                <option value="garis_lightsaber">Menghilangkan Garis Layar (Light Saber)</option>
+                <option value="flex_fold">Pergantian Fleksibel Z Flip &amp; Z Fold</option>
+                <option value="baterai">Pergantian Baterai Original</option>
+                <option value="software_virus">Software, Menghilangkan Virus HP &amp; Flash</option>
+                <option value="lcd" selected>Ganti Layar / LCD / OLED Pecah</option>
                 <option value="kaca">Ganti Kaca Saja (Glass OCA Laminating)</option>
                 <option value="charging">Port Cas / Konektor Charger Rusak</option>
                 <option value="kamera">Kamera Getar (OIS) / Kaca Kamera Pecah</option>
@@ -804,11 +816,11 @@
     <div class="testimonials-grid" id="testimonialsGrid">
       <!-- Testi 1 -->
       <div class="testimonial-card">
-        <div class="testimonial-stars" style="margin-bottom: 14px;">⭐⭐⭐⭐⭐</div>
+        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-text">"Layar iPhone tiba-tiba green screen blank setelah update iOS, sempat panik karena di tempat resmi divonis ganti whole unit jutaan. Di Ngalam Fix Pro berhasil diperbaiki jalurnya dalam 1,5 jam, TrueTone aktif normal dan data utuh. Luar biasa!"</p>
         <div class="testimonial-user">
           <div class="testimonial-avatar">D</div>
-          <div>
+          <div class="testimonial-info">
             <strong>Dimas Prasetyo</strong>
             <small>Pengguna Apple iPhone 14 Pro Max • 23 Okt 2026</small>
           </div>
@@ -817,11 +829,11 @@
 
       <!-- Testi 2 -->
       <div class="testimonial-card">
-        <div class="testimonial-stars" style="margin-bottom: 14px;">⭐⭐⭐⭐⭐</div>
+        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-text">"Port cas kendor dan kamera belakang getar OIS saat buka Instagram. Dikerjakan langsung di depan mata dalam 45 menit selesai. Fast charging 45W lancar lagi dan kamera fokus mulus. Tempat servis HP paling jujur."</p>
         <div class="testimonial-user">
           <div class="testimonial-avatar">S</div>
-          <div>
+          <div class="testimonial-info">
             <strong>Siti Rahmawati</strong>
             <small>Pengguna Samsung Galaxy S23 Ultra • 22 Okt 2026</small>
           </div>
@@ -830,11 +842,11 @@
 
       <!-- Testi 3 -->
       <div class="testimonial-card">
-        <div class="testimonial-stars" style="margin-bottom: 14px;">⭐⭐⭐⭐⭐</div>
+        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-text">"HP Xiaomi anak saya tercebur ke ember air dan mati total. Dibawa ke Ngalam Fix Pro langsung ditangani ultrasonic cleaning dan ganti IC power. Nyala normal kembali tanpa kehilangan foto-foto keluarga. Recommended!"</p>
         <div class="testimonial-user">
           <div class="testimonial-avatar">B</div>
-          <div>
+          <div class="testimonial-info">
             <strong>Budi Santoso</strong>
             <small>Pengguna Xiaomi 13T & iPhone 13 • 21 Okt 2026</small>
           </div>
@@ -843,11 +855,11 @@
 
       <!-- Testi 4 -->
       <div class="testimonial-card">
-        <div class="testimonial-stars" style="margin-bottom: 14px;">⭐⭐⭐⭐⭐</div>
+        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         <p class="testimonial-text">"Servis ganti layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi 90 hari. Suku cadang original dan teknisi transparan. Mantap!"</p>
         <div class="testimonial-user">
           <div class="testimonial-avatar">R</div>
-          <div>
+          <div class="testimonial-info">
             <strong>Rian Pratama</strong>
             <small>Pengguna Samsung S22 Ultra • 23 Okt 2026</small>
           </div>

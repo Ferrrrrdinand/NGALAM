@@ -401,6 +401,11 @@
         <span>Mitra Driver & Afiliasi</span>
         <span id="mitraCountBadge" class="nav-tab-badge" style="background: rgba(16, 185, 129, 0.2); color: #059669; border-color: rgba(16, 185, 129, 0.4);">2 Mitra</span>
       </button>
+      <button type="button" class="admin-nav-tab" data-tab="activity-logs" id="activityLogsTabBtn">
+        <span style="font-size: 1.05rem;">📋</span>
+        <span>Audit Log & Neon Sync</span>
+        <span id="activityLogBadge" class="nav-tab-badge" style="background: rgba(124, 58, 237, 0.15); color: #7c3aed; border-color: rgba(124, 58, 237, 0.3);">Dual Sync</span>
+      </button>
       <a href="../teknisi/index.html" class="admin-nav-tab" style="margin-left: auto; text-decoration: none; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25);">
         <span>🛠️</span>
         <span>Masuk Portal Teknisi</span>
@@ -1499,6 +1504,84 @@
             </thead>
             <tbody id="adminMitraTableBody">
               <!-- Populated by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 8: AUDIT LOG AKTIVITAS & NEON CLOUD DUAL SYNC -->
+    <!-- ============================================== -->
+    <div class="admin-tab-panel" id="tab-activity-logs">
+      <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; flex-wrap: wrap;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <span style="font-size: 1.6rem;">📋</span>
+              <h2 style="font-size: 1.35rem; color: #0f172a; margin: 0; font-weight: 800;">Audit Log Aktivitas &amp; Neon Dual-Sync</h2>
+              <span style="background: #ede9fe; color: #7c3aed; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1px solid #ddd6fe;">REAL-TIME</span>
+            </div>
+            <p style="color: #64748b; font-size: 0.88rem; margin: 0; max-width: 780px;">
+              Memantau seluruh jejak aktivitas pengguna, pendaftaran akun baru, pembaruan status teknisi, login, dan transaksi. Seluruh data otomatis disinkronisasi ke <strong>Neon PostgreSQL Cloud</strong> dan file lokal di <strong>data/</strong>.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn small" id="btnTriggerNeonSync" style="background: linear-gradient(135deg, #059669, #047857); color: #ffffff; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5,150,105,0.25);">
+              <span>⚡</span>
+              <span>Sinkronkan ke Neon Cloud Sekarang</span>
+            </button>
+            <button type="button" class="btn small outline darkoutline" id="btnRefreshActivityLogs" style="border-radius: 10px; display: inline-flex; align-items: center; gap: 6px;">
+              <span>🔄</span>
+              <span>Muat Ulang Log</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sync & Database Status Banner -->
+        <div id="neonSyncStatusBanner" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.4rem;" id="neonStatusDot">🟢</span>
+            <div>
+              <strong style="color: #0f172a; font-size: 0.92rem; display: block;" id="neonStatusTitle">Dual-Storage Siaga (Neon PostgreSQL &amp; data/)</strong>
+              <small style="color: #64748b; font-size: 0.8rem;" id="neonStatusSubtitle">Setiap perubahan akun staf dan pelanggan otomatis tersimpan di 2 lokasi secara bersamaan.</small>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <span style="background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #334155;" id="logCountBadge">0 Total Log</span>
+            <span style="background: #f0fdf4; border: 1px solid #86efac; padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #15803d;">Semua Tabel Sinkron</span>
+          </div>
+        </div>
+
+        <!-- Filter Tab Buttons -->
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+          <button type="button" class="filter-tab-btn active" data-log-filter="all">Semua Log</button>
+          <button type="button" class="filter-tab-btn" data-log-filter="staff">Akun Staf (Admin/Kasir/Teknisi)</button>
+          <button type="button" class="filter-tab-btn" data-log-filter="customers">Pelanggan (Customers)</button>
+          <button type="button" class="filter-tab-btn" data-log-filter="orders">Tiket Servis (Orders)</button>
+          <button type="button" class="filter-tab-btn" data-log-filter="sync">Sistem &amp; Sinkronisasi</button>
+        </div>
+
+        <!-- Table Container -->
+        <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+          <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                <th style="padding: 12px 14px; width: 170px;">Waktu &amp; Tanggal</th>
+                <th style="padding: 12px 14px; width: 150px;">Aksi (Action)</th>
+                <th style="padding: 12px 14px; width: 120px;">Tabel / Modul</th>
+                <th style="padding: 12px 14px; width: 160px;">Target ID</th>
+                <th style="padding: 12px 14px;">Rincian Perubahan (Payload)</th>
+                <th style="padding: 12px 14px; width: 140px; text-align: center;">Status Storage</th>
+              </tr>
+            </thead>
+            <tbody id="activityLogsTableBody">
+              <tr>
+                <td colspan="6" style="padding: 30px; text-align: center; color: #94a3b8;">
+                  Memuat riwayat log aktivitas...
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
