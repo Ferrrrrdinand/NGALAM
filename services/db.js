@@ -184,7 +184,17 @@ async function initDb() {
         );
       `);
 
-      console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions) siap.');
+      await client.query(`
+          CREATE TABLE IF NOT EXISTS activity_logs (
+            id SERIAL PRIMARY KEY,
+            action VARCHAR(100),
+            table_name VARCHAR(100),
+            record_id VARCHAR(100),
+            payload JSONB,
+            performed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+        `);
+        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs) siap.')
     } finally {
       client.release();
     }
@@ -205,6 +215,45 @@ initDb().catch(() => {});
  * Eksekusi query dengan penanganan error aman dan sinkronisasi ke storage lokal
  */
 async function query(text, params, syncTable = null) {
+  if (!pool || !isConnected) {
+    throw new Error('Database PostgreSQL belum terhubung.');
+  }
+  const res = await pool.query(text, params);
+  // Determine if the query modifies data (INSERT, UPDATE, DELETE) for activity logging
+  const lowered = text.trim().toLowerCase();
+  const isWrite = lowered.startsWith('insert') || lowered.startsWith('update') || lowered.startsWith('delete');
+  if (isWrite && syncTable && res && res.rows && res.rows[0]) {
+    try {
+      upsertRecord(syncTable, res.rows[0]);
+      // Log activity to activity_logs table
+      await logActivity(isWrite ? 'WRITE' : 'READ', syncTable, res.rows[0].id, res.rows[0]);
+    } catch (e) {
+      console.warn('[local sync] Gagal menyimpan ke local store atau log activity:', e.message);
+    }
+  } else if (syncTable && res && res.rows && res.rows[0]) {
+    // For read queries we still sync local store without logging
+    try {
+      upsertRecord(syncTable, res.rows[0]);
+    } catch (e) {
+      console.warn('[local sync] Gagal menyimpan ke local store:', e.message);
+    }
+  }
+  return res;
+}
+
+// Helper to log activity actions
+async function logActivity(action, table_name, record_id, payload) {
+  if (!pool || !isConnected) return;
+  const logQuery = `
+    INSERT INTO activity_logs (action, table_name, record_id, payload)
+    VALUES ($1, $2, $3, $4)
+  `;
+  try {
+    await pool.query(logQuery, [action, table_name, record_id, JSON.stringify(payload)]);
+  } catch (e) {
+    console.warn('[activity log] Gagal mencatat aktivitas:', e.message);
+  }
+}
   if (!pool || !isConnected) {
     throw new Error('Database PostgreSQL belum terhubung.');
   }
