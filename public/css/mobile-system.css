@@ -741,45 +741,58 @@
   }
 
   /* ==========================================================================
-     6b. TESTIMONIALS SECTION (KOTAK KECIL-KECIL UNTUK RESOLUSI HP)
+     6b. TESTIMONIALS SECTION (KOTAK KECIL-KECIL RAPI UNTUK RESOLUSI HP)
      ========================================================================== */
   .testimonials-section {
-    padding: 24px 0 32px !important;
+    padding: 22px 0 28px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   .testimonials-section > div:first-child {
-    margin: 0 auto 16px !important;
+    margin: 0 auto 14px !important;
     max-width: 100% !important;
     text-align: center !important;
+    padding: 0 4px !important;
+    box-sizing: border-box !important;
   }
 
   .testimonials-section .eyebrow {
-    font-size: 0.68rem !important;
+    font-size: 0.66rem !important;
+    letter-spacing: 0.08em !important;
     margin-bottom: 4px !important;
+    font-weight: 700 !important;
   }
 
   .testimonials-section h2 {
-    font-size: clamp(1.12rem, 4.5vw, 1.32rem) !important;
+    font-size: clamp(1.12rem, 4.5vw, 1.3rem) !important;
     line-height: 1.25 !important;
-    margin: 4px 0 0 !important;
+    margin: 4px auto 0 !important;
+    max-width: 320px !important;
   }
 
   .testimonials-section p {
-    font-size: 0.78rem !important;
-    line-height: 1.4 !important;
-    margin-top: 6px !important;
+    font-size: 0.76rem !important;
+    line-height: 1.38 !important;
+    margin: 6px auto 0 !important;
     color: #475569 !important;
+    max-width: 330px !important;
   }
 
-  /* Grid Kotak Kecil-Kecil (2 Kolom Rapi di Layar HP) */
+  /* Grid Kotak Kecil-Kecil (2 Kolom Presisi, Anti Melebar/Off-screen) */
   .testimonials-grid {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 8px !important;
     margin-top: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  @media (max-width: 340px) {
+  @media (max-width: 330px) {
     .testimonials-grid {
       grid-template-columns: 1fr !important;
       gap: 8px !important;
@@ -788,7 +801,7 @@
 
   /* Kartu Testimoni: Kotak Kecil Kompak & Elegan */
   .testimonial-card {
-    padding: 10px 10px !important;
+    padding: 10px 9px !important;
     border-radius: 12px !important;
     border: 1px solid #e2e8f0 !important;
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
@@ -797,6 +810,11 @@
     flex-direction: column !important;
     justify-content: space-between !important;
     box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
     min-height: 100% !important;
     cursor: pointer !important;
     transition: transform 0.15s ease, border-color 0.15s ease !important;
@@ -808,17 +826,19 @@
   }
 
   .testimonial-stars {
-    font-size: 0.72rem !important;
-    letter-spacing: 1px !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0px !important;
     margin-bottom: 6px !important;
     line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
     gap: 2px !important;
   }
 
   .testimonial-card p,
   .testimonial-text {
-    font-size: 0.72rem !important;
-    line-height: 1.35 !important;
+    font-size: 0.7rem !important;
+    line-height: 1.34 !important;
     color: #334155 !important;
     margin-bottom: 8px !important;
     font-style: normal !important;
@@ -828,6 +848,7 @@
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     flex-grow: 1 !important;
+    word-break: break-word !important;
   }
 
   .testimonial-card.expanded p,
@@ -842,23 +863,40 @@
     align-items: center !important;
     gap: 6px !important;
     border-top: 1px solid #f1f5f9 !important;
-    padding-top: 8px !important;
+    padding-top: 6px !important;
     margin-top: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
+  /* Avatar inisial: Bulat sempurna 24px x 24px, fix tidak bisa melar */
   .testimonial-avatar,
   .author-avatar {
-    width: 26px !important;
-    height: 26px !important;
-    border-radius: 6px !important;
-    font-size: 0.7rem !important;
-    font-weight: 800 !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    flex: 0 0 24px !important;
     flex-shrink: 0 !important;
-    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.2) !important;
+    border-radius: 50% !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    background: linear-gradient(135deg, #d4af37, #b45309) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 5px rgba(212, 175, 55, 0.25) !important;
   }
 
-  .testimonial-user > div,
-  .author-info > div {
+  /* Kolom Teks Pengguna: Hanya div teks (bukan avatar) yang membesar */
+  .testimonial-info,
+  .testimonial-user > div:not(.testimonial-avatar),
+  .author-info > div:not(.author-avatar) {
     min-width: 0 !important;
     flex: 1 !important;
     overflow: hidden !important;
@@ -866,19 +904,20 @@
 
   .testimonial-user strong,
   .author-info strong {
-    font-size: 0.72rem !important;
+    font-size: 0.7rem !important;
     line-height: 1.2 !important;
     display: block !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     color: #0f172a !important;
+    font-weight: 700 !important;
   }
 
   .testimonial-user small,
   .author-info small {
-    font-size: 0.6rem !important;
-    line-height: 1.2 !important;
+    font-size: 0.58rem !important;
+    line-height: 1.15 !important;
     display: block !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -1433,6 +1472,53 @@
   .export-filter-grid {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
+  }
+
+  /* ==========================================================================
+     17b. FOOTER & MASCOT ANTI-OVERLAP DI HP
+     ========================================================================== */
+  .footer,
+  footer.footer {
+    padding: 30px 0 85px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .footgrid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding-bottom: 20px !important;
+    width: 100% !important;
+  }
+
+  .footer .logo {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .footer .logo-badge {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+  }
+
+  .footer .logo span {
+    font-size: 1.05rem !important;
+  }
+
+  .chatbot-container {
+    right: 14px !important;
+    bottom: 16px !important;
+    left: auto !important;
+    z-index: 9999 !important;
+  }
+
+  .chatbot-avatar-btn {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
   }
 
 }

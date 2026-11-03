@@ -880,11 +880,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const initial = (item.name || 'P').trim().charAt(0).toUpperCase();
 
       card.innerHTML = `
-        <div class="testimonial-stars" style="margin-bottom:14px;">${starsString}</div>
+        <div class="testimonial-stars">${starsString}</div>
         <p class="testimonial-text">"${item.text}"</p>
         <div class="testimonial-user">
           <div class="testimonial-avatar">${initial}</div>
-          <div>
+          <div class="testimonial-info">
             <strong>${item.name}</strong>
             <small>Pengguna ${item.device || 'Smartphone'} • ${item.date || 'Baru'}</small>
           </div>
