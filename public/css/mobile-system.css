@@ -929,16 +929,17 @@
   /* ==========================================================================
      7. HALAMAN BOOKING / PESAN SERVIS (public/pesan-servis/index.html)
      ========================================================================== */
-  .formpage {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    padding: 16px 0 50px !important;
-    margin: 10px auto 40px !important;
+  /* Sembunyikan kolom intro & info di HP agar langsung fokus ke formulir service */
+  .formpage > div:first-child,
+  .booking-sidebar-info {
+    display: none !important;
   }
 
-  .formpage > div:first-child {
-    position: static !important;
+  .formpage {
+    display: block !important;
+    padding: 8px 0 45px !important;
+    margin: 6px auto 30px !important;
+    width: 100% !important;
   }
 
   .booking-hero-pill {
@@ -1547,6 +1548,11 @@
   .home-page-body .testimonials-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
     gap: 24px !important;
+  }
+
+  .booking-sidebar-info,
+  .formpage > div:first-child {
+    display: block !important;
   }
 
   .chatbot-container {
