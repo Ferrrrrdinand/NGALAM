@@ -741,6 +741,153 @@
   }
 
   /* ==========================================================================
+     6b. TESTIMONIALS SECTION (KOTAK KECIL-KECIL UNTUK RESOLUSI HP)
+     ========================================================================== */
+  .testimonials-section {
+    padding: 24px 0 32px !important;
+  }
+
+  .testimonials-section > div:first-child {
+    margin: 0 auto 16px !important;
+    max-width: 100% !important;
+    text-align: center !important;
+  }
+
+  .testimonials-section .eyebrow {
+    font-size: 0.68rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .testimonials-section h2 {
+    font-size: clamp(1.12rem, 4.5vw, 1.32rem) !important;
+    line-height: 1.25 !important;
+    margin: 4px 0 0 !important;
+  }
+
+  .testimonials-section p {
+    font-size: 0.78rem !important;
+    line-height: 1.4 !important;
+    margin-top: 6px !important;
+    color: #475569 !important;
+  }
+
+  /* Grid Kotak Kecil-Kecil (2 Kolom Rapi di Layar HP) */
+  .testimonials-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-top: 14px !important;
+  }
+
+  @media (max-width: 340px) {
+    .testimonials-grid {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+  }
+
+  /* Kartu Testimoni: Kotak Kecil Kompak & Elegan */
+  .testimonial-card {
+    padding: 10px 10px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+    background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    min-height: 100% !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, border-color 0.15s ease !important;
+  }
+
+  .testimonial-card:active {
+    transform: scale(0.98) !important;
+    border-color: #d4af37 !important;
+  }
+
+  .testimonial-stars {
+    font-size: 0.72rem !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 6px !important;
+    line-height: 1 !important;
+    gap: 2px !important;
+  }
+
+  .testimonial-card p,
+  .testimonial-text {
+    font-size: 0.72rem !important;
+    line-height: 1.35 !important;
+    color: #334155 !important;
+    margin-bottom: 8px !important;
+    font-style: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 4 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    flex-grow: 1 !important;
+  }
+
+  .testimonial-card.expanded p,
+  .testimonial-card.expanded .testimonial-text {
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+  }
+
+  .testimonial-user,
+  .testimonial-author {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    border-top: 1px solid #f1f5f9 !important;
+    padding-top: 8px !important;
+    margin-top: auto !important;
+  }
+
+  .testimonial-avatar,
+  .author-avatar {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 6px !important;
+    font-size: 0.7rem !important;
+    font-weight: 800 !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.2) !important;
+  }
+
+  .testimonial-user > div,
+  .author-info > div {
+    min-width: 0 !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+  }
+
+  .testimonial-user strong,
+  .author-info strong {
+    font-size: 0.72rem !important;
+    line-height: 1.2 !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #0f172a !important;
+  }
+
+  .testimonial-user small,
+  .author-info small {
+    font-size: 0.6rem !important;
+    line-height: 1.2 !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #64748b !important;
+    margin-top: 1px !important;
+  }
+
+  /* ==========================================================================
      7. HALAMAN BOOKING / PESAN SERVIS (public/pesan-servis/index.html)
      ========================================================================== */
   .formpage {
@@ -1309,6 +1456,11 @@
 
   .home-page-body .services-dual {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-page-body .testimonials-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 24px !important;
   }
 
   .chatbot-container {

@@ -895,6 +895,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Tap-to-expand compact testimonial boxes on mobile
+  if (testimonialsGrid) {
+    testimonialsGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('.testimonial-card');
+      if (card) {
+        card.classList.toggle('expanded');
+      }
+    });
+  }
+
   // Modal open & close
   if (openTestiModalBtn && testiModal) {
     openTestiModalBtn.addEventListener('click', () => {
