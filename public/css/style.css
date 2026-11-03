@@ -7201,15 +7201,16 @@ footer.footer {
 @media (max-width: 480px) {
   .chatbot-container {
     bottom: 16px !important;
-    left: 14px !important;
-    right: auto !important;
+    right: 14px !important;
+    left: auto !important;
   }
 
   .chatbot-panel {
     bottom: 0 !important;
-    left: 0 !important;
-    right: auto !important;
-    width: calc(100vw - 28px) !important;
+    right: 10px !important;
+    left: auto !important;
+    width: calc(100vw - 20px) !important;
+    max-width: 380px !important;
     height: min(530px, 84vh) !important;
   }
 
@@ -9556,18 +9557,18 @@ body.nav-menu-open .chatbot-container,
 .is-mobile .chatbot-container,
 html[data-device="mobile"] .chatbot-container {
   position: fixed !important;
-  bottom: max(18px, env(safe-area-inset-bottom, 18px)) !important;
-  left: 16px !important;
-  right: auto !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+  right: 14px !important;
+  left: auto !important;
   z-index: 9999 !important;
 }
 
 @media (max-width: 768px) {
   .chatbot-container {
     position: fixed !important;
-    bottom: max(18px, env(safe-area-inset-bottom, 18px)) !important;
-    left: 16px !important;
-    right: auto !important;
+    bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+    right: 14px !important;
+    left: auto !important;
     z-index: 9999 !important;
   }
 
