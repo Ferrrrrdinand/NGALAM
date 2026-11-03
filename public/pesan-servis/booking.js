@@ -547,12 +547,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.resolveNgalamApiBase) {
         API_BASE = await window.resolveNgalamApiBase();
       }
-      const res = await fetch(\/api/mitra/ref/\);
+      const res = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(code)}`);
       const data = await res.json();
       if (data.success && data.mitra) {
         setLockedReferral(data.mitra.referralCode, data.mitra);
         // Simpan sesi referral ke server (Database Sessions)
-        fetch(\/api/mitra/session/lock, {
+        fetch(`${API_BASE}/api/mitra/session/lock`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ attemptId: getOrCreateAttemptId(), referralCode: data.mitra.referralCode })
