@@ -13,6 +13,7 @@ const {
   getAllCustomers,
 } = require('../services/customerService');
 const { readTransactions } = require('../services/financeService');
+const db = require('../services/db');
 
 /**
  * Hitung Status Garansi Resmi 90 Hari Workshop Lab
@@ -340,6 +341,16 @@ router.post('/login', async (req, res) => {
       token: 'CUST-TOKEN-' + Math.random().toString(36).substring(2, 12),
       loginAt: new Date().toISOString()
     };
+
+    // Rekam login pelanggan ke activity logs
+    try {
+      db.logActivity('CUSTOMER_LOGIN', 'customers', registeredCust.id || registeredCust.whatsapp, {
+        name: registeredCust.name,
+        whatsapp: registeredCust.whatsapp,
+        district: registeredCust.district,
+        loginAt: customerSession.loginAt
+      });
+    } catch (_) {}
 
     res.json({
       success: true,

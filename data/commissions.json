@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "referral_code": "MTR-DEMO-001",
+    "order_id": "NGF-20261028-1001",
+    "commission_amount": 25000,
+    "status": "Tercatat",
+    "created_at": "2026-10-28T09:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "referral_code": "MTR-JAYA-888",
+    "order_id": "NGF-20261028-1002",
+    "commission_amount": 40000,
+    "status": "Tercatat",
+    "created_at": "2026-10-28T11:30:00.000Z"
+  }
+]

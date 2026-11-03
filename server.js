@@ -222,6 +222,17 @@ app.get('/api/activity-logs', async (req, res) => {
   }
 });
 
+// Endpoint Sinkronisasi Penuh ke Neon PostgreSQL
+const { syncAllTablesToNeon } = require('./services/neonSyncService');
+app.all(['/api/database/sync', '/api/sync-neon'], async (req, res) => {
+  try {
+    const result = await syncAllTablesToNeon();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Fallback for API 404
 app.use('/api', (req, res) => {
   res.status(404).json({ success: false, message: `Endpoint API "${req.originalUrl}" tidak ditemukan.` });
@@ -259,6 +270,8 @@ function startServer(portToTry) {
     // Inisialisasi Database PostgreSQL & Skema Tabel
     try {
       await initPostgresDatabase();
+      // Jalankan sinkronisasi seluruh tabel data/ ke Neon Cloud
+      await syncAllTablesToNeon();
     } catch (pgErr) {
       console.warn('[PostgreSQL] Inisialisasi awal database:', pgErr.message);
     }

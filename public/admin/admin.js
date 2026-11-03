@@ -86,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchTechnicians();
       } else if (target === 'mitras') {
         fetchMitras();
+      } else if (target === 'activity-logs') {
+        fetchActivityLogs();
       }
     });
   });
@@ -3123,6 +3125,170 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('refreshMitraBtn')?.addEventListener('click', fetchMitras);
+
+  // ==============================================================
+  // TAB AUDIT LOG AKTIVITAS & NEON CLOUD DUAL-SYNC CONTROLLER
+  // ==============================================================
+  let allActivityLogs = [];
+  let currentLogFilter = 'all';
+
+  async function fetchActivityLogs() {
+    const tableBody = document.getElementById('activityLogsTableBody');
+    const badge = document.getElementById('logCountBadge');
+    if (tableBody) {
+      tableBody.innerHTML = `<tr><td colspan="6" style="padding: 24px; text-align: center; color: #94a3b8;">Memuat riwayat log aktivitas...</td></tr>`;
+    }
+
+    try {
+      const res = await fetch('/api/activity-logs');
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.logs)) {
+        allActivityLogs = data.logs;
+        if (badge) badge.textContent = `${allActivityLogs.length} Total Log`;
+        renderActivityLogs();
+      } else {
+        if (tableBody) tableBody.innerHTML = `<tr><td colspan="6" style="padding: 24px; text-align: center; color: #94a3b8;">Belum ada riwayat aktivitas yang tercatat.</td></tr>`;
+      }
+    } catch (err) {
+      console.warn('[Admin] Error fetching activity logs:', err.message);
+      if (tableBody) tableBody.innerHTML = `<tr><td colspan="6" style="padding: 24px; text-align: center; color: #ef4444;">Gagal memuat log aktivitas: ${err.message}</td></tr>`;
+    }
+  }
+
+  function getActionBadge(action) {
+    const act = (action || '').toUpperCase();
+    if (act.includes('LOGIN')) {
+      return `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #bae6fd;">🔑 ${act}</span>`;
+    }
+    if (act.includes('LOGOUT')) {
+      return `<span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #cbd5e1;">🚪 ${act}</span>`;
+    }
+    if (act.includes('REGISTER')) {
+      return `<span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #86efac;">✨ ${act}</span>`;
+    }
+    if (act.includes('SYNC')) {
+      return `<span style="background: #ede9fe; color: #6d28d9; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #ddd6fe;">⚡ ${act}</span>`;
+    }
+    if (act.includes('ORDER')) {
+      return `<span style="background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #fde68a;">📦 ${act}</span>`;
+    }
+    return `<span style="background: #f3e8ff; color: #7e22ce; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #e9d5ff;">⚙️ ${act}</span>`;
+  }
+
+  function renderActivityLogs() {
+    const tableBody = document.getElementById('activityLogsTableBody');
+    if (!tableBody) return;
+
+    let filtered = allActivityLogs;
+    if (currentLogFilter === 'staff') {
+      filtered = allActivityLogs.filter(l => (l.table_name === 'users') || (l.action && l.action.startsWith('STAFF_')) || (l.action && l.action.startsWith('USER_')));
+    } else if (currentLogFilter === 'customers') {
+      filtered = allActivityLogs.filter(l => (l.table_name === 'customers') || (l.action && l.action.startsWith('CUSTOMER_')));
+    } else if (currentLogFilter === 'orders') {
+      filtered = allActivityLogs.filter(l => (l.table_name === 'orders') || (l.action && l.action.startsWith('ORDER_')));
+    } else if (currentLogFilter === 'sync') {
+      filtered = allActivityLogs.filter(l => (l.action && l.action.includes('SYNC')) || (l.table_name === 'system') || (l.table_name === 'all_tables'));
+    }
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="6" style="padding: 24px; text-align: center; color: #94a3b8;">Tidak ada log yang cocok dengan filter "${currentLogFilter}".</td></tr>`;
+      return;
+    }
+
+    tableBody.innerHTML = filtered.map((log) => {
+      const rawDate = log.performed_at || log.timestamp || log.created_at || new Date().toISOString();
+      const dateFormatted = new Date(rawDate).toLocaleString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      let payloadSnippet = '-';
+      if (log.payload) {
+        if (typeof log.payload === 'object') {
+          payloadSnippet = Object.entries(log.payload)
+            .map(([k, v]) => `<strong>${k}:</strong> ${typeof v === 'object' ? JSON.stringify(v) : v}`)
+            .join(' | ');
+        } else {
+          payloadSnippet = String(log.payload);
+        }
+      }
+
+      return `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 12px 14px; color: #475569; font-size: 0.82rem; white-space: nowrap;">
+            🕒 ${dateFormatted}
+          </td>
+          <td style="padding: 12px 14px;">
+            ${getActionBadge(log.action)}
+          </td>
+          <td style="padding: 12px 14px;">
+            <span style="font-family: monospace; font-size: 0.8rem; background: #f8fafc; border: 1px solid #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #334155;">
+              ${log.table_name || 'general'}
+            </span>
+          </td>
+          <td style="padding: 12px 14px; font-family: monospace; font-size: 0.82rem; color: #0284c7; font-weight: 700;">
+            ${log.record_id || '-'}
+          </td>
+          <td style="padding: 12px 14px; color: #334155; font-size: 0.82rem; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${typeof log.payload === 'object' ? JSON.stringify(log.payload, null, 2) : log.payload}">
+            ${payloadSnippet}
+          </td>
+          <td style="padding: 12px 14px; text-align: center;">
+            <span style="background: #f0fdf4; color: #166534; font-size: 0.74rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid #bbf7d0; display: inline-flex; align-items: center; gap: 4px;">
+              <span>✅ Neon</span>
+              <span>•</span>
+              <span>📁 data/</span>
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // Trigger Full Sync to Neon PostgreSQL
+  async function triggerNeonSync() {
+    const btn = document.getElementById('btnTriggerNeonSync');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<span>⏳</span><span>Menyinkronkan ke Neon Cloud...</span>`;
+    }
+
+    try {
+      const res = await fetch('/api/database/sync', { method: 'POST' });
+      const data = await res.json();
+      if (data && data.success) {
+        const counts = data.syncedCounts || {};
+        const countSummary = Object.entries(counts).map(([k, v]) => `${k}: ${v}`).join(', ');
+        alert(`🎉 Berhasil menyinkronkan seluruh tabel ke Neon PostgreSQL!\n\nJumlah baris tersinkron:\n${countSummary || 'Semua tabel diperbarui.'}`);
+      } else {
+        alert(`ℹ️ Status Sinkronisasi: ${data.message || 'Berjalan dalam mode lokal data/'}`);
+      }
+      fetchActivityLogs();
+    } catch (err) {
+      alert(`⚠️ Terjadi kesalahan saat sinkronisasi ke Neon: ${err.message}`);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<span>⚡</span><span>Sinkronkan ke Neon Cloud Sekarang</span>`;
+      }
+    }
+  }
+
+  document.getElementById('btnTriggerNeonSync')?.addEventListener('click', triggerNeonSync);
+  document.getElementById('btnRefreshActivityLogs')?.addEventListener('click', fetchActivityLogs);
+
+  // Filter Buttons Handler
+  document.querySelectorAll('[data-log-filter]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-log-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentLogFilter = btn.getAttribute('data-log-filter');
+      renderActivityLogs();
+    });
+  });
 
   // Initial Load
   initAdminAuth();
