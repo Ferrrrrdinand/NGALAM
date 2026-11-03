@@ -577,6 +577,18 @@ document.addEventListener('DOMContentLoaded', () => {
           affiliateInputAlert.innerHTML = `✅ Terhubung ke mitra resmi: <b>${refData.mitra.name}</b> (${refData.mitra.referralCode}). Komisi otomatis dialokasikan ke mitra!`;
         }
       } else {
+        if (code && code.startsWith('MTR-')) {
+          activeAffiliateRef = code;
+          if (custAffiliateInput) {
+            custAffiliateInput.value = code;
+            custAffiliateInput.style.borderColor = '#10b981';
+            custAffiliateInput.style.background = '#f0fdf4';
+          }
+          const banner = document.getElementById('affiliateBanner');
+          const badgeEl = document.getElementById('affiliateBadgeCode');
+          if (banner) banner.style.display = 'block';
+          if (badgeEl) badgeEl.textContent = code;
+        }
         if (!silent && affiliateInputAlert) {
           affiliateInputAlert.style.display = 'block';
           affiliateInputAlert.style.background = '#fef2f2';
@@ -586,6 +598,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
+      if (code && code.startsWith('MTR-')) {
+        activeAffiliateRef = code;
+        if (custAffiliateInput) {
+          custAffiliateInput.value = code;
+          custAffiliateInput.style.borderColor = '#10b981';
+          custAffiliateInput.style.background = '#f0fdf4';
+        }
+        const banner = document.getElementById('affiliateBanner');
+        const badgeEl = document.getElementById('affiliateBadgeCode');
+        if (banner) banner.style.display = 'block';
+        if (badgeEl) badgeEl.textContent = code;
+      }
       if (!silent && affiliateInputAlert) {
         affiliateInputAlert.style.display = 'block';
         affiliateInputAlert.style.background = '#fef2f2';

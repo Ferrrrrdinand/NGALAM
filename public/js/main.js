@@ -323,7 +323,9 @@ document.addEventListener('DOMContentLoaded', () => {
                            window.location.pathname.includes('/admin') ||
                            window.location.pathname.includes('/teknisi');
           const prefix = isSubdir ? '../' : '';
-          estBookingBtn.href = `${prefix}${data.bookingUrl}`;
+          const activeRef = localStorage.getItem('ngalam_affiliate_ref') || '';
+          const refSuffix = activeRef ? `&ref=${encodeURIComponent(activeRef)}` : '';
+          estBookingBtn.href = `${prefix}${data.bookingUrl}${refSuffix}`;
         }
       }
     } catch (err) {
@@ -1092,5 +1094,110 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
   }
   checkNavAuth();
+
+  // ==========================================
+  // 12. MITRA BARCODE SCANNER & REFERRAL PERSISTENCE
+  // ==========================================
+  async function initReferralPersistence() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const scannedRef = (
+        urlParams.get('ref') ||
+        urlParams.get('referral') ||
+        urlParams.get('affiliate') ||
+        urlParams.get('mitra') ||
+        ''
+      ).trim().toUpperCase();
+
+      if (scannedRef) {
+        localStorage.setItem('ngalam_affiliate_ref', scannedRef);
+        sessionStorage.setItem('ngalam_affiliate_ref', scannedRef);
+        localStorage.setItem('ngalam_affiliate_time', String(Date.now()));
+      }
+
+      const activeRef = localStorage.getItem('ngalam_affiliate_ref') || sessionStorage.getItem('ngalam_affiliate_ref');
+      if (!activeRef) return;
+
+      // Automatically append referral code to all "Pesan Servis" buttons/links on the page
+      function updateBookingLinks() {
+        document.querySelectorAll('a[href*="pesan-servis"]').forEach((link) => {
+          try {
+            const rawHref = link.getAttribute('href');
+            if (!rawHref) return;
+            if (!rawHref.includes('ref=')) {
+              const sep = rawHref.includes('?') ? '&' : '?';
+              link.setAttribute('href', `${rawHref}${sep}ref=${encodeURIComponent(activeRef)}`);
+            }
+          } catch (_) {}
+        });
+      }
+      updateBookingLinks();
+      setTimeout(updateBookingLinks, 800);
+
+      // If user is on homepage or catalog, show informative verified partner banner
+      const isBookingPage = window.location.pathname.includes('/pesan-servis');
+      if (!isBookingPage && !document.getElementById('mitraActiveBadge')) {
+        let mitraName = localStorage.getItem('ngalam_affiliate_name') || '';
+
+        // Try fetching partner's verified name from backend API
+        if (!mitraName) {
+          try {
+            const res = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(activeRef)}`);
+            const data = await res.json();
+            if (data.success && data.mitra) {
+              mitraName = data.mitra.name;
+              localStorage.setItem('ngalam_affiliate_name', mitraName);
+            }
+          } catch (_) {}
+        }
+
+        const bannerText = mitraName
+          ? `Terhubung via Scan QR Mitra Resmi: <strong>${mitraName}</strong> (<span style="font-family: monospace; font-weight: 700;">${activeRef}</span>). Diskon & prioritas aktif otomatis saat pesan servis!`
+          : `Terhubung via Scan QR Mitra Resmi: <span style="font-family: monospace; font-weight: 700;">${activeRef}</span>. Kode otomatis terpasang saat pendaftaran servis!`;
+
+        const banner = document.createElement('div');
+        banner.id = 'mitraActiveBadge';
+        banner.style.cssText = `
+          background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+          border-bottom: 2px solid #10b981;
+          color: #065f46;
+          font-size: 0.84rem;
+          padding: 8px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          text-align: center;
+          position: relative;
+          z-index: 990;
+          box-shadow: 0 2px 10px rgba(16, 185, 129, 0.12);
+        `;
+        banner.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.15rem;">🛵</span>
+            <span>${bannerText}</span>
+          </div>
+          <button type="button" style="background: none; border: none; font-size: 1.25rem; color: #047857; cursor: pointer; padding: 0 4px; line-height: 1;" title="Tutup Notifikasi">&times;</button>
+        `;
+
+        banner.querySelector('button')?.addEventListener('click', () => {
+          banner.remove();
+        });
+
+        // Insert right below header or at top of body
+        const headerEl = document.querySelector('.header');
+        if (headerEl && headerEl.nextSibling) {
+          headerEl.parentNode.insertBefore(banner, headerEl.nextSibling);
+        } else {
+          document.body.prepend(banner);
+        }
+      }
+    } catch (err) {
+      console.warn('[Ngalam Fix Pro] Referral persistence init error:', err);
+    }
+  }
+
+  initReferralPersistence();
 });
 

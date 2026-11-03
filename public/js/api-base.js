@@ -38,4 +38,25 @@
 
   window.getNgalamApiBase = getNgalamApiBaseSync;
   window.resolveNgalamApiBase = resolveNgalamApiBase;
+
+  // Global Referral & Barcode Mitra Tracking Persistence
+  try {
+    if (typeof window !== 'undefined' && window.location) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const scannedRef = (
+        urlParams.get('ref') ||
+        urlParams.get('referral') ||
+        urlParams.get('affiliate') ||
+        urlParams.get('mitra') ||
+        ''
+      ).trim().toUpperCase();
+
+      if (scannedRef) {
+        localStorage.setItem('ngalam_affiliate_ref', scannedRef);
+        sessionStorage.setItem('ngalam_affiliate_ref', scannedRef);
+        localStorage.setItem('ngalam_affiliate_time', String(Date.now()));
+        console.log('[Ngalam Fix Pro] Kode referral mitra terdeteksi & tersimpan:', scannedRef);
+      }
+    }
+  } catch (_) {}
 })(window);
