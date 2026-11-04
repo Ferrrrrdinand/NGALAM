@@ -7,7 +7,7 @@ module.exports = {
     if (!tables.includes('sessions')) {
       await queryInterface.createTable('sessions', {
         token: {
-          type: Sequelize.STRING(255),
+          type: Sequelize.STRING(1000),
           primaryKey: true,
           allowNull: false
         },

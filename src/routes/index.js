@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const userService = require('../../services/userService');
+
+router.use(async (req, res, next) => {
+  try {
+    await userService.refreshUsersFromDb();
+  } catch (_) {}
+  next();
+});
 
 // Domain Routers
 const authRoutes = require('../../routes/authRoutes');

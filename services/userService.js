@@ -24,6 +24,10 @@ function resolveFilePath(envKey, defaultRelativePath) {
   return path.join(ROOT_DIR, defaultRelativePath);
 }
 
+const memoryTables = new Map();
+let usersHydratedAt = 0;
+let usersHydration = null;
+
 const FILE_PATHS = {
   get admin() {
     return resolveFilePath('USERS_ADMIN_FILE', 'data/users_admin.json');
@@ -46,6 +50,7 @@ const FILE_PATHS = {
  * Baca file JSON dengan pembersihan BOM aman
  */
 function readJson(filePath, defaultValue = []) {
+  if (memoryTables.has(filePath)) return memoryTables.get(filePath);
   try {
     if (fs.existsSync(filePath)) {
       const raw = fs.readFileSync(filePath, 'utf-8');
@@ -62,17 +67,83 @@ function readJson(filePath, defaultValue = []) {
  * Tulis file JSON dengan format rapi
  */
 function writeJson(filePath, data) {
+  memoryTables.set(filePath, data);
   try {
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-    return true;
   } catch (err) {
-    console.error(`[UserService] Error writing ${filePath}:`, err.message);
-    return false;
+    console.warn(`[UserService] Disk write skipped for ${filePath}:`, err.message);
   }
+  return true;
+}
+
+function normalizeDbUser(row) {
+  const raw = row && row.raw_data && typeof row.raw_data === 'object' ? row.raw_data : {};
+  return {
+    ...raw,
+    id: raw.id || row.id,
+    username: raw.username || row.username || '',
+    password: raw.password || row.password || '',
+    name: raw.name || row.name || '',
+    role: raw.role || row.role || 'staff',
+    category: raw.category || row.category || '',
+    avatar: raw.avatar || row.avatar || '',
+    phone: raw.phone || row.phone || '',
+    email: raw.email || row.email || '',
+    referralCode: raw.referralCode || raw.referral_code || row.referral_code || '',
+    commissionRate: raw.commissionRate !== undefined ? raw.commissionRate : Number(row.commission_rate || 10),
+    totalCommission: raw.totalCommission !== undefined ? raw.totalCommission : Number(row.total_commission || 0),
+    status: raw.status || row.status || 'Active',
+    lastActive: raw.lastActive || row.last_active || 'Baru Saja',
+    desk: raw.desk || row.desk || '',
+    specialty: raw.specialty || row.specialty || ''
+  };
+}
+
+async function refreshUsersFromDb(force = false) {
+  const now = Date.now();
+  if (!force && usersHydratedAt && now - usersHydratedAt < 3000) return true;
+  if (usersHydration) return usersHydration;
+
+  usersHydration = (async () => {
+    try {
+      if (!db.isDbConnected()) await db.ensureDbReady();
+      if (!db.isDbConnected()) return false;
+
+      const res = await db.query('SELECT * FROM users ORDER BY created_at ASC');
+      const users = (res.rows || []).map(normalizeDbUser).filter((u) => u.id || u.username);
+      const admins = [];
+      const kasirs = [];
+      const teknisis = [];
+      const mitras = [];
+
+      users.forEach((u) => {
+        const role = String(u.role || '').toLowerCase();
+        if (role === 'admin' || role === 'owner' || role === 'superadmin') admins.push(u);
+        else if (role === 'kasir') kasirs.push(u);
+        else if (role === 'teknisi') teknisis.push(u);
+        else mitras.push(u);
+      });
+
+      memoryTables.set(FILE_PATHS.admin, admins);
+      memoryTables.set(FILE_PATHS.kasir, kasirs);
+      memoryTables.set(FILE_PATHS.teknisi, teknisis);
+      memoryTables.set(FILE_PATHS.mitra, mitras);
+      memoryTables.set(FILE_PATHS.legacy, users);
+      usersHydratedAt = Date.now();
+      return true;
+    } catch (err) {
+      console.warn('[UserService] PostgreSQL hydrate warning:', err.message);
+      return false;
+    } finally {
+      usersHydration = null;
+    }
+  })();
+
+  return usersHydration;
 }
 
 /**
@@ -460,6 +531,8 @@ function getUserFileDetails() {
 }
 
 module.exports = {
+  refreshUsersFromDb,
+  syncUserToNeon,
   FILE_PATHS,
   getAdminUsers,
   saveAdminUsers,

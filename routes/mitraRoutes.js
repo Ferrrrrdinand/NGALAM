@@ -142,7 +142,7 @@ function generateUniqueMitraUsername(users, profile) {
   return candidate;
 }
 
-function createMitraFromGoogle(users, profile) {
+async function createMitraFromGoogle(users, profile) {
   const now = new Date();
   const username = generateUniqueMitraUsername(users, profile);
   let refCode = generateMitraCode(profile.name || username, username);
@@ -176,6 +176,7 @@ function createMitraFromGoogle(users, profile) {
   };
   users.push(mitra);
   saveUsers(users);
+  await userService.syncUserToNeon(mitra, 'MITRA_GOOGLE_REGISTER').catch(() => {});
   return mitra;
 }
 
@@ -268,12 +269,13 @@ router.get('/auth/google/callback', async (req, res) => {
     const users = readUsers();
     let mitra = findMitraByGoogle(users, profile);
     if (!mitra) {
-      mitra = createMitraFromGoogle(users, profile);
+      mitra = await createMitraFromGoogle(users, profile);
     } else if (!mitra.googleId) {
       mitra.googleId = String(profile.sub || '');
       mitra.authProvider = mitra.authProvider || 'google';
       if (!mitra.email) mitra.email = String(profile.email || '').trim().toLowerCase();
       saveUsers(users);
+      await userService.syncUserToNeon(mitra, 'MITRA_GOOGLE_LINK').catch(() => {});
     }
 
     const jwtInfo = generateToken({
@@ -310,7 +312,7 @@ router.get('/auth/session', (req, res) => {
 });
 
 // POST /api/mitra/auth/complete-profile - Nomor WhatsApp wajib untuk mitra yang daftar via Google
-router.post('/auth/complete-profile', (req, res) => {
+router.post('/auth/complete-profile', async (req, res) => {
   try {
     const payload = verifyToken(getMitraToken(req));
     if (!payload) {
@@ -335,6 +337,7 @@ router.post('/auth/complete-profile', (req, res) => {
     mitra.phone = phone;
     mitra.lastActive = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ', Profil Dilengkapi';
     saveUsers(users);
+    await userService.syncUserToNeon(mitra, 'MITRA_PROFILE_COMPLETE').catch(() => {});
 
     res.json({
       success: true,

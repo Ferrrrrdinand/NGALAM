@@ -42,7 +42,7 @@ function createPool() {
     }
 
     const isNeonOrSsl =
-      connectionString.includes('neon.tech') ||
+      /neon\.tech|supabase\.(co|com)/i.test(connectionString) ||
       connectionString.includes('sslmode=require') ||
       process.env.PG_SSL === 'true';
 
@@ -70,10 +70,12 @@ function createPool() {
   });
 }
 
+let initInFlight = null;
+
 /**
  * Inisialisasi pool dan schema tabel PostgreSQL
  */
-async function initDb() {
+async function runInitDb() {
   try {
     if (!pool) {
       pool = createPool();
@@ -120,10 +122,10 @@ async function initDb() {
         CREATE TABLE IF NOT EXISTS customers (
           id VARCHAR(100) PRIMARY KEY,
           name VARCHAR(255),
-          whatsapp VARCHAR(50) UNIQUE,
+          whatsapp VARCHAR(50),
           email VARCHAR(255),
           district VARCHAR(255),
-          pin VARCHAR(50),
+          pin VARCHAR(255),
           registered_at VARCHAR(100),
           registered_via VARCHAR(100),
           raw_data JSONB,
@@ -187,7 +189,7 @@ async function initDb() {
 
         -- Tabel Sesi Login Aktif (Sessions)
         CREATE TABLE IF NOT EXISTS sessions (
-          token VARCHAR(255) PRIMARY KEY,
+          token VARCHAR(1000) PRIMARY KEY,
           user_id VARCHAR(100),
           name VARCHAR(255),
           username VARCHAR(100),
@@ -220,6 +222,21 @@ async function initDb() {
     console.info('[PostgreSQL Fallback] Sistem otomatis beralih ke penyimpanan lokal (data/) hingga kredensial PostgreSQL terhubung.');
     return false;
   }
+}
+
+async function initDb() {
+  if (initInFlight) return initInFlight;
+  initInFlight = runInitDb();
+  try {
+    return await initInFlight;
+  } finally {
+    initInFlight = null;
+  }
+}
+
+async function ensureDbReady() {
+  if (pool && isConnected) return true;
+  return initDb();
 }
 
 // Inisialisasi saat modul dimuat
@@ -255,7 +272,7 @@ async function query(text, params, syncTable = null) {
   return res;
 }
 
-// Helper to log activity actions (Dual persistence: Neon PostgreSQL + local data/activity_logs.json)
+// Helper to log activity actions (Dual persistence: PostgreSQL + local data/activity_logs.json)
 async function logActivity(action, table_name, record_id, payload) {
   // 1. Selalu rekam ke penyimpanan lokal
   try {
@@ -264,7 +281,7 @@ async function logActivity(action, table_name, record_id, payload) {
     console.warn('[activity log local] Gagal mencatat aktivitas lokal:', e.message);
   }
 
-  // 2. Rekam ke Neon PostgreSQL jika terhubung
+  // 2. Rekam ke PostgreSQL jika terhubung
   if (pool && isConnected) {
     const logQuery = `
       INSERT INTO activity_logs (action, table_name, record_id, payload)
@@ -348,6 +365,7 @@ function getConnectionDetails() {
 
 module.exports = {
   initDb,
+  ensureDbReady,
   query,
   logActivity,
   testConnection,

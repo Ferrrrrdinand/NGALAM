@@ -9,6 +9,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const { getAllOrders } = require('../services/orderService');
 const {
+  refreshCustomersFromDb,
   findCustomerByIdentifier,
   findCustomerByEmail,
   registerNewCustomer,
@@ -20,6 +21,13 @@ const { readTransactions } = require('../services/financeService');
 const db = require('../services/db');
 const { generateToken, verifyToken } = require('../src/utils/jwt');
 const { verifyPassword } = require('../src/utils/security');
+
+router.use(async (req, res, next) => {
+  try {
+    await refreshCustomersFromDb();
+  } catch (_) {}
+  next();
+});
 
 // ============================================================
 // Google OAuth & Session Helpers
@@ -338,7 +346,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    const newCust = registerNewCustomer({
+    const newCust = await registerNewCustomer({
       name,
       whatsapp: cleanWa,
       email,
@@ -528,7 +536,7 @@ router.get('/orders', async (req, res) => {
 });
 
 // GET /api/customer/lookup (Pencarian data member terdaftar untuk auto-fill formulir)
-router.get('/lookup', (req, res) => {
+router.get('/lookup', async (req, res) => {
   try {
     const identifier = (req.query.identifier || req.query.phone || '').trim().toLowerCase();
     if (!identifier) {
@@ -554,7 +562,7 @@ router.get('/lookup', (req, res) => {
 });
 
 // Status Database Pelanggan
-router.get('/database-status', (req, res) => {
+router.get('/database-status', async (req, res) => {
   const customers = getAllCustomers();
   res.json({
     success: true,
@@ -644,7 +652,7 @@ router.get('/auth/google/callback', async (req, res) => {
     const profile = await profileRes.json().catch(() => ({}));
     if (!profileRes.ok || !profile.email) return failRedirect('profile_fetch_failed');
 
-    const cust = upsertGoogleCustomer({
+    const cust = await upsertGoogleCustomer({
       googleId: profile.sub || '',
       email: profile.email,
       name: profile.name || '',
@@ -668,7 +676,7 @@ router.get('/auth/google/callback', async (req, res) => {
 });
 
 // GET /api/customer/me - Ambil sesi member dari cookie / token (dipakai setelah redirect OAuth)
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   try {
     const token = getCustomerToken(req);
     const payload = verifyToken(token);
@@ -694,7 +702,7 @@ router.get('/me', (req, res) => {
 });
 
 // POST /api/customer/complete-profile - Nomor telepon wajib dilengkapi setelah registrasi Google
-router.post('/complete-profile', (req, res) => {
+router.post('/complete-profile', async (req, res) => {
   try {
     const token = getCustomerToken(req);
     const payload = verifyToken(token);
@@ -719,7 +727,7 @@ router.post('/complete-profile', (req, res) => {
       return res.status(409).json({ success: false, message: 'Nomor WhatsApp ini sudah digunakan akun lain.' });
     }
 
-    const updated = updateCustomerById(cust.id, {
+    const updated = await updateCustomerById(cust.id, {
       whatsapp: digits,
       district: (req.body.district || cust.district || 'Malang').trim()
     });

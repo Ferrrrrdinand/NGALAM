@@ -8,15 +8,19 @@ require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const { Sequelize } = require('sequelize');
 
 const databaseUrl = process.env.DATABASE_URL || '';
-const isNeonOrSsl = databaseUrl.includes('neon.tech') || databaseUrl.includes('sslmode=require');
+const isNeonOrSsl = /neon\.tech|supabase\.(co|com)/i.test(databaseUrl) || databaseUrl.includes('sslmode=require') || process.env.PG_SSL === 'true';
+
+function makeDialectOptions() {
+  return {
+    ssl: isNeonOrSsl ? { require: true, rejectUnauthorized: false } : false
+  };
+}
 
 const dbConfig = {
   url: databaseUrl,
   dialect: 'postgres',
   logging: process.env.DB_LOGGING === 'true' ? console.log : false,
-  dialectOptions: {
-    ssl: isNeonOrSsl ? { require: true, rejectUnauthorized: false } : false
-  },
+  dialectOptions: makeDialectOptions(),
   pool: {
     max: 10,
     min: 0,
@@ -29,7 +33,7 @@ const sequelize = databaseUrl
   ? new Sequelize(databaseUrl, {
       dialect: 'postgres',
       logging: dbConfig.logging,
-      dialectOptions: dbConfig.dialectOptions,
+      dialectOptions: makeDialectOptions(),
       pool: dbConfig.pool
     })
   : new Sequelize({
@@ -40,7 +44,7 @@ const sequelize = databaseUrl
       port: parseInt(process.env.PGPORT || '5432', 10),
       dialect: 'postgres',
       logging: dbConfig.logging,
-      dialectOptions: dbConfig.dialectOptions,
+      dialectOptions: makeDialectOptions(),
       pool: dbConfig.pool
     });
 

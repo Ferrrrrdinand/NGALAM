@@ -11,6 +11,54 @@ const { hashPassword } = require('../src/utils/security');
 
 const CUSTOMERS_FILE = path.join(__dirname, '..', 'data', 'customers.json');
 
+let customerCache = null;
+let customersHydratedAt = 0;
+let customersHydration = null;
+
+function normalizeDbCustomer(row) {
+  const raw = row && row.raw_data && typeof row.raw_data === 'object' ? row.raw_data : {};
+  return {
+    ...raw,
+    id: raw.id || row.id,
+    name: raw.name || row.name || '',
+    whatsapp: raw.whatsapp !== undefined ? raw.whatsapp : row.whatsapp,
+    email: raw.email || row.email || '',
+    district: raw.district || row.district || '',
+    pin: raw.pin || row.pin || '',
+    passwordHash: raw.passwordHash || raw.pin || row.pin || '',
+    googleId: raw.googleId || '',
+    referredByMitra: raw.referredByMitra || '',
+    registeredAt: raw.registeredAt || row.registered_at || '',
+    registeredVia: raw.registeredVia || row.registered_via || '',
+    avatar: raw.avatar || ''
+  };
+}
+
+async function refreshCustomersFromDb(force = false) {
+  const now = Date.now();
+  if (!force && customersHydratedAt && now - customersHydratedAt < 3000) return true;
+  if (customersHydration) return customersHydration;
+
+  customersHydration = (async () => {
+    try {
+      if (!db.isDbConnected()) await db.ensureDbReady();
+      if (!db.isDbConnected()) return false;
+
+      const res = await db.query('SELECT * FROM customers ORDER BY created_at ASC');
+      customerCache = (res.rows || []).map(normalizeDbCustomer).filter((c) => c.id);
+      customersHydratedAt = Date.now();
+      return true;
+    } catch (err) {
+      console.warn('[CustomerService] PostgreSQL hydrate warning:', err.message);
+      return false;
+    } finally {
+      customersHydration = null;
+    }
+  })();
+
+  return customersHydration;
+}
+
 /**
  * Baca seluruh pelanggan dari file lokal
  */
@@ -31,20 +79,20 @@ function getLocalCustomers() {
  * Simpan data pelanggan ke file lokal
  */
 function saveCustomers(customers) {
+  customerCache = Array.isArray(customers) ? customers : [];
   try {
-    fs.writeFileSync(CUSTOMERS_FILE, JSON.stringify(customers, null, 2), 'utf8');
-    return true;
+    fs.writeFileSync(CUSTOMERS_FILE, JSON.stringify(customerCache, null, 2), 'utf8');
   } catch (err) {
-    console.error('[CustomerService] Error writing customers.json:', err.message);
-    return false;
+    console.warn('[CustomerService] Disk write skipped for customers.json:', err.message);
   }
+  return true;
 }
 
 /**
- * Ambil seluruh data pelanggan (sinkron / lokal)
+ * Ambil seluruh data pelanggan (cache PostgreSQL, fallback lokal)
  */
 function getAllCustomers() {
-  return getLocalCustomers();
+  return customerCache || getLocalCustomers();
 }
 
 /**
@@ -170,7 +218,7 @@ function findCustomerByIdentifier(identifier) {
 /**
  * Daftarkan akun pelanggan baru
  */
-function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '', password = '', registeredVia = 'Portal Pelanggan Web', referredByMitra = '', googleId = '' }) {
+async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '', password = '', registeredVia = 'Portal Pelanggan Web', referredByMitra = '', googleId = '' }) {
   if (!name || !name.trim()) {
     throw new Error('Nama lengkap pelanggan wajib diisi.');
   }
@@ -207,34 +255,43 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
     registeredVia: registeredVia
   };
 
-  // 1. Simpan ke PostgreSQL jika terhubung
+  // 1. Simpan ke cache & PostgreSQL (sumber data utama di serverless)
+  customers.push(newCust);
+  saveCustomers(customers);
+
   if (db.isDbConnected()) {
-    db.query(`
-      INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        email = EXCLUDED.email,
-        district = EXCLUDED.district,
-        raw_data = EXCLUDED.raw_data
-    `, [
-      newCust.id,
-      newCust.name,
-      newCust.whatsapp,
-      newCust.email,
-      newCust.district,
-      newCust.pin,
-      newCust.registeredAt,
-      newCust.registeredVia,
-      JSON.stringify(newCust)
-    ], 'customers').catch(err => {
-      console.warn('[CustomerService] PostgreSQL insert customer warning:', err.message);
-    });
+    try {
+      await db.query(`
+        INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          whatsapp = EXCLUDED.whatsapp,
+          email = EXCLUDED.email,
+          district = EXCLUDED.district,
+          pin = EXCLUDED.pin,
+          registered_at = EXCLUDED.registered_at,
+          registered_via = EXCLUDED.registered_via,
+          raw_data = EXCLUDED.raw_data
+      `, [
+        newCust.id,
+        newCust.name,
+        newCust.whatsapp,
+        newCust.email,
+        newCust.district,
+        newCust.pin,
+        newCust.registeredAt,
+        newCust.registeredVia,
+        JSON.stringify(newCust)
+      ], 'customers');
+    } catch (pgErr) {
+      console.warn('[CustomerService] PostgreSQL insert customer warning:', pgErr.message);
+    }
   }
 
   // Catat aktivitas registrasi pelanggan
   try {
-    db.logActivity('CUSTOMER_REGISTER', 'customers', newCust.id, {
+    await db.logActivity('CUSTOMER_REGISTER', 'customers', newCust.id, {
       name: newCust.name,
       whatsapp: newCust.whatsapp,
       district: newCust.district,
@@ -242,17 +299,13 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
     });
   } catch (_) {}
 
-  // 2. Simpan ke lokal
-  customers.push(newCust);
-  saveCustomers(customers);
-
   return newCust;
 }
 
 /**
  * Pastikan akun pelanggan tersedia (otomatis dibuat jika belum ada)
  */
-function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', registeredVia = 'Sistem Servis', referredByMitra = '' }) {
+async function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', registeredVia = 'Sistem Servis', referredByMitra = '' }) {
   if (!whatsapp) return null;
   const existing = findCustomerByIdentifier(whatsapp);
   if (existing) {
@@ -275,13 +328,23 @@ function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen,
       if (idx !== -1) {
         customers[idx] = existing;
         saveCustomers(customers);
+        if (db.isDbConnected()) {
+          try {
+            await db.query(`
+              UPDATE customers SET name = $2, whatsapp = $3, email = $4, district = $5, raw_data = $6
+              WHERE id = $1
+            `, [existing.id, existing.name || '', existing.whatsapp || null, existing.email || '', existing.district || '', JSON.stringify(existing)], 'customers');
+          } catch (pgErr) {
+            console.warn('[CustomerService] PostgreSQL ensure customer warning:', pgErr.message);
+          }
+        }
       }
     }
     return existing;
   }
 
   try {
-    return registerNewCustomer({
+    return await registerNewCustomer({
       name: name || 'Pelanggan Setia',
       whatsapp: whatsapp,
       email: email,
@@ -299,7 +362,7 @@ function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen,
 /**
  * Simpan / perbarui satu record pelanggan (lokal + PostgreSQL)
  */
-function saveCustomerRecord(customer) {
+async function saveCustomerRecord(customer) {
   if (!customer || !customer.id) return customer;
   const customers = getAllCustomers();
   const idx = customers.findIndex((c) => c.id === customer.id);
@@ -311,29 +374,33 @@ function saveCustomerRecord(customer) {
   saveCustomers(customers);
 
   if (db.isDbConnected()) {
-    db.query(`
-      INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        whatsapp = EXCLUDED.whatsapp,
-        email = EXCLUDED.email,
-        district = EXCLUDED.district,
-        pin = EXCLUDED.pin,
-        raw_data = EXCLUDED.raw_data
-    `, [
-      customer.id,
-      customer.name || '',
-      customer.whatsapp || null,
-      customer.email || '',
-      customer.district || '',
-      customer.pin || '',
-      customer.registeredAt || '',
-      customer.registeredVia || '',
-      JSON.stringify(customer)
-    ], 'customers').catch((err) => {
-      console.warn('[CustomerService] PostgreSQL save customer warning:', err.message);
-    });
+    try {
+      await db.query(`
+        INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          whatsapp = EXCLUDED.whatsapp,
+          email = EXCLUDED.email,
+          district = EXCLUDED.district,
+          pin = EXCLUDED.pin,
+          registered_at = EXCLUDED.registered_at,
+          registered_via = EXCLUDED.registered_via,
+          raw_data = EXCLUDED.raw_data
+      `, [
+        customer.id,
+        customer.name || '',
+        customer.whatsapp || null,
+        customer.email || '',
+        customer.district || '',
+        customer.pin || '',
+        customer.registeredAt || '',
+        customer.registeredVia || '',
+        JSON.stringify(customer)
+      ], 'customers');
+    } catch (pgErr) {
+      console.warn('[CustomerService] PostgreSQL save customer warning:', pgErr.message);
+    }
   }
 
   return idx !== -1 ? customers[idx] : customer;
@@ -359,7 +426,7 @@ function findCustomerByGoogleId(googleId) {
 /**
  * Buat / hubungkan akun pelanggan dari Google OAuth
  */
-function upsertGoogleCustomer({ googleId = '', email = '', name = '', avatar = '' }) {
+async function upsertGoogleCustomer({ googleId = '', email = '', name = '', avatar = '' }) {
   if (!email) throw new Error('Email Google tidak tersedia.');
   const cleanEmail = String(email).trim().toLowerCase();
   const existing = findCustomerByGoogleId(googleId) || findCustomerByEmail(cleanEmail);
@@ -372,7 +439,7 @@ function upsertGoogleCustomer({ googleId = '', email = '', name = '', avatar = '
       name: name || existing.name,
       avatar: avatar || existing.avatar || ''
     };
-    return saveCustomerRecord(updates);
+    return await saveCustomerRecord(updates);
   }
 
   const now = new Date();
@@ -390,14 +457,14 @@ function upsertGoogleCustomer({ googleId = '', email = '', name = '', avatar = '
     registeredAt: now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
     registeredVia: 'Google OAuth'
   };
-  saveCustomerRecord(newCust);
+  await saveCustomerRecord(newCust);
   return newCust;
 }
 
 /**
  * Perbarui data pelanggan berdasarkan ID
  */
-function updateCustomerById(id, updates = {}) {
+async function updateCustomerById(id, updates = {}) {
   const customers = getAllCustomers();
   const idx = customers.findIndex((c) => c.id === id);
   if (idx === -1) return null;
@@ -406,18 +473,22 @@ function updateCustomerById(id, updates = {}) {
   saveCustomers(customers);
 
   if (db.isDbConnected()) {
-    db.query(`
-      UPDATE customers SET
-        name = $2, whatsapp = $3, email = $4, district = $5, raw_data = $6
-      WHERE id = $1
-    `, [updated.id, updated.name || '', updated.whatsapp || null, updated.email || '', updated.district || '', JSON.stringify(updated)], 'customers')
-      .catch((err) => console.warn('[CustomerService] PostgreSQL update customer warning:', err.message));
+    try {
+      await db.query(`
+        UPDATE customers SET
+          name = $2, whatsapp = $3, email = $4, district = $5, pin = $6, raw_data = $7
+        WHERE id = $1
+      `, [updated.id, updated.name || '', updated.whatsapp || null, updated.email || '', updated.district || '', updated.pin || '', JSON.stringify(updated)], 'customers');
+    } catch (pgErr) {
+      console.warn('[CustomerService] PostgreSQL update customer warning:', pgErr.message);
+    }
   }
 
   return updated;
 }
 
 module.exports = {
+  refreshCustomersFromDb,
   getAllCustomers,
   saveCustomers,
   findCustomerByIdentifier,

@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   const Session = sequelize.define('Session', {
     token: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(1000),
       primaryKey: true
     },
     user_id: {

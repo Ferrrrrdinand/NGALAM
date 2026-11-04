@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Website Spesialis Servis HP Ngalam Fix Pro - React Vite TailwindCSS & Node.js Express",
   "main": "server.js",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "start": "node server.js",
     "dev:server": "node server.js",

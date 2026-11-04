@@ -67,7 +67,7 @@ process.on('unhandledRejection', (reason) => {
 async function bootDatabase() {
   try {
     await db.sequelize.authenticate();
-    console.log('✅ [Sequelize] Terhubung ke Neon PostgreSQL Database.');
+    console.log('✅ [Sequelize] Terhubung ke PostgreSQL Database.');
   } catch (err) {
     console.warn('⚠️ [Sequelize Warning] Database belum terhubung:', err.message);
   }

@@ -1,22 +1,17 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --no-audit --no-fund && npm --prefix client ci --no-audit --no-fund",
+  "rewrites": [
     {
-      "src": "server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "public/**",
-          "data/**",
-          "scripts/**"
-        ]
-      }
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "{public,data,scripts,client/dist}/**",
+      "maxDuration": 60,
+      "memory": 1024
     }
-  ]
+  }
 }

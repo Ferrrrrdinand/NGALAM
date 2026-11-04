@@ -22,7 +22,7 @@ function readJson(filename) {
 }
 
 async function syncAll() {
-  console.log('🔄 [Sequelize Sync] Memulai sinkronisasi data ke Neon PostgreSQL...');
+  console.log('🔄 [Sequelize Sync] Memulai sinkronisasi data ke PostgreSQL...');
   const stats = {};
 
   // 1. Sync Users
@@ -132,11 +132,11 @@ async function syncAll() {
       id: f.id,
       type: f.type || 'Pemasukan',
       category: f.category || 'Servis',
-      amount: parseNumeric(f.amount, 0),
+      amount: parseNumeric(f.amount !== undefined ? f.amount : (f.debit !== undefined ? f.debit : f.credit), 0),
       description: f.description || '',
       date: f.date || new Date().toISOString(),
-      source: f.source || 'Kasir',
-      recorded_by: f.recordedBy || f.recorded_by || 'Admin',
+      source: f.source || f.ref || 'Kasir',
+      recorded_by: f.recordedBy || f.recorded_by || f.cashier || 'Admin',
       raw_data: f
     });
     finSynced++;
@@ -193,9 +193,9 @@ async function syncAll() {
     const id = t.id || `TEST-${Date.now()}-${testSynced}`;
     await db.Testimonial.upsert({
       id,
-      customer_name: t.customerName || t.customer_name || 'Pelanggan',
+      customer_name: t.customerName || t.customer_name || t.name || 'Pelanggan',
       rating: parseInt(t.rating || 5, 10),
-      comment: t.comment || '',
+      comment: t.comment || t.text || '',
       device: t.device || 'Smartphone',
       raw_data: t
     });
@@ -236,6 +236,38 @@ async function syncAll() {
     sessSynced++;
   }
   stats.sessions = sessSynced;
+
+  // 11. Sync Activity Logs (tanpa membuat ulang ID lokal)
+  const activityLogs = readJson('activity_logs.json');
+  await db.ActivityLog.destroy({ where: {}, truncate: true, restartIdentity: true });
+  let activitySynced = 0;
+  for (const log of activityLogs) {
+    await db.ActivityLog.create({
+      action: log.action || '',
+      table_name: log.table_name || log.tableName || '',
+      record_id: log.record_id || log.recordId || '',
+      payload: log.payload || log.raw_data || log,
+      performed_at: log.performed_at || log.timestamp || new Date()
+    });
+    activitySynced++;
+  }
+  stats.activityLogs = activitySynced;
+
+  // 12. Sync Technician Logs (tanpa membuat ulang ID lokal)
+  const technicianLogs = readJson('technician_logs.json');
+  await db.TechnicianLog.destroy({ where: {}, truncate: true, restartIdentity: true });
+  let techLogsSynced = 0;
+  for (const log of technicianLogs) {
+    await db.TechnicianLog.create({
+      technician: log.technician || log.technicianName || log.username || '',
+      action: log.action || '',
+      details: log.details || '',
+      raw_data: log,
+      timestamp: log.timestamp || new Date()
+    });
+    techLogsSynced++;
+  }
+  stats.technicianLogs = techLogsSynced;
 
   console.log('✅ [Sequelize Sync] Sinkronisasi selesai! Statistik:', stats);
   return stats;

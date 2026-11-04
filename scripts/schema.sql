@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS customers (
     id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    whatsapp VARCHAR(50) UNIQUE NOT NULL,
+    whatsapp VARCHAR(50),
     email VARCHAR(255),
     district VARCHAR(255),
-    pin VARCHAR(50) DEFAULT '123456',
+    pin VARCHAR(255) DEFAULT '123456',
     registered_at VARCHAR(100),
     registered_via VARCHAR(100) DEFAULT 'Portal Pelanggan Web',
     raw_data JSONB,

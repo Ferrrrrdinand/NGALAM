@@ -17,8 +17,8 @@ module.exports = {
         },
         whatsapp: {
           type: Sequelize.STRING(50),
-          allowNull: false,
-          unique: true
+          allowNull: true,
+          unique: false
         },
         email: {
           type: Sequelize.STRING(255),

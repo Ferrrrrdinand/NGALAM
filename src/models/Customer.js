@@ -12,8 +12,8 @@ module.exports = (sequelize) => {
     },
     whatsapp: {
       type: DataTypes.STRING(50),
-      allowNull: false,
-      unique: true
+      allowNull: true,
+      unique: false
     },
     email: {
       type: DataTypes.STRING(255),
@@ -24,7 +24,7 @@ module.exports = (sequelize) => {
       allowNull: true
     },
     pin: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(255),
       defaultValue: '123456'
     },
     registered_at: {
