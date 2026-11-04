@@ -1,17 +1,51 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install --no-audit --no-fund && npm --prefix client ci --no-audit --no-fund",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "app": {
+      "root": ".",
+      "framework": "express",
+      "entrypoint": "server.js",
+      "buildCommand": "echo \"Express API service has no build step\"",
+      "functions": {
+        "server.js": {
+          "includeFiles": "{public,data,scripts}/**",
+          "maxDuration": 60,
+          "memory": 1024
+        }
+      }
+    },
+    "client": {
+      "root": "client",
+      "framework": "vite",
+      "routes": [
+        {
+          "handle": "filesystem"
+        },
+        {
+          "src": "/.*",
+          "dest": "/index.html"
+        }
+      ]
+    }
+  },
   "rewrites": [
     {
+      "source": "/api",
+      "destination": {
+        "service": "app"
+      }
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "app"
+      }
+    },
+    {
       "source": "/(.*)",
-      "destination": "/api"
+      "destination": {
+        "service": "client"
+      }
     }
-  ],
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "{public,data,scripts,client/dist}/**",
-      "maxDuration": 60,
-      "memory": 1024
-    }
-  }
+  ]
 }
