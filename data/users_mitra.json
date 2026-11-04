@@ -46,5 +46,21 @@
     "totalCommission": 0,
     "status": "Siaga / Aktif",
     "lastActive": "Hari ini"
+  },
+  {
+    "id": "USR-MITRA-202611-3906",
+    "username": "reyy",
+    "password": "Reyy_123",
+    "name": "reyy",
+    "role": "ojol",
+    "category": "Mitra Kurir Ojek Online (Motor)",
+    "avatar": "🛵",
+    "phone": "085791609482",
+    "email": "mr6945425@gmail.com",
+    "referralCode": "MTR-REYY-2800",
+    "commissionRate": 10,
+    "totalCommission": 15000045000,
+    "status": "Siaga / Aktif",
+    "lastActive": "4/11/2026, 09.42.07"
   }
 ]

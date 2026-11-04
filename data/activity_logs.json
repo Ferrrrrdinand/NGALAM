@@ -1,5 +1,18 @@
 [
   {
+    "id": "LOG-1793760049873-235",
+    "action": "CUSTOMER_REGISTER",
+    "table_name": "customers",
+    "record_id": "CUST-20261104-3674",
+    "payload": {
+      "name": "ferdi",
+      "whatsapp": "0812345678905",
+      "district": "Sukun, Kota Malang",
+      "registeredVia": "Portal Pelanggan Web"
+    },
+    "performed_at": "2026-11-04T02:40:49.873Z"
+  },
+  {
     "id": "LOG-INIT-001",
     "action": "SYSTEM_INITIALIZE",
     "table_name": "system",
