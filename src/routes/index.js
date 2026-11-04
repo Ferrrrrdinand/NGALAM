@@ -110,7 +110,7 @@ router.get('/database/status', async (req, res) => {  try {
     await db.sequelize.authenticate();
     const stats = {
       users_count: await db.User.count().catch(() => 0),
-      customers_count: await db.Customer.count().catch(() => 0),
+      customers_count: await db.User.count({ where: { role: ['customer', 'pelanggan'] } }).catch(() => 0),
       orders_count: await db.Order.count().catch(() => 0),
       transactions_count: await db.Transaction.count().catch(() => 0),
       finances_count: await db.Finance.count().catch(() => 0)

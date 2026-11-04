@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const apiRoutes = require('../src/routes');
 const userService = require('../services/userService');
+const customerService = require('../services/customerService');
+const db = require('../services/db');
 
 const app = express();
 app.use(cors());
@@ -42,6 +44,10 @@ function request(method, path, body = null, headers = {}) {
 
 async function run() {
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  let tempMitraId = '';
+  let tempCustomerId = '';
+  let tempCustomerPhone = '';
+  let tempCustomerEmail = '';
 
   try {
     const adminLogin = await request('POST', '/api/auth/login', {
@@ -78,10 +84,35 @@ async function run() {
     assert.strictEqual(registerTech.status, 404);
     console.log('✅ Staff self-registration endpoints removed');
 
+    const tempMitraSuffix = String(Date.now()).slice(-7);
+    tempCustomerPhone = `0896${tempMitraSuffix}1`;
+    tempCustomerEmail = `temp.customer.${tempMitraSuffix}@example.com`;
+    const tempCustomer = await request('POST', '/api/customer/register', {
+      name: 'Pelanggan Temp Auth Test',
+      whatsapp: tempCustomerPhone,
+      email: tempCustomerEmail,
+      password: 'rahasia123'
+    });
+    assert.strictEqual(tempCustomer.status, 201);
+    tempCustomerId = tempCustomer.body.customer.id;
+
+    const tempMitra = await request('POST', '/api/mitra/register', {
+      name: 'Mitra Temp Auth Test',
+      username: `temp_mitra_${tempMitraSuffix}`,
+      phone: `0899${tempMitraSuffix}2`,
+      email: `temp.mitra.${tempMitraSuffix}@example.com`,
+      password: 'rahasia123'
+    });
+    assert.strictEqual(tempMitra.status, 201);
+    tempMitraId = tempMitra.body.driver.id;
+    const tempMitraUsername = tempMitra.body.driver.username;
+    const tempMitraPhone = tempMitra.body.driver.phone;
+    const tempMitraEmail = tempMitra.body.driver.email;
+
     const duplicateCustomerEmail = await request('POST', '/api/customer/register', {
       name: 'Duplicate Email',
       whatsapp: '089955550001',
-      email: 'pelanggan.dummy@ngalamfixpro.com',
+      email: tempCustomerEmail,
       password: 'rahasia123'
     });
     assert.strictEqual(duplicateCustomerEmail.status, 409);
@@ -89,7 +120,7 @@ async function run() {
 
     const duplicateCustomerPhone = await request('POST', '/api/customer/register', {
       name: 'Duplicate Phone',
-      whatsapp: '081234567890',
+      whatsapp: tempCustomerPhone,
       email: 'duplicate.phone@example.com',
       password: 'rahasia123'
     });
@@ -99,7 +130,7 @@ async function run() {
     const mitraContactAsCustomer = await request('POST', '/api/customer/register', {
       name: 'Mitra Contact',
       whatsapp: '089955550002',
-      email: 'mitra.dummy@ngalamfixpro.com',
+      email: tempMitraEmail,
       password: 'rahasia123'
     });
     assert.strictEqual(mitraContactAsCustomer.status, 409);
@@ -109,7 +140,7 @@ async function run() {
       name: 'Customer Contact Mitra',
       username: 'customer_contact_mitra',
       phone: '089955550003',
-      email: 'pelanggan.dummy@ngalamfixpro.com',
+      email: tempCustomerEmail,
       password: 'rahasia123'
     });
     assert.strictEqual(customerContactAsMitra.status, 409);
@@ -118,7 +149,7 @@ async function run() {
     const duplicateMitraPhone = await request('POST', '/api/mitra/register', {
       name: 'Duplicate Mitra Phone',
       username: 'duplicate_mitra_phone',
-      phone: '081234567899',
+      phone: tempMitraPhone,
       email: 'duplicate.mitra.phone@example.com',
       password: 'rahasia123'
     });
@@ -129,7 +160,7 @@ async function run() {
       name: 'Duplicate Mitra Email',
       username: 'duplicate_mitra_email',
       phone: '089955550004',
-      email: 'mitra.dummy@ngalamfixpro.com',
+      email: tempMitraEmail,
       password: 'rahasia123'
     });
     assert.strictEqual(duplicateMitraEmail.status, 409);
@@ -137,8 +168,8 @@ async function run() {
     console.log('✅ Email and phone uniqueness enforced across account types');
 
     const mitraAsCustomer = await request('POST', '/api/customer/login', {
-      identifier: 'mitra_demo',
-      password: 'password123',
+      identifier: tempMitraUsername,
+      password: 'rahasia123',
       rememberMe: true
     });
     assert.strictEqual(mitraAsCustomer.status, 200);
@@ -146,7 +177,7 @@ async function run() {
     assert(mitraAsCustomer.body.customer.mitraId);
 
     const wrongMitraPassword = await request('POST', '/api/customer/login', {
-      identifier: 'mitra_demo',
+      identifier: tempMitraUsername,
       password: 'salah123'
     });
     assert.strictEqual(wrongMitraPassword.status, 401);
@@ -162,6 +193,24 @@ async function run() {
 
     console.log('\n🎉 AUTH HARDENING TESTS PASSED');
   } finally {
+    try {
+      await userService.refreshUsersFromDb(true);
+      const users = userService.getMitraUsers();
+      if (tempMitraId && users.some((user) => user.id === tempMitraId)) {
+        await userService.saveMitraUsers(users.filter((user) => user.id !== tempMitraId));
+      }
+    } catch (_) {}
+    try {
+      await db.ensureDbReady();
+      if (tempCustomerId) {
+        await db.query("DELETE FROM users WHERE id = $1 AND role IN ('customer', 'pelanggan')", [tempCustomerId]);
+      }
+      await customerService.refreshCustomersFromDb(true);
+      const customers = customerService.getAllCustomers();
+      if (tempCustomerId) {
+        customerService.saveCustomers(customers.filter((customer) => customer.id !== tempCustomerId));
+      }
+    } catch (_) {}
     await new Promise((resolve) => server.close(resolve));
   }
 }

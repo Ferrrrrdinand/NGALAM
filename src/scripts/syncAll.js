@@ -28,22 +28,31 @@ async function syncAll() {
   // 1. Users are managed directly in the PostgreSQL users table (not from JSON files).
   stats.users = 0;
 
-  // 2. Sync Customers
+  // 2. Sync Customers into the unified users table (role customer)
   const customers = readJson('customers.json');
   let custSynced = 0;
   for (const c of customers) {
     if (!c.id && !c.whatsapp) continue;
     const id = c.id || `CUST-${normalizePhone(c.whatsapp)}`;
-    await db.Customer.upsert({
-      id,
-      name: c.name || 'Pelanggan',
-      whatsapp: c.whatsapp || '',
-      email: c.email || '',
+    const username = c.username || `cust_${String(id).toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
+    const raw = {
+      ...c,
       district: c.district || 'Malang Raya',
-      pin: c.pin || '123456',
-      registered_at: c.registeredAt || c.registered_at || new Date().toISOString(),
-      registered_via: c.registeredVia || c.registered_via || 'Portal Pelanggan Web',
-      raw_data: c
+      registeredAt: c.registeredAt || c.registered_at || new Date().toISOString(),
+      registeredVia: c.registeredVia || c.registered_via || 'Portal Pelanggan Web'
+    };
+    await db.User.upsert({
+      id,
+      username,
+      password: c.passwordHash || c.pin || '123456',
+      name: c.name || 'Pelanggan',
+      role: 'customer',
+      category: 'Pelanggan',
+      phone: c.whatsapp || '',
+      email: c.email || '',
+      referral_code: c.referredByMitra || '',
+      status: 'Aktif',
+      raw_data: raw
     });
     custSynced++;
   }

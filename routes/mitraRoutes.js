@@ -274,8 +274,10 @@ router.get('/auth/google/callback', async (req, res) => {
     let mitra = findMitraByGoogle(users, profile);
     if (!mitra) {
       const linkedUser = userService.findUser(profileEmail);
-      const linkedIsMitra = linkedUser && ['mitra', 'ojol', 'kurir'].includes(String(linkedUser.role || '').toLowerCase());
-      if (linkedUser && !linkedIsMitra) {
+      const linkedRole = String(linkedUser && linkedUser.role || '').toLowerCase();
+      const linkedIsMitra = ['mitra', 'ojol', 'kurir'].includes(linkedRole);
+      const linkedIsCustomer = ['customer', 'pelanggan'].includes(linkedRole);
+      if (linkedUser && !linkedIsMitra && !linkedIsCustomer) {
         return failRedirect('staff_account_exists');
       }
       if (linkedIsMitra) {
@@ -608,8 +610,18 @@ router.post('/register', async (req, res) => {
     await userService.refreshUsersFromDb();
     await refreshCustomersFromDb();
     const users = readUsers();
-    const allUsers = userService.getAllUsers();
 
+    const existingCustomer = findCustomerByPhone(cleanPhone) || (cleanEmail ? findCustomerByEmail(cleanEmail) : null);
+    if (existingCustomer) {
+      return res.status(409).json({
+        success: false,
+        code: 'CUSTOMER_ACCOUNT_EXISTS',
+        field: findCustomerByPhone(cleanPhone) ? 'phone' : 'email',
+        message: 'Kontak ini sudah terdaftar sebagai pelanggan. Gunakan kontak lain untuk akun mitra.'
+      });
+    }
+
+    const allUsers = userService.getAllUsers().filter((user) => !['customer', 'pelanggan'].includes(String(user.role || '').toLowerCase()));
     const existingPhone = allUsers.find((user) => phonesMatch(user.phone, cleanPhone));
     if (existingPhone) {
       return res.status(409).json({
@@ -637,16 +649,6 @@ router.post('/register', async (req, res) => {
         code: 'USERNAME_TAKEN',
         field: 'username',
         message: 'Username sudah digunakan mitra lain. Pilih username yang berbeda.'
-      });
-    }
-
-    const existingCustomer = findCustomerByPhone(cleanPhone) || (cleanEmail ? findCustomerByEmail(cleanEmail) : null);
-    if (existingCustomer) {
-      return res.status(409).json({
-        success: false,
-        code: 'CUSTOMER_ACCOUNT_EXISTS',
-        field: findCustomerByPhone(cleanPhone) ? 'phone' : 'email',
-        message: 'Kontak ini sudah terdaftar sebagai pelanggan. Gunakan kontak lain untuk akun mitra.'
       });
     }
 

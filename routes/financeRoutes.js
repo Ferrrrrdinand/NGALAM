@@ -45,11 +45,13 @@ router.get('/status', async (req, res) => {
       },
       tables: {
         customers: {
-          name: 'Tabel Pelanggan (customers)',
-          file: 'data/customers.json',
-          connected: true,
+          name: 'Akun Pelanggan (users role customer)',
+          table: 'users',
+          roles: userService.getUserTableDetails().customer.roles,
+          count: userService.getUserTableDetails().customer.count,
+          connected: userService.getUserTableDetails().customer.connected,
           mode: 'database',
-          message: 'Tersimpan aman di data/customers.json (Siap migrasi PostgreSQL)'
+          message: 'Tersimpan di tabel users PostgreSQL/Supabase bersama admin, mitra, dan teknisi.'
         },
         usersAdmin: {
           name: 'Tabel Pengguna Admin & Kasir',

@@ -23,17 +23,18 @@ function normalizeDbCustomer(row) {
   return {
     ...raw,
     id: raw.id || row.id,
+    username: raw.username || row.username || '',
     name: raw.name || row.name || '',
-    whatsapp: raw.whatsapp !== undefined ? raw.whatsapp : row.whatsapp,
+    whatsapp: raw.whatsapp !== undefined ? raw.whatsapp : (row.phone || row.whatsapp),
     email: raw.email || row.email || '',
     district: raw.district || row.district || '',
-    pin: raw.pin || row.pin || '',
-    passwordHash: raw.passwordHash || raw.pin || row.pin || '',
+    pin: raw.pin || row.password || row.pin || '',
+    passwordHash: raw.passwordHash || raw.pin || row.password || row.pin || '',
     googleId: raw.googleId || '',
     referredByMitra: raw.referredByMitra || '',
     registeredAt: raw.registeredAt || row.registered_at || '',
     registeredVia: raw.registeredVia || row.registered_via || '',
-    avatar: raw.avatar || ''
+    avatar: raw.avatar || row.avatar || ''
   };
 }
 
@@ -47,7 +48,7 @@ async function refreshCustomersFromDb(force = false) {
       if (!db.isDbConnected()) await db.ensureDbReady();
       if (!db.isDbConnected()) return false;
 
-      const res = await db.query('SELECT * FROM customers ORDER BY created_at ASC');
+      const res = await db.query("SELECT * FROM users WHERE role IN ('customer', 'pelanggan') ORDER BY created_at ASC");
       customerCache = (res.rows || []).map(normalizeDbCustomer).filter((c) => c.id);
       customersHydratedAt = Date.now();
       return true;
@@ -98,6 +99,55 @@ function getAllCustomers() {
   return customerCache || getLocalCustomers();
 }
 
+function buildCustomerUsername(customer) {
+  const existing = String(customer.username || '').trim().toLowerCase();
+  if (existing) return existing;
+  const suffix = String(customer.id || customer.whatsapp || customer.email || Date.now())
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || String(Date.now());
+  return `cust_${suffix}`;
+}
+
+async function persistCustomerUser(customer) {
+  if (!customer || !customer.id || !db.isDbConnected()) return false;
+  const username = buildCustomerUsername(customer);
+  await db.query(`
+    INSERT INTO users (
+      id, username, password, name, role, category, avatar, phone, email,
+      referral_code, commission_rate, total_commission, status, last_active, desk, specialty, raw_data
+    )
+    VALUES ($1, $2, $3, $4, 'customer', $5, $6, $7, $8, $9, 0, 0, $10, $11, '', '', $12)
+    ON CONFLICT (id) DO UPDATE SET
+      username = EXCLUDED.username,
+      password = EXCLUDED.password,
+      name = EXCLUDED.name,
+      role = 'customer',
+      category = EXCLUDED.category,
+      avatar = EXCLUDED.avatar,
+      phone = EXCLUDED.phone,
+      email = EXCLUDED.email,
+      referral_code = EXCLUDED.referral_code,
+      status = EXCLUDED.status,
+      last_active = EXCLUDED.last_active,
+      raw_data = EXCLUDED.raw_data
+  `, [
+    customer.id,
+    username,
+    customer.passwordHash || customer.pin || '',
+    customer.name || '',
+    customer.category || 'Pelanggan',
+    customer.avatar && String(customer.avatar).length <= 50 ? customer.avatar : '👤',
+    customer.whatsapp || '',
+    customer.email || '',
+    customer.referredByMitra || '',
+    customer.status || 'Aktif',
+    customer.registeredAt || '',
+    JSON.stringify(customer)
+  ], 'users');
+  return true;
+}
+
 /**
  * Normalisasi nomor telepon Indonesia (mengubah +62 / 62 menjadi format standar 08...)
  */
@@ -127,95 +177,14 @@ function phonesMatch(p1, p2) {
 function findCustomerByIdentifier(identifier) {
   if (!identifier) return null;
   const customers = getAllCustomers();
-  const clean = identifier.trim().toLowerCase();
-  const digits = clean.replace(/\D/g, '');
+  const clean = String(identifier).trim().toLowerCase();
 
-  let found = customers.find(c => {
-    const cId = (c.id || '').toLowerCase();
-    const cWa = c.whatsapp || '';
-    const cEmail = (c.email || '').toLowerCase();
-
-    if (cId === clean) return true;
-    if (phonesMatch(cWa, clean)) return true;
-    if (cEmail && cEmail === clean) return true;
-    return false;
-  });
-
-  if (found) return found;
-
-  // Fallback: Periksa apakah identifier cocok dengan tiket servis di data/orders.json
-  try {
-    const ordersFile = path.join(__dirname, '..', 'data', 'orders.json');
-    if (fs.existsSync(ordersFile)) {
-      const ordersRaw = fs.readFileSync(ordersFile, 'utf8');
-      const orders = JSON.parse(ordersRaw.replace(/^\uFEFF/, ''));
-      if (Array.isArray(orders)) {
-        const matchedOrder = orders.find(o => {
-          const oId = (o.id || '').toLowerCase();
-          const oWa = o.whatsapp || o.customerPhone || o.phone || '';
-          const oEmail = (o.email || '').toLowerCase();
-          return oId === clean || phonesMatch(oWa, clean) || (oEmail && oEmail === clean);
-        });
-
-        if (matchedOrder) {
-          const autoWa = matchedOrder.whatsapp || matchedOrder.customerPhone || matchedOrder.phone || clean;
-          const autoCust = {
-            id: `CUST-${(matchedOrder.id || '').replace(/[^0-9]/g, '') || Date.now()}`,
-            name: matchedOrder.customerName || matchedOrder.name || 'Pelanggan Ngalam Fix Pro',
-            whatsapp: autoWa,
-            email: matchedOrder.email || '',
-            district: matchedOrder.district || matchedOrder.address || 'Malang Raya',
-            pin: hashPassword('123456'),
-            registeredAt: matchedOrder.createdAt || new Date().toLocaleDateString('id-ID'),
-            registeredVia: 'Otomatisasi Tiket Servis'
-          };
-          // Simpan ke customers.json agar sesi berikutnya instan
-          customers.push(autoCust);
-          saveCustomers(customers);
-          return autoCust;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('[CustomerService] Fallback order search error:', err.message);
-  }
-
-  // Fallback 2: Periksa apakah identifier cocok dengan nomor tiket di data/transactions.json
-  try {
-    const txFile = path.join(__dirname, '..', 'data', 'transactions.json');
-    if (fs.existsSync(txFile)) {
-      const txRaw = fs.readFileSync(txFile, 'utf8');
-      const txList = JSON.parse(txRaw.replace(/^\uFEFF/, ''));
-      if (Array.isArray(txList)) {
-        const matchedTx = txList.find(t => {
-          const tId = (t.ticketId || t.orderId || '').toLowerCase();
-          const tInv = (t.invoiceNumber || t.invoiceNo || '').toLowerCase();
-          return tId === clean || tInv === clean;
-        });
-
-        if (matchedTx) {
-          const autoWa = matchedTx.customerPhone || clean;
-          const autoCust = {
-            id: `CUST-${(matchedTx.ticketId || matchedTx.id || '').replace(/[^0-9]/g, '') || Date.now()}`,
-            name: matchedTx.customerName || 'Pelanggan Ngalam Fix Pro',
-            whatsapp: autoWa,
-            email: matchedTx.customerEmail || '',
-            district: 'Malang Raya',
-            pin: hashPassword('123456'),
-            registeredAt: matchedTx.date || new Date().toISOString(),
-            registeredVia: 'Otomatisasi Faktur Transaksi'
-          };
-          customers.push(autoCust);
-          saveCustomers(customers);
-          return autoCust;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('[CustomerService] Fallback transaction search error:', err.message);
-  }
-
-  return null;
+  return customers.find((customer) => {
+    const customerId = String(customer.id || '').toLowerCase();
+    const customerPhone = customer.whatsapp || '';
+    const customerEmail = String(customer.email || '').toLowerCase();
+    return customerId === clean || phonesMatch(customerPhone, clean) || (customerEmail && customerEmail === clean);
+  }) || null;
 }
 
 /**
@@ -276,7 +245,8 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
     const usersReady = await userService.refreshUsersFromDb();
     if (usersReady) {
       const registeredUser = userService.findUser(cleanWa) || (cleanEmail ? userService.findUser(cleanEmail) : null);
-      if (registeredUser) {
+      const isCustomer = registeredUser && ['customer', 'pelanggan'].includes(String(registeredUser.role || '').toLowerCase());
+      if (registeredUser && !isCustomer) {
         const isMitra = ['mitra', 'ojol', 'kurir'].includes(String(registeredUser.role || '').toLowerCase());
         throw new AuthError(
           isMitra
@@ -317,38 +287,14 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
     registeredVia: registeredVia
   };
 
-  // 1. Simpan ke cache & PostgreSQL (sumber data utama di serverless)
+  // 1. Simpan ke cache local dan tabel users (role customer)
   customers.push(newCust);
   saveCustomers(customers);
 
-  if (db.isDbConnected()) {
-    try {
-      await db.query(`
-        INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        ON CONFLICT (id) DO UPDATE SET
-          name = EXCLUDED.name,
-          whatsapp = EXCLUDED.whatsapp,
-          email = EXCLUDED.email,
-          district = EXCLUDED.district,
-          pin = EXCLUDED.pin,
-          registered_at = EXCLUDED.registered_at,
-          registered_via = EXCLUDED.registered_via,
-          raw_data = EXCLUDED.raw_data
-      `, [
-        newCust.id,
-        newCust.name,
-        newCust.whatsapp,
-        newCust.email,
-        newCust.district,
-        newCust.pin,
-        newCust.registeredAt,
-        newCust.registeredVia,
-        JSON.stringify(newCust)
-      ], 'customers');
-    } catch (pgErr) {
-      console.warn('[CustomerService] PostgreSQL insert customer warning:', pgErr.message);
-    }
+  try {
+    await persistCustomerUser(newCust);
+  } catch (pgErr) {
+    console.warn('[CustomerService] PostgreSQL insert customer warning:', pgErr.message);
   }
 
   // Catat aktivitas registrasi pelanggan
@@ -390,15 +336,10 @@ async function ensureCustomerAccount({ name, whatsapp, email = '', district = 'K
       if (idx !== -1) {
         customers[idx] = existing;
         saveCustomers(customers);
-        if (db.isDbConnected()) {
-          try {
-            await db.query(`
-              UPDATE customers SET name = $2, whatsapp = $3, email = $4, district = $5, raw_data = $6
-              WHERE id = $1
-            `, [existing.id, existing.name || '', existing.whatsapp || null, existing.email || '', existing.district || '', JSON.stringify(existing)], 'customers');
-          } catch (pgErr) {
-            console.warn('[CustomerService] PostgreSQL ensure customer warning:', pgErr.message);
-          }
+        try {
+          await persistCustomerUser(existing);
+        } catch (pgErr) {
+          console.warn('[CustomerService] PostgreSQL ensure customer warning:', pgErr.message);
         }
       }
     }
@@ -435,34 +376,10 @@ async function saveCustomerRecord(customer) {
   }
   saveCustomers(customers);
 
-  if (db.isDbConnected()) {
-    try {
-      await db.query(`
-        INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        ON CONFLICT (id) DO UPDATE SET
-          name = EXCLUDED.name,
-          whatsapp = EXCLUDED.whatsapp,
-          email = EXCLUDED.email,
-          district = EXCLUDED.district,
-          pin = EXCLUDED.pin,
-          registered_at = EXCLUDED.registered_at,
-          registered_via = EXCLUDED.registered_via,
-          raw_data = EXCLUDED.raw_data
-      `, [
-        customer.id,
-        customer.name || '',
-        customer.whatsapp || null,
-        customer.email || '',
-        customer.district || '',
-        customer.pin || '',
-        customer.registeredAt || '',
-        customer.registeredVia || '',
-        JSON.stringify(customer)
-      ], 'customers');
-    } catch (pgErr) {
-      console.warn('[CustomerService] PostgreSQL save customer warning:', pgErr.message);
-    }
+  try {
+    await persistCustomerUser(customer);
+  } catch (pgErr) {
+    console.warn('[CustomerService] PostgreSQL save customer warning:', pgErr.message);
   }
 
   return idx !== -1 ? customers[idx] : customer;
@@ -539,16 +456,10 @@ async function updateCustomerById(id, updates = {}) {
   customers[idx] = updated;
   saveCustomers(customers);
 
-  if (db.isDbConnected()) {
-    try {
-      await db.query(`
-        UPDATE customers SET
-          name = $2, whatsapp = $3, email = $4, district = $5, pin = $6, raw_data = $7
-        WHERE id = $1
-      `, [updated.id, updated.name || '', updated.whatsapp || null, updated.email || '', updated.district || '', updated.pin || '', JSON.stringify(updated)], 'customers');
-    } catch (pgErr) {
-      console.warn('[CustomerService] PostgreSQL update customer warning:', pgErr.message);
-    }
+  try {
+    await persistCustomerUser(updated);
+  } catch (pgErr) {
+    console.warn('[CustomerService] PostgreSQL update customer warning:', pgErr.message);
   }
 
   return updated;

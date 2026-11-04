@@ -233,6 +233,14 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
     }
   }
 
+  if (['customer', 'pelanggan'].includes(String(user.role || '').toLowerCase())) {
+    throw new AuthError('Akun pelanggan hanya dapat masuk melalui portal pelanggan.', {
+      status: 403,
+      code: 'CUSTOMER_ACCOUNT_ONLY',
+      field: 'identifier'
+    });
+  }
+
   // Referral Code & Access Tier Enforcement
   const cleanReferral = (referralCode || '').trim();
   const validReferral = getAdminReferralCode();

@@ -173,8 +173,11 @@ async function run() {
         customerService.saveCustomers(customers.filter((customer) => !targetIds.includes(customer.id)));
       }
       if (customerId && !targetIds.includes(customerId)) targetIds.push(customerId);
-      if (targetIds.length && db.isDbConnected()) {
-        await db.query('DELETE FROM customers WHERE id = ANY($1::text[])', [targetIds]);
+      if (db.isDbConnected()) {
+        await db.query(
+          "DELETE FROM users WHERE (id = ANY($1::text[]) OR lower(email) = lower($2)) AND role IN ('customer', 'pelanggan')",
+          [targetIds, email]
+        );
       }
     } catch (err) {
       console.warn('[Google OAuth Test] Customer cleanup warning:', err.message);

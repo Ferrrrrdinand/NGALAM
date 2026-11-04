@@ -117,6 +117,10 @@ function isMitraRole(role) {
   return ['mitra', 'ojol', 'kurir'].includes(String(role || '').toLowerCase());
 }
 
+function isCustomerRole(role) {
+  return ['customer', 'pelanggan'].includes(String(role || '').toLowerCase());
+}
+
 function findMitraAccount(identifier) {
   const clean = String(identifier || '').trim().toLowerCase();
   if (!clean) return null;
@@ -458,7 +462,7 @@ router.post('/register', async (req, res) => {
 
     await userService.refreshUsersFromDb();
     const registeredUser = userService.findUser(cleanWa) || (cleanEmail ? userService.findUser(cleanEmail) : null);
-    if (registeredUser) {
+    if (registeredUser && !isCustomerRole(registeredUser.role)) {
       const isMitra = isMitraRole(registeredUser.role);
       return res.status(409).json({
         success: false,
@@ -815,10 +819,11 @@ router.get('/auth/google/callback', async (req, res) => {
     await userService.refreshUsersFromDb();
     const linkedUser = userService.findUser(profileEmail);
 
-    if (linkedUser) {
-      if (!isMitraRole(linkedUser.role)) {
-        return failRedirect('staff_account_exists');
-      }
+    if (linkedUser && !isMitraRole(linkedUser.role) && !isCustomerRole(linkedUser.role)) {
+      return failRedirect('staff_account_exists');
+    }
+
+    if (linkedUser && isMitraRole(linkedUser.role)) {
       const jwtInfo = generateToken({
         customerId: linkedUser.id,
         userId: linkedUser.id,
@@ -1012,7 +1017,7 @@ router.post('/complete-profile', async (req, res) => {
     }
     await userService.refreshUsersFromDb();
     const staffOrMitra = userService.findUser(digits);
-    if (staffOrMitra) {
+    if (staffOrMitra && !isCustomerRole(staffOrMitra.role)) {
       return res.status(409).json({
         success: false,
         code: isMitraRole(staffOrMitra.role) ? 'MITRA_ACCOUNT_EXISTS' : 'STAFF_ACCOUNT_EXISTS',

@@ -316,7 +316,7 @@ async function testConnection() {
         const counts = await client.query(`
           SELECT 
             (SELECT COUNT(*) FROM orders) AS orders_count,
-            (SELECT COUNT(*) FROM customers) AS customers_count,
+            (SELECT COUNT(*) FROM users WHERE role IN ('customer', 'pelanggan')) AS customers_count,
             (SELECT COUNT(*) FROM users) AS users_count,
             (SELECT COUNT(*) FROM transactions) AS transactions_count,
             (SELECT COUNT(*) FROM finances) AS finances_count

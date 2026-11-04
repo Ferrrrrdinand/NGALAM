@@ -10,7 +10,8 @@ const ROLE_GROUPS = {
   admin: ['admin', 'owner', 'superadmin'],
   kasir: ['kasir'],
   teknisi: ['teknisi'],
-  mitra: ['mitra', 'ojol', 'kurir']
+  mitra: ['mitra', 'ojol', 'kurir'],
+  customer: ['customer', 'pelanggan']
 };
 
 const memoryTables = new Map();
@@ -31,6 +32,7 @@ function classifyUser(user) {
   if (ROLE_GROUPS.admin.includes(role)) return 'admin';
   if (ROLE_GROUPS.kasir.includes(role)) return 'kasir';
   if (ROLE_GROUPS.teknisi.includes(role)) return 'teknisi';
+  if (ROLE_GROUPS.customer.includes(role)) return 'customer';
   return 'mitra';
 }
 
@@ -39,6 +41,7 @@ function bucketForRole(role) {
   if (ROLE_GROUPS.admin.includes(clean)) return 'admin';
   if (ROLE_GROUPS.kasir.includes(clean)) return 'kasir';
   if (ROLE_GROUPS.teknisi.includes(clean)) return 'teknisi';
+  if (ROLE_GROUPS.customer.includes(clean)) return 'customer';
   return 'mitra';
 }
 
@@ -61,7 +64,14 @@ function normalizeDbUser(row) {
     status: raw.status || row.status || 'Active',
     lastActive: raw.lastActive || row.last_active || 'Baru Saja',
     desk: raw.desk || row.desk || '',
-    specialty: raw.specialty || row.specialty || ''
+    specialty: raw.specialty || row.specialty || '',
+    whatsapp: raw.whatsapp || row.phone || '',
+    district: raw.district || '',
+    registeredAt: raw.registeredAt || '',
+    registeredVia: raw.registeredVia || '',
+    googleId: raw.googleId || '',
+    referredByMitra: raw.referredByMitra || '',
+    passwordHash: raw.passwordHash || raw.pin || row.password || ''
   };
 }
 
@@ -85,7 +95,7 @@ async function refreshUsersFromDb(force = false) {
       await ensureDatabase();
       const res = await db.query('SELECT * FROM users ORDER BY created_at ASC');
       const users = (res.rows || []).map(normalizeDbUser).filter((u) => u.id || u.username);
-      const buckets = { admin: [], kasir: [], teknisi: [], mitra: [] };
+      const buckets = { admin: [], kasir: [], teknisi: [], mitra: [], customer: [] };
 
       users.forEach((user) => {
         buckets[classifyUser(user)].push(user);
@@ -122,11 +132,16 @@ function getMitraUsers() {
   return getBucket('mitra');
 }
 
+function getCustomerUsers() {
+  return getBucket('customer');
+}
+
 function getAllUsers() {
   const admins = getAdminUsers().map((u) => ({ ...u, _source: 'admin' }));
   const kasirs = getKasirUsers().map((u) => ({ ...u, _source: 'kasir' }));
   const techs = getTeknisiUsers().map((u) => ({ ...u, _source: 'teknisi' }));
   const mitras = getMitraUsers().map((u) => ({ ...u, _source: 'mitra' }));
+  const customers = getCustomerUsers().map((u) => ({ ...u, _source: 'customer' }));
   const userMap = new Map();
 
   admins.forEach((u) => {
@@ -151,6 +166,7 @@ function getAllUsers() {
   merge(kasirs, 'kasir');
   merge(techs, 'teknisi');
   merge(mitras, 'mitra');
+  merge(customers, 'customer');
 
   return Array.from(userMap.values());
 }
@@ -276,6 +292,10 @@ function saveMitraUsers(users) {
   return saveRoleBucket('mitra', users);
 }
 
+function saveCustomerUsers(users) {
+  return saveRoleBucket('customer', users);
+}
+
 async function saveUserByRole(user) {
   if (!user || !user.role) throw new Error('User data dan role wajib disertakan.');
   await refreshUsersFromDb();
@@ -351,6 +371,8 @@ module.exports = {
   saveTeknisiUsers,
   getMitraUsers,
   saveMitraUsers,
+  getCustomerUsers,
+  saveCustomerUsers,
   getAllUsers,
   findUser,
   saveUserByRole,
