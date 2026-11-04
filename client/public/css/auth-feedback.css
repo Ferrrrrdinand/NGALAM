@@ -1,0 +1,403 @@
+/**
+ * NGALAM FIX PRO - Modern Auth Feedback UI Component Stylesheet
+ * Replaces default Chrome alert() and browser tooltips with rich, glassmorphic modal feedback.
+ */
+
+/* Overlay Container */
+.ngalam-auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ngalam-auth-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Card Base */
+.ngalam-auth-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 26px;
+  padding: 34px 28px 28px;
+  text-align: center;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 1px 1px rgba(0, 0, 0, 0.06);
+  transform: scale(0.92) translateY(14px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.ngalam-auth-overlay.active .ngalam-auth-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* Shaking Animation for Errors */
+.ngalam-auth-modal.modal-shake {
+  animation: authModalShake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes authModalShake {
+  10%, 90% { transform: translate3d(-3px, 0, 0) scale(1); }
+  20%, 80% { transform: translate3d(5px, 0, 0) scale(1); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0) scale(1); }
+  40%, 60% { transform: translate3d(6px, 0, 0) scale(1); }
+}
+
+/* Close Button (Optional corner dismiss) */
+.ngalam-auth-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.ngalam-auth-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: rotate(90deg);
+}
+
+/* ========================================================
+   SUCCESS MODAL SPECIFICS
+   ======================================================== */
+.ngalam-auth-modal.modal-success {
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
+  background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 65%), #ffffff;
+}
+
+.auth-icon-badge-success {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.42);
+}
+
+.auth-icon-badge-success::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(16, 185, 129, 0.55);
+  animation: authSuccessRipple 1.9s infinite cubic-bezier(0, 0.2, 0.8, 1);
+}
+
+@keyframes authSuccessRipple {
+  0% { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.auth-check-svg {
+  width: 38px;
+  height: 38px;
+  stroke: #ffffff;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.auth-check-path {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: authDrawCheck 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.15s forwards;
+}
+
+@keyframes authDrawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Title & Subtitle */
+.auth-modal-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.auth-modal-subtitle {
+  font-size: 0.92rem;
+  color: #475569;
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+/* User Profile Badge Inside Modal */
+.auth-user-badge-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.auth-user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+}
+
+.auth-user-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.auth-user-name {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-user-role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+.auth-user-role-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+/* Multi-stage Progress Bar */
+.auth-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.auth-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #10b981, #059669, #34d399);
+  background-size: 200% 100%;
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: authGradientShift 1.5s infinite linear;
+}
+
+@keyframes authGradientShift {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.auth-status-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #047857;
+}
+
+.auth-step-spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid #a7f3d0;
+  border-top-color: #047857;
+  border-radius: 50%;
+  animation: authSpin 0.75s linear infinite;
+}
+
+@keyframes authSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================================
+   FAILURE / ERROR MODAL SPECIFICS
+   ======================================================== */
+.ngalam-auth-modal.modal-error {
+  border: 1.5px solid rgba(239, 68, 68, 0.45);
+  background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.12) 0%, transparent 65%), #ffffff;
+}
+
+.auth-icon-badge-error {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.42);
+}
+
+.auth-icon-badge-error::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(239, 68, 68, 0.55);
+  animation: authErrorRipple 1.9s infinite cubic-bezier(0, 0.2, 0.8, 1);
+}
+
+@keyframes authErrorRipple {
+  0% { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.auth-error-msg-box {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  font-size: 0.92rem;
+  color: #991b1b;
+  text-align: left;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.auth-error-msg-box svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Helpful Tips Box */
+.auth-tips-box {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 22px;
+  text-align: left;
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.auth-tips-title {
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-tips-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.auth-tips-list li {
+  margin-bottom: 4px;
+}
+
+/* Action Button */
+.auth-modal-action-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 0.98rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.auth-btn-retry {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+.auth-btn-retry:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.45);
+}
+
+.auth-btn-retry:active {
+  transform: translateY(0);
+}
+
+/* Input Error Highlight Ring */
+.auth-input-error-glow {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.25) !important;
+  animation: authInputGlowPulse 1.2s ease;
+}
+
+@keyframes authInputGlowPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}

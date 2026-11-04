@@ -5,6 +5,11 @@
  * Completely isolated from public customer pages and technician/mitra portals.
  */
 
+const net = require('net');
+if (typeof net.setDefaultAutoSelectFamily === 'function') {
+  net.setDefaultAutoSelectFamily(false);
+}
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -101,8 +106,9 @@ app.use((req, res, next) => {
   }
 
   // Check auth cookie or token for web dashboard pages
+  const authHeader = req.headers.authorization || '';
   const cookies = parseCookies(req);
-  const token = cookies.ngalam_token || req.query.token;
+  const token = authHeader.replace(/^Bearer\s+/i, '') || cookies.ngalam_admin_token || cookies.ngalam_token || req.query.token;
   const session = verifySession(token);
 
   if (!session || (session.role !== 'admin' && session.role !== 'owner' && session.role !== 'kasir')) {

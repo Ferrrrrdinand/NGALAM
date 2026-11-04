@@ -109,13 +109,13 @@ textarea {
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
-table {
+table:not(.admin-layout-root *):not(.tech-dashboard-root *) {
   width: 100%;
   border-collapse: collapse;
   color: #000000;
 }
 
-th {
+th:not(.admin-layout-root *):not(.tech-dashboard-root *) {
   background: #f8fafc;
   color: #000000;
   border-bottom: 1.5px solid #e2e8f0;
@@ -124,13 +124,13 @@ th {
   text-align: left;
 }
 
-td {
+td:not(.admin-layout-root *):not(.tech-dashboard-root *) {
   padding: 12px 16px;
   border-bottom: 1px solid #f1f5f9;
   color: #000000;
 }
 
-tr:hover td {
+tr:hover td:not(.admin-layout-root *):not(.tech-dashboard-root *) {
   background: #f8fafc;
 }
 
@@ -546,10 +546,16 @@ tr:hover td {
   display: none;
   position: fixed;
   inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   background: rgba(3, 7, 18, 0.65);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 990;
+  z-index: 995;
+  pointer-events: auto;
 }
 
 .nav-backdrop.show {
@@ -9760,13 +9766,17 @@ label {
   font-weight: 700 !important;
 }
 
-input, select, textarea {
+input:not(.admin-layout-root *):not(.tech-dashboard-root *),
+select:not(.admin-layout-root *):not(.tech-dashboard-root *),
+textarea:not(.admin-layout-root *):not(.tech-dashboard-root *) {
   color: #000000 !important;
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus:not(.admin-layout-root *):not(.tech-dashboard-root *),
+select:focus:not(.admin-layout-root *):not(.tech-dashboard-root *),
+textarea:focus:not(.admin-layout-root *):not(.tech-dashboard-root *) {
   border-color: #d4af37 !important;
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25) !important;
 }
@@ -9818,29 +9828,59 @@ input:focus, select:focus, textarea:focus {
   color: #000000 !important;
 }
 
+/* Protect Admin & Technician Sidebars / Dark Consoles */
+.admin-sidebar,
+.admin-sidebar *,
+aside.admin-sidebar,
+aside.admin-sidebar * {
+  color: #ffffff;
+}
+
+.admin-sidebar-btn,
+.admin-sidebar-btn *,
+.admin-sidebar-btn span,
+.admin-sidebar-btn svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.admin-nav-section-title {
+  color: #ffffff !important;
+  opacity: 0.9 !important;
+}
+
+.admin-brand-sub {
+  color: #fbbf24 !important;
+}
+
+.admin-sidebar-btn.active,
+.admin-sidebar-btn.active * {
+  color: #ffffff !important;
+}
+
 /* ==========================================================================
    UNIVERSAL SOLID PURE BLACK TYPOGRAPHY OVERRIDE (#000000)
    Guarantees 100% maximum contrast on white pages while protecting dark footers & gold buttons
    ========================================================================== */
 html,
 body,
-p:not(.footer *):not(.footgrid *):not(footer *),
-span:not(.btn *):not(.gold-badge):not(.logo-pill):not([class*="badge"]):not(.footer *):not(.footgrid *):not(footer *):not(.ai-status-dot):not(.pulse-green-dot),
-h1, h2, h3, h4, h5, h6,
-label,
-input:not([type="checkbox"]):not([type="radio"]),
-select,
-textarea,
-th,
-td,
-li:not(.footer *):not(.footgrid *):not(footer *),
-small:not(.gold-badge):not(.logo-pill):not([class*="badge"]):not(.footer *):not(.footgrid *):not(footer *),
-strong:not(.footer *):not(.footgrid *):not(footer *),
-b:not(.btn *):not(.footer *):not(.footgrid *):not(footer *),
-div.subtitle,
-div.desc,
-div.text-secondary,
-.text-muted,
+p:not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+span:not(.btn *):not(.gold-badge):not(.logo-pill):not([class*="badge"]):not(.footer *):not(.footgrid *):not(footer *):not(.ai-status-dot):not(.pulse-green-dot):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+h1:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *), h2:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *), h3:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *), h4:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *), h5:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *), h6:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+label:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+input:not([type="checkbox"]):not([type="radio"]):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+select:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+textarea:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+th:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+td:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+li:not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+small:not(.gold-badge):not(.logo-pill):not([class*="badge"]):not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+strong:not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+b:not(.btn *):not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+div.subtitle:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+div.desc:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+div.text-secondary:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
+.text-muted:not(.admin-sidebar *):not(.admin-layout-root *):not(.tech-dashboard-root *),
 .showcase-desc,
 .showcase-card-title,
 .showcase-card-text,
@@ -9859,11 +9899,11 @@ div.text-secondary,
 }
 
 /* Regular links on white pages */
-a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *):not(.footgrid *):not(footer *) {
+a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-sidebar) {
   color: #000000 !important;
 }
 
-a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *):not(.footgrid *):not(footer *):hover {
+a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *):not(.footgrid *):not(footer *):not(.admin-sidebar *):not(.admin-sidebar):hover {
   color: #b45309 !important;
 }
 

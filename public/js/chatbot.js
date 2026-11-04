@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {
       hideTyping();
-      appendMessage('bot', `⚠️ Gagal menghubungi server Node.js (${err.message}). Pastikan server aktif.`);
+        appendMessage('bot', `Gagal menghubungi server Node.js (${err.message}). Pastikan server aktif.`);
     }
   }
 

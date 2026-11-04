@@ -4,6 +4,11 @@
  * otherwise falls back gracefully to JSON storage.
  */
 
+const net = require('net');
+if (typeof net.setDefaultAutoSelectFamily === 'function') {
+  net.setDefaultAutoSelectFamily(false);
+}
+
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');

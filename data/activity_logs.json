@@ -1,16 +1,2772 @@
 [
   {
-    "id": "LOG-1793760049873-235",
-    "action": "CUSTOMER_REGISTER",
-    "table_name": "customers",
-    "record_id": "CUST-20261104-3674",
+    "id": "LOG-1793790307572-93",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
     "payload": {
-      "name": "ferdi",
-      "whatsapp": "0812345678905",
-      "district": "Sukun, Kota Malang",
-      "registeredVia": "Portal Pelanggan Web"
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T11:05:07.572Z"
     },
-    "performed_at": "2026-11-04T02:40:49.873Z"
+    "performed_at": "2026-11-04T11:05:07.572Z"
+  },
+  {
+    "id": "LOG-1793787555330-245",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T10:19:15.328Z"
+    },
+    "performed_at": "2026-11-04T10:19:15.330Z"
+  },
+  {
+    "id": "LOG-1793782445810-341",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:54:05.810Z"
+    },
+    "performed_at": "2026-11-04T08:54:05.810Z"
+  },
+  {
+    "id": "LOG-1793782445029-171",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:54:05.028Z"
+    },
+    "performed_at": "2026-11-04T08:54:05.029Z"
+  },
+  {
+    "id": "LOG-1793782444874-359",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:54:04.872Z"
+    },
+    "performed_at": "2026-11-04T08:54:04.874Z"
+  },
+  {
+    "id": "LOG-1793782443809-140",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:54:03.807Z"
+    },
+    "performed_at": "2026-11-04T08:54:03.809Z"
+  },
+  {
+    "id": "LOG-1793782443432-366",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:54:03.431Z"
+    },
+    "performed_at": "2026-11-04T08:54:03.432Z"
+  },
+  {
+    "id": "LOG-1793782442572-372",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:54:02.571Z"
+    },
+    "performed_at": "2026-11-04T08:54:02.572Z"
+  },
+  {
+    "id": "LOG-1793782442417-177",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:54:02.416Z"
+    },
+    "performed_at": "2026-11-04T08:54:02.417Z"
+  },
+  {
+    "id": "LOG-1793782442263-147",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:54:02.262Z"
+    },
+    "performed_at": "2026-11-04T08:54:02.263Z"
+  },
+  {
+    "id": "LOG-1793782442104-184",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:54:02.102Z"
+    },
+    "performed_at": "2026-11-04T08:54:02.104Z"
+  },
+  {
+    "id": "LOG-1793782442020-867",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:54:02.019Z"
+    },
+    "performed_at": "2026-11-04T08:54:02.020Z"
+  },
+  {
+    "id": "LOG-1793782441796-642",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:54:01.795Z"
+    },
+    "performed_at": "2026-11-04T08:54:01.796Z"
+  },
+  {
+    "id": "LOG-1793782441280-478",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:54:01.280Z"
+    },
+    "performed_at": "2026-11-04T08:54:01.280Z"
+  },
+  {
+    "id": "LOG-1793782440864-391",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:54:00.864Z"
+    },
+    "performed_at": "2026-11-04T08:54:00.864Z"
+  },
+  {
+    "id": "LOG-1793782440390-145",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:54:00.390Z"
+    },
+    "performed_at": "2026-11-04T08:54:00.390Z"
+  },
+  {
+    "id": "LOG-1793782439878-481",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T08:53:59.877Z"
+    },
+    "performed_at": "2026-11-04T08:53:59.878Z"
+  },
+  {
+    "id": "LOG-1793782439868-519",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:53:59.868Z"
+    },
+    "performed_at": "2026-11-04T08:53:59.868Z"
+  },
+  {
+    "id": "LOG-1793782437786-949",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:53:57.785Z"
+    },
+    "performed_at": "2026-11-04T08:53:57.786Z"
+  },
+  {
+    "id": "LOG-1793782437687-537",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:53:57.686Z"
+    },
+    "performed_at": "2026-11-04T08:53:57.687Z"
+  },
+  {
+    "id": "LOG-1793782423338-395",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:53:43.337Z"
+    },
+    "performed_at": "2026-11-04T08:53:43.338Z"
+  },
+  {
+    "id": "LOG-1793782144557-989",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:49:04.556Z"
+    },
+    "performed_at": "2026-11-04T08:49:04.557Z"
+  },
+  {
+    "id": "LOG-1793781943391-423",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T08:45:43.390Z"
+    },
+    "performed_at": "2026-11-04T08:45:43.391Z"
+  },
+  {
+    "id": "LOG-1793781943383-694",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:45:43.382Z"
+    },
+    "performed_at": "2026-11-04T08:45:43.383Z"
+  },
+  {
+    "id": "LOG-1793781941444-983",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:45:41.443Z"
+    },
+    "performed_at": "2026-11-04T08:45:41.444Z"
+  },
+  {
+    "id": "LOG-1793781941339-388",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:45:41.338Z"
+    },
+    "performed_at": "2026-11-04T08:45:41.339Z"
+  },
+  {
+    "id": "LOG-1793781722575-869",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:42:02.573Z"
+    },
+    "performed_at": "2026-11-04T08:42:02.575Z"
+  },
+  {
+    "id": "LOG-1793781562559-718",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:39:22.558Z"
+    },
+    "performed_at": "2026-11-04T08:39:22.559Z"
+  },
+  {
+    "id": "LOG-1793781199535-423",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:33:19.534Z"
+    },
+    "performed_at": "2026-11-04T08:33:19.535Z"
+  },
+  {
+    "id": "LOG-1793780982618-234",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:29:42.617Z"
+    },
+    "performed_at": "2026-11-04T08:29:42.618Z"
+  },
+  {
+    "id": "LOG-1793780981833-458",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:29:41.832Z"
+    },
+    "performed_at": "2026-11-04T08:29:41.833Z"
+  },
+  {
+    "id": "LOG-1793780981674-992",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:29:41.672Z"
+    },
+    "performed_at": "2026-11-04T08:29:41.674Z"
+  },
+  {
+    "id": "LOG-1793780980627-563",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:29:40.625Z"
+    },
+    "performed_at": "2026-11-04T08:29:40.627Z"
+  },
+  {
+    "id": "LOG-1793780980245-899",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:40.244Z"
+    },
+    "performed_at": "2026-11-04T08:29:40.245Z"
+  },
+  {
+    "id": "LOG-1793780979315-18",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:39.314Z"
+    },
+    "performed_at": "2026-11-04T08:29:39.315Z"
+  },
+  {
+    "id": "LOG-1793780979153-175",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:39.152Z"
+    },
+    "performed_at": "2026-11-04T08:29:39.153Z"
+  },
+  {
+    "id": "LOG-1793780978979-591",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:38.978Z"
+    },
+    "performed_at": "2026-11-04T08:29:38.979Z"
+  },
+  {
+    "id": "LOG-1793780978820-438",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:38.819Z"
+    },
+    "performed_at": "2026-11-04T08:29:38.820Z"
+  },
+  {
+    "id": "LOG-1793780978728-841",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:29:38.727Z"
+    },
+    "performed_at": "2026-11-04T08:29:38.728Z"
+  },
+  {
+    "id": "LOG-1793780978500-805",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:29:38.500Z"
+    },
+    "performed_at": "2026-11-04T08:29:38.500Z"
+  },
+  {
+    "id": "LOG-1793780977757-812",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:29:37.756Z"
+    },
+    "performed_at": "2026-11-04T08:29:37.757Z"
+  },
+  {
+    "id": "LOG-1793780977310-505",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:29:37.310Z"
+    },
+    "performed_at": "2026-11-04T08:29:37.310Z"
+  },
+  {
+    "id": "LOG-1793780976896-322",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:29:36.896Z"
+    },
+    "performed_at": "2026-11-04T08:29:36.896Z"
+  },
+  {
+    "id": "LOG-1793780976395-818",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T08:29:36.394Z"
+    },
+    "performed_at": "2026-11-04T08:29:36.395Z"
+  },
+  {
+    "id": "LOG-1793780976382-110",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:29:36.382Z"
+    },
+    "performed_at": "2026-11-04T08:29:36.382Z"
+  },
+  {
+    "id": "LOG-1793780974166-44",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:34.164Z"
+    },
+    "performed_at": "2026-11-04T08:29:34.166Z"
+  },
+  {
+    "id": "LOG-1793780974057-233",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:29:34.056Z"
+    },
+    "performed_at": "2026-11-04T08:29:34.057Z"
+  },
+  {
+    "id": "LOG-1793780705277-14",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:25:05.277Z"
+    },
+    "performed_at": "2026-11-04T08:25:05.277Z"
+  },
+  {
+    "id": "LOG-1793780588524-333",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T08:23:08.523Z"
+    },
+    "performed_at": "2026-11-04T08:23:08.524Z"
+  },
+  {
+    "id": "LOG-1793780588516-710",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:23:08.516Z"
+    },
+    "performed_at": "2026-11-04T08:23:08.516Z"
+  },
+  {
+    "id": "LOG-1793780586313-5",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:23:06.311Z"
+    },
+    "performed_at": "2026-11-04T08:23:06.313Z"
+  },
+  {
+    "id": "LOG-1793780586213-109",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:23:06.212Z"
+    },
+    "performed_at": "2026-11-04T08:23:06.213Z"
+  },
+  {
+    "id": "LOG-1793780579746-878",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:22:59.746Z"
+    },
+    "performed_at": "2026-11-04T08:22:59.746Z"
+  },
+  {
+    "id": "LOG-1793780578970-316",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:22:58.969Z"
+    },
+    "performed_at": "2026-11-04T08:22:58.970Z"
+  },
+  {
+    "id": "LOG-1793780578805-942",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:22:58.803Z"
+    },
+    "performed_at": "2026-11-04T08:22:58.805Z"
+  },
+  {
+    "id": "LOG-1793780577666-373",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:22:57.663Z"
+    },
+    "performed_at": "2026-11-04T08:22:57.666Z"
+  },
+  {
+    "id": "LOG-1793780577271-793",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:22:57.270Z"
+    },
+    "performed_at": "2026-11-04T08:22:57.271Z"
+  },
+  {
+    "id": "LOG-1793780576424-567",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:22:56.422Z"
+    },
+    "performed_at": "2026-11-04T08:22:56.424Z"
+  },
+  {
+    "id": "LOG-1793780576262-176",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:22:56.261Z"
+    },
+    "performed_at": "2026-11-04T08:22:56.262Z"
+  },
+  {
+    "id": "LOG-1793780576093-122",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:22:56.092Z"
+    },
+    "performed_at": "2026-11-04T08:22:56.093Z"
+  },
+  {
+    "id": "LOG-1793780575914-472",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:22:55.913Z"
+    },
+    "performed_at": "2026-11-04T08:22:55.914Z"
+  },
+  {
+    "id": "LOG-1793780575798-835",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:22:55.797Z"
+    },
+    "performed_at": "2026-11-04T08:22:55.798Z"
+  },
+  {
+    "id": "LOG-1793780575546-315",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:22:55.546Z"
+    },
+    "performed_at": "2026-11-04T08:22:55.546Z"
+  },
+  {
+    "id": "LOG-1793780575146-172",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:22:55.145Z"
+    },
+    "performed_at": "2026-11-04T08:22:55.146Z"
+  },
+  {
+    "id": "LOG-1793780574450-690",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:22:54.449Z"
+    },
+    "performed_at": "2026-11-04T08:22:54.450Z"
+  },
+  {
+    "id": "LOG-1793780570644-280",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:22:50.644Z"
+    },
+    "performed_at": "2026-11-04T08:22:50.645Z"
+  },
+  {
+    "id": "LOG-1793780380907-159",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:19:40.905Z"
+    },
+    "performed_at": "2026-11-04T08:19:40.907Z"
+  },
+  {
+    "id": "LOG-1793780380746-597",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:19:40.744Z"
+    },
+    "performed_at": "2026-11-04T08:19:40.746Z"
+  },
+  {
+    "id": "LOG-1793780379698-60",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TEKNISI-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:19:39.695Z"
+    },
+    "performed_at": "2026-11-04T08:19:39.698Z"
+  },
+  {
+    "id": "LOG-1793780379324-446",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:39.323Z"
+    },
+    "performed_at": "2026-11-04T08:19:39.324Z"
+  },
+  {
+    "id": "LOG-1793780378491-168",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:38.490Z"
+    },
+    "performed_at": "2026-11-04T08:19:38.491Z"
+  },
+  {
+    "id": "LOG-1793780378270-71",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:38.266Z"
+    },
+    "performed_at": "2026-11-04T08:19:38.270Z"
+  },
+  {
+    "id": "LOG-1793780378102-661",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:38.101Z"
+    },
+    "performed_at": "2026-11-04T08:19:38.102Z"
+  },
+  {
+    "id": "LOG-1793780377943-234",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:37.942Z"
+    },
+    "performed_at": "2026-11-04T08:19:37.943Z"
+  },
+  {
+    "id": "LOG-1793780377860-498",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:19:37.859Z"
+    },
+    "performed_at": "2026-11-04T08:19:37.860Z"
+  },
+  {
+    "id": "LOG-1793780377629-622",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:19:37.629Z"
+    },
+    "performed_at": "2026-11-04T08:19:37.629Z"
+  },
+  {
+    "id": "LOG-1793780377178-991",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:19:37.178Z"
+    },
+    "performed_at": "2026-11-04T08:19:37.178Z"
+  },
+  {
+    "id": "LOG-1793780376752-242",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:19:36.752Z"
+    },
+    "performed_at": "2026-11-04T08:19:36.752Z"
+  },
+  {
+    "id": "LOG-1793780376361-53",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:19:36.361Z"
+    },
+    "performed_at": "2026-11-04T08:19:36.361Z"
+  },
+  {
+    "id": "LOG-1793780373358-876",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T08:19:33.358Z"
+    },
+    "performed_at": "2026-11-04T08:19:33.358Z"
+  },
+  {
+    "id": "LOG-1793780373351-479",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:19:33.350Z"
+    },
+    "performed_at": "2026-11-04T08:19:33.351Z"
+  },
+  {
+    "id": "LOG-1793780370081-845",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:30.080Z"
+    },
+    "performed_at": "2026-11-04T08:19:30.081Z"
+  },
+  {
+    "id": "LOG-1793780369980-64",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:19:29.979Z"
+    },
+    "performed_at": "2026-11-04T08:19:29.980Z"
+  },
+  {
+    "id": "LOG-1793779825606-610",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:10:25.606Z"
+    },
+    "performed_at": "2026-11-04T08:10:25.606Z"
+  },
+  {
+    "id": "LOG-1793779805905-248",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:10:05.904Z"
+    },
+    "performed_at": "2026-11-04T08:10:05.905Z"
+  },
+  {
+    "id": "LOG-1793779651639-780",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:07:31.639Z"
+    },
+    "performed_at": "2026-11-04T08:07:31.639Z"
+  },
+  {
+    "id": "LOG-1793779648333-397",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:07:28.330Z"
+    },
+    "performed_at": "2026-11-04T08:07:28.333Z"
+  },
+  {
+    "id": "LOG-1793779615640-821",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:06:55.639Z"
+    },
+    "performed_at": "2026-11-04T08:06:55.640Z"
+  },
+  {
+    "id": "LOG-1793779615037-408",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:06:55.036Z"
+    },
+    "performed_at": "2026-11-04T08:06:55.037Z"
+  },
+  {
+    "id": "LOG-1793779614873-109",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:06:54.871Z"
+    },
+    "performed_at": "2026-11-04T08:06:54.873Z"
+  },
+  {
+    "id": "LOG-1793779613603-10",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:06:53.601Z"
+    },
+    "performed_at": "2026-11-04T08:06:53.603Z"
+  },
+  {
+    "id": "LOG-1793779613377-634",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:06:53.376Z"
+    },
+    "performed_at": "2026-11-04T08:06:53.377Z"
+  },
+  {
+    "id": "LOG-1793779612185-0",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:06:52.184Z"
+    },
+    "performed_at": "2026-11-04T08:06:52.185Z"
+  },
+  {
+    "id": "LOG-1793779612018-402",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:06:52.017Z"
+    },
+    "performed_at": "2026-11-04T08:06:52.018Z"
+  },
+  {
+    "id": "LOG-1793779611859-519",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:06:51.859Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.859Z"
+  },
+  {
+    "id": "LOG-1793779611707-968",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:06:51.707Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.707Z"
+  },
+  {
+    "id": "LOG-1793779611618-848",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:06:51.617Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.618Z"
+  },
+  {
+    "id": "LOG-1793779611425-977",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:06:51.424Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.425Z"
+  },
+  {
+    "id": "LOG-1793779611335-927",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:06:51.335Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.335Z"
+  },
+  {
+    "id": "LOG-1793779611170-770",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:06:51.169Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.170Z"
+  },
+  {
+    "id": "LOG-1793779611082-214",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:06:51.082Z"
+    },
+    "performed_at": "2026-11-04T08:06:51.082Z"
+  },
+  {
+    "id": "LOG-1793779602328-981",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-1793779602028",
+    "payload": {
+      "username": "testkasir_1793779602024",
+      "name": "Staf Kasir Otomatis",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:06:42.327Z"
+    },
+    "performed_at": "2026-11-04T08:06:42.328Z"
+  },
+  {
+    "id": "LOG-1793779602019-954",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:06:42.019Z"
+    },
+    "performed_at": "2026-11-04T08:06:42.019Z"
+  },
+  {
+    "id": "LOG-1793779601910-817",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:06:41.909Z"
+    },
+    "performed_at": "2026-11-04T08:06:41.910Z"
+  },
+  {
+    "id": "LOG-1793779379641-109",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:02:59.640Z"
+    },
+    "performed_at": "2026-11-04T08:02:59.641Z"
+  },
+  {
+    "id": "LOG-1793779379539-919",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:02:59.538Z"
+    },
+    "performed_at": "2026-11-04T08:02:59.539Z"
+  },
+  {
+    "id": "LOG-1793779349735-697",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:02:29.734Z"
+    },
+    "performed_at": "2026-11-04T08:02:29.735Z"
+  },
+  {
+    "id": "LOG-1793779267749-314",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-MITRA-EXAMPLE",
+    "payload": {
+      "username": "mitra_demo",
+      "name": "Mitra Contoh (Ojol)",
+      "role": "ojol",
+      "loginAt": "2026-11-04T08:01:07.748Z"
+    },
+    "performed_at": "2026-11-04T08:01:07.749Z"
+  },
+  {
+    "id": "LOG-1793779267425-993",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:01:07.407Z"
+    },
+    "performed_at": "2026-11-04T08:01:07.425Z"
+  },
+  {
+    "id": "LOG-1793779267242-440",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:01:07.241Z"
+    },
+    "performed_at": "2026-11-04T08:01:07.242Z"
+  },
+  {
+    "id": "LOG-1793779267079-383",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:01:07.078Z"
+    },
+    "performed_at": "2026-11-04T08:01:07.079Z"
+  },
+  {
+    "id": "LOG-1793779266881-798",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:01:06.880Z"
+    },
+    "performed_at": "2026-11-04T08:01:06.881Z"
+  },
+  {
+    "id": "LOG-1793779266648-854",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-02",
+    "payload": {
+      "username": "kasir1",
+      "name": "Kasir Shift Pagi",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:01:06.648Z"
+    },
+    "performed_at": "2026-11-04T08:01:06.648Z"
+  },
+  {
+    "id": "LOG-1793779266496-47",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:01:06.495Z"
+    },
+    "performed_at": "2026-11-04T08:01:06.496Z"
+  },
+  {
+    "id": "LOG-1793779262888-557",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:01:02.887Z"
+    },
+    "performed_at": "2026-11-04T08:01:02.888Z"
+  },
+  {
+    "id": "LOG-1793779262737-35",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:01:02.736Z"
+    },
+    "performed_at": "2026-11-04T08:01:02.737Z"
+  },
+  {
+    "id": "LOG-1793779259123-556",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T08:00:59.123Z"
+    },
+    "performed_at": "2026-11-04T08:00:59.123Z"
+  },
+  {
+    "id": "LOG-1793779259104-732",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:00:59.104Z"
+    },
+    "performed_at": "2026-11-04T08:00:59.104Z"
+  },
+  {
+    "id": "LOG-1793779257065-156",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:00:57.064Z"
+    },
+    "performed_at": "2026-11-04T08:00:57.065Z"
+  },
+  {
+    "id": "LOG-1793779256968-422",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:00:56.967Z"
+    },
+    "performed_at": "2026-11-04T08:00:56.968Z"
+  },
+  {
+    "id": "LOG-1793779245709-878",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4116",
+    "payload": {
+      "name": "Pelanggan Uji Coba",
+      "whatsapp": "081299988877",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:00:45.709Z"
+    },
+    "performed_at": "2026-11-04T08:00:45.709Z"
+  },
+  {
+    "id": "LOG-1793779243649-883",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T08:00:43.647Z"
+    },
+    "performed_at": "2026-11-04T08:00:43.649Z"
+  },
+  {
+    "id": "LOG-1793779243496-909",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:00:43.495Z"
+    },
+    "performed_at": "2026-11-04T08:00:43.496Z"
+  },
+  {
+    "id": "LOG-1793779243338-984",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:00:43.338Z"
+    },
+    "performed_at": "2026-11-04T08:00:43.338Z"
+  },
+  {
+    "id": "LOG-1793779243248-621",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T08:00:43.247Z"
+    },
+    "performed_at": "2026-11-04T08:00:43.248Z"
+  },
+  {
+    "id": "LOG-1793779239534-443",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T08:00:39.534Z"
+    },
+    "performed_at": "2026-11-04T08:00:39.534Z"
+  },
+  {
+    "id": "LOG-1793779236604-188",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T08:00:36.603Z"
+    },
+    "performed_at": "2026-11-04T08:00:36.604Z"
+  },
+  {
+    "id": "LOG-1793778710398-329",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T07:51:50.398Z"
+    },
+    "performed_at": "2026-11-04T07:51:50.398Z"
+  },
+  {
+    "id": "LOG-1793778710389-841",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:51:50.389Z"
+    },
+    "performed_at": "2026-11-04T07:51:50.389Z"
+  },
+  {
+    "id": "LOG-1793778708230-569",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:48.230Z"
+    },
+    "performed_at": "2026-11-04T07:51:48.230Z"
+  },
+  {
+    "id": "LOG-1793778708128-962",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:48.128Z"
+    },
+    "performed_at": "2026-11-04T07:51:48.128Z"
+  },
+  {
+    "id": "LOG-1793778692873-69",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:51:32.872Z"
+    },
+    "performed_at": "2026-11-04T07:51:32.873Z"
+  },
+  {
+    "id": "LOG-1793778692456-420",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:51:32.453Z"
+    },
+    "performed_at": "2026-11-04T07:51:32.456Z"
+  },
+  {
+    "id": "LOG-1793778692332-433",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:51:32.329Z"
+    },
+    "performed_at": "2026-11-04T07:51:32.332Z"
+  },
+  {
+    "id": "LOG-1793778691312-240",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:51:31.310Z"
+    },
+    "performed_at": "2026-11-04T07:51:31.312Z"
+  },
+  {
+    "id": "LOG-1793778691225-919",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:31.224Z"
+    },
+    "performed_at": "2026-11-04T07:51:31.225Z"
+  },
+  {
+    "id": "LOG-1793778690206-925",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:30.205Z"
+    },
+    "performed_at": "2026-11-04T07:51:30.206Z"
+  },
+  {
+    "id": "LOG-1793778690121-450",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:30.120Z"
+    },
+    "performed_at": "2026-11-04T07:51:30.121Z"
+  },
+  {
+    "id": "LOG-1793778690032-796",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:30.032Z"
+    },
+    "performed_at": "2026-11-04T07:51:30.032Z"
+  },
+  {
+    "id": "LOG-1793778689943-674",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:51:29.942Z"
+    },
+    "performed_at": "2026-11-04T07:51:29.943Z"
+  },
+  {
+    "id": "LOG-1793778689846-380",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:51:29.845Z"
+    },
+    "performed_at": "2026-11-04T07:51:29.846Z"
+  },
+  {
+    "id": "LOG-1793778689759-573",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:51:29.759Z"
+    },
+    "performed_at": "2026-11-04T07:51:29.759Z"
+  },
+  {
+    "id": "LOG-1793778689421-200",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:51:29.421Z"
+    },
+    "performed_at": "2026-11-04T07:51:29.421Z"
+  },
+  {
+    "id": "LOG-1793778688997-137",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:51:28.996Z"
+    },
+    "performed_at": "2026-11-04T07:51:28.997Z"
+  },
+  {
+    "id": "LOG-1793778687060-99",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:51:27.060Z"
+    },
+    "performed_at": "2026-11-04T07:51:27.060Z"
+  },
+  {
+    "id": "LOG-1793778540685-84",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:49:00.684Z"
+    },
+    "performed_at": "2026-11-04T07:49:00.685Z"
+  },
+  {
+    "id": "LOG-1793778540597-373",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:49:00.596Z"
+    },
+    "performed_at": "2026-11-04T07:49:00.597Z"
+  },
+  {
+    "id": "LOG-1793778539625-400",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:48:59.624Z"
+    },
+    "performed_at": "2026-11-04T07:48:59.625Z"
+  },
+  {
+    "id": "LOG-1793778539543-824",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:48:59.542Z"
+    },
+    "performed_at": "2026-11-04T07:48:59.543Z"
+  },
+  {
+    "id": "LOG-1793778538563-121",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:48:58.563Z"
+    },
+    "performed_at": "2026-11-04T07:48:58.563Z"
+  },
+  {
+    "id": "LOG-1793778538484-903",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:48:58.483Z"
+    },
+    "performed_at": "2026-11-04T07:48:58.484Z"
+  },
+  {
+    "id": "LOG-1793778538400-638",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:48:58.399Z"
+    },
+    "performed_at": "2026-11-04T07:48:58.400Z"
+  },
+  {
+    "id": "LOG-1793778538320-892",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:48:58.320Z"
+    },
+    "performed_at": "2026-11-04T07:48:58.320Z"
+  },
+  {
+    "id": "LOG-1793778538237-563",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:48:58.236Z"
+    },
+    "performed_at": "2026-11-04T07:48:58.237Z"
+  },
+  {
+    "id": "LOG-1793778538153-114",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:48:58.153Z"
+    },
+    "performed_at": "2026-11-04T07:48:58.153Z"
+  },
+  {
+    "id": "LOG-1793778537736-20",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:48:57.735Z"
+    },
+    "performed_at": "2026-11-04T07:48:57.736Z"
+  },
+  {
+    "id": "LOG-1793778537179-106",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:48:57.179Z"
+    },
+    "performed_at": "2026-11-04T07:48:57.179Z"
+  },
+  {
+    "id": "LOG-1793778535026-657",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:48:55.026Z"
+    },
+    "performed_at": "2026-11-04T07:48:55.026Z"
+  },
+  {
+    "id": "LOG-1793778467612-743",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:47:47.611Z"
+    },
+    "performed_at": "2026-11-04T07:47:47.612Z"
+  },
+  {
+    "id": "LOG-1793778467525-699",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:47:47.524Z"
+    },
+    "performed_at": "2026-11-04T07:47:47.525Z"
+  },
+  {
+    "id": "LOG-1793778466559-296",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:47:46.557Z"
+    },
+    "performed_at": "2026-11-04T07:47:46.559Z"
+  },
+  {
+    "id": "LOG-1793778466471-844",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:46.470Z"
+    },
+    "performed_at": "2026-11-04T07:47:46.471Z"
+  },
+  {
+    "id": "LOG-1793778465434-980",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:45.433Z"
+    },
+    "performed_at": "2026-11-04T07:47:45.434Z"
+  },
+  {
+    "id": "LOG-1793778465328-769",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:45.327Z"
+    },
+    "performed_at": "2026-11-04T07:47:45.328Z"
+  },
+  {
+    "id": "LOG-1793778465240-842",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:45.239Z"
+    },
+    "performed_at": "2026-11-04T07:47:45.240Z"
+  },
+  {
+    "id": "LOG-1793778465156-681",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:45.156Z"
+    },
+    "performed_at": "2026-11-04T07:47:45.156Z"
+  },
+  {
+    "id": "LOG-1793778465075-361",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:47:45.075Z"
+    },
+    "performed_at": "2026-11-04T07:47:45.075Z"
+  },
+  {
+    "id": "LOG-1793778464993-16",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:44.993Z"
+    },
+    "performed_at": "2026-11-04T07:47:44.993Z"
+  },
+  {
+    "id": "LOG-1793778463003-924",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:43.003Z"
+    },
+    "performed_at": "2026-11-04T07:47:43.004Z"
+  },
+  {
+    "id": "LOG-1793778462554-961",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:42.554Z"
+    },
+    "performed_at": "2026-11-04T07:47:42.554Z"
+  },
+  {
+    "id": "LOG-1793778460377-653",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:40.377Z"
+    },
+    "performed_at": "2026-11-04T07:47:40.377Z"
+  },
+  {
+    "id": "LOG-1793778428435-769",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:47:08.433Z"
+    },
+    "performed_at": "2026-11-04T07:47:08.435Z"
+  },
+  {
+    "id": "LOG-1793778428350-780",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:08.349Z"
+    },
+    "performed_at": "2026-11-04T07:47:08.350Z"
+  },
+  {
+    "id": "LOG-1793778427381-991",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:07.380Z"
+    },
+    "performed_at": "2026-11-04T07:47:07.381Z"
+  },
+  {
+    "id": "LOG-1793778427300-885",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:07.300Z"
+    },
+    "performed_at": "2026-11-04T07:47:07.300Z"
+  },
+  {
+    "id": "LOG-1793778427218-739",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:07.217Z"
+    },
+    "performed_at": "2026-11-04T07:47:07.218Z"
+  },
+  {
+    "id": "LOG-1793778427135-201",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:07.134Z"
+    },
+    "performed_at": "2026-11-04T07:47:07.135Z"
+  },
+  {
+    "id": "LOG-1793778427052-626",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:47:07.052Z"
+    },
+    "performed_at": "2026-11-04T07:47:07.052Z"
+  },
+  {
+    "id": "LOG-1793778426970-540",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:06.969Z"
+    },
+    "performed_at": "2026-11-04T07:47:06.970Z"
+  },
+  {
+    "id": "LOG-1793778426626-295",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-202610282993",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:06.626Z"
+    },
+    "performed_at": "2026-11-04T07:47:06.626Z"
+  },
+  {
+    "id": "LOG-1793778426195-457",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:06.195Z"
+    },
+    "performed_at": "2026-11-04T07:47:06.195Z"
+  },
+  {
+    "id": "LOG-1793778425845-697",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4414",
+    "payload": {
+      "name": "Ferdinand",
+      "whatsapp": "082335493176",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:47:05.845Z"
+    },
+    "performed_at": "2026-11-04T07:47:05.845Z"
+  },
+  {
+    "id": "LOG-1793778421303-39",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:47:01.302Z"
+    },
+    "performed_at": "2026-11-04T07:47:01.303Z"
+  },
+  {
+    "id": "LOG-1793778421139-679",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-02",
+    "payload": {
+      "username": "kasir1",
+      "name": "Kasir Shift Pagi",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:47:01.139Z"
+    },
+    "performed_at": "2026-11-04T07:47:01.139Z"
+  },
+  {
+    "id": "LOG-1793778421053-104",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:47:01.052Z"
+    },
+    "performed_at": "2026-11-04T07:47:01.053Z"
+  },
+  {
+    "id": "LOG-1793778403895-762",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:46:43.895Z"
+    },
+    "performed_at": "2026-11-04T07:46:43.895Z"
+  },
+  {
+    "id": "LOG-1793778400494-517",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T07:46:40.494Z"
+    },
+    "performed_at": "2026-11-04T07:46:40.494Z"
+  },
+  {
+    "id": "LOG-1793778400483-560",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:46:40.483Z"
+    },
+    "performed_at": "2026-11-04T07:46:40.483Z"
+  },
+  {
+    "id": "LOG-1793778400144-401",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:46:40.144Z"
+    },
+    "performed_at": "2026-11-04T07:46:40.144Z"
+  },
+  {
+    "id": "LOG-1793778400042-268",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:46:40.042Z"
+    },
+    "performed_at": "2026-11-04T07:46:40.042Z"
+  },
+  {
+    "id": "LOG-1793778396431-829",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-20261029-4116",
+    "payload": {
+      "name": "Pelanggan Uji Coba",
+      "whatsapp": "081299988877",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:46:36.431Z"
+    },
+    "performed_at": "2026-11-04T07:46:36.431Z"
+  },
+  {
+    "id": "LOG-1793778396001-175",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-TECH-01",
+    "payload": {
+      "username": "rian",
+      "name": "Mas Rian (Spesialis Hardware & Mesin)",
+      "role": "teknisi",
+      "loginAt": "2026-11-04T07:46:35.984Z"
+    },
+    "performed_at": "2026-11-04T07:46:36.001Z"
+  },
+  {
+    "id": "LOG-1793778395900-745",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:46:35.900Z"
+    },
+    "performed_at": "2026-11-04T07:46:35.900Z"
+  },
+  {
+    "id": "LOG-1793778395796-614",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:46:35.795Z"
+    },
+    "performed_at": "2026-11-04T07:46:35.796Z"
+  },
+  {
+    "id": "LOG-1793778395701-374",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "kasir",
+      "loginAt": "2026-11-04T07:46:35.701Z"
+    },
+    "performed_at": "2026-11-04T07:46:35.701Z"
+  },
+  {
+    "id": "LOG-1793778216641-209",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-KASIR-01",
+    "payload": {
+      "username": "kasir",
+      "name": "Kasir Meja 1 Front Desk",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:43:36.640Z"
+    },
+    "performed_at": "2026-11-04T07:43:36.641Z"
+  },
+  {
+    "id": "LOG-1793778211121-697",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T07:43:31.121Z"
+    },
+    "performed_at": "2026-11-04T07:43:31.121Z"
+  },
+  {
+    "id": "LOG-1793778211110-444",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:43:31.110Z"
+    },
+    "performed_at": "2026-11-04T07:43:31.110Z"
+  },
+  {
+    "id": "LOG-1793778208360-650",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:43:28.359Z"
+    },
+    "performed_at": "2026-11-04T07:43:28.360Z"
+  },
+  {
+    "id": "LOG-1793778208241-530",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:43:28.241Z"
+    },
+    "performed_at": "2026-11-04T07:43:28.241Z"
+  },
+  {
+    "id": "LOG-1793777957698-216",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:39:17.697Z"
+    },
+    "performed_at": "2026-11-04T07:39:17.698Z"
+  },
+  {
+    "id": "LOG-1793777955023-386",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:39:15.022Z"
+    },
+    "performed_at": "2026-11-04T07:39:15.023Z"
+  },
+  {
+    "id": "LOG-1793777939105-474",
+    "action": "STAFF_LOGOUT",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "logoutAt": "2026-11-04T07:38:59.105Z"
+    },
+    "performed_at": "2026-11-04T07:38:59.105Z"
+  },
+  {
+    "id": "LOG-1793777939083-413",
+    "action": "CUSTOMER_LOGIN",
+    "table_name": "customers",
+    "record_id": "CUST-DUMMY-01",
+    "payload": {
+      "name": "Pelanggan Dummy",
+      "whatsapp": "081234567890",
+      "district": "Klojen, Kota Malang",
+      "loginAt": "2026-11-04T07:38:59.083Z"
+    },
+    "performed_at": "2026-11-04T07:38:59.083Z"
+  },
+  {
+    "id": "LOG-1793777937075-274",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:38:57.075Z"
+    },
+    "performed_at": "2026-11-04T07:38:57.075Z"
+  },
+  {
+    "id": "LOG-1793777936962-82",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:38:56.961Z"
+    },
+    "performed_at": "2026-11-04T07:38:56.962Z"
+  },
+  {
+    "id": "LOG-1793777753268-258",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:35:53.266Z"
+    },
+    "performed_at": "2026-11-04T07:35:53.268Z"
+  },
+  {
+    "id": "LOG-1793776799181-727",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T07:19:59.181Z"
+    },
+    "performed_at": "2026-11-04T07:19:59.181Z"
+  },
+  {
+    "id": "LOG-1793774453369-440",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T06:40:53.369Z"
+    },
+    "performed_at": "2026-11-04T06:40:53.369Z"
+  },
+  {
+    "id": "LOG-1793773038561-210",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T06:17:18.561Z"
+    },
+    "performed_at": "2026-11-04T06:17:18.561Z"
+  },
+  {
+    "id": "LOG-1793773038555-392",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T06:17:18.554Z"
+    },
+    "performed_at": "2026-11-04T06:17:18.555Z"
+  },
+  {
+    "id": "LOG-1793773038549-135",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-04T06:17:18.549Z"
+    },
+    "performed_at": "2026-11-04T06:17:18.549Z"
+  },
+  {
+    "id": "LOG-1793772132189-544",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-OWNER-01",
+    "payload": {
+      "username": "owner",
+      "name": "Ferdinand (Owner & Super Admin)",
+      "role": "admin",
+      "loginAt": "2026-11-04T06:02:12.189Z"
+    },
+    "performed_at": "2026-11-04T06:02:12.189Z"
   },
   {
     "id": "LOG-INIT-001",

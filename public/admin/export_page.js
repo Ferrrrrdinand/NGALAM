@@ -262,13 +262,13 @@
         // Badge Metode Bayar
         const rawMethod = (tx.paymentMethod || 'TUNAI').toUpperCase();
         let methodBadgeClass = 'badge-method tunai';
-        let methodIcon = '💵';
+        let methodIcon = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg>';
         if (rawMethod.includes('QRIS') || rawMethod.includes('WALLET')) {
           methodBadgeClass = 'badge-method qris';
-          methodIcon = '📱';
+          methodIcon = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>';
         } else if (rawMethod.includes('TRANSFER') || rawMethod.includes('BANK')) {
           methodBadgeClass = 'badge-method transfer';
-          methodIcon = '🏦';
+          methodIcon = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>';
         }
 
         const netTotal = parseInt(tx.totalPaid, 10) || 0;
@@ -298,7 +298,7 @@
             ${tx.cashierName || 'Kasir Meja 1'}
           </td>
           <td style="text-align: center;">
-            <span class="badge-status-lunas">✓ Lunas</span>
+            <span class="badge-status-lunas"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Lunas</span>
           </td>
         `;
 
@@ -370,9 +370,9 @@
         }, 1500);
 
         if (typeof window.showToast === 'function') {
-          window.showToast(`🎉 Laporan Excel "${filename}" berhasil diunduh!`, 'success');
+          window.showToast(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Laporan Excel "${filename}" berhasil diunduh!`, 'success');
         } else {
-          alert(`🎉 Berhasil!\nLaporan riwayat transaksi "${filename}" berhasil diekspor dan terunduh ke komputer Anda.`);
+          alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil!\nLaporan riwayat transaksi "${filename}" berhasil diekspor dan terunduh ke komputer Anda.`);
         }
       } catch (err) {
         console.error('[ExportPage] Download failed:', err);
@@ -380,11 +380,11 @@
       } finally {
         if (btnMainDownload) {
           btnMainDownload.disabled = false;
-          btnMainDownload.innerHTML = '<span>📥 Unduh Laporan Excel (.xlsx)</span>';
+          btnMainDownload.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg> Unduh Laporan Excel (.xlsx)</span>';
         }
         if (btnTopDownload) {
           btnTopDownload.disabled = false;
-          btnTopDownload.innerHTML = '<span>📥 Unduh Excel (.xlsx)</span>';
+          btnTopDownload.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg> Unduh Excel (.xlsx)</span>';
         }
       }
     }

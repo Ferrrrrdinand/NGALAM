@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
           chip.type = 'button';
           chip.className = 'quick-promo-chip';
           chip.setAttribute('data-code', promo.code);
-          chip.innerHTML = `<span>🏷️</span> <strong>${promo.code}</strong> <small style="opacity:0.85;">(${discountLabel})</small>`;
+          chip.innerHTML = `<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 9 9-9 9-9-9Z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg></span> <strong>${promo.code}</strong> <small style="opacity:0.85;">(${discountLabel})</small>`;
           chip.addEventListener('click', () => {
             if (custPromoCode) custPromoCode.value = promo.code;
             applyPromo(promo.code);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (promoAlertBox) {
         promoAlertBox.className = 'promo-alert-box error';
         promoAlertBox.style.display = 'flex';
-        promoAlertBox.innerHTML = '<span>⚠️</span> Mohon masukkan kode promo terlebih dahulu.';
+        promoAlertBox.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> Mohon masukkan kode promo terlebih dahulu.';
       }
       return;
     }
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (promoAlertBox) {
           promoAlertBox.className = 'promo-alert-box success';
           promoAlertBox.style.display = 'flex';
-          promoAlertBox.innerHTML = `<span>🎉</span> <div><strong>Kode Promo ${data.promo.code} Aktif!</strong> Anda berhasil hemat <b>Rp ${Number(data.discountAmount).toLocaleString('id-ID')}</b> untuk pendaftaran servis ini.</div>`;
+          promoAlertBox.innerHTML = `<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span> <div><strong>Kode Promo ${data.promo.code} Aktif!</strong> Anda berhasil hemat <b>Rp ${Number(data.discountAmount).toLocaleString('id-ID')}</b> untuk pendaftaran servis ini.</div>`;
         }
       } else {
         // Promo Invalid or Expired
@@ -242,19 +242,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (promoAlertBox) {
           promoAlertBox.className = 'promo-alert-box error';
           promoAlertBox.style.display = 'flex';
-          promoAlertBox.innerHTML = `<span>⚠️</span> <div>${data.message || 'Kode promo tidak valid atau sudah tidak berlaku.'}</div>`;
+          promoAlertBox.innerHTML = `<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> <div>${data.message || 'Kode promo tidak valid atau sudah tidak berlaku.'}</div>`;
         }
       }
     } catch (err) {
       if (promoAlertBox) {
         promoAlertBox.className = 'promo-alert-box error';
         promoAlertBox.style.display = 'flex';
-        promoAlertBox.innerHTML = '<span>⚠️</span> Gagal memeriksa kode promo: ' + err.message;
+        promoAlertBox.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> Gagal memeriksa kode promo: ' + err.message;
       }
     } finally {
       if (btnApplyPromo) {
         btnApplyPromo.disabled = false;
-        btnApplyPromo.innerHTML = '<span>Gunakan Promo ✨</span>';
+        btnApplyPromo.innerHTML = '<span>Gunakan Promo <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span>';
       }
     }
   }
@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!models.includes('Seri Lainnya / Tulis Manual')) {
       const optManual = document.createElement('option');
       optManual.value = 'Lainnya';
-      optManual.textContent = '➕ Seri Lainnya / Tulis Manual';
+      optManual.textContent = '+ Seri Lainnya / Tulis Manual';
       custModelSelect.appendChild(optManual);
     }
   }
@@ -516,90 +516,163 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPromo(requestedPromo.toUpperCase());
   }
 
-  // Affiliate Mitra Referral & QR Code Auto-Lock & Recovery
+  // Affiliate Mitra Referral & QR Code Detection
+  const custAffiliateInput = document.getElementById('custAffiliateInput');
+  const btnApplyAffiliate = document.getElementById('btnApplyAffiliate');
+  const btnRemoveAffiliate = document.getElementById('btnRemoveAffiliate');
+  const affiliateInputAlert = document.getElementById('affiliateInputAlert');
+
   let activeAffiliateRef = '';
-  const affiliateBanner = document.getElementById('affiliateBanner');
-  const affiliateMitraName = document.getElementById('affiliateMitraName');
-  const affiliateBadgeCode = document.getElementById('affiliateBadgeCode');
-  const affiliateMitraAvatar = document.getElementById('affiliateMitraAvatar');
 
-  function getLockedReferral() {
-    return localStorage.getItem('ngalam_locked_mitra_ref') || sessionStorage.getItem('ngalam_locked_mitra_ref') || localStorage.getItem('ngalam_affiliate_ref') || '';
-  }
-
-  function setLockedReferral(refCode, mitraData = null) {
-    if (!refCode) return;
-    const clean = String(refCode).trim().toUpperCase();
-    activeAffiliateRef = clean;
-    localStorage.setItem('ngalam_locked_mitra_ref', clean);
-    sessionStorage.setItem('ngalam_locked_mitra_ref', clean);
-    localStorage.setItem('ngalam_affiliate_ref', clean);
-    if (mitraData) {
-      localStorage.setItem('ngalam_locked_mitra_data', JSON.stringify(mitraData));
+  async function applyAffiliateCode(rawCode, silent = false) {
+    const code = (rawCode || custAffiliateInput?.value || '').trim().toUpperCase();
+    if (!code) {
+      if (!silent && affiliateInputAlert) {
+        affiliateInputAlert.style.display = 'block';
+        affiliateInputAlert.style.background = '#fef2f2';
+        affiliateInputAlert.style.color = '#b91c1c';
+        affiliateInputAlert.style.border = '1px solid #fecaca';
+        affiliateInputAlert.textContent = 'Silakan masukkan kode referral mitra terlebih dahulu.';
+      }
+      return;
     }
-  }
 
-  async function resolveAndLockAffiliate(rawCode) {
-    const code = String(rawCode || '').trim().toUpperCase();
-    if (!code) return;
+    if (btnApplyAffiliate) {
+      btnApplyAffiliate.disabled = true;
+      btnApplyAffiliate.innerHTML = '<span>⏳ Memeriksa...</span>';
+    }
 
     try {
       if (window.resolveNgalamApiBase) {
         API_BASE = await window.resolveNgalamApiBase();
       }
-      const res = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(code)}`);
-      const data = await res.json();
-      if (data.success && data.mitra) {
-        setLockedReferral(data.mitra.referralCode, data.mitra);
-        // Simpan sesi referral ke server (Database Sessions)
-        fetch(`${API_BASE}/api/mitra/session/lock`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ attemptId: getOrCreateAttemptId(), referralCode: data.mitra.referralCode })
-        }).catch(() => {});
-        renderAffiliateBadge(data.mitra);
+      const refRes = await fetch(`${API_BASE}/api/mitra/ref/${encodeURIComponent(code)}`);
+      const refData = await refRes.json();
+      if (refData.success && refData.mitra) {
+        activeAffiliateRef = refData.mitra.referralCode;
+        localStorage.setItem('ngalam_affiliate_ref', activeAffiliateRef);
+
+        if (custAffiliateInput) {
+          custAffiliateInput.value = activeAffiliateRef;
+          custAffiliateInput.style.borderColor = '#10b981';
+          custAffiliateInput.style.background = '#f0fdf4';
+        }
+        if (btnRemoveAffiliate) btnRemoveAffiliate.style.display = 'inline-block';
+
+        const banner = document.getElementById('affiliateBanner');
+        const nameEl = document.getElementById('affiliateMitraName');
+        const badgeEl = document.getElementById('affiliateBadgeCode');
+        const avatarEl = document.getElementById('affiliateMitraAvatar');
+
+        if (banner) banner.style.display = 'block';
+        if (nameEl) nameEl.textContent = refData.mitra.name;
+        if (badgeEl) badgeEl.textContent = refData.mitra.referralCode;
+        if (avatarEl) avatarEl.textContent = refData.mitra.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>';
+
+        if (affiliateInputAlert) {
+          affiliateInputAlert.style.display = 'block';
+          affiliateInputAlert.style.background = '#ecfdf5';
+          affiliateInputAlert.style.color = '#047857';
+          affiliateInputAlert.style.border = '1px solid #a7f3d0';
+          affiliateInputAlert.innerHTML = `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Terhubung ke mitra resmi: <b>${refData.mitra.name}</b> (${refData.mitra.referralCode}). Komisi otomatis dialokasikan ke mitra!`;
+        }
+      } else {
+        if (code && code.startsWith('MTR-')) {
+          activeAffiliateRef = code;
+          if (custAffiliateInput) {
+            custAffiliateInput.value = code;
+            custAffiliateInput.style.borderColor = '#10b981';
+            custAffiliateInput.style.background = '#f0fdf4';
+          }
+          const banner = document.getElementById('affiliateBanner');
+          const badgeEl = document.getElementById('affiliateBadgeCode');
+          if (banner) banner.style.display = 'block';
+          if (badgeEl) badgeEl.textContent = code;
+        }
+        if (!silent && affiliateInputAlert) {
+          affiliateInputAlert.style.display = 'block';
+          affiliateInputAlert.style.background = '#fef2f2';
+          affiliateInputAlert.style.color = '#b91c1c';
+          affiliateInputAlert.style.border = '1px solid #fecaca';
+          affiliateInputAlert.textContent = refData.message || `Kode mitra "${code}" tidak ditemukan di database.`;
+        }
       }
     } catch (err) {
-      console.warn('[Affiliate] Fallback cache local:', err.message);
-      const cached = localStorage.getItem('ngalam_locked_mitra_data');
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.referralCode === code) renderAffiliateBadge(parsed);
-        } catch (_) {}
+      if (code && code.startsWith('MTR-')) {
+        activeAffiliateRef = code;
+        if (custAffiliateInput) {
+          custAffiliateInput.value = code;
+          custAffiliateInput.style.borderColor = '#10b981';
+          custAffiliateInput.style.background = '#f0fdf4';
+        }
+        const banner = document.getElementById('affiliateBanner');
+        const badgeEl = document.getElementById('affiliateBadgeCode');
+        if (banner) banner.style.display = 'block';
+        if (badgeEl) badgeEl.textContent = code;
+      }
+      if (!silent && affiliateInputAlert) {
+        affiliateInputAlert.style.display = 'block';
+        affiliateInputAlert.style.background = '#fef2f2';
+        affiliateInputAlert.style.color = '#b91c1c';
+        affiliateInputAlert.style.border = '1px solid #fecaca';
+        affiliateInputAlert.textContent = 'Gagal memeriksa kode mitra: ' + err.message;
+      }
+    } finally {
+      if (btnApplyAffiliate) {
+        btnApplyAffiliate.disabled = false;
+        btnApplyAffiliate.innerHTML = '<span>Hubungkan Mitra <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></span>';
       }
     }
   }
 
-  function renderAffiliateBadge(mitra) {
-    if (!affiliateBanner) return;
-    affiliateBanner.style.display = 'block';
-    if (affiliateMitraName) affiliateMitraName.textContent = mitra.name || 'Mitra Ojol Rekanan';
-    if (affiliateBadgeCode) affiliateBadgeCode.textContent = mitra.referralCode;
-    if (affiliateMitraAvatar) affiliateMitraAvatar.textContent = mitra.avatar || '??';
-  }
-
-  // Scan QR Auto-detection: ?ref=... / ?referral=...
-  const scannedRef = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('affiliate');
-  if (scannedRef) {
-    setLockedReferral(scannedRef);
-    resolveAndLockAffiliate(scannedRef);
-  } else {
-    const saved = getLockedReferral();
-    if (saved) resolveAndLockAffiliate(saved);
-  }
-
-  function getOrCreateAttemptId() {
-    let attemptId = sessionStorage.getItem('ngalam_booking_attempt_id');
-    if (!attemptId) {
-      attemptId = 'ATT-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      sessionStorage.setItem('ngalam_booking_attempt_id', attemptId);
+  function removeAffiliateCode() {
+    activeAffiliateRef = '';
+    localStorage.removeItem('ngalam_affiliate_ref');
+    if (custAffiliateInput) {
+      custAffiliateInput.value = '';
+      custAffiliateInput.style.borderColor = '';
+      custAffiliateInput.style.background = '';
     }
-    return attemptId;
+    const banner = document.getElementById('affiliateBanner');
+    if (banner) banner.style.display = 'none';
+    if (btnRemoveAffiliate) btnRemoveAffiliate.style.display = 'none';
+    if (affiliateInputAlert) {
+      affiliateInputAlert.style.display = 'none';
+      affiliateInputAlert.innerHTML = '';
+    }
   }
 
-  function clearAttemptId() {
-    sessionStorage.removeItem('ngalam_booking_attempt_id');
+  btnApplyAffiliate?.addEventListener('click', () => applyAffiliateCode());
+  btnRemoveAffiliate?.addEventListener('click', removeAffiliateCode);
+  custAffiliateInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      applyAffiliateCode();
+    }
+  });
+
+  // Deteksi kode referral mitra otomatis dari 3 sumber:
+  // 1. URL parameter (?ref=... / ?referral=... / ?affiliate=...)
+  // 2. Akun member pelanggan yang login (cust.referredByMitra)
+  // 3. LocalStorage riwayat kunjungan (ngalam_affiliate_ref)
+  let initialAffiliate = urlParams.get('ref') || urlParams.get('referral') || urlParams.get('affiliate') || '';
+  if (!initialAffiliate) {
+    try {
+      const rawCust = localStorage.getItem('ngalam_customer_session') || sessionStorage.getItem('ngalam_customer_session');
+      if (rawCust) {
+        const custObj = JSON.parse(rawCust);
+        if (custObj && (custObj.referredByMitra || custObj.referralCode)) {
+          initialAffiliate = custObj.referredByMitra || custObj.referralCode;
+        }
+      }
+    } catch (_) {}
+  }
+  if (!initialAffiliate) {
+    initialAffiliate = localStorage.getItem('ngalam_affiliate_ref') || '';
+  }
+
+  if (initialAffiliate) {
+    applyAffiliateCode(initialAffiliate, true);
   }
 
   // Problem tags toggle with dynamic promo recalculation
@@ -688,8 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cost: finalCostString,
       promoCode: appliedPromo ? appliedPromo.promo.code : '',
       discountAmount: appliedPromo ? appliedPromo.discountAmount : 0,
-      affiliateRef: activeAffiliateRef || getLockedReferral() || '',
-      attemptId: getOrCreateAttemptId(),
+      affiliateRef: activeAffiliateRef || (custAffiliateInput ? custAffiliateInput.value.trim().toUpperCase() : '') || localStorage.getItem('ngalam_affiliate_ref') || '',
       duration: '30 - 60 Menit',
       status: 'Registrasi & Masuk',
       step: 1,
@@ -721,7 +793,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (result.success && result.data) {
         const order = result.data;
         if (createdTicketBadge) createdTicketBadge.textContent = order.id;
-        clearAttemptId(); // Sukses, reset attemptId agar order berikutnya mendapatkan id unik baru
 
         // WhatsApp Confirmation Message
         let promoWaText = '';
@@ -811,8 +882,3 @@ document.addEventListener('DOMContentLoaded', () => {
   loadQuickPromos();
   autofillMemberData();
 });
-
-
-
-
-

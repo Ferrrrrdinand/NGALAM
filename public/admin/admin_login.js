@@ -44,12 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
       adminLoginAlert.style.background = 'rgba(16, 185, 129, 0.15)';
       adminLoginAlert.style.border = '1px solid rgba(16, 185, 129, 0.4)';
       adminLoginAlert.style.color = '#059669';
-      adminLoginAlert.innerHTML = `<b>🎉 Berhasil:</b> ${msg}`;
+      adminLoginAlert.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil:</b> ${msg}`;
     } else {
       adminLoginAlert.style.background = 'rgba(239, 68, 68, 0.15)';
       adminLoginAlert.style.border = '1px solid rgba(239, 68, 68, 0.4)';
       adminLoginAlert.style.color = '#dc2626';
-      adminLoginAlert.innerHTML = `<b>⚠️ Gagal Masuk:</b> ${msg}`;
+      adminLoginAlert.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Gagal Masuk:</b> ${msg}`;
     }
   }
 
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyeOpen.style.display = isPass ? 'none' : 'block';
       eyeClosed.style.display = isPass ? 'block' : 'none';
     } else {
-      toggleAdminPassBtn.textContent = isPass ? '🔒' : '👁️';
+      toggleAdminPassBtn.textContent = isPass ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
     }
   });
 
@@ -311,17 +311,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Langsung lakukan otentikasi otomatis (Auto-Login)
         try {
+          const isRemember = Boolean(adminRememberCheck?.checked);
           const autoLoginRes = await fetch(`${apiBase}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ identifier: username, password, role, referralCode }),
+            body: JSON.stringify({ identifier: username, password, role, referralCode, rememberMe: isRemember }),
           });
           const autoData = await autoLoginRes.json();
           if (autoData.success && autoData.user) {
-            const storage = adminRememberCheck?.checked ? localStorage : sessionStorage;
+            const storage = isRemember ? localStorage : sessionStorage;
+            const otherStorage = isRemember ? sessionStorage : localStorage;
             storage.setItem('ngalam_auth_user', JSON.stringify(autoData.user));
-            localStorage.setItem('ngalam_auth_user', JSON.stringify(autoData.user));
-            document.cookie = `ngalam_token=${autoData.user.token}; path=/; max-age=86400; SameSite=Lax`;
+            otherStorage.removeItem('ngalam_auth_user');
+            const maxAge = autoData.user.maxAge || (isRemember ? 2592000 : 86400);
+            document.cookie = `ngalam_token=${autoData.user.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
             
             if (window.showAuthSuccessModal) {
               window.showAuthSuccessModal({
@@ -530,20 +533,24 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
       }
 
+      const isRemember = Boolean(adminRememberCheck?.checked);
       const res = await fetch(`${apiBase}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password, role, referralCode: effectiveReferral }),
+        body: JSON.stringify({ identifier, password, role, referralCode: effectiveReferral, rememberMe: isRemember }),
       });
       const data = await res.json();
 
       if (data.success && data.user) {
+        const storage = isRemember ? localStorage : sessionStorage;
+        const otherStorage = isRemember ? sessionStorage : localStorage;
+        const maxAge = data.user.maxAge || (isRemember ? 2592000 : 86400);
+
         // Jika akun kasir login di halaman admin, arahkan ke dashboard kasir
         if (data.user.role === 'kasir') {
-          const storage = adminRememberCheck?.checked ? localStorage : sessionStorage;
           storage.setItem('ngalam_auth_user', JSON.stringify(data.user));
-          localStorage.setItem('ngalam_auth_user', JSON.stringify(data.user));
-          document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=86400; SameSite=Lax`;
+          otherStorage.removeItem('ngalam_auth_user');
+          document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
           showAlert('Akun Kasir terdeteksi. Mengalihkan ke Dashboard Kasir Meja 1...', true);
           setTimeout(() => {
             window.location.replace('../kasir/index.html');
@@ -566,10 +573,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const roleTitle = 'Admin Super User';
         showAlert(data.message || `Login berhasil sebagai ${roleTitle}! Mengalihkan...`, true);
-        const storage = adminRememberCheck?.checked ? localStorage : sessionStorage;
         storage.setItem('ngalam_auth_user', JSON.stringify(data.user));
-        localStorage.setItem('ngalam_auth_user', JSON.stringify(data.user));
-        document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=86400; SameSite=Lax`;
+        otherStorage.removeItem('ngalam_auth_user');
+        document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
 
         const redirectTarget = resolveSafeRedirect(urlParams.get('redirect'));
 
@@ -594,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         const errMsg = data.error || data.message || 'Username atau password yang Anda masukkan tidak cocok.';
         if (errMsg.includes('KASIR')) {
-          showAlert(`⚠️ ${errMsg} <a href="../kasir/login.html" style="color: #0284c7; font-weight: 800; text-decoration: underline; margin-left: 6px;">Buka Login Kasir Meja 1 ↗</a>`);
+          showAlert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${errMsg} <a href="../kasir/login.html" style="color: #0284c7; font-weight: 800; text-decoration: underline; margin-left: 6px;">Buka Login Kasir Meja 1 ↗</a>`);
         } else {
           showAlert(errMsg);
         }

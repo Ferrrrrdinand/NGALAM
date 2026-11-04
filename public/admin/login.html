@@ -771,7 +771,7 @@
 
         <!-- Portal Kasir Quick Switcher Banner -->
         <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 10px 14px; margin-bottom: 18px; font-size: 0.84rem; color: #0369a1; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-          <span style="font-weight: 700;">👩‍💼 Khusus Staf Kasir Front Desk?</span>
+          <span style="font-weight: 700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg> Khusus Staf Kasir Front Desk?</span>
           <a href="../kasir/login.html" style="color: #0284c7; font-weight: 800; text-decoration: underline;">Buka Login Kasir ↗</a>
         </div>
 
@@ -1005,7 +1005,7 @@
           <div style="margin-bottom: 10px;">
             <span>Petugas Kasir Front Desk? </span>
             <a href="../kasir/login.html" style="color: #0284c7; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-              <span>👩‍💼 Login Kasir Meja 1 ↗</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg> Login Kasir Meja 1 ↗</span>
             </a>
           </div>
           <div>
@@ -1108,7 +1108,7 @@
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
 
-        liveClockDisplay.textContent = `🕒 ${dayName}, ${date} ${month} ${year} • ${hours}:${minutes}:${seconds} WIB`;
+        liveClockDisplay.textContent = `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${dayName}, ${date} ${month} ${year} • ${hours}:${minutes}:${seconds} WIB`;
       }
 
       updateLiveClock();

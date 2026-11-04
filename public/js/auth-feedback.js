@@ -69,29 +69,28 @@
     const user = options.user || {};
     const name = user.name || user.username || 'Pengguna Terverifikasi';
     
-    // Determine friendly role name & avatar
+    // Determine friendly role name & avatar SVG
     let roleText = 'Akses Terverifikasi';
-    let avatarIcon = '✨';
+    let avatarIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>';
 
     const r = (user.role || '').toLowerCase();
     if (r === 'admin' || r === 'owner') {
-      roleText = '👑 Admin Super User (Akses Penuh)';
-      avatarIcon = '👑';
+      roleText = 'Admin Super User (Akses Penuh)';
+      avatarIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>';
     } else if (r === 'kasir') {
-      roleText = '👩‍💼 Kasir Meja 1 Workshop';
-      avatarIcon = '👩‍💼';
+      roleText = 'Kasir Meja 1 Workshop';
+      avatarIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>';
     } else if (r === 'teknisi') {
-      roleText = '🔬 Teknisi Meja Kerja Lab';
-      avatarIcon = '🔬';
-    } else if (r === 'mitra') {
-      roleText = '🤝 Mitra Ekosistem Workshop';
-      avatarIcon = '🤝';
+      roleText = 'Teknisi Meja Kerja Lab';
+      avatarIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>';
+    } else if (r === 'mitra' || r === 'ojol') {
+      roleText = 'Mitra Ekosistem Workshop';
+      avatarIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>';
     } else if (r === 'customer' || r === 'pelanggan') {
-      roleText = '📱 Pelanggan Member Terdaftar';
-      avatarIcon = '📱';
+      roleText = 'Pelanggan Member Terdaftar';
+      avatarIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
     }
 
-    if (user.avatar) avatarIcon = user.avatar;
     if (user.roleText) roleText = user.roleText;
 
     const modalHtml = `
@@ -197,7 +196,9 @@
 
     const modalHtml = `
       <div class="ngalam-auth-modal modal-error modal-shake" role="dialog" aria-modal="true" aria-labelledby="authErrorTitle">
-        <button type="button" class="ngalam-auth-close-btn" id="authErrorCloseBtn" aria-label="Tutup Dialog">✕</button>
+        <button type="button" class="ngalam-auth-close-btn" id="authErrorCloseBtn" aria-label="Tutup Dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
 
         <!-- Error Icon Badge -->
         <div class="auth-icon-badge-error">

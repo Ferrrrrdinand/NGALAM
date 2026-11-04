@@ -1,1 +1,93 @@
-[]
+[
+  {
+    "id": "FIN-20261103-8124",
+    "date": "2026-11-03T13:30:58.463Z",
+    "displayDate": "3 Nov 2026, 20.30",
+    "ref": "INV-20261103-3323",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-3323 - iPhone 13 (Test Pelanggan Automated) via Tunai",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 250000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261104-3165",
+    "date": "2026-11-04T10:27:38.693Z",
+    "displayDate": "4 Nov 2026, 17.27",
+    "ref": "INV-20261104-2190",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261104-7646 - XIAOMI Xiaomi 14 / 14 Ultra (Pelanggan Dummy) via Tunai (Cash)",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 500000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261104-1679",
+    "date": "2026-11-04T10:27:40.436Z",
+    "displayDate": "4 Nov 2026, 17.27",
+    "ref": "INV-20261104-3071",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261104-7646 - XIAOMI Xiaomi 14 / 14 Ultra (Pelanggan Dummy) via Tunai (Cash)",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 750000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261104-8473",
+    "date": "2026-11-04T10:27:40.439Z",
+    "displayDate": "4 Nov 2026, 17.27",
+    "ref": "INV-20261104-2732",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261104-7646 - XIAOMI Xiaomi 14 / 14 Ultra (Pelanggan Dummy) via Tunai (Cash)",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 1000000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261104-3709",
+    "date": "2026-11-04T10:27:40.443Z",
+    "displayDate": "4 Nov 2026, 17.27",
+    "ref": "INV-20261104-7868",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261104-7646 - XIAOMI Xiaomi 14 / 14 Ultra (Pelanggan Dummy) via Tunai (Cash)",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 1250000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261104-2108",
+    "date": "2026-11-04T10:27:40.677Z",
+    "displayDate": "4 Nov 2026, 17.27",
+    "ref": "INV-20261104-5795",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261104-7646 - XIAOMI Xiaomi 14 / 14 Ultra (Pelanggan Dummy) via Tunai (Cash)",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 1500000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261104-2252",
+    "date": "2026-11-04T10:27:40.972Z",
+    "displayDate": "4 Nov 2026, 17.27",
+    "ref": "INV-20261104-1595",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261104-7646 - XIAOMI Xiaomi 14 / 14 Ultra (Pelanggan Dummy) via Tunai (Cash)",
+    "debit": 250000,
+    "credit": 0,
+    "balance": 1750000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  }
+]

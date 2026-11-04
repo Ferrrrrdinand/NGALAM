@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (loadingIndicator) loadingIndicator.classList.add('hidden');
       if (trackSubmitBtn) {
         trackSubmitBtn.disabled = false;
-        trackSubmitBtn.innerHTML = '<span>Lacak Unit 🔍</span>';
+        trackSubmitBtn.innerHTML = '<span>Lacak Unit <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>';
       }
 
       if (data.success && data.data) {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (loadingIndicator) loadingIndicator.classList.add('hidden');
       if (trackSubmitBtn) {
         trackSubmitBtn.disabled = false;
-        trackSubmitBtn.innerHTML = '<span>Lacak Unit 🔍</span>';
+        trackSubmitBtn.innerHTML = '<span>Lacak Unit <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>';
       }
       if (notFoundAlert) notFoundAlert.classList.remove('hidden');
     }
@@ -102,10 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
       let icon = s.num;
       if (s.num < step) {
         statusClass = 'completed';
-        icon = '✓';
+        icon = '<svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
       } else if (s.num === step) {
         statusClass = 'active';
-        icon = '⚡';
+        icon = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
       }
 
       return `
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div class="tracking-timeline-box">
           <div style="font-weight:700;color:#0f172a;margin-bottom:14px;font-size:0.95rem;">
-            📍 Progres Pengerjaan di Meja Lab:
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Progres Pengerjaan di Meja Lab:
           </div>
           <div class="tracking-timeline">
             ${timelineHtml}
@@ -153,11 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="tracking-detail-item">
             <span>Teknisi Penanggung Jawab:</span>
-            <strong>👨‍🔧 ${order.technician || 'Rian Workshop (Meja 1)'}</strong>
+            <strong><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> ${order.technician || 'Rian Workshop (Meja 1)'}</strong>
           </div>
           <div class="tracking-detail-item">
             <span>Metode Servis:</span>
-            <strong>🛵 ${order.method || 'Antar-Jemput Mitra / Walk-in'}</strong>
+            <strong><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg> ${order.method || 'Antar-Jemput Mitra / Walk-in'}</strong>
           </div>
           <div class="tracking-detail-item">
             <span>Catatan Diagnosa Lab:</span>
@@ -167,10 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div class="tracking-card-actions">
           <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20status%20tiket%20${encodeURIComponent(order.id)}" target="_blank" rel="noopener noreferrer" class="btn small" style="background:#25d366;border-color:#25d366;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-            <span>💬 Hubungi Customer Care</span>
+            <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Hubungi Customer Care</span>
           </a>
           <a href="../login/index.html" class="btn small outline" style="border-radius:10px;text-decoration:none;">
-            <span>👤 Masuk ke Akun Member Pelanggan ↗</span>
+            <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Masuk ke Akun Member Pelanggan ↗</span>
           </a>
         </div>
       </div>

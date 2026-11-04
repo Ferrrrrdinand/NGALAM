@@ -91,12 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
       kasirLoginAlert.style.background = 'rgba(16, 185, 129, 0.12)';
       kasirLoginAlert.style.border = '1px solid rgba(16, 185, 129, 0.35)';
       kasirLoginAlert.style.color = '#059669';
-      kasirLoginAlert.innerHTML = `<b>🎉 Berhasil:</b> ${msg}`;
+      kasirLoginAlert.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil:</b> ${msg}`;
     } else {
       kasirLoginAlert.style.background = 'rgba(239, 68, 68, 0.12)';
       kasirLoginAlert.style.border = '1px solid rgba(239, 68, 68, 0.35)';
       kasirLoginAlert.style.color = '#dc2626';
-      kasirLoginAlert.innerHTML = `<b>⚠️ Gagal Masuk:</b> ${msg}`;
+      kasirLoginAlert.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Gagal Masuk:</b> ${msg}`;
     }
   }
 
@@ -201,13 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
           try { apiBase = await window.resolveNgalamApiBase(); } catch (_) {}
         }
 
+        const isRemember = kasirRememberCheck ? kasirRememberCheck.checked : true;
+
         const response = await fetch(`${apiBase}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             identifier,
             password,
-            role: 'kasir'
+            role: 'kasir',
+            rememberMe: isRemember
           })
         });
 
@@ -221,20 +224,19 @@ document.addEventListener('DOMContentLoaded', () => {
             email: data.user.email,
             phone: data.user.phone,
             role: data.user.role,
-            avatar: data.user.avatar || '👩‍💼',
+            avatar: data.user.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg>',
             token: data.user.token,
             accessLevel: data.user.accessLevel || 'kasir_frontdesk',
             loginTime: new Date().toISOString()
           };
 
-          const isRemember = kasirRememberCheck ? kasirRememberCheck.checked : true;
-          if (isRemember) {
-            localStorage.setItem('ngalam_auth_user', JSON.stringify(authData));
-          } else {
-            sessionStorage.setItem('ngalam_auth_user', JSON.stringify(authData));
-          }
+          const targetStorage = isRemember ? localStorage : sessionStorage;
+          const otherStorage = isRemember ? sessionStorage : localStorage;
+          targetStorage.setItem('ngalam_auth_user', JSON.stringify(authData));
+          otherStorage.removeItem('ngalam_auth_user');
 
-          document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=86400; SameSite=Lax`;
+          const maxAge = data.user.maxAge || (isRemember ? 2592000 : 86400);
+          document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
 
           const targetUrl = resolveSafeRedirect(urlParams.get('redirect'));
 

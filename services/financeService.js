@@ -379,9 +379,21 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
   let updatedMitra = null;
   if (mitraIdx !== -1) {
     mitras[mitraIdx].totalCommission = (mitras[mitraIdx].totalCommission || 0) + commNum;
+    mitras[mitraIdx].balance = (mitras[mitraIdx].balance || 0) + commNum;
     mitras[mitraIdx].lastActive = new Date().toLocaleString('id-ID');
-    updatedMitra = mitras[mitraIdx];
+    
+    if (!Array.isArray(mitras[mitraIdx].commissionHistory)) {
+      mitras[mitraIdx].commissionHistory = [];
+    }
+    mitras[mitraIdx].commissionHistory.push({
+      orderId,
+      amount: commNum,
+      type: 'credit',
+      date: new Date().toISOString(),
+      note: `Komisi 10% nota order ${orderId}`
+    });
 
+    updatedMitra = mitras[mitraIdx];
     userService.saveMitraUsers(mitras);
   }
 
@@ -390,6 +402,52 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
     referralCode: cleanRef,
     commissionAmount: commNum,
     updatedMitra
+  };
+}
+
+/**
+ * Payout / Tarik Saldo Komisi Mitra oleh Kasir / Admin
+ */
+async function payoutMitraCommission(refCode, amount = null, note = 'Pencairan komisi kasir') {
+  const cleanRef = String(refCode || '').trim().toUpperCase();
+  if (!cleanRef) return null;
+
+  const mitras = userService.getMitraUsers();
+  const mitraIdx = mitras.findIndex(u => (u.referralCode || '').toUpperCase() === cleanRef);
+  if (mitraIdx === -1) return null;
+
+  const currentBalance = mitras[mitraIdx].balance || 0;
+  const payoutAmount = amount !== null ? Math.min(currentBalance, Math.max(0, parseInt(amount, 10) || 0)) : currentBalance;
+
+  if (payoutAmount <= 0) {
+    return {
+      success: false,
+      message: 'Saldo komisi mitra Rp 0 atau tidak mencukupi untuk ditarik.',
+      mitra: mitras[mitraIdx]
+    };
+  }
+
+  mitras[mitraIdx].balance = Math.max(0, currentBalance - payoutAmount);
+  mitras[mitraIdx].withdrawnCommission = (mitras[mitraIdx].withdrawnCommission || 0) + payoutAmount;
+  mitras[mitraIdx].lastPayoutAt = new Date().toLocaleString('id-ID');
+
+  if (!Array.isArray(mitras[mitraIdx].commissionHistory)) {
+    mitras[mitraIdx].commissionHistory = [];
+  }
+  mitras[mitraIdx].commissionHistory.push({
+    amount: payoutAmount,
+    type: 'debit',
+    date: new Date().toISOString(),
+    note
+  });
+
+  userService.saveMitraUsers(mitras);
+
+  return {
+    success: true,
+    message: `Pencairan komisi sebesar Rp ${payoutAmount.toLocaleString('id-ID')} untuk mitra ${mitras[mitraIdx].name} berhasil dicatat.`,
+    payoutAmount,
+    mitra: mitras[mitraIdx]
   };
 }
 
@@ -410,5 +468,6 @@ module.exports = {
   getWitMonthYearPeriod,
   getWitDisplayTime,
   generateMitraCode,
-  recordMitraCommission
+  recordMitraCommission,
+  payoutMitraCommission
 };

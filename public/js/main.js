@@ -312,8 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.success) {
         if (estPriceDisplay) estPriceDisplay.textContent = data.price;
-        if (estTimeDisplay) estTimeDisplay.textContent = '⚡ ' + data.time;
-        if (estWarrantyDisplay) estWarrantyDisplay.textContent = '🛡️ Garansi ' + data.warranty;
+        if (estTimeDisplay) estTimeDisplay.textContent = data.time;
+        if (estWarrantyDisplay) estWarrantyDisplay.textContent = 'Garansi ' + data.warranty;
         if (estCtaButton) estCtaButton.href = data.waUrl;
         if (estBookingBtn) {
           const isSubdir = window.location.pathname.includes('/layanan') ||
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!promoModal) return;
 
     // Set Tag & Pill
-    if (modalPromoBadge) modalPromoBadge.textContent = promo.badgeTag || '🔥 PROMO SPESIAL BULAN INI';
+    if (modalPromoBadge) modalPromoBadge.textContent = promo.badgeTag || 'PROMO SPESIAL BULAN INI';
     if (modalPromoPill) {
       if (promo.badgePill) {
         modalPromoPill.style.display = 'inline-flex';
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Format and handle Promo Code
     const rawCode = (promo.promoCode || '').trim();
     let cleanCode = '';
-    if (rawCode && !rawCode.startsWith('🛡️')) {
+    if (rawCode && !rawCode.startsWith('GARANSI')) {
       cleanCode = rawCode.replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
     }
 
@@ -485,10 +485,10 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           const codeToCopy = cleanCode || rawCode;
           const onSuccess = () => {
-            if (modalCopyCodeText) modalCopyCodeText.textContent = '✓ Disalin!';
+            if (modalCopyCodeText) modalCopyCodeText.textContent = 'Disalin!';
             if (copyToast) {
               copyToast.style.display = 'block';
-              copyToast.textContent = `✅ Kode voucher "${codeToCopy}" berhasil disalin!`;
+              copyToast.textContent = `Kode voucher "${codeToCopy}" berhasil disalin!`;
             }
             setTimeout(() => {
               if (modalCopyCodeText) modalCopyCodeText.textContent = 'Salin Kode';
@@ -739,7 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Extract clean promo code if available for linking
       const rawCode = (promo.promoCode || '').trim();
       let cleanCode = '';
-      if (rawCode && !rawCode.startsWith('🛡️')) {
+      if (rawCode && !rawCode.startsWith('GARANSI')) {
         cleanCode = rawCode.replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
       }
 
@@ -752,8 +752,8 @@ document.addEventListener('DOMContentLoaded', () => {
       slide.setAttribute('data-btn-text', promo.buttonText || 'Klaim Promo Servis Sekarang ↗');
 
       const hintText = promo.theme === 'green'
-        ? '✨ Klik Banner untuk Fasilitas &amp; Garansi'
-        : (promo.theme === 'purple' ? '✨ Klik Banner untuk Bonus Tempered Glass' : '✨ Klik Banner untuk Info Promo &amp; Klaim');
+        ? 'Klik Banner untuk Fasilitas &amp; Garansi'
+        : (promo.theme === 'purple' ? 'Klik Banner untuk Bonus Tempered Glass' : 'Klik Banner untuk Info Promo &amp; Klaim');
       const ctaText = promo.theme === 'green' ? 'Konsultasi ↗' : 'Klaim Promo ↗';
       const pulseColor = promo.theme === 'green' ? '#10b981' : (promo.theme === 'purple' ? '#c084fc' : '#ef4444');
 
@@ -768,7 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="promo-top-row">
             <div class="promo-badge-tag" style="color: #ffffff !important;">
               <span class="pulse-indicator"></span>
-              <span style="color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);">${promo.badgeTag || '🔥 PROMO SPESIAL BULAN INI'}</span>
+              <span style="color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);">${promo.badgeTag || 'PROMO SPESIAL BULAN INI'}</span>
             </div>
             ${promo.badgePill ? `<div class="promo-discount-pill" style="${themeStyles.pillStyle}; color: #ffffff !important;"><span style="color: #ffffff !important; font-weight: 800; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);">${promo.badgePill}</span></div>` : ''}
           </div>
@@ -878,7 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (item.isNew) card.classList.add('testi-new-highlight');
 
       const starCount = Math.min(5, Math.max(1, parseInt(item.rating, 10) || 5));
-      const starsString = '⭐'.repeat(starCount);
+      const starsString = '<svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'.repeat(starCount);
       const initial = (item.name || 'P').trim().charAt(0).toUpperCase();
 
       card.innerHTML = `
@@ -1037,20 +1037,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user && (user.name || user.username)) {
           const shortName = (user.name || user.username).split('(')[0].trim().split(' ')[0];
           let dest = 'admin/index.html';
-          let roleDisplay = 'KASIR';
-          let avatar = user.avatar || '👩‍💼';
+          let roleDisplay = 'ADMIN';
 
           if (user.role === 'admin' || user.role === 'owner') {
             roleDisplay = user.isSuperAdmin ? 'SUPER ADMIN' : 'OWNER';
-            avatar = '👑';
           } else if (user.role === 'teknisi') {
             dest = 'teknisi/index.html';
             roleDisplay = 'TEKNISI';
-            avatar = user.avatar || '🔬';
           }
 
           loginLink.href = `${prefix}${dest}`;
-          loginLink.innerHTML = `<span>${avatar} ${shortName} (${roleDisplay})</span>`;
+          loginLink.innerHTML = `<span>${shortName} (${roleDisplay})</span>`;
           loginLink.title = `Buka Dashboard: ${user.name || user.username}`;
           return;
         }
@@ -1062,7 +1059,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tech && (tech.name || tech.username)) {
           const shortName = (tech.name || tech.username).split('(')[0].trim().split(' ')[0];
           loginLink.href = `${prefix}teknisi/index.html`;
-          loginLink.innerHTML = `<span>${tech.avatar || '🔬'} ${shortName} (TEKNISI)</span>`;
+          loginLink.innerHTML = `<span>${shortName} (TEKNISI)</span>`;
           loginLink.title = `Meja Kerja Teknisi: ${tech.name || tech.username}`;
           return;
         }
@@ -1074,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mitra && (mitra.name || mitra.username)) {
           const shortName = (mitra.name || mitra.username).split('(')[0].trim().split(' ')[0];
           loginLink.href = `${prefix}mitra/index.html`;
-          loginLink.innerHTML = `<span>${mitra.avatar || '🛵'} ${shortName} (MITRA)</span>`;
+          loginLink.innerHTML = `<span>${shortName} (MITRA)</span>`;
           loginLink.title = `Portal Afiliasi Mitra: ${mitra.name || mitra.username}`;
           return;
         }
@@ -1086,7 +1083,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cust && (cust.name || cust.whatsapp)) {
           const shortName = (cust.name || 'Pelanggan').split('(')[0].trim().split(' ')[0];
           loginLink.href = `${prefix}login/index.html`;
-          loginLink.innerHTML = `<span>👤 ${shortName} (MEMBER)</span>`;
+          loginLink.innerHTML = `<span>${shortName} (MEMBER)</span>`;
           loginLink.title = `Portal Servis Member: ${cust.name || cust.whatsapp}`;
           return;
         }
@@ -1175,7 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         banner.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.15rem;">🛵</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
             <span>${bannerText}</span>
           </div>
           <button type="button" style="background: none; border: none; font-size: 1.25rem; color: #047857; cursor: pointer; padding: 0 4px; line-height: 1;" title="Tutup Notifikasi">&times;</button>

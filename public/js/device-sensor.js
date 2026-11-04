@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * 📱 NGALAM FIX PRO - ADVANCED SCREEN DETECTOR & IMAGE UI ENGINE
+ * NGALAM FIX PRO - ADVANCED SCREEN DETECTOR & IMAGE UI ENGINE
  * ============================================================================
  * Sensor Detektor Ukuran Layar Cerdas Real-Time:
  * 1. Mendeteksi secara instan ukuran layar (lebar & tinggi viewport, orientasi, DPI).

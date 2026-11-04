@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const kasirNameDisplay = document.getElementById('kasirNameDisplay');
   const kasirAvatar = document.getElementById('kasirAvatar');
   if (kasirNameDisplay) kasirNameDisplay.textContent = currentUser.name || currentUser.username || 'Kasir Meja 1';
-  if (kasirAvatar) kasirAvatar.textContent = currentUser.avatar || '👩‍💼';
+  if (kasirAvatar) kasirAvatar.textContent = currentUser.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg>';
 
   // Logout Handler
   const btnKasirLogout = document.getElementById('btnKasirLogout');
@@ -43,11 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnOpenDrawer = document.getElementById('btnOpenDrawer');
   if (btnOpenDrawer) {
     btnOpenDrawer.addEventListener('click', () => {
-      btnOpenDrawer.textContent = '🔓 Laci Kas Terbuka!';
+      btnOpenDrawer.textContent = '<svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg> Laci Kas Terbuka!';
       btnOpenDrawer.style.background = '#fef3c7';
       btnOpenDrawer.style.borderColor = '#f59e0b';
       setTimeout(() => {
-        btnOpenDrawer.textContent = '💵 Buka Laci Kas';
+        btnOpenDrawer.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> Buka Laci Kas';
         btnOpenDrawer.style.background = '#ffffff';
         btnOpenDrawer.style.borderColor = '#0284c7';
       }, 2000);
@@ -239,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = document.createElement('tr');
       let statusBadge = '';
       if (o.status === 'menunggu') statusBadge = '<span class="badge-status menunggu">⏳ Menunggu Lab</span>';
-      else if (o.status === 'pengerjaan') statusBadge = '<span class="badge-status pengerjaan">⚡ Di Meja Lab</span>';
-      else if (o.status === 'selesai') statusBadge = '<span class="badge-status selesai">✅ Siap Diambil</span>';
-      else statusBadge = '<span class="badge-status lunas">🎉 Lunas / Selesai</span>';
+      else if (o.status === 'pengerjaan') statusBadge = '<span class="badge-status pengerjaan"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Di Meja Lab</span>';
+      else if (o.status === 'selesai') statusBadge = '<span class="badge-status selesai"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Siap Diambil</span>';
+      else statusBadge = '<span class="badge-status lunas"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Lunas / Selesai</span>';
 
       const isLunas = (Number(o.remaining) <= 0);
 
@@ -257,11 +257,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="display: flex; gap: 6px;">
             ${!isLunas ? `
               <button type="button" class="btn-kasir-primary btn-pay-action" style="padding: 6px 12px; font-size: 0.8rem;" data-id="${o.ticketId}">
-                💳 Bayar
+                <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Bayar
               </button>
             ` : `
               <button type="button" class="btn-kasir-outline btn-print-action" style="padding: 6px 12px; font-size: 0.8rem;" data-id="${o.ticketId}">
-                🖨️ Struk
+                <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Struk
               </button>
             `}
           </div>

@@ -21,10 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginMitraId = document.getElementById('loginMitraId');
   const loginMitraPassword = document.getElementById('loginMitraPassword');
   const btnSubmitLogin = document.getElementById('btnSubmitLogin');
+  const btnGoogleMitra = document.getElementById('btnGoogleMitra');
 
   // Periksa apakah sudah ada sesi login mitra aktif
   const urlParams = new URLSearchParams(window.location.search);
   const isMitraLoggedOut = urlParams.get('action') === 'logout';
+
+  const isGoogleAuth = urlParams.get('auth') === 'google';
 
   if (isMitraLoggedOut) {
     try {
@@ -41,6 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (_) {}
+  }
+
+  if (isGoogleAuth) {
+    restoreGoogleSession();
   }
 
   const formMitraRegister = document.getElementById('formMitraRegister');
@@ -92,18 +99,87 @@ document.addEventListener('DOMContentLoaded', () => {
       mitraAlertBox.style.background = '#ecfdf5';
       mitraAlertBox.style.border = '1px solid #a7f3d0';
       mitraAlertBox.style.color = '#065f46';
-      mitraAlertBox.innerHTML = `<b>🎉 Berhasil:</b> ${msg}`;
+      mitraAlertBox.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil:</b> ${msg}`;
     } else {
       mitraAlertBox.style.background = '#fef2f2';
       mitraAlertBox.style.border = '1px solid #fecaca';
       mitraAlertBox.style.color = '#991b1b';
-      mitraAlertBox.innerHTML = `<b>⚠️ Peringatan:</b> ${msg}`;
+      mitraAlertBox.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Peringatan:</b> ${msg}`;
     }
   }
 
   function hideAlert() {
     if (mitraAlertBox) mitraAlertBox.style.display = 'none';
   }
+
+  async function resolveApiBase() {
+    let base = (typeof window !== 'undefined' && window.getNgalamApiBase)
+      ? window.getNgalamApiBase()
+      : '';
+    if (window.resolveNgalamApiBase) {
+      try { base = await window.resolveNgalamApiBase(); } catch (_) {}
+    }
+    return base;
+  }
+
+  async function completeGooglePhone(apiBase) {
+    let phone = window.prompt('Lengkapi nomor WhatsApp aktif Anda untuk mengaktifkan komisi mitra:', '');
+    if (phone === null) {
+      showAlert('Nomor WhatsApp wajib dilengkapi agar komisi dapat dicairkan.');
+      return null;
+    }
+    phone = phone.trim();
+    if (!phone) {
+      showAlert('Nomor WhatsApp tidak boleh kosong.');
+      return completeGooglePhone(apiBase);
+    }
+    const res = await fetch(`${apiBase}/api/mitra/auth/complete-profile`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.success) {
+      showAlert(data.message || 'Gagal menyimpan nomor WhatsApp.');
+      return completeGooglePhone(apiBase);
+    }
+    return data.driver;
+  }
+
+  async function restoreGoogleSession() {
+    hideAlert();
+    try {
+      const apiBase = await resolveApiBase();
+      const res = await fetch(`${apiBase}/api/mitra/auth/session`, { headers: { Accept: 'application/json' } });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success || !data.driver) {
+        showAlert(data.message || 'Sesi Google tidak valid. Silakan coba lagi.');
+        return;
+      }
+
+      let driver = data.driver;
+      if (driver.needsPhone) {
+        showAlert('Akun Google terhubung. Lengkapi nomor WhatsApp untuk mengaktifkan komisi.', true);
+        driver = await completeGooglePhone(apiBase);
+        if (!driver) return;
+      }
+
+      localStorage.setItem('ngalam_mitra_session', JSON.stringify(driver));
+      showAlert('Login Google berhasil. Selamat datang, ' + (driver.name || 'Mitra') + '!', true);
+      renderDashboard(driver);
+    } catch (err) {
+      showAlert('Gagal memulihkan sesi Google: ' + err.message);
+    } finally {
+      try { window.history.replaceState({}, '', window.location.pathname); } catch (_) {}
+    }
+  }
+
+  btnGoogleMitra?.addEventListener('click', async () => {
+    btnGoogleMitra.disabled = true;
+    btnGoogleMitra.innerHTML = '<span>Menghubungkan ke Google...</span>';
+    const apiBase = await resolveApiBase();
+    window.location.href = `${apiBase}/api/mitra/auth/google`;
+  });
 
   // Handle Login Submit
   formMitraLogin?.addEventListener('submit', async (e) => {
@@ -153,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
             user: {
               name: data.driver.name,
               role: 'mitra',
-              roleText: `🤝 Mitra Afiliasi (${data.driver.referralCode || 'Partner'})`,
-              avatar: '🤝'
+              roleText: `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4L16 11"/><path d="m18 11 3-3a1 1 0 0 0 0-1.4L18.7 4.3a1 1 0 0 0-1.4 0L14 7"/></svg> Mitra Afiliasi (${data.driver.referralCode || 'Partner'})`,
+              avatar: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4L16 11"/><path d="m18 11 3-3a1 1 0 0 0 0-1.4L18.7 4.3a1 1 0 0 0-1.4 0L14 7"/></svg>'
             },
             duration: 1300,
             onComplete: () => {
@@ -194,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showAlert(errMsg);
     } finally {
       btnSubmitLogin.disabled = false;
-      btnSubmitLogin.innerHTML = '<span>🚀 Masuk ke Dashboard Mitra</span>';
+      btnSubmitLogin.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Masuk ke Dashboard Mitra</span>';
     }
   });
 
@@ -250,8 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
             user: {
               name: data.mitra.name,
               role: 'mitra',
-              roleText: `🤝 Mitra Afiliasi (${data.mitra.referralCode})`,
-              avatar: '🤝'
+              roleText: `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4L16 11"/><path d="m18 11 3-3a1 1 0 0 0 0-1.4L18.7 4.3a1 1 0 0 0-1.4 0L14 7"/></svg> Mitra Afiliasi (${data.mitra.referralCode})`,
+              avatar: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4L16 11"/><path d="m18 11 3-3a1 1 0 0 0 0-1.4L18.7 4.3a1 1 0 0 0-1.4 0L14 7"/></svg>'
             },
             duration: 1400,
             onComplete: () => {
@@ -286,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showAlert(errMsg);
     } finally {
       btnSubmitRegister.disabled = false;
-      btnSubmitRegister.innerHTML = '<span>✨ Buat Akun & Dapatkan QR Code</span>';
+      btnSubmitRegister.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Buat Akun & Dapatkan QR Code</span>';
     }
   });
 
@@ -297,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mitraAuthSection.style.display = 'none';
     mitraDashboardSection.style.display = 'block';
 
-    dashAvatar.textContent = mitra.avatar || (mitra.role === 'ojol' ? '🛵' : '🏪');
+    dashAvatar.textContent = mitra.avatar || (mitra.role === 'ojol' ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg>');
     dashMitraName.textContent = mitra.name;
     dashMitraName.style.color = '#ffffff';
     dashCategory.textContent = `${mitra.category || 'Mitra Resmi'} • WA: ${mitra.phone || '-'}`;
@@ -307,9 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Build URL & QR Code (Scan barcode masuk ke web utama Ngalam Fix Pro dengan referral mitra)
     const host = window.location.host;
     const protocol = window.location.protocol;
-    const hasPublicPrefix = window.location.pathname.includes('/public/');
-    const basePath = hasPublicPrefix ? '/public/index.html' : '/index.html';
-    const affiliateUrl = `${protocol}//${host}${basePath}?ref=${encodeURIComponent(mitra.referralCode)}`;
+    const affiliateUrl = `${protocol}//${host}/?ref=${encodeURIComponent(mitra.referralCode)}`;
 
     dashAffiliateUrl.value = affiliateUrl;
 
@@ -382,15 +456,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch(`${apiBase}/api/mitra/dashboard?ref=${encodeURIComponent(mitra.referralCode)}`);
       const json = await res.json();
       if (json.success) {
-        if (json.mitra) {
-          localStorage.setItem('ngalam_mitra_session', JSON.stringify(json.mitra));
-          dashMitraName.textContent = json.mitra.name;
-          dashCategory.textContent = `${json.mitra.category || 'Mitra Resmi'} • WA: ${json.mitra.phone || '-'}`;
-          dashRefCode.textContent = json.mitra.referralCode;
-        }
         if (json.stats) {
           dashTotalOrders.textContent = json.stats.totalOrders || 0;
-          dashTotalComm.textContent = 'Rp ' + Number(json.stats.totalCommission || (json.mitra && json.mitra.totalCommission) || mitra.totalCommission || 0).toLocaleString('id-ID');
+          dashTotalComm.textContent = 'Rp ' + Number(json.stats.totalCommission || mitra.totalCommission || 0).toLocaleString('id-ID');
           if (orderCountBadge) orderCountBadge.textContent = `${json.stats.totalOrders || 0} Unit`;
         }
 
@@ -442,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dashAffiliateUrl.select();
     navigator.clipboard.writeText(dashAffiliateUrl.value).then(() => {
       const orig = btnCopyAffiliateLink.textContent;
-      btnCopyAffiliateLink.textContent = '✅ Disalin!';
+      btnCopyAffiliateLink.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Disalin!';
       btnCopyAffiliateLink.style.background = '#10b981';
       setTimeout(() => {
         btnCopyAffiliateLink.textContent = orig;

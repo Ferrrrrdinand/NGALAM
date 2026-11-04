@@ -1,0 +1,185 @@
+.mitra-container {
+  max-width: 1100px;
+  margin: 36px auto 80px;
+  padding: 0 20px;
+}
+.mitra-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  color: #059669;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.mitra-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  padding: 32px;
+  margin-bottom: 24px;
+}
+.mitra-banner-card {
+  background: linear-gradient(135deg, #064e3b, #047857) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 28px 32px;
+  border-radius: 20px !important;
+  box-shadow: 0 14px 30px -6px rgba(6, 78, 59, 0.45);
+}
+.mitra-banner-card h2,
+#dashMitraName {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+.mitra-banner-card p,
+#dashCategory {
+  color: #ecfdf5 !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+.mitra-verified-badge {
+  font-size: 0.82rem;
+  color: #d1fae5 !important;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.mitra-logout-btn {
+  padding: 10px 22px;
+  background: #ffffff !important;
+  color: #064e3b !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 12px;
+  font-weight: 800 !important;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.mitra-logout-btn:hover {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(185, 28, 28, 0.25);
+}
+.auth-tab-btn {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.auth-tab-btn.active {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+}
+.auth-tab-btn:not(.active) {
+  background: #f1f5f9;
+  color: #000000;
+}
+.form-control-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  font-size: 0.95rem;
+  background: #ffffff;
+  color: #000000;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+.form-control-input:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+.btn-mitra-primary {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s;
+}
+.btn-mitra-primary:hover {
+  background: linear-gradient(135deg, #047857, #059669);
+  transform: translateY(-1px);
+}
+.qr-card {
+  background: linear-gradient(135deg, #ffffff, #f0fdf4);
+  border: 2px dashed #059669;
+  border-radius: 20px;
+  padding: 28px;
+  text-align: center;
+}
+.qr-image-wrapper {
+  display: inline-block;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.12);
+  border: 1px solid #d1fae5;
+  margin-bottom: 16px;
+}
+.qr-image-wrapper img {
+  width: 220px;
+  height: 220px;
+  display: block;
+}
+.code-pill {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 6px 18px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+.stat-metric-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+.stat-metric-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #000000;
+  margin: 4px 0;
+}
+.stat-metric-label {
+  font-size: 0.8rem;
+  color: #000000;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+@media (max-width: 900px) {
+  .mitra-dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

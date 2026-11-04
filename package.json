@@ -1,29 +1,46 @@
 {
   "name": "ngalam-fix-pro",
   "version": "1.0.0",
-  "description": "Website Spesialis Servis HP Ngalam Fix Pro - HTML, CSS & Node.js dengan Dukungan Database PostgreSQL",
+  "description": "Website Spesialis Servis HP Ngalam Fix Pro - React Vite TailwindCSS & Node.js Express",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "dev:server": "node server.js",
+    "dev:client": "npm --prefix client run dev",
     "dev": "node server.js",
+    "build:client": "npm --prefix client run build",
+    "build": "npm --prefix client run build",
     "start:admin": "node server_admin.js",
-    "dev:admin": "node server_admin.js"
+    "dev:admin": "node server_admin.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:sync": "node src/scripts/syncAll.js",
+    "db:pull": "node src/scripts/pullNeon.js"
   },
   "keywords": [
     "servis-hp",
-    "html",
-    "css",
+    "react",
+    "vite",
+    "tailwindcss",
+    "express",
     "node",
-    "postgresql",
-    "database"
+    "postgresql"
   ],
   "author": "Liem Hingky Liman",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
-    "pg": "^8.23.1"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.5"
   }
 }

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (text) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-          showToast('Alamat workshop berhasil disalin ke clipboard! 📋');
+          showToast('Alamat workshop berhasil disalin ke clipboard! <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>');
         }).catch(() => {
           fallbackCopy(text);
         });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       temp.select();
       document.execCommand('copy');
       document.body.removeChild(temp);
-      showToast('Alamat workshop berhasil disalin ke clipboard! 📋');
+      showToast('Alamat workshop berhasil disalin ke clipboard! <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>');
     } catch (_) {
       alert('Alamat: ' + text);
     }
@@ -257,10 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const issue = document.getElementById('quickIssueInput')?.value.trim() || 'Kendala Servis';
 
     const message = `Halo Ngalam Fix Pro, saya ingin konsultasi servis smartphone:\n\n` +
-      `📱 Merek: ${brand}\n` +
-      `🔍 Model/Seri: ${model}\n` +
-      `⚠️ Kendala/Keluhan: ${issue}\n\n` +
-      `Mohon info estimasi biaya dan ketersediaan sparepart. Terima kasih! 🙏`;
+      `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Merek: ${brand}\n` +
+      `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Model/Seri: ${model}\n` +
+      `<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Kendala/Keluhan: ${issue}\n\n` +
+      `Mohon info estimasi biaya dan ketersediaan sparepart. Terima kasih! `;
 
     const waUrl = `https://wa.me/6281330304321?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank', 'noopener,noreferrer');

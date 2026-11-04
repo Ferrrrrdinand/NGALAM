@@ -4,6 +4,11 @@
  * Dilengkapi dengan auto-schema initialization dan fallback aman ke data/ lokal.
  */
 
+const net = require('net');
+if (typeof net.setDefaultAutoSelectFamily === 'function') {
+  net.setDefaultAutoSelectFamily(false);
+}
+
 const { Pool } = require('pg');
 const { upsertRecord, appendActivityLog } = require('./localStore');
 const fs = require('fs');

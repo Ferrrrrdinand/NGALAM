@@ -43,31 +43,6 @@ async function getAllOrders() {
 }
 
 /**
- * Ambil data pesanan berdasarkan attemptId (Idempotency Key Check)
- */
-async function getOrderByAttemptId(attemptId) {
-  if (!attemptId) return null;
-  const cleanAttempt = String(attemptId).trim();
-
-  if (db.isDbConnected()) {
-    try {
-      const res = await db.query(
-        "SELECT raw_data FROM orders WHERE raw_data->>'attemptId' = $1 LIMIT 1",
-        [cleanAttempt]
-      );
-      if (res.rows && res.rows.length > 0) {
-        return res.rows[0].raw_data;
-      }
-    } catch (err) {
-      console.warn('[OrderService] PostgreSQL getOrderByAttemptId warning:', err.message);
-    }
-  }
-
-  const orders = await getAllOrders();
-  return orders.find((o) => o.attemptId && String(o.attemptId).trim() === cleanAttempt) || null;
-}
-
-/**
  * Ambil data tiket tunggal berdasarkan ID, WhatsApp, atau Email
  */
 async function getOrderById(id) {
@@ -233,7 +208,7 @@ async function appendOrder(order) {
   try {
     const { ensureCustomerAccount } = require('./customerService');
     if (customerPhone && customerPhone !== '-') {
-      await ensureCustomerAccount({
+      ensureCustomerAccount({
         name: order.customerName,
         whatsapp: customerPhone,
         email: order.email || '',
@@ -328,10 +303,7 @@ module.exports = {
   getOrderById,
   appendOrder,
   updateOrder,
-  clearAllOrders,
-  getOrderByAttemptId
+  clearAllOrders
 };
-
-
 
 

@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const userService = require('./userService');
+const { hashPassword } = require('../src/utils/security');
 const LOGS_FILE = path.join(__dirname, '..', 'data', 'technician_logs.json');
 
 /**
@@ -415,7 +416,7 @@ async function createTechnician(payload = {}, { isAdmin = false } = {}) {
     id: newId,
     username: cleanUsername,
     email: email ? email.trim() : `${cleanUsername}@ngalamfixpro.com`,
-    password: cleanPassword,
+    password: hashPassword(cleanPassword),
     name: cleanName,
     role: 'teknisi',
     avatar: avatar || '🔬',
@@ -498,7 +499,7 @@ async function updateTechnician(idOrUsername, updates = {}) {
     tech.avatar = updates.avatar;
   }
   if (updates.password && updates.password.trim().length > 0) {
-    tech.password = updates.password.trim();
+    tech.password = hashPassword(updates.password.trim());
   }
   if (updates.onlineStatus && (updates.onlineStatus === 'online' || updates.onlineStatus === 'offline')) {
     tech.onlineStatus = updates.onlineStatus;

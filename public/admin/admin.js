@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultLeadTech = {
       username: 'ferdinand',
       name: 'Ferdinand (Teknisi Lab Workshop)',
-      avatar: '🔬',
+      avatar: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>',
       desk: 'Meja Lab Workshop - Teknisi Utama',
       specialty: 'Spesialis Servis Smartphone & Hardware Lab',
       onlineStatus: 'online',
@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const techs = getAvailableLabTechnicians();
     walkinTech.innerHTML = techs.map(t => {
       const val = `${t.username}|${t.name}`;
-      const statusLabel = t.onlineStatus === 'online' ? '🟢 Online (Siaga)' : '⚪ Siaga Lab';
-      return `<option value="${val}" ${t.username.toLowerCase() === 'ferdinand' ? 'selected' : ''}>${t.avatar || '🔬'} ${t.name} - ${statusLabel}</option>`;
+      const statusLabel = t.onlineStatus === 'online' ? '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Online (Siaga)' : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Siaga Lab';
+      return `<option value="${val}" ${t.username.toLowerCase() === 'ferdinand' ? 'selected' : ''}>${t.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>'} ${t.name} - ${statusLabel}</option>`;
     }).join('');
     if (currentVal && walkinTech.querySelector(`option[value="${currentVal}"]`)) {
       walkinTech.value = currentVal;
@@ -119,12 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!dbStatusBadge) return;
 
       dbStatusBadge.className = 'status-tag tag-connected';
-      dbStatusBadge.innerHTML = `🟢 <b>Database Sistem Aktif</b> (Siap PostgreSQL)`;
+      dbStatusBadge.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> <b>Database Sistem Aktif</b> (Siap PostgreSQL)`;
       dbStatusBadge.title = data.message || 'Sistem siap dihubungkan ke PostgreSQL';
     } catch (err) {
       if (dbStatusBadge) {
         dbStatusBadge.className = 'status-tag tag-error';
-        dbStatusBadge.innerHTML = `🔴 Server Offline`;
+        dbStatusBadge.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span> Server Offline`;
       }
     }
   }
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       queueTableBody.innerHTML = `
         <tr>
           <td colspan="7" style="text-align:center;padding:48px 20px;color:#64748b;">
-            <div style="font-size:2.2rem;margin-bottom:8px;">📭</div>
+            <div style="font-size:2.2rem;margin-bottom:8px;"><svg class="svg-ic" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="M19 16v6"/><path d="M16 19h6"/></svg></div>
             <strong style="color:#0f172a;font-size:1.1rem;display:block;">Belum Ada Data Antrian Servis</strong>
             <p style="margin:4px 0 16px;font-size:0.88rem;color:#475569;">Data masih kosong. Anda dapat mendaftarkan unit walk-in pelanggan baru atau menunggu pesanan masuk.</p>
             <div style="display:flex;justify-content:center;gap:10px;">
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let techOptionsHtml = `<option value="">-- Belum Ditugaskan --</option>`;
       availableTechs.forEach((t) => {
         const isSelected = (assignedUname === t.username.toLowerCase()) || (techStr.includes(t.username.toLowerCase()));
-        techOptionsHtml += `<option value="${t.username}|${t.name}" ${isSelected ? 'selected' : ''}>${t.avatar || '🔬'} ${t.name}</option>`;
+        techOptionsHtml += `<option value="${t.username}|${t.name}" ${isSelected ? 'selected' : ''}>${t.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>'} ${t.name}</option>`;
       });
 
       rowsHtml += `
@@ -224,12 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>
             <div style="font-weight:700;color:#0f172a;">${order.customerName}</div>
             <div style="font-size:0.82rem;color:#0284c7;">${order.whatsapp || '-'}</div>
-            ${order.email ? `<div style="font-size:0.78rem;color:#2563eb;">✉️ ${order.email}</div>` : ''}
+            ${order.email ? `<div style="font-size:0.78rem;color:#2563eb;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> ${order.email}</div>` : ''}
             <small class="text-muted">${order.district || '-'}</small>
           </td>
           <td>
             <div style="font-weight:700;color:#0f172a;">${order.phoneType}</div>
-            <div style="font-size:0.82rem;color:#dc2626;">⚠️ ${order.damageDescription}</div>
+            <div style="font-size:0.82rem;color:#dc2626;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${order.damageDescription}</div>
             <small class="text-muted">Kunci PIN: ${order.screenPin || 'Tidak Ada'}</small>
           </td>
           <td>
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                 <label style="font-size:0.7rem;color:#475569;font-weight:700;">Teknisi PJ (Handle s/d Akhir):</label>
                 <button type="button" onclick="openAssignTechModal('${order.id}')" style="background:#eff6ff; border:1px solid #bae6fd; color:#0284c7; font-size:0.68rem; font-weight:700; padding:2px 6px; border-radius:4px; cursor:pointer;" title="Bagi Antrean ke Teknisi Lab">
-                  🔄 Bagi
+                  <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Bagi
                 </button>
               </div>
               <select onchange="assignTechnicianFromAdmin('${order.id}', this.value)" style="font-size:0.75rem;font-weight:600;padding:4px 6px;border-radius:6px;border:1.5px solid #cbd5e1;background:#ffffff;color:#0f172a;cursor:pointer;width:100%;">
@@ -257,16 +257,16 @@ document.addEventListener('DOMContentLoaded', () => {
                   Lanjut Langkah ${step + 1} ↗
                 </button>
               ` : `
-                <span style="font-size:0.75rem;color:#34d399;font-weight:700;">✅ Siap Diambil</span>
+                <span style="font-size:0.75rem;color:#34d399;font-weight:700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Siap Diambil</span>
               `}
               <button class="action-btn action-assign" onclick="openAssignTechModal('${order.id}')" title="Bagi Antrean ke Teknisi Lab" style="background:#f0fdf4; border:1px solid #bbf7d0; color:#15803d; font-size:0.78rem;">
-                👨‍🔧 Bagi Teknisi
+                <svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Bagi Teknisi
               </button>
               <button class="action-btn action-receipt" onclick="openReceiptModal('${order.id}')" title="Cetak Nota Fisik Struk Thermal">
-                🖨️ Struk
+                <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Struk
               </button>
               <a href="https://wa.me/${formatWaNumber(order.whatsapp)}?text=Halo%20kak%20${encodeURIComponent(order.customerName)},%20update%20servis%20HP%20${encodeURIComponent(order.phoneType)}%20(Tiket:%20${encodeURIComponent(order.id)})" target="_blank" class="action-btn action-wa" title="Hubungi Pelanggan via WA">
-                💬 WA
+                <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> WA
               </a>
             </div>
           </td>
@@ -362,8 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const availableTechs = getAvailableLabTechnicians();
       assignTechSelect.innerHTML = availableTechs.map((t) => {
         const isSel = (order.assignedTechnicianUsername || '').toLowerCase() === t.username.toLowerCase();
-        const statusText = t.onlineStatus === 'online' ? '🟢 Online (Siaga)' : '⚪ Siaga Lab';
-        return `<option value="${t.username}|${t.name}" ${isSel ? 'selected' : ''}>${t.avatar || '🔬'} ${t.name} - ${statusText}</option>`;
+        const statusText = t.onlineStatus === 'online' ? '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Online (Siaga)' : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Siaga Lab';
+        return `<option value="${t.username}|${t.name}" ${isSel ? 'selected' : ''}>${t.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>'} ${t.name} - ${statusText}</option>`;
       }).join('');
     }
 
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAssignTechModal();
     const order = allOrders.find((o) => o.id === ticketId);
     const techName = rawVal.includes('|') ? rawVal.split('|')[1] : rawVal;
-    alert(`✅ Berhasil!\n\nAntrean unit HP ${(order && order.customerName) || 'Pelanggan'} telah berhasil dimasukkan ke teknisi ${techName} untuk dihandle dari awal hingga akhir.`);
+    alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Berhasil!\n\nAntrean unit HP ${(order && order.customerName) || 'Pelanggan'} telah berhasil dimasukkan ke teknisi ${techName} untuk dihandle dari awal hingga akhir.`);
   });
 
   // Advance Order Step (1 to 5) - Official 5 Statuses
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Error jaringan: ' + err.message);
     } finally {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<span>Daftarkan Unit & Terbitkan Nota Struk 🖨️</span>';
+      submitBtn.innerHTML = '<span>Daftarkan Unit & Terbitkan Nota Struk <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>';
     }
   });
 
@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Kosongkan Semua Data Button
   clearDataBtn?.addEventListener('click', async () => {
     const confirmClear = confirm(
-      '⚠️ PERINGATAN:\nApakah Anda yakin ingin MENGOSONGKAN SEMUA DATA antrian tiket servis?\nData di database sistem akan di-reset menjadi kosong.'
+      '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> PERINGATAN:\nApakah Anda yakin ingin MENGOSONGKAN SEMUA DATA antrian tiket servis?\nData di database sistem akan di-reset menjadi kosong.'
     );
 
     if (!confirmClear) return;
@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch(`${API_BASE}/api/orders/clear`, { method: 'POST' });
       const json = await res.json();
       if (json.success) {
-        alert('✅ Semua data antrian berhasil dikosongkan!');
+        alert('<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Semua data antrian berhasil dikosongkan!');
         await fetchOrders();
       } else {
         alert('Gagal: ' + json.message);
@@ -794,10 +794,10 @@ document.addEventListener('DOMContentLoaded', () => {
       simDesc.textContent = promoDescInput.value.trim() || 'Deskripsi detail promo layanan workshop...';
     }
     if (simBadgeTag && promoBadgeTagInput) {
-      simBadgeTag.textContent = promoBadgeTagInput.value.trim() || '🔥 PROMO SPESIAL';
+      simBadgeTag.textContent = promoBadgeTagInput.value.trim() || ' PROMO SPESIAL';
     }
     if (simBadgePill && promoBadgePillInput) {
-      simBadgePill.textContent = promoBadgePillInput.value.trim() || '✨ FLASH DEAL';
+      simBadgePill.textContent = promoBadgePillInput.value.trim() || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> FLASH DEAL';
     }
     if (simCode && promoCodeInput) {
       simCode.textContent = promoCodeInput.value.trim() ? `KODE: ${promoCodeInput.value.trim().toUpperCase()}` : 'PROMO WORKSHOP';
@@ -903,7 +903,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error fetching promos:', err);
       promosListContainer.innerHTML = `
         <div style="text-align: center; color: #f87171; padding: 24px; background: rgba(239,68,68,0.1); border-radius: 10px;">
-          ⚠️ Gagal mengambil data banner promosi. Pastikan server Node berjalan.
+          <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Gagal mengambil data banner promosi. Pastikan server Node berjalan.
         </div>
       `;
     }
@@ -923,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (list.length === 0) {
       promosListContainer.innerHTML = `
         <div style="text-align: center; color: #94a3b8; padding: 30px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
-          <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
+          <div style="font-size: 2rem; margin-bottom: 8px;"><svg class="svg-ic" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="M19 16v6"/><path d="M16 19h6"/></svg></div>
           <p style="margin: 0;">Belum ada banner promosi. Gunakan formulir di sebelah kiri untuk mengunggah banner pertama.</p>
         </div>
       `;
@@ -989,14 +989,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div style="display: flex; flex-direction: column; gap: 8px; min-width: 105px;">
           <button type="button" class="btn small change-photo-btn" data-id="${promo.id}" style="font-size: 0.78rem; padding: 6px 10px; background: #f0fdf4; border: 1.5px solid #86efac; color: #16a34a; font-weight: 700; cursor: pointer; border-radius: 8px;">
-            📷 Ganti Foto
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Ganti Foto
           </button>
           <input type="file" class="hidden-promo-file-input" data-id="${promo.id}" accept="image/png, image/jpeg, image/webp" style="display: none;">
           <button type="button" class="btn small toggle-promo-btn" data-id="${promo.id}" style="font-size: 0.78rem; padding: 6px 10px; background: ${isActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; border: 1px solid ${isActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}; color: ${isActive ? '#dc2626' : '#059669'}; font-weight: 700;">
             ${isActive ? 'Nonaktifkan' : 'Aktifkan'}
           </button>
           <button type="button" class="btn small delete-promo-btn" data-id="${promo.id}" data-title="${promo.title}" style="font-size: 0.78rem; padding: 6px 10px; background: #ffffff; border: 1px solid #cbd5e1; color: #64748b;">
-            🗑️ Hapus
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> Hapus
           </button>
         </div>
       `;
@@ -1025,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const id = input.getAttribute('data-id');
         const btn = promosListContainer.querySelector(`.change-photo-btn[data-id="${id}"]`);
-        const originalText = btn ? btn.innerHTML : '📷 Ganti Foto';
+        const originalText = btn ? btn.innerHTML : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Ganti Foto';
         if (btn) {
           btn.innerHTML = '⏳ Menyimpan...';
           btn.disabled = true;
@@ -1042,7 +1042,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const json = await res.json();
             if (json.success) {
-              alert(`✅ Berhasil! Foto banner #${id} telah diganti dan sistem langsung mengeksekusi UPDATE banners SET image_url = ... di PostgreSQL!`);
+              alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Berhasil! Foto banner #${id} telah diganti dan sistem langsung mengeksekusi UPDATE banners SET image_url = ... di PostgreSQL!`);
               fetchPromos();
             } else {
               alert('Gagal mengganti foto banner: ' + (json.error || 'Terjadi kesalahan'));
@@ -1109,8 +1109,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const title = promoTitleInput?.value.trim();
     const desc = promoDescInput?.value.trim();
-    const badgeTag = promoBadgeTagInput?.value.trim() || '🔥 PROMO SPESIAL';
-    const badgePill = promoBadgePillInput?.value.trim() || '✨ FLASH DEAL';
+    const badgeTag = promoBadgeTagInput?.value.trim() || ' PROMO SPESIAL';
+    const badgePill = promoBadgePillInput?.value.trim() || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> FLASH DEAL';
     const promoCode = promoCodeInput?.value.trim() || '';
     const theme = promoThemeInput?.value || 'purple';
     const btnText = promoBtnTextInput?.value.trim() || 'Klaim Promo ↗';
@@ -1161,8 +1161,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const json = await res.json();
       if (json.success) {
         alert(isBannerActive 
-          ? '🎉 Berhasil! Banner promosi telah disimpan dan langsung aktif di beranda.' 
-          : '📁 Berhasil! Banner disimpan sebagai draft (nonaktif di beranda).');
+          ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil! Banner promosi telah disimpan dan langsung aktif di beranda.' 
+          : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg> Berhasil! Banner disimpan sebagai draft (nonaktif di beranda).');
         // Reset form
         promoUploadForm.reset();
         selectedPromoImage = '';
@@ -1199,7 +1199,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================================
-  // 🎟️ PROMO CODE MANAGEMENT PORTAL (REAL-TIME & AUTO-EXPIRING)
+  // <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg> PROMO CODE MANAGEMENT PORTAL (REAL-TIME & AUTO-EXPIRING)
   // ==========================================================
   let allPromoCodes = [];
   let promoCodeFilter = 'all';
@@ -1298,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Auto-fill button link when admin types or selects a promo code in banner form
   promoCodeInput?.addEventListener('input', () => {
     const raw = (promoCodeInput.value || '').trim();
-    if (raw && !raw.startsWith('🛡️') && !raw.startsWith('⚡')) {
+    if (raw && !raw.startsWith('<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>') && !raw.startsWith('<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>')) {
       const clean = raw.replace(/[^A-Za-z0-9_-]/g, '').toUpperCase();
       if (promoBtnLinkInput && clean) {
         promoBtnLinkInput.value = `pesan-servis/index.html?promo=${clean}`;
@@ -1323,7 +1323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (list.length === 0) {
       promoCodesListContainer.innerHTML = `
         <div style="text-align: center; color: #64748b; padding: 36px; background: #ffffff; border-radius: 12px; border: 1.5px dashed #cbd5e1; box-shadow: 0 2px 10px rgba(15,23,42,0.04);">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🎟️</div>
+          <div style="font-size: 2rem; margin-bottom: 8px;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div>
           <strong style="color: #0f172a; display: block;">Tidak Ada Kode Promo Ditemukan</strong>
           <span style="font-size: 0.82rem; color: #475569;">Gunakan formulir di sebelah kiri untuk membuat kode promo baru.</span>
         </div>
@@ -1348,10 +1348,10 @@ document.addEventListener('DOMContentLoaded', () => {
         statusBadgeHtml = '<span class="status-pill-badge active" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;">● AKTIF</span>';
       } else if (promo.status === 'EXPIRED') {
         card.style.border = '1px solid #fca5a5';
-        statusBadgeHtml = '<span class="status-pill-badge expired" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;">⚠️ KEDALUWARSA</span>';
+        statusBadgeHtml = '<span class="status-pill-badge expired" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> KEDALUWARSA</span>';
       } else if (promo.status === 'QUOTA_FULL') {
         card.style.border = '1px solid #fde047';
-        statusBadgeHtml = '<span class="status-pill-badge quota-full" style="background:#fefce8;color:#a16207;border:1px solid #fef08a;">⚡ KUOTA HABIS</span>';
+        statusBadgeHtml = '<span class="status-pill-badge quota-full" style="background:#fefce8;color:#a16207;border:1px solid #fef08a;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> KUOTA HABIS</span>';
       } else {
         card.style.border = '1px solid #e2e8f0';
         statusBadgeHtml = '<span class="status-pill-badge inactive" style="background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;">○ NONAKTIF</span>';
@@ -1374,7 +1374,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (daysDiff === 0) {
         expiryNote = `<span style="color: #d97706; font-weight: 700;">⏱️ Berakhir Hari Ini!</span>`;
       } else {
-        expiryNote = `<span style="color: #dc2626; font-weight: 700;">🚫 Kedaluwarsa ${Math.abs(daysDiff)} hari lalu (Otomatis Hilang dari Pelanggan)</span>`;
+        expiryNote = `<span style="color: #dc2626; font-weight: 700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Kedaluwarsa ${Math.abs(daysDiff)} hari lalu (Otomatis Hilang dari Pelanggan)</span>`;
       }
 
       // Quota percent
@@ -1404,13 +1404,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div style="display: flex; gap: 8px; align-items: center;">
             <button type="button" class="btn small copy-promo-link-btn" data-code="${promo.code}" style="font-size: 0.78rem; padding: 6px 12px; background: #eff6ff; border: 1px solid #bae6fd; color: #0284c7; font-weight: 600;" title="Salin tautan langsung booking promo">
-              🔗 Salin Link
+              <svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Salin Link
             </button>
             <button type="button" class="btn small toggle-promo-code-btn" data-id="${promo.id}" data-active="${promo.active}" style="font-size: 0.78rem; padding: 6px 12px; background: ${promo.active ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; border: 1px solid ${promo.active ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}; color: ${promo.active ? '#dc2626' : '#059669'}; font-weight: 700;">
               ${promo.active ? 'Nonaktifkan' : 'Aktifkan'}
             </button>
             <button type="button" class="btn small delete-promo-code-btn" data-id="${promo.id}" data-code="${promo.code}" style="font-size: 0.78rem; padding: 6px 10px; background: #ffffff; border: 1px solid #cbd5e1; color: #64748b;" title="Hapus promo">
-              🗑️
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
             </button>
           </div>
         </div>
@@ -1419,12 +1419,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; font-size: 0.78rem;">
           <div>
             <span style="color: #64748b; display: block;">Masa Berlaku (Valid Until):</span>
-            <strong style="color: #0f172a;">📅 ${promo.validUntil}</strong>
+            <strong style="color: #0f172a;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${promo.validUntil}</strong>
             <div style="margin-top: 2px;">${expiryNote}</div>
           </div>
           <div>
             <span style="color: #64748b; display: block;">Pemakaian Kuota:</span>
-            <strong style="color: #0f172a;">📊 ${used} / ${limit} Pelanggan (${pct}%)</strong>
+            <strong style="color: #0f172a;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> ${used} / ${limit} Pelanggan (${pct}%)</strong>
             <div style="width: 100%; height: 5px; background: #e2e8f0; border-radius: 999px; margin-top: 5px; overflow: hidden;">
               <div style="width: ${pct}%; height: 100%; background: ${pct >= 100 ? '#ef4444' : '#0284c7'};"></div>
             </div>
@@ -1446,7 +1446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = `${window.location.origin}/pesan-servis/index.html?promo=${encodeURIComponent(code)}`;
         navigator.clipboard.writeText(url).then(() => {
           const original = btn.innerHTML;
-          btn.innerHTML = '✅ Tersalin!';
+          btn.innerHTML = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Tersalin!';
           setTimeout(() => { btn.innerHTML = original; }, 2000);
         }).catch(() => {
           prompt('Salin tautan ini:', url);
@@ -1550,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const json = await res.json();
       if (json.success) {
-        alert(`🎉 Berhasil! Kode promo "${code}" berhasil diterbitkan dan siap memotong harga transaksi pelanggan.`);
+        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil! Kode promo "${code}" berhasil diterbitkan dan siap memotong harga transaksi pelanggan.`);
         promoCodeForm.reset();
         // Reset default date
         if (promoInpValidUntil) {
@@ -1620,7 +1620,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headerPill.style.background = '#7c3aed';
         headerPill.style.color = '#ffffff';
       }
-      if (roleBannerAvatar) roleBannerAvatar.textContent = '👩‍💼';
+      if (roleBannerAvatar) roleBannerAvatar.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg>';
       if (roleBannerTitle) roleBannerTitle.textContent = `Peran Kerja: ${user.name || 'Kasir Meja 1'} (Kasir Front Desk)`;
       if (roleBannerBadge) {
         roleBannerBadge.textContent = 'FRONT DESK KASIR';
@@ -1657,7 +1657,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headerPill.style.background = '#d97706';
         headerPill.style.color = '#ffffff';
       }
-      if (roleBannerAvatar) roleBannerAvatar.textContent = '👑';
+      if (roleBannerAvatar) roleBannerAvatar.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>';
       if (roleBannerTitle) roleBannerTitle.textContent = `Peran Kerja: ${user.name || 'Super Admin'} (Owner / Manager)`;
       if (roleBannerBadge) {
         roleBannerBadge.textContent = 'SUPER USER / KONTROL PENUH';
@@ -1773,7 +1773,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn('[Admin] Gagal memuat data teknisi:', err.message);
     } finally {
       if (!isSilent && refreshTechRosterBtn) {
-        refreshTechRosterBtn.textContent = '🔄 Refresh Status Teknisi';
+        refreshTechRosterBtn.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Refresh Status Teknisi';
       }
     }
   }
@@ -1832,7 +1832,7 @@ document.addEventListener('DOMContentLoaded', () => {
         workDetailsBox = `
           <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 12px; margin: 14px 0;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <span style="font-size: 0.75rem; color: #a16207; font-weight: 800; text-transform: uppercase;">📱 Sedang Dikerjakan:</span>
+              <span style="font-size: 0.75rem; color: #a16207; font-weight: 800; text-transform: uppercase;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Sedang Dikerjakan:</span>
               <span style="font-size: 0.72rem; color: #713f12; background: #fef9c3; padding: 2px 6px; border-radius: 4px; font-family: monospace; border: 1px solid #fef08a;">${tech.currentJob.orderId}</span>
             </div>
             <strong style="color: #0f172a; font-size: 0.95rem; display: block; margin-bottom: 2px;">${tech.currentJob.phoneType}</strong>
@@ -1845,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (isStandby) {
         workDetailsBox = `
           <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 12px; margin: 14px 0; font-size: 0.84rem;">
-            <div style="color: #059669; font-weight: 700; margin-bottom: 2px;">🟢 Meja Bersih & Siap Terima Unit</div>
+            <div style="color: #059669; font-weight: 700; margin-bottom: 2px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Meja Bersih & Siap Terima Unit</div>
             <span style="color: #64748b; font-size: 0.78rem;">Teknisi standby di meja lab, siap mengerjakan tiket walk-in baru atau unit kurir ojol.</span>
           </div>
         `;
@@ -1862,25 +1862,25 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isOnline) {
         adminActionButtons = `
           <button type="button" class="btn small" onclick="adminSetTechStatus('${tech.username}', 'online')" style="flex: 1; padding: 8px; font-size: 0.8rem; border-radius: 8px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; font-weight: 700;">
-            <span>🟢 Set Online</span>
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Set Online</span>
           </button>
         `;
       } else if (isHandled) {
         adminActionButtons = `
           <button type="button" class="btn small" onclick="adminSetTechStatus('${tech.username}', 'standby')" style="flex: 1; padding: 8px; font-size: 0.8rem; border-radius: 8px; background: #eff6ff; border: 1px solid #bae6fd; color: #0284c7; font-weight: 700;">
-            <span>✅ Selesai (Set Standby)</span>
+            <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Selesai (Set Standby)</span>
           </button>
           <button type="button" class="btn small" onclick="adminSetTechStatus('${tech.username}', 'offline')" style="padding: 8px 12px; font-size: 0.8rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239,68,68,0.3); color: #dc2626; font-weight: 600;">
-            <span>⚪ Logout</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Logout</span>
           </button>
         `;
       } else {
         adminActionButtons = `
           <button type="button" class="btn small" onclick="adminAssignSampleJob('${tech.username}')" style="flex: 1; padding: 8px; font-size: 0.8rem; border-radius: 8px; background: #fefce8; border: 1px solid #facc15; color: #a16207; font-weight: 700;">
-            <span>🟡 Set Handled Phone</span>
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 6px #f59e0b;"></span> Set Handled Phone</span>
           </button>
           <button type="button" class="btn small" onclick="adminSetTechStatus('${tech.username}', 'offline')" style="padding: 8px 12px; font-size: 0.8rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239,68,68,0.3); color: #dc2626; font-weight: 600;">
-            <span>⚪ Logout</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Logout</span>
           </button>
         `;
       }
@@ -1891,7 +1891,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- Top Tech Header -->
             <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px;">
               <div style="font-size: 2.4rem; line-height: 1; background: #f1f5f9; padding: 10px; border-radius: 14px; border: 1px solid #e2e8f0;">
-                ${tech.avatar || '🛠️'}
+                ${tech.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'}
               </div>
               <div style="flex: 1;">
                 <h4 style="font-size: 1.15rem; color: #0f172a; margin: 0 0 2px;">${tech.name}</h4>
@@ -1923,10 +1923,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- Admin Account Edit / Delete Controls -->
           <div style="display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
             <button type="button" class="btn small outline" onclick="adminOpenEditTechModal('${tech.id || tech.username}')" style="flex: 1; padding: 7px 10px; font-size: 0.78rem; border-radius: 8px; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; background: #ffffff;">
-              <span>✏️ Edit Akun Teknisi</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Edit Akun Teknisi</span>
             </button>
             <button type="button" class="btn small outline" onclick="adminDeleteTech('${tech.id || tech.username}', '${tech.name}')" style="padding: 7px 12px; font-size: 0.78rem; border-radius: 8px; border: 1.5px solid rgba(239, 68, 68, 0.3); color: #dc2626; background: rgba(239, 68, 68, 0.05); font-weight: 700;">
-              <span>🗑️ Hapus</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> Hapus</span>
             </button>
           </div>
         </div>
@@ -2046,7 +2046,7 @@ document.addEventListener('DOMContentLoaded', () => {
   techLogSearchInput?.addEventListener('input', () => renderTechnicianLogs(cachedTechLogs));
 
   // =========================================================================
-  // 👨‍🔧 ADMIN TECHNICIAN MANAGEMENT (ADD, EDIT, DELETE & DATABASE SYNC)
+  // <svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> ADMIN TECHNICIAN MANAGEMENT (ADD, EDIT, DELETE & DATABASE SYNC)
   // =========================================================================
   const openAddTechModalBtn = document.getElementById('openAddTechModalBtn');
   const addEditTechnicianModal = document.getElementById('addEditTechnicianModal');
@@ -2072,7 +2072,7 @@ document.addEventListener('DOMContentLoaded', () => {
     techModalMode.value = 'add';
     techModalTargetId.value = '';
     techModalTitle.textContent = 'Tambah Teknisi Lab Baru';
-    techModalHeaderIcon.textContent = '➕';
+    techModalHeaderIcon.textContent = '+';
     techModalName.value = '';
     techModalUsername.value = '';
     techModalUsername.disabled = false;
@@ -2103,7 +2103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     techModalMode.value = 'edit';
     techModalTargetId.value = tech.id || tech.username;
     techModalTitle.textContent = `Edit Data Teknisi: ${tech.name}`;
-    techModalHeaderIcon.textContent = '✏️';
+    techModalHeaderIcon.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
     techModalName.value = tech.name || '';
     techModalUsername.value = tech.username || '';
     techModalUsername.disabled = true;
@@ -2196,7 +2196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       if (saveTechModalBtn) {
         saveTechModalBtn.disabled = false;
-        saveTechModalBtn.innerHTML = '<span>💾 Simpan ke Database</span>';
+        saveTechModalBtn.innerHTML = '<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan ke Database</span>';
       }
     }
   });
@@ -2224,7 +2224,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // =========================================================================
-  // 💰 DATABASE FINANCE & TRANSACTIONS MANAGEMENT (ADMIN STAFF)
+  // <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v12"/></svg> DATABASE FINANCE & TRANSACTIONS MANAGEMENT (ADMIN STAFF)
   // =========================================================================
   let cachedFinanceRecords = [];
   cachedTransactions = [];
@@ -2357,7 +2357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         badgeDbFinance.style.background = 'rgba(16,185,129,0.2)';
         badgeDbFinance.style.borderColor = 'rgba(16,185,129,0.5)';
         badgeDbFinance.style.color = '#34d399';
-        badgeDbFinance.innerHTML = '🟢 Database Kas Workshop Aktif (Siap PostgreSQL)';
+        badgeDbFinance.innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Database Kas Workshop Aktif (Siap PostgreSQL)';
       }
       if (displayFinanceDbStatus) {
         displayFinanceDbStatus.textContent = 'PostgreSQL Ready (data/finances.json)';
@@ -2368,7 +2368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         badgeDbTransactions.style.background = 'rgba(16,185,129,0.2)';
         badgeDbTransactions.style.borderColor = 'rgba(16,185,129,0.5)';
         badgeDbTransactions.style.color = '#34d399';
-        badgeDbTransactions.innerHTML = '🟢 Database Transaksi Kasir Aktif (Siap PostgreSQL)';
+        badgeDbTransactions.innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Database Transaksi Kasir Aktif (Siap PostgreSQL)';
       }
       if (displayTransactionsDbStatus) {
         displayTransactionsDbStatus.textContent = 'PostgreSQL Ready (data/transactions.json)';
@@ -2427,8 +2427,8 @@ document.addEventListener('DOMContentLoaded', () => {
     financeTableBody.innerHTML = filtered.map((rec) => {
       const isIncome = rec.type === 'pemasukan';
       const typeBadge = isIncome
-        ? '<span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;">🟢 PEMASUKAN</span>'
-        : '<span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;">🔴 PENGELUARAN</span>';
+        ? '<span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> PEMASUKAN</span>'
+        : '<span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span> PENGELUARAN</span>';
 
       const debitStr = rec.debit > 0 ? `<span style="color: #34d399; font-weight: 700;">+${formatRupiah(rec.debit)}</span>` : '<span style="color: #64748b;">-</span>';
       const creditStr = rec.credit > 0 ? `<span style="color: #f87171; font-weight: 700;">-${formatRupiah(rec.credit)}</span>` : '<span style="color: #64748b;">-</span>';
@@ -2525,13 +2525,13 @@ document.addEventListener('DOMContentLoaded', () => {
       let methodBadge = '';
       const m = (tx.paymentMethod || '').toLowerCase();
       if (m.includes('qris')) {
-        methodBadge = '<span style="background: #eff6ff; color: #0284c7; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;">📱 QRIS BCA</span>';
+        methodBadge = '<span style="background: #eff6ff; color: #0284c7; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> QRIS BCA</span>';
       } else if (m.includes('tunai') || m.includes('cash')) {
-        methodBadge = '<span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;">💵 TUNAI</span>';
+        methodBadge = '<span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> TUNAI</span>';
       } else if (m.includes('transfer')) {
-        methodBadge = '<span style="background: #faf5ff; color: #9333ea; border: 1px solid #e9d5ff; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;">🏦 TRANSFER</span>';
+        methodBadge = '<span style="background: #faf5ff; color: #9333ea; border: 1px solid #e9d5ff; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> TRANSFER</span>';
       } else {
-        methodBadge = `<span style="background: #fefce8; color: #a16207; border: 1px solid #fef08a; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;">💳 ${tx.paymentMethod}</span>`;
+        methodBadge = `<span style="background: #fefce8; color: #a16207; border: 1px solid #fef08a; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> ${tx.paymentMethod}</span>`;
       }
 
       return `
@@ -2561,12 +2561,12 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td style="padding: 10px 14px; text-align: center;">
             <span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 800;">
-              ✓ LUNAS
+              <svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> LUNAS
             </span>
           </td>
           <td style="padding: 10px 14px; text-align: center;">
             <button type="button" class="action-btn action-receipt" onclick="openReceiptModal('${tx.ticketId}')" title="Cetak Nota Faktur Thermal">
-              🖨️ Faktur
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Faktur
             </button>
           </td>
         </tr>
@@ -2829,7 +2829,7 @@ document.addEventListener('DOMContentLoaded', () => {
     allOrders.forEach((o) => {
       const opt = document.createElement('option');
       opt.value = o.id;
-      const stepLabel = o.step === 5 ? '✅ Selesai' : `Langkah ${o.step}`;
+      const stepLabel = o.step === 5 ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Selesai' : `Langkah ${o.step}`;
       opt.textContent = `${o.id} - ${o.customerName} (${o.phoneType}) [${stepLabel}]`;
       checkoutTicketSelect.appendChild(opt);
     });
@@ -2903,7 +2903,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const json = await res.json();
       if (json.success) {
-        alert(`🎉 Pembayaran Berhasil!\n\nNo. Faktur: ${json.data.invoiceNumber}\nTotal Tagihan: ${formatRupiah(totalPaid)}\nMetode: ${paymentMethod}\n\nData otomatis tercatat di database sistem (Catatan Keuangan & Riwayat Transaksi).`);
+        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Pembayaran Berhasil!\n\nNo. Faktur: ${json.data.invoiceNumber}\nTotal Tagihan: ${formatRupiah(totalPaid)}\nMetode: ${paymentMethod}\n\nData otomatis tercatat di database sistem (Catatan Keuangan & Riwayat Transaksi).`);
 
         // Automatically advance order step to step 5 if order exists
         const existing = allOrders.find((o) => o.id === ticketId);
@@ -2967,7 +2967,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const json = await res.json();
       if (json.success) {
-        alert(`✅ Berhasil mencatat ${type} sebesar ${formatRupiah(amount)}!`);
+        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Berhasil mencatat ${type} sebesar ${formatRupiah(amount)}!`);
         addFinanceForm.reset();
         if (addFinanceModal) addFinanceModal.style.display = 'none';
         await fetchFinanceStatus();
@@ -3002,7 +3002,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const json = await res.json();
       if (json.success) {
-        alert(`✅ ${json.message}`);
+        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ${json.message}`);
       } else {
         alert(`ℹ️ Info Sinkronisasi:\n${json.message}`);
       }
@@ -3074,7 +3074,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           tableBody.innerHTML = drivers.map(d => {
-            const avatar = d.avatar || (d.role === 'ojol' ? '🛵' : '🏪');
+            const avatar = d.avatar || (d.role === 'ojol' ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg>');
             const totalCommStr = 'Rp ' + Number(d.totalCommission || 0).toLocaleString('id-ID');
 
             return `
@@ -3158,21 +3158,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function getActionBadge(action) {
     const act = (action || '').toUpperCase();
     if (act.includes('LOGIN')) {
-      return `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #bae6fd;">🔑 ${act}</span>`;
+      return `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #bae6fd;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> ${act}</span>`;
     }
     if (act.includes('LOGOUT')) {
-      return `<span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #cbd5e1;">🚪 ${act}</span>`;
+      return `<span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #cbd5e1;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> ${act}</span>`;
     }
     if (act.includes('REGISTER')) {
-      return `<span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #86efac;">✨ ${act}</span>`;
+      return `<span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #86efac;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> ${act}</span>`;
     }
     if (act.includes('SYNC')) {
-      return `<span style="background: #ede9fe; color: #6d28d9; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #ddd6fe;">⚡ ${act}</span>`;
+      return `<span style="background: #ede9fe; color: #6d28d9; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #ddd6fe;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${act}</span>`;
     }
     if (act.includes('ORDER')) {
-      return `<span style="background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #fde68a;">📦 ${act}</span>`;
+      return `<span style="background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #fde68a;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg> ${act}</span>`;
     }
-    return `<span style="background: #f3e8ff; color: #7e22ce; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #e9d5ff;">⚙️ ${act}</span>`;
+    return `<span style="background: #f3e8ff; color: #7e22ce; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; border: 1px solid #e9d5ff;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> ${act}</span>`;
   }
 
   function renderActivityLogs() {
@@ -3220,7 +3220,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `
         <tr style="border-bottom: 1px solid #f1f5f9;">
           <td style="padding: 12px 14px; color: #475569; font-size: 0.82rem; white-space: nowrap;">
-            🕒 ${dateFormatted}
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${dateFormatted}
           </td>
           <td style="padding: 12px 14px;">
             ${getActionBadge(log.action)}
@@ -3238,9 +3238,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td style="padding: 12px 14px; text-align: center;">
             <span style="background: #f0fdf4; color: #166534; font-size: 0.74rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid #bbf7d0; display: inline-flex; align-items: center; gap: 4px;">
-              <span>✅ Neon</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Neon</span>
               <span>•</span>
-              <span>📁 data/</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg> data/</span>
             </span>
           </td>
         </tr>
@@ -3262,17 +3262,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data && data.success) {
         const counts = data.syncedCounts || {};
         const countSummary = Object.entries(counts).map(([k, v]) => `${k}: ${v}`).join(', ');
-        alert(`🎉 Berhasil menyinkronkan seluruh tabel ke Neon PostgreSQL!\n\nJumlah baris tersinkron:\n${countSummary || 'Semua tabel diperbarui.'}`);
+        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil menyinkronkan seluruh tabel ke Neon PostgreSQL!\n\nJumlah baris tersinkron:\n${countSummary || 'Semua tabel diperbarui.'}`);
       } else {
         alert(`ℹ️ Status Sinkronisasi: ${data.message || 'Berjalan dalam mode lokal data/'}`);
       }
       fetchActivityLogs();
     } catch (err) {
-      alert(`⚠️ Terjadi kesalahan saat sinkronisasi ke Neon: ${err.message}`);
+      alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Terjadi kesalahan saat sinkronisasi ke Neon: ${err.message}`);
     } finally {
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = `<span>⚡</span><span>Sinkronkan ke Neon Cloud Sekarang</span>`;
+        btn.innerHTML = `<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span>Sinkronkan ke Neon Cloud Sekarang</span>`;
       }
     }
   }

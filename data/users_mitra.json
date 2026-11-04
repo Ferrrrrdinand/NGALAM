@@ -1,8 +1,35 @@
 [
   {
+    "id": "USR-MITRA-DUMMY",
+    "username": "mitra_dummy",
+    "password": "$2b$10$4MbcgPMiADr/xrJdxoEQz.z2Z74XD.A4PCr3Ljw9dYsTBxNGXPAz2",
+    "name": "Mitra Dummy (Driver Ojol)",
+    "role": "ojol",
+    "category": "Mitra Kurir Ojek Online (Motor)",
+    "avatar": "🛵",
+    "phone": "081234567899",
+    "email": "mitra.dummy@ngalamfixpro.com",
+    "referralCode": "MTR-DUMMY-77",
+    "status": "Siaga / Aktif",
+    "commissionRate": 10,
+    "balance": 25000,
+    "totalCommission": 25000,
+    "withdrawnCommission": 0,
+    "commissionHistory": [
+      {
+        "orderId": "NGF-20261104-7646",
+        "amount": 25000,
+        "type": "credit",
+        "date": "2026-11-04T10:27:38.185Z",
+        "note": "Komisi 10% nota order NGF-20261104-7646"
+      }
+    ],
+    "lastActive": "4/11/2026, 17.27.38"
+  },
+  {
     "id": "USR-MITRA-EXAMPLE",
     "username": "mitra_demo",
-    "password": "password123",
+    "password": "$2b$10$NsRUDMU9uTY6bK4e5lWX.ufNsD2QS9r2fkAdSpVX0MS9AeomAqamS",
     "name": "Mitra Contoh (Ojol)",
     "role": "ojol",
     "category": "Mitra Kurir Ojek Online (Motor)",
@@ -10,15 +37,18 @@
     "phone": "081234567890",
     "email": "mitra@example.com",
     "referralCode": "MTR-DEMO-001",
-    "commissionRate": 10,
-    "totalCommission": 75000,
     "status": "Siaga / Aktif",
-    "lastActive": "3/11/2026, 10.23.43"
+    "commissionRate": 10,
+    "balance": 0,
+    "totalCommission": 0,
+    "withdrawnCommission": 0,
+    "commissionHistory": [],
+    "lastActive": "Hari ini"
   },
   {
     "id": "USR-MITRA-02",
     "username": "toko_jaya",
-    "password": "password123",
+    "password": "$2b$10$PRiC6PI7JWnOqxtxJQ20iO/V/8KLltkrETv4flTi/L95I2VSP36LO",
     "name": "Toko Sparepart Jaya Abadi",
     "role": "mitra",
     "category": "Mitra Bengkel / Toko Rekanan",
@@ -26,15 +56,18 @@
     "phone": "081234567899",
     "email": "tokojaya@example.com",
     "referralCode": "MTR-JAYA-888",
-    "commissionRate": 10,
-    "totalCommission": 120000,
     "status": "Siaga / Aktif",
+    "commissionRate": 10,
+    "balance": 0,
+    "totalCommission": 0,
+    "withdrawnCommission": 0,
+    "commissionHistory": [],
     "lastActive": "Hari ini"
   },
   {
     "id": "USR-MITRA-FERDINAND",
-    "username": "ferdinand",
-    "password": "123456",
+    "username": "ferdinand_mitra",
+    "password": "$2b$10$0N3d7KaYkff07fe.v8k68uMLpugOHU3AxjugTnXLQikcAuVd9SD2W",
     "name": "Ferdinand (Owner Mitra)",
     "role": "ojol",
     "category": "Mitra Kurir Ojek Online (Motor)",
@@ -42,25 +75,12 @@
     "phone": "082335493176",
     "email": "ferdinandleandro12@gmail.com",
     "referralCode": "MTR-FERDI-2026",
+    "status": "Siaga / Aktif",
     "commissionRate": 10,
+    "balance": 0,
     "totalCommission": 0,
-    "status": "Siaga / Aktif",
+    "withdrawnCommission": 0,
+    "commissionHistory": [],
     "lastActive": "Hari ini"
-  },
-  {
-    "id": "USR-MITRA-202611-3906",
-    "username": "reyy",
-    "password": "Reyy_123",
-    "name": "reyy",
-    "role": "ojol",
-    "category": "Mitra Kurir Ojek Online (Motor)",
-    "avatar": "🛵",
-    "phone": "085791609482",
-    "email": "mr6945425@gmail.com",
-    "referralCode": "MTR-REYY-2800",
-    "commissionRate": 10,
-    "totalCommission": 15000045000,
-    "status": "Siaga / Aktif",
-    "lastActive": "4/11/2026, 09.42.07"
   }
 ]

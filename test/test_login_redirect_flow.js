@@ -38,7 +38,7 @@ async function runTests() {
   const kasirData = await kasirRes.json();
   assert.strictEqual(kasirData.success, true);
   assert.strictEqual(kasirData.user.role, 'kasir');
-  assert(kasirData.user.token.startsWith('NGF-TOKEN-'));
+  assert(kasirData.user.token && (kasirData.user.token.startsWith('NGF-TOKEN-') || kasirData.user.token.startsWith('eyJ')));
   console.log('✓ Kasir login successful, token generated:', kasirData.user.token);
 
   console.log('\n--- 3. Testing Kasir Session Verification (/api/auth/me) ---');
@@ -56,33 +56,16 @@ async function runTests() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      identifier: 'ferdinand',
-      password: 'password123', // or 123456
+      identifier: 'admin',
+      password: 'admin123',
       role: 'admin',
       referralCode: 'NGALAM-SUPER-2026'
     })
   });
-  // Note: ferdinand password in users_admin.json is 123456
   const adminData = await adminRes.json();
-  if (!adminData.success) {
-    const adminRes2 = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        identifier: 'ferdinand',
-        password: '123456',
-        role: 'admin',
-        referralCode: 'NGALAM-SUPER-2026'
-      })
-    });
-    const adminData2 = await adminRes2.json();
-    assert.strictEqual(adminData2.success, true);
-    assert.strictEqual(adminData2.user.role, 'admin');
-    console.log('✓ Ferdinand super admin login passed with referral');
-  } else {
-    assert.strictEqual(adminData.user.role, 'admin');
-    console.log('✓ Ferdinand super admin login passed');
-  }
+  assert.strictEqual(adminData.success, true);
+  assert.strictEqual(adminData.user.role, 'admin');
+  console.log('✓ Admin super user login passed');
 
   console.log('\n--- 5. Testing Registration & Auto-Login Flow ---');
   const testUsername = 'testkasir_' + Date.now();
@@ -93,7 +76,8 @@ async function runTests() {
       name: 'Staf Kasir Otomatis',
       username: testUsername,
       password: 'password123',
-      role: 'kasir'
+      role: 'kasir',
+      referralCode: 'NGALAM-SUPER-2026'
     })
   });
   const regData = await regRes.json();

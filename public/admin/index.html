@@ -229,7 +229,7 @@
       <div class="admin-nav-actions" style="display: flex; align-items: center; gap: 10px; position: relative;">
         <!-- Staff Badge (Desktop) -->
         <div id="adminUserBadge" class="admin-header-user-badge" style="display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 14px; border-radius: 999px; font-size: 0.84rem; border: 1.5px solid #e2e8f0; color: #000000; font-weight: 700;">
-          <span id="adminUserAvatar">👩‍💼</span>
+          <span id="adminUserAvatar"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg></span>
           <span id="adminUserName">Admin Meja 1</span>
         </div>
 
@@ -249,12 +249,12 @@
               <span class="nav-dropdown-title">KONTROL ADMIN &amp; NAVIGASI</span>
               <div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;">Menu Operasional Meja 1</div>
             </div>
-            <button type="button" class="nav-dropdown-close" id="adminNavDropdownClose" aria-label="Tutup Menu">✕</button>
+            <button type="button" class="nav-dropdown-close" id="adminNavDropdownClose" aria-label="Tutup Menu"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
           </div>
 
           <!-- User Card in Menu -->
           <div class="admin-dropdown-user-card" style="display: flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 12px; margin-bottom: 10px;">
-            <span id="dropdownUserAvatar" style="font-size: 1.5rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">👩‍💼</span>
+            <span id="dropdownUserAvatar" style="font-size: 1.5rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.06);"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg></span>
             <div style="flex: 1; min-width: 0;">
               <strong id="dropdownUserName" style="display: block; font-size: 0.88rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Admin Meja 1</strong>
               <small id="dropdownUserRole" style="display: block; font-size: 0.72rem; color: #7c3aed; font-weight: 700;">Akses Staf Meja 1</small>
@@ -264,7 +264,7 @@
           <div class="nav-dropdown-links">
             <!-- 1. Refresh Data -->
             <button type="button" class="nav-dropdown-item admin-menu-btn" id="refreshBtn" title="Muat Ulang Data Antrean">
-              <span class="nav-dropdown-item-icon" style="background: #e0f2fe; color: #0284c7;">🔄</span>
+              <span class="nav-dropdown-item-icon" style="background: #e0f2fe; color: #0284c7;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg></span>
               <div class="nav-dropdown-item-text" style="text-align: left;">
                 <strong style="color: #0f172a;">Refresh Antrean</strong>
                 <small style="color: #64748b;">Muat ulang data order antrian</small>
@@ -273,7 +273,7 @@
 
             <!-- 2. Fullscreen Toggle -->
             <button type="button" class="nav-dropdown-item admin-menu-btn" id="btnAdminDashboardFullscreen" title="Mode Layar Penuh (F11)">
-              <span class="nav-dropdown-item-icon" style="background: #f5f3ff; color: #7c3aed;" id="dashFsIcon">⛶</span>
+              <span class="nav-dropdown-item-icon" style="background: #f5f3ff; color: #7c3aed;" id="dashFsIcon"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></span>
               <div class="nav-dropdown-item-text" style="text-align: left;">
                 <strong style="color: #0f172a;" id="dashFsText">Mode Layar Penuh</strong>
                 <small style="color: #64748b;">Maksimalkan area monitor kerja</small>
@@ -284,7 +284,7 @@
 
             <!-- 2b. Halaman Khusus Ekspor Excel (Owner) -->
             <a href="export.html" class="nav-dropdown-item" title="Buka Halaman Khusus Ekspor Transaksi ke Excel">
-              <span class="nav-dropdown-item-icon" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">📊</span>
+              <span class="nav-dropdown-item-icon" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>
               <div class="nav-dropdown-item-text">
                 <strong style="color: #047857;">Ekspor Riwayat Excel ↗</strong>
                 <small style="color: #64748b;">Laporan pembukuan &amp; audit transaksi</small>
@@ -293,7 +293,7 @@
 
             <!-- 3. Portal Teknisi -->
             <a href="../teknisi/index.html" class="nav-dropdown-item" title="Buka Portal Teknisi & Lab">
-              <span class="nav-dropdown-item-icon" style="background: #fffdf5; color: #b45309; border: 1px solid #fef08a;">🛠️</span>
+              <span class="nav-dropdown-item-icon" style="background: #fffdf5; color: #b45309; border: 1px solid #fef08a;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
               <div class="nav-dropdown-item-text">
                 <strong style="color: #0f172a;">Portal Teknisi</strong>
                 <small style="color: #64748b;">Akses lab pengerjaan unit HP</small>
@@ -302,7 +302,7 @@
 
             <!-- 4. Ke Beranda -->
             <a href="../index.html" class="nav-dropdown-item" title="Buka Halaman Utama Website">
-              <span class="nav-dropdown-item-icon" style="background: #f8fafc; color: #334155;">🏠</span>
+              <span class="nav-dropdown-item-icon" style="background: #f8fafc; color: #334155;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
               <div class="nav-dropdown-item-text">
                 <strong style="color: #0f172a;">Halaman Beranda ↗</strong>
                 <small style="color: #64748b;">Lihat website publik utama</small>
@@ -313,7 +313,7 @@
 
             <!-- 5. Kosongkan Data (Super Admin Only) -->
             <button type="button" class="nav-dropdown-item admin-menu-btn" id="clearDataBtn" title="Kosongkan Semua Data Antrean" style="background: #fef2f2; border: 1px solid #fecaca;">
-              <span class="nav-dropdown-item-icon" style="background: #fee2e2; color: #dc2626;">🗑️</span>
+              <span class="nav-dropdown-item-icon" style="background: #fee2e2; color: #dc2626;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></span>
               <div class="nav-dropdown-item-text" style="text-align: left;">
                 <strong style="color: #dc2626;">Kosongkan Data</strong>
                 <small style="color: #ef4444;">Hapus seluruh antrean aktif</small>
@@ -322,7 +322,7 @@
 
             <!-- 6. Keluar / Logout -->
             <button type="button" class="nav-dropdown-item admin-menu-btn" id="adminLogoutBtn" title="Keluar dari akun admin" style="background: #fff1f2; border: 1px solid #fecdd3; margin-top: 4px;">
-              <span class="nav-dropdown-item-icon" style="background: #ffe4e6; color: #e11d48;">🚪</span>
+              <span class="nav-dropdown-item-icon" style="background: #ffe4e6; color: #e11d48;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
               <div class="nav-dropdown-item-text" style="text-align: left;">
                 <strong style="color: #e11d48;">Keluar (Logout)</strong>
                 <small style="color: #e11d48;">Akhiri sesi kerja admin</small>
@@ -343,7 +343,7 @@
     <!-- ROLE OPERASIONAL BANNER (KASIR VS ADMIN SUPER USER) -->
     <div id="roleWelcomeBanner" style="margin-bottom: 22px; padding: 16px 22px; border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 16px rgba(15,23,42,0.03);">
       <div style="display: flex; align-items: center; gap: 14px;">
-        <span id="roleBannerAvatar" style="font-size: 2rem;">👩‍💼</span>
+        <span id="roleBannerAvatar" style="font-size: 2rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg></span>
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <strong id="roleBannerTitle" style="color: #000000; font-size: 1.05rem;">Peran Kerja: Kasir Meja 1</strong>
@@ -369,45 +369,45 @@
     <!-- Top Nav Tabs -->
     <div class="admin-nav-tabs">
       <button type="button" class="admin-nav-tab active" data-tab="register">
-        <span style="font-size: 1.05rem;">📝</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg></span>
         <span>Registrasi Walk-in Offline</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="queue">
-        <span style="font-size: 1.05rem;">📋</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
         <span>Antrian & Bagi Teknisi</span>
         <span id="queueCountBadge" class="nav-tab-badge">0 Antrian</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="cashier">
-        <span style="font-size: 1.05rem;">💰</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v12"/></svg></span>
         <span>Kasir & Cetak Struk</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="promos">
-        <span style="font-size: 1.05rem;">🖼️</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span>
         <span>Banner Promosi</span>
         <span id="promoCountBadge" class="nav-tab-badge">3 Banner</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="promocodes">
-        <span style="font-size: 1.05rem;">🎟️</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></span>
         <span>Kode Promo</span>
         <span id="promoCodeCountBadge" class="nav-tab-badge">3 Aktif</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="technicians">
-        <span style="font-size: 1.05rem;">👨‍🔧</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
         <span>Monitoring Tim Teknisi</span>
         <span id="techOnlineBadge" class="nav-tab-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">0 Online</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="mitras">
-        <span style="font-size: 1.05rem;">🛵</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></span>
         <span>Mitra Driver & Afiliasi</span>
         <span id="mitraCountBadge" class="nav-tab-badge" style="background: rgba(16, 185, 129, 0.2); color: #059669; border-color: rgba(16, 185, 129, 0.4);">2 Mitra</span>
       </button>
       <button type="button" class="admin-nav-tab" data-tab="activity-logs" id="activityLogsTabBtn">
-        <span style="font-size: 1.05rem;">📋</span>
+        <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
         <span>Audit Log & Neon Sync</span>
         <span id="activityLogBadge" class="nav-tab-badge" style="background: rgba(124, 58, 237, 0.15); color: #7c3aed; border-color: rgba(124, 58, 237, 0.3);">Dual Sync</span>
       </button>
       <a href="../teknisi/index.html" class="admin-nav-tab" style="margin-left: auto; text-decoration: none; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25);">
-        <span>🛠️</span>
+        <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
         <span>Masuk Portal Teknisi</span>
       </a>
     </div>
@@ -517,7 +517,7 @@
                 <div class="form-group">
                   <label for="walkinTech" style="color: #000000; font-size: 0.82rem; font-weight: 700;">Teknisi PJ (Handle Awal s/d Akhir)</label>
                   <select id="walkinTech" class="form-control" style="font-weight: 600;">
-                    <option value="ferdinand|Ferdinand (Teknisi Lab Workshop)" selected>🔬 Ferdinand (Teknisi Lab Workshop)</option>
+                    <option value="ferdinand|Ferdinand (Teknisi Lab Workshop)" selected><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg> Ferdinand (Teknisi Lab Workshop)</option>
                   </select>
                   <small style="font-size: 0.72rem; color: #000000; display: block; margin-top: 3px;">Teknisi yang menghandle unit hingga tuntas</small>
                 </div>
@@ -538,7 +538,7 @@
             </div>
 
             <button type="submit" class="btn full" id="walkinSubmitBtn" style="padding: 16px; font-size: 1.05rem; font-weight: 700; background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35);">
-              <span>Daftarkan Unit & Terbitkan Nota Struk 🖨️</span>
+              <span>Daftarkan Unit & Terbitkan Nota Struk <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
             </button>
           </form>
         </div>
@@ -548,11 +548,11 @@
           <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px;">
             <h3 style="color: #000000; font-size: 1.1rem; margin-bottom: 12px;">SOP Penerimaan Unit Meja 1</h3>
             <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 0.86rem; color: #000000;">
-              <li>1. 🔍 Cek fisik bersama pelanggan di depan counter (layar, kamera, tombol).</li>
-              <li>2. 🏷️ Tanyakan keluhan utama dan catat aksesori yang dititipkan.</li>
-              <li>3. 🔒 Informasikan privasi: sandi/PIN tidak wajib jika ganti hardware.</li>
-              <li>4. 🖨️ Cetak tanda terima nota thermal rangkap 2 (1 customer, 1 unit meja kerja).</li>
-              <li>5. 📊 Data otomatis tersimpan ke database sistem secara realtime.</li>
+              <li>1. <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Cek fisik bersama pelanggan di depan counter (layar, kamera, tombol).</li>
+              <li>2. <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 9 9-9 9-9-9Z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg> Tanyakan keluhan utama dan catat aksesori yang dititipkan.</li>
+              <li>3. <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Informasikan privasi: sandi/PIN tidak wajib jika ganti hardware.</li>
+              <li>4. <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Cetak tanda terima nota thermal rangkap 2 (1 customer, 1 unit meja kerja).</li>
+              <li>5. <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Data otomatis tersimpan ke database sistem secara realtime.</li>
             </ul>
           </div>
 
@@ -617,7 +617,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 14px;">
         <div>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 1.5rem;">💰</span>
+            <span style="font-size: 1.5rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v12"/></svg></span>
             <h2 style="font-size: 1.45rem; color: #000000; margin: 0;">Kasir, Keuangan & Database Sistem</h2>
             <span style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; font-size: 0.76rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
               DATABASE SYSTEM ACTIVE
@@ -629,10 +629,10 @@
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <button type="button" class="btn small outline" id="openDbConfigModalBtn" style="border-radius: 10px; background: #fffdf5; border-color: #bae6fd; color: #b45309; font-weight: 700;">
-            ⚙️ Status Database Sistem
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Status Database Sistem
           </button>
           <button type="button" class="btn small" id="syncDatabaseBtn" style="border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669); font-weight: 700;">
-            🔄 Perbarui Data Transaksi
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Perbarui Data Transaksi
           </button>
         </div>
       </div>
@@ -643,14 +643,14 @@
         <div class="card" style="background: #ffffff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.8rem;">📊</span>
+              <span style="font-size: 1.8rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>
               <div>
                 <strong style="color: #000000; font-size: 1.05rem; display: block;">Tabel 1: Catatan Keuangan & Kas</strong>
                 <small style="color: #b45309; font-family: monospace; font-weight: 600;">Penyimpanan: data/finances.json</small>
               </div>
             </div>
             <span id="badgeDbFinance" style="padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669;">
-              🟢 Database Kas Workshop Aktif
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Database Kas Workshop Aktif
             </span>
           </div>
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 12px;">
@@ -660,7 +660,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
             <span style="color: #000000;">Total Entri Pembukuan: <strong style="color: #b45309;" id="countFinanceEntries">0 Baris</strong></span>
             <button type="button" class="btn small outline" id="quickSyncFinanceBtn" style="padding: 4px 10px; font-size: 0.76rem; border-radius: 6px; border-color: #bae6fd; color: #b45309; background: #fffdf5;">
-              Refresh ➔
+              Refresh →
             </button>
           </div>
         </div>
@@ -669,14 +669,14 @@
         <div class="card" style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.8rem;">🧾</span>
+              <span style="font-size: 1.8rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-8"/><path d="M16 12h-8"/><path d="M10 16h-2"/></svg></span>
               <div>
                 <strong style="color: #000000; font-size: 1.05rem; display: block;">Tabel 2: Riwayat Seluruh Transaksi & Faktur</strong>
                 <small style="color: #059669; font-family: monospace; font-weight: 600;">Penyimpanan: data/transactions.json</small>
               </div>
             </div>
             <span id="badgeDbTransactions" style="padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669;">
-              🟢 Database Transaksi Kasir Aktif
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Database Transaksi Kasir Aktif
             </span>
           </div>
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 12px;">
@@ -686,7 +686,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
             <span style="color: #000000;">Total Faktur Transaksi: <strong style="color: #059669;" id="countTransactionEntries">0 Faktur</strong></span>
             <button type="button" class="btn small outline" id="quickSyncTransactionsBtn" style="padding: 4px 10px; font-size: 0.76rem; border-radius: 6px; border-color: #a7f3d0; color: #059669; background: #ecfdf5;">
-              Refresh ➔
+              Refresh →
             </button>
           </div>
         </div>
@@ -722,17 +722,17 @@
       <!-- SUB-NAVIGATION BUTTONS -->
       <div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; flex-wrap: wrap; align-items: center;">
         <button type="button" class="btn small" id="subtabBtnFinances" style="border-radius: 10px; background: linear-gradient(135deg, #d4af37, #b45309); font-weight: 700; padding: 10px 18px; color: #ffffff;">
-          <span>📊 Tabel 1: Catatan Keuangan & Kas</span>
+          <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Tabel 1: Catatan Keuangan & Kas</span>
         </button>
         <button type="button" class="btn small outline darkoutline" id="subtabBtnTransactions" style="border-radius: 10px; border-color: #a7f3d0; color: #059669; background: #ecfdf5; font-weight: 700; padding: 10px 18px;">
-          <span>🧾 Tabel 2: Riwayat Seluruh Transaksi & Faktur</span>
+          <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-8"/><path d="M16 12h-8"/><path d="M10 16h-2"/></svg> Tabel 2: Riwayat Seluruh Transaksi & Faktur</span>
         </button>
         <!-- Tombol Khusus Halaman Mandiri Ekspor Excel (Khusus Owner / Admin) -->
         <a href="export.html" id="linkToExportPage" class="btn small" style="border-radius: 10px; background: linear-gradient(135deg, #10b981, #047857); font-weight: 700; color: #ffffff; padding: 10px 18px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
-          <span>📥 Halaman Ekspor Excel ↗</span>
+          <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg> Halaman Ekspor Excel ↗</span>
         </a>
         <button type="button" class="btn small outline darkoutline" id="subtabBtnCheckout" style="border-radius: 10px; border-color: #fde68a; color: #b45309; background: #fffbeb; font-weight: 700; padding: 10px 18px; margin-left: auto;">
-          <span>💳 Pembayaran Kasir Cepat</span>
+          <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Pembayaran Kasir Cepat</span>
         </button>
       </div>
 
@@ -751,8 +751,8 @@
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
               <select id="filterFinanceType" class="form-control" style="width: 160px; padding: 8px 12px; font-size: 0.84rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; color: #000000;">
                 <option value="all">Semua Jenis</option>
-                <option value="pemasukan">🟢 Pemasukan Saja</option>
-                <option value="pengeluaran">🔴 Pengeluaran Saja</option>
+                <option value="pemasukan"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Pemasukan Saja</option>
+                <option value="pengeluaran"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span> Pengeluaran Saja</option>
               </select>
               <button type="button" class="btn small" id="openAddFinanceModalBtn" style="border-radius: 8px; background: linear-gradient(135deg, #d4af37, #10b981); font-weight: 700; color: #ffffff; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25);">
                 + Catat Kas Masuk/Keluar
@@ -798,14 +798,14 @@
             <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
               <select id="filterTxMethod" class="form-control" style="width: 170px; padding: 8px 12px; font-size: 0.84rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; color: #000000;">
                 <option value="all">Semua Metode</option>
-                <option value="qris">📱 QRIS BCA / E-Wallet</option>
-                <option value="tunai">💵 Tunai (Cash)</option>
-                <option value="transfer">🏦 Transfer Bank</option>
+                <option value="qris"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> QRIS BCA / E-Wallet</option>
+                <option value="tunai"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> Tunai (Cash)</option>
+                <option value="transfer"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> Transfer Bank</option>
               </select>
               <input type="text" id="searchTxInput" placeholder="Cari nota / nama / tiket..." class="form-control"
                 style="width: 220px; padding: 8px 12px; font-size: 0.84rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; color: #000000;">
               <button type="button" class="btn small" id="printDailyReportBtn" style="border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b45309); font-weight: 700; color: #ffffff; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); cursor: pointer;">
-                <span>🖨️ Cetak Struk Rekap Transaksi Harian</span>
+                <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Cetak Struk Rekap Transaksi Harian</span>
               </button>
             </div>
           </div>
@@ -840,7 +840,7 @@
         <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px;">
           <!-- Form Checkout -->
           <div class="card" style="background: #ffffff; border: 1.5px solid #bae6fd; border-radius: 18px; padding: 24px;">
-            <h3 style="color: #000000; font-size: 1.2rem; margin: 0 0 16px;">💳 Proses Pembayaran Servis di Kasir</h3>
+            <h3 style="color: #000000; font-size: 1.2rem; margin: 0 0 16px;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Proses Pembayaran Servis di Kasir</h3>
 
             <form id="cashierCheckoutForm">
               <div style="margin-bottom: 14px;">
@@ -882,19 +882,19 @@
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
                   <label style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; color: #000000;">
                     <input type="radio" name="checkoutPaymentMethod" value="QRIS BCA" checked>
-                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;">📱 QRIS</span>
+                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> QRIS</span>
                   </label>
                   <label style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; color: #000000;">
                     <input type="radio" name="checkoutPaymentMethod" value="Tunai (Cash)">
-                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;">💵 Tunai</span>
+                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> Tunai</span>
                   </label>
                   <label style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; color: #000000;">
                     <input type="radio" name="checkoutPaymentMethod" value="Transfer Bank BCA">
-                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;">🏦 BCA</span>
+                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> BCA</span>
                   </label>
                   <label style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; color: #000000;">
                     <input type="radio" name="checkoutPaymentMethod" value="Kartu Debit">
-                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;">💳 Debit</span>
+                    <span style="display: block; font-size: 0.82rem; margin-top: 4px; font-weight: 600;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Debit</span>
                   </label>
                 </div>
               </div>
@@ -911,7 +911,7 @@
               </div>
 
               <button type="submit" class="btn" style="width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff;">
-                <span>Bayar Sekarang & Simpan Transaksi 🚀</span>
+                <span>Bayar Sekarang & Simpan Transaksi <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
               </button>
             </form>
           </div>
@@ -920,7 +920,7 @@
           <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 24px; text-align: center;">
             <h4 style="color: #000000; font-size: 1.1rem; margin: 0 0 12px;">QRIS Kasir Workshop</h4>
             <div style="background: #ffffff; padding: 16px; border-radius: 14px; display: inline-block; margin-bottom: 14px;">
-              <div style="font-size: 5rem; line-height: 1;">📱</div>
+              <div style="font-size: 5rem; line-height: 1;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg></div>
               <strong style="color: #000000; display: block; font-size: 0.9rem; margin-top: 6px;">NGALAM FIX PRO QRIS</strong>
               <small style="color: #000000; font-size: 0.75rem;">NMID: ID10293847561</small>
             </div>
@@ -940,7 +940,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
           <h2 style="font-size: 1.4rem; color: #000000; margin: 0 0 4px; display: flex; align-items: center; gap: 10px;">
-            <span>🖼️</span> Manajemen Banner Promosi Beranda (Hero Slider)
+            <span><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span> Manajemen Banner Promosi Beranda (Hero Slider)
           </h2>
           <p style="color: #000000; font-size: 0.88rem; margin: 0;">
             Admin staf dapat mengunggah gambar promosi mandiri, mengatur kupon diskon, serta mengaktifkan atau menonaktifkan banner secara real-time.
@@ -948,10 +948,10 @@
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
           <a href="../index.html" target="_blank" rel="noopener noreferrer" class="btn small outline darkoutline" title="Buka Beranda untuk melihat banner langsung">
-            👁️ Lihat di Beranda ↗
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> Lihat di Beranda ↗
           </a>
           <button type="button" class="btn small outline darkoutline" id="reloadPromosBtn" title="Muat ulang daftar banner">
-            🔄 Segarkan Data
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Segarkan Data
           </button>
           <button type="button" class="btn small outline darkoutline" id="resetPromosBtn" title="Kembalikan 3 banner default workshop" style="border: 1px solid #fca5a5; color: #dc2626; background: #fef2f2; font-weight: 600;">
             ↩️ Reset Default
@@ -963,7 +963,7 @@
         <!-- Left: Upload / Add Form -->
         <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 26px;">
           <h3 style="color: #000000; font-size: 1.15rem; margin: 0 0 16px; display: flex; align-items: center; gap: 8px;">
-            <span>📤</span> Formulir Upload Banner Baru
+            <span><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span> Formulir Upload Banner Baru
           </h3>
 
           <form id="promoUploadForm">
@@ -989,7 +989,7 @@
               <div id="promoFileInputBox">
                 <div class="file-drop-area" id="promoDropArea" style="border: 2px dashed rgba(2, 132, 199, 0.4); border-radius: 12px; padding: 22px; text-align: center; cursor: pointer; background: #f0f9ff; transition: all 0.2s ease;">
                   <input type="file" id="promoFileInput" accept="image/png, image/jpeg, image/webp" style="display: none;">
-                  <div style="font-size: 2.2rem; margin-bottom: 6px;">📸</div>
+                  <div style="font-size: 2.2rem; margin-bottom: 6px;"><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
                   <div style="color: #000000; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">Klik untuk Pilih Foto atau Drag & Drop</div>
                   <div style="color: #000000; font-size: 0.8rem;">Format: JPG, PNG, WebP (Rasio ideal 16:9 atau lebar lanskap)</div>
                 </div>
@@ -1011,7 +1011,7 @@
                   Foto Terpilih
                 </div>
                 <button type="button" id="promoRemoveImageBtn" style="position: absolute; top: 8px; right: 8px; background: #dc2626; border: none; color: #ffffff; border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; cursor: pointer; font-weight: 600;">
-                  Ganti Foto ✕
+                  Ganti Foto <svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
               </div>
             </div>
@@ -1035,11 +1035,11 @@
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div class="form-group">
                   <label for="promoBadgeTagInput" style="color: #000000; font-size: 0.82rem; font-weight: 600;">Tag Badge Kiri</label>
-                  <input type="text" id="promoBadgeTagInput" class="form-control" value="🎁 BONUS TEMPERED GLASS 9H" placeholder="Contoh: 🔥 PROMO SPESIAL">
+                  <input type="text" id="promoBadgeTagInput" class="form-control" value="<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/></svg> BONUS TEMPERED GLASS 9H" placeholder="Contoh:  PROMO SPESIAL">
                 </div>
                 <div class="form-group">
                   <label for="promoBadgePillInput" style="color: #000000; font-size: 0.82rem; font-weight: 600;">Pill Diskon / Highlight Kanan</label>
-                  <input type="text" id="promoBadgePillInput" class="form-control" value="✨ FLASH DEAL BULAN INI" placeholder="Contoh: 🏷️ DISKON S/D 30%">
+                  <input type="text" id="promoBadgePillInput" class="form-control" value="<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> FLASH DEAL BULAN INI" placeholder="Contoh: <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 9 9-9 9-9-9Z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg> DISKON S/D 30%">
                 </div>
               </div>
             </div>
@@ -1062,12 +1062,12 @@
                 <div class="form-group">
                   <label for="promoThemeInput" style="color: #000000; font-size: 0.82rem; font-weight: 600;">Aksen Gradien Warna</label>
                   <select id="promoThemeInput" class="form-control">
-                    <option value="purple" selected>🟣 Ungu Cyber (Flash Deal)</option>
-                    <option value="green">🟢 Hijau Emerald (Workshop / Cepat 30m)</option>
-                    <option value="red">🔴 Merah Api (Promo Spesial / Diskon 30%)</option>
-                    <option value="blue">🔵 Biru Neon (Teknisi Original Parts)</option>
-                    <option value="amber">🟡 Emas / Amber (Garansi VIP)</option>
-                    <option value="cyan">🌊 Cyan Samudera (Modern Tech)</option>
+                    <option value="purple" selected><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8b5cf6;"></span> Ungu Cyber (Flash Deal)</option>
+                    <option value="green"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Hijau Emerald (Workshop / Cepat 30m)</option>
+                    <option value="red"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span> Merah Api (Promo Spesial / Diskon 30%)</option>
+                    <option value="blue"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#3b82f6;"></span> Biru Neon (Teknisi Original Parts)</option>
+                    <option value="amber"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 6px #f59e0b;"></span> Emas / Amber (Garansi VIP)</option>
+                    <option value="cyan"> Cyan Samudera (Modern Tech)</option>
                   </select>
                 </div>
               </div>
@@ -1086,8 +1086,8 @@
               <div class="form-group">
                 <label for="promoActiveInput" style="color: #000000; font-size: 0.82rem; font-weight: 600;">Status Tampil di Halaman Utama</label>
                 <select id="promoActiveInput" class="form-control">
-                  <option value="true" selected>🟢 Aktif Langsung di Beranda Utama</option>
-                  <option value="false">⚪ Simpan Sebagai Draft (Nonaktif di Beranda)</option>
+                  <option value="true" selected><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Aktif Langsung di Beranda Utama</option>
+                  <option value="false"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Simpan Sebagai Draft (Nonaktif di Beranda)</option>
                 </select>
               </div>
             </div>
@@ -1095,17 +1095,17 @@
             <!-- 4. WYSIWYG LIVE PREVIEW -->
             <div style="margin-bottom: 20px;">
               <span style="color: #000000; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 8px;">
-                👁️ Simulasi Tampilan Banner (Live Preview):
+                <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> Simulasi Tampilan Banner (Live Preview):
               </span>
               <div id="liveBannerSimulator" style="position: relative; width: 100%; aspect-ratio: 16/9; max-height: 220px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(56, 189, 248, 0.4); box-shadow: 0 10px 25px rgba(0,0,0,0.5); background: #070e1b;">
                 <img id="simBannerImg" src="../images/promo-banner-1.jpg" alt="Simulasi" style="width: 100%; height: 100%; object-fit: cover;">
                 <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,14,27,0.3) 0%, rgba(7,14,27,0.92) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 14px;">
                   <div style="display: flex; justify-content: space-between; gap: 8px;">
                     <span id="simBadgeTag" style="font-size: 0.65rem; font-weight: 800; background: rgba(7,14,27,0.85); border: 1px solid #38bdf8; color: #38bdf8; padding: 3px 10px; border-radius: 999px;">
-                      🎁 BONUS TEMPERED GLASS 9H
+                      <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/></svg> BONUS TEMPERED GLASS 9H
                     </span>
                     <span id="simBadgePill" style="font-size: 0.65rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, #6366f1); color: #fff; padding: 3px 10px; border-radius: 999px;">
-                      ✨ FLASH DEAL BULAN INI
+                      <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> FLASH DEAL BULAN INI
                     </span>
                   </div>
                   <div>
@@ -1130,7 +1130,7 @@
 
             <!-- Submit Button -->
             <button type="submit" id="savePromoBtn" class="btn" style="width: 100%; background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35); font-weight: 700; font-size: 1rem; padding: 14px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <span>💾 Publikasikan Banner ke Beranda Sekarang</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Publikasikan Banner ke Beranda Sekarang</span>
             </button>
           </form>
         </div>
@@ -1139,7 +1139,7 @@
         <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 26px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <h3 style="color: #000000; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;">
-              <span>📑</span> Banner Yang Sedang Aktif
+              <span><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg></span> Banner Yang Sedang Aktif
             </h3>
             <span id="activePromoCounter" style="background: #fffdf5; border: 1px solid #fef08a; color: #b45309; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 999px;">
               3 Banner Terdaftar
@@ -1169,7 +1169,7 @@
       <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.15)); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 16px; padding: 22px 26px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span style="font-size: 1.4rem;">🎟️</span>
+            <span style="font-size: 1.4rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></span>
             <h2 style="font-size: 1.35rem; color: #000000; margin: 0; font-weight: 800;">Manajemen Kode Promo & Potongan Harga</h2>
           </div>
           <p style="color: #000000; font-size: 0.88rem; margin: 0; max-width: 720px;">
@@ -1197,7 +1197,7 @@
         <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 26px; height: fit-content;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
             <h3 style="color: #000000; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;">
-              <span>➕</span> Buat Kode Promo Baru
+              <span>+</span> Buat Kode Promo Baru
             </h3>
             <span style="background: #fffdf5; border: 1px solid #fef08a; color: #b45309; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
               INPUT PROMO
@@ -1275,13 +1275,13 @@
             <div class="form-group" style="margin-bottom: 18px;">
               <label for="promoInpActive" style="color: #000000; font-size: 0.85rem; font-weight: 600;">Status Terbitan</label>
               <select id="promoInpActive" class="form-control">
-                <option value="true">🟢 Langsung Aktif & Bisa Dipakai</option>
-                <option value="false">⚪ Simpan Sebagai Draft (Nonaktif)</option>
+                <option value="true"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Langsung Aktif & Bisa Dipakai</option>
+                <option value="false"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Simpan Sebagai Draft (Nonaktif)</option>
               </select>
             </div>
 
             <button type="submit" id="btnSavePromoCode" class="btn" style="width: 100%; background: linear-gradient(135deg, #d4af37, #b45309); font-weight: 700; font-size: 0.95rem; padding: 13px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <span>💾 Terbitkan Kode Promo Sekarang</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Terbitkan Kode Promo Sekarang</span>
             </button>
           </form>
         </div>
@@ -1291,7 +1291,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
             <div>
               <h3 style="color: #000000; font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: 8px;">
-                <span>📋</span> Daftar Kode Promo & Status Kedaluwarsa
+                <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span> Daftar Kode Promo & Status Kedaluwarsa
               </h3>
               <p style="color: #000000; font-size: 0.82rem; margin: 4px 0 0;">
                 Pantau promo aktif, masa berlaku habis, dan pemakaian pelanggan.
@@ -1299,7 +1299,7 @@
             </div>
             <div style="display: flex; gap: 8px;">
               <button type="button" id="refreshPromoCodesBtn" class="btn small outline darkoutline" style="font-size: 0.78rem;">
-                🔄 Refresh
+                <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Refresh
               </button>
             </div>
           </div>
@@ -1310,10 +1310,10 @@
               Semua Promo
             </button>
             <button type="button" class="promo-code-filter-btn" data-filter="ACTIVE" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #000000; padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-              🟢 Aktif Saja
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Aktif Saja
             </button>
             <button type="button" class="promo-code-filter-btn" data-filter="EXPIRED" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #000000; padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-              🔴 Kedaluwarsa
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span> Kedaluwarsa
             </button>
           </div>
 
@@ -1335,7 +1335,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.5rem;">👨‍🔧</span>
+            <span style="font-size: 1.5rem;"><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
             <h2 style="font-size: 1.45rem; color: #000000; margin: 0;">Monitoring Tim Teknisi Lab Live</h2>
             <span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 0.76rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
               REAL-TIME SYNC
@@ -1347,10 +1347,10 @@
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <button type="button" class="btn small" id="openAddTechModalBtn" style="border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; font-weight: 700; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);">
-            ➕ Tambah Teknisi Baru
+            + Tambah Teknisi Baru
           </button>
           <button type="button" class="btn small" id="refreshTechRosterBtn" style="border-radius: 10px; background: linear-gradient(135deg, #d4af37, #b45309); font-weight: 700;">
-            🔄 Refresh Status Teknisi
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Refresh Status Teknisi
           </button>
         </div>
       </div>
@@ -1364,25 +1364,25 @@
         </div>
 
         <div class="card" style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 14px; padding: 16px;">
-          <span style="color: #059669; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">🟢 Online Sekarang</span>
+          <span style="color: #059669; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Online Sekarang</span>
           <div style="font-size: 1.8rem; font-weight: 800; color: #059669; margin: 4px 0;" id="kpiTechOnline">0</div>
           <small style="color: #000000; font-size: 0.76rem;">Sedang Aktif Shift</small>
         </div>
 
         <div class="card" style="background: #ffffff; border: 1px solid #fef08a; border-radius: 14px; padding: 16px;">
-          <span style="color: #a16207; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">🟡 Handled Phone</span>
+          <span style="color: #a16207; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 6px #f59e0b;"></span> Handled Phone</span>
           <div style="font-size: 1.8rem; font-weight: 800; color: #a16207; margin: 4px 0;" id="kpiTechHandled">0</div>
           <small style="color: #000000; font-size: 0.76rem;">Sedang Mengerjakan HP</small>
         </div>
 
         <div class="card" style="background: #ffffff; border: 1px solid #fef08a; border-radius: 14px; padding: 16px;">
-          <span style="color: #b45309; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">🔵 Standby Meja</span>
+          <span style="color: #b45309; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#3b82f6;"></span> Standby Meja</span>
           <div style="font-size: 1.8rem; font-weight: 800; color: #b45309; margin: 4px 0;" id="kpiTechStandby">0</div>
           <small style="color: #000000; font-size: 0.76rem;">Siap Menerima Unit Baru</small>
         </div>
 
         <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px;">
-          <span style="color: #000000; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">⚪ Offline</span>
+          <span style="color: #000000; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Offline</span>
           <div style="font-size: 1.8rem; font-weight: 800; color: #000000; margin: 4px 0;" id="kpiTechOffline">3</div>
           <small style="color: #000000; font-size: 0.76rem;">Belum Login / Istirahat</small>
         </div>
@@ -1390,7 +1390,7 @@
 
       <!-- Live Roster Cards of 3 Technicians -->
       <h3 style="color: #000000; font-size: 1.2rem; margin: 0 0 16px; display: flex; align-items: center; gap: 8px;">
-        <span>🛠️ Status & Meja Kerja Masing-Masing Teknisi:</span>
+        <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Status & Meja Kerja Masing-Masing Teknisi:</span>
       </h3>
       <div id="techniciansCardsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 36px;">
         <!-- Dynamically rendered by admin.js -->
@@ -1404,7 +1404,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
           <div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 1.3rem;">📋</span>
+              <span style="font-size: 1.3rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
               <h3 style="color: #000000; font-size: 1.2rem; margin: 0;">Log Aktivitas & Audit Perubahan Status Teknisi</h3>
             </div>
             <p style="color: #000000; font-size: 0.84rem; margin: 4px 0 0;">
@@ -1441,7 +1441,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.5rem;">🛵</span>
+            <span style="font-size: 1.5rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></span>
             <h2 style="font-size: 1.45rem; color: #000000; margin: 0;">Manajemen Mitra Driver, Ojol & Afiliasi QR Code</h2>
             <span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #059669; font-size: 0.76rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
               TABEL DATABASE: MitraDriver
@@ -1453,10 +1453,10 @@
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <a href="../mitra/index.html" target="_blank" class="btn small" style="border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-            <span>🌐 Buka Portal Mitra ↗</span>
+            <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Buka Portal Mitra ↗</span>
           </a>
           <button type="button" class="btn small" id="refreshMitraBtn" style="border-radius: 10px; background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; font-weight: 700;">
-            🔄 Refresh Data Mitra
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Refresh Data Mitra
           </button>
         </div>
       </div>
@@ -1518,7 +1518,7 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; flex-wrap: wrap;">
           <div>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-              <span style="font-size: 1.6rem;">📋</span>
+              <span style="font-size: 1.6rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
               <h2 style="font-size: 1.35rem; color: #0f172a; margin: 0; font-weight: 800;">Audit Log Aktivitas &amp; Neon Dual-Sync</h2>
               <span style="background: #ede9fe; color: #7c3aed; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1px solid #ddd6fe;">REAL-TIME</span>
             </div>
@@ -1529,11 +1529,11 @@
 
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
             <button type="button" class="btn small" id="btnTriggerNeonSync" style="background: linear-gradient(135deg, #059669, #047857); color: #ffffff; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5,150,105,0.25);">
-              <span>⚡</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
               <span>Sinkronkan ke Neon Cloud Sekarang</span>
             </button>
             <button type="button" class="btn small outline darkoutline" id="btnRefreshActivityLogs" style="border-radius: 10px; display: inline-flex; align-items: center; gap: 6px;">
-              <span>🔄</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg></span>
               <span>Muat Ulang Log</span>
             </button>
           </div>
@@ -1542,7 +1542,7 @@
         <!-- Sync & Database Status Banner -->
         <div id="neonSyncStatusBanner" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.4rem;" id="neonStatusDot">🟢</span>
+            <span style="font-size: 1.4rem;" id="neonStatusDot"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span></span>
             <div>
               <strong style="color: #0f172a; font-size: 0.92rem; display: block;" id="neonStatusTitle">Dual-Storage Siaga (Neon PostgreSQL &amp; data/)</strong>
               <small style="color: #64748b; font-size: 0.8rem;" id="neonStatusSubtitle">Setiap perubahan akun staf dan pelanggan otomatis tersimpan di 2 lokasi secara bersamaan.</small>
@@ -1597,7 +1597,7 @@
     <div class="receipt-modal-container" style="max-width: 440px; background: #ffffff; color: #000000; border-radius: 14px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6);">
       <div style="background: #0f172a; color: #ffffff; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
         <strong style="font-size: 0.95rem;">Pratinjau Nota Fisik Thermal</strong>
-        <button type="button" id="closeReceiptBtn" style="background: transparent; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer;">✕</button>
+        <button type="button" id="closeReceiptBtn" style="background: transparent; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <!-- Printable Container -->
@@ -1610,7 +1610,7 @@
           Tutup
         </button>
         <button type="button" class="btn small" id="printReceiptBtn" style="background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; font-weight: 700; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);">
-          <span>Cetak ke Printer Thermal 🖨️</span>
+          <span>Cetak ke Printer Thermal <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
         </button>
       </div>
     </div>
@@ -1623,10 +1623,10 @@
     <div class="receipt-modal-container" style="max-width: 520px; background: #ffffff; color: #000000; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 60px rgba(15,23,42,0.25); border: 1.5px solid #bae6fd;">
       <div style="background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.3rem;">👨‍🔧</span>
+          <span style="font-size: 1.3rem;"><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
           <strong style="font-size: 1.05rem;">Bagi Antrean HP ke Teknisi Lab Penanggung Jawab</strong>
         </div>
-        <button type="button" id="closeAssignTechModalBtn" style="background: transparent; border: none; color: #ffffff; font-size: 1.3rem; cursor: pointer;">✕</button>
+        <button type="button" id="closeAssignTechModalBtn" style="background: transparent; border: none; color: #ffffff; font-size: 1.3rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <div style="padding: 22px;">
@@ -1660,7 +1660,7 @@
               <!-- Populated dynamically by admin.js -->
             </select>
             <small style="display: block; margin-top: 6px; color: #000000; font-size: 0.8rem; line-height: 1.4;">
-              💡 <b>Catatan Kasir:</b> Teknisi ini akan bertanggung jawab menangani unit dari awal pengerjaan (Step 1) hingga selesai & uji QC (Step 5).
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> <b>Catatan Kasir:</b> Teknisi ini akan bertanggung jawab menangani unit dari awal pengerjaan (Step 1) hingga selesai & uji QC (Step 5).
             </small>
           </div>
 
@@ -1669,7 +1669,7 @@
               Batal
             </button>
             <button type="submit" id="confirmAssignTechBtn" class="btn small" style="background: linear-gradient(135deg, #d4af37, #b45309); font-weight: 700; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);">
-              <span>✅ Konfirmasi Tugaskan Teknisi</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Konfirmasi Tugaskan Teknisi</span>
             </button>
           </div>
         </form>
@@ -1683,8 +1683,8 @@
   <div class="receipt-modal-backdrop" id="dailyReceiptModal" style="display: none;">
     <div class="receipt-modal-container" style="max-width: 480px; background: #ffffff; color: #000000; border-radius: 14px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 1px solid #e2e8f0;">
       <div style="background: #0f172a; color: #ffffff; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
-        <strong style="font-size: 0.95rem;">🖨️ Struk Rekap Transaksi Harian Kasir</strong>
-        <button type="button" id="closeDailyReceiptBtn" style="background: transparent; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer;">✕</button>
+        <strong style="font-size: 0.95rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Struk Rekap Transaksi Harian Kasir</strong>
+        <button type="button" id="closeDailyReceiptBtn" style="background: transparent; border: none; color: #ffffff; font-size: 1.2rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <!-- Printable Container for Daily Cashier Report -->
@@ -1697,7 +1697,7 @@
           Tutup
         </button>
         <button type="button" class="btn small" id="printDailyReceiptBtn" style="background: linear-gradient(135deg, #d4af37, #b45309); color: #ffffff; font-weight: 700; padding: 8px 18px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);">
-          <span>Cetak Struk Harian 🖨️</span>
+          <span>Cetak Struk Harian <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
         </button>
       </div>
     </div>
@@ -1711,17 +1711,17 @@
     <div class="receipt-modal-container" style="max-width: 680px; background: #ffffff; color: #000000; border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 18px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.8);">
       <div style="background: #f8fafc; padding: 16px 22px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0;">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.3rem;">🗄️</span>
+          <span style="font-size: 1.3rem;"><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="8" x="2" y="3" rx="2"/><rect width="20" height="8" x="2" y="13" rx="2"/><line x1="10" y1="7" x2="14" y2="7"/><line x1="10" y1="17" x2="14" y2="17"/></svg></span>
           <strong style="font-size: 1.1rem; color: #000000;">Status Database Sistem & PostgreSQL</strong>
         </div>
-        <button type="button" id="closeDbConfigBtn" style="background: transparent; border: none; color: #000000; font-size: 1.3rem; cursor: pointer;">✕</button>
+        <button type="button" id="closeDbConfigBtn" style="background: transparent; border: none; color: #000000; font-size: 1.3rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <div style="padding: 24px; max-height: 75vh; overflow-y: auto;">
         <!-- Status Database banner -->
         <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="font-size: 1.4rem;">🐘</span>
+            <span style="font-size: 1.4rem;">PostgreSQL</span>
             <div>
               <strong style="color: #0369a1; font-size: 1rem;">Database PostgreSQL (Siap Terhubung)</strong>
               <span style="background: #10b981; color: #ffffff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin-left: 6px;">Mode Mandiri Aktif</span>
@@ -1778,7 +1778,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
             <button type="button" id="modalSyncAllBtn" class="btn small" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700;">
-              ⚡ Validasi Konsistensi Database
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Validasi Konsistensi Database
             </button>
             <button type="button" class="btn small outline darkoutline" onclick="document.getElementById('closeDbConfigBtn').click()">
               Tutup
@@ -1795,8 +1795,8 @@
   <div class="receipt-modal-backdrop" id="addFinanceModal" style="display: none;">
     <div class="receipt-modal-container" style="max-width: 520px; background: #ffffff; color: #000000; border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; box-shadow: 0 25px 60px rgba(15,23,42,0.25);">
       <div style="background: #f8fafc; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0;">
-        <strong style="font-size: 1.05rem; color: #000000;">➕ Catat Kas Masuk / Keluar Baru</strong>
-        <button type="button" id="closeAddFinanceBtn" style="background: transparent; border: none; color: #000000; font-size: 1.3rem; cursor: pointer;">✕</button>
+        <strong style="font-size: 1.05rem; color: #000000;">+ Catat Kas Masuk / Keluar Baru</strong>
+        <button type="button" id="closeAddFinanceBtn" style="background: transparent; border: none; color: #000000; font-size: 1.3rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <div style="padding: 22px;">
@@ -1806,11 +1806,11 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
               <label style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; color: #059669; font-weight: 700;">
                 <input type="radio" name="financeType" value="pemasukan" checked>
-                <span>🟢 Pemasukan (Kas Masuk)</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Pemasukan (Kas Masuk)</span>
               </label>
               <label style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; color: #dc2626; font-weight: 700;">
                 <input type="radio" name="financeType" value="pengeluaran">
-                <span>🔴 Pengeluaran (Kas Keluar)</span>
+                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;"></span> Pengeluaran (Kas Keluar)</span>
               </label>
             </div>
           </div>
@@ -1849,7 +1849,7 @@
               Batal
             </button>
             <button type="submit" class="btn small" style="background: linear-gradient(135deg, #10b981, #059669); font-weight: 700;">
-              <span>Simpan Catatan Kas 💾</span>
+              <span>Simpan Catatan Kas <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>
             </button>
           </div>
   <!-- ============================================== -->
@@ -1859,15 +1859,15 @@
     <div class="receipt-modal-container" style="max-width: 580px; background: #ffffff; color: #000000; border: 1.5px solid #bae6fd; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(15,23,42,0.25);">
       <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 1.4rem;" id="techModalHeaderIcon">➕</span>
+          <span style="font-size: 1.4rem;" id="techModalHeaderIcon">+</span>
           <strong style="font-size: 1.15rem;" id="techModalTitle">Tambah Teknisi Lab Baru</strong>
         </div>
-        <button type="button" id="closeTechModalBtn" style="background: transparent; border: none; color: #000000; font-size: 1.4rem; cursor: pointer;">✕</button>
+        <button type="button" id="closeTechModalBtn" style="background: transparent; border: none; color: #000000; font-size: 1.4rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <div style="padding: 24px; max-height: 80vh; overflow-y: auto;">
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.84rem; color: #166534; display: flex; align-items: center; gap: 8px;">
-          <span>⚡</span>
+          <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
           <span>Data akun teknisi akan <b>otomatis disimpan</b> ke database server (Siap PostgreSQL).</span>
         </div>
 
@@ -1944,7 +1944,7 @@
               Batal
             </button>
             <button type="submit" id="saveTechModalBtn" class="btn small" style="background: linear-gradient(135deg, #d4af37, #b45309); font-weight: 700; padding: 10px 22px; border-radius: 10px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);">
-              <span>💾 Simpan ke Database</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan ke Database</span>
             </button>
           </div>
         </form>
@@ -1962,7 +1962,7 @@
       <div style="background: linear-gradient(135deg, #065f46, #047857); padding: 20px 24px; border-radius: 18px 18px 0 0; display: flex; justify-content: space-between; align-items: center; color: #ffffff;">
         <div style="display: flex; align-items: center; gap: 12px;">
           <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(255, 255, 255, 0.18); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-            📊
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
           </div>
           <div>
             <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #ffffff;">Ekspor Riwayat Transaksi ke Excel</h3>
@@ -1970,7 +1970,7 @@
           </div>
         </div>
         <button type="button" id="closeExportTxModalBtn" style="background: rgba(255, 255, 255, 0.2); border: none; width: 34px; height: 34px; border-radius: 50%; color: #ffffff; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
-          ✕
+          <svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
 
@@ -1980,20 +1980,20 @@
         <!-- Opsi Preset Cepat 1-3 Bulan -->
         <div style="margin-bottom: 20px;">
           <label style="display: block; font-size: 0.86rem; font-weight: 700; color: #1e293b; margin-bottom: 10px;">
-            ⚡ Opsi Cepat (Preset Periode):
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Opsi Cepat (Preset Periode):
           </label>
           <div style="display: flex; flex-wrap: wrap; gap: 8px;">
             <button type="button" class="export-preset-chip active" data-preset="1m">
-              📅 1 Bulan Terakhir
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 1 Bulan Terakhir
             </button>
             <button type="button" class="export-preset-chip" data-preset="2m">
-              📅 2 Bulan Terakhir
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 2 Bulan Terakhir
             </button>
             <button type="button" class="export-preset-chip" data-preset="3m">
-              📅 3 Bulan Terakhir
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 3 Bulan Terakhir
             </button>
             <button type="button" class="export-preset-chip" data-preset="cur_month">
-              🗓️ Bulan Berjalan
+              <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Bulan Berjalan
             </button>
           </div>
         </div>
@@ -2001,7 +2001,7 @@
         <!-- Rentang Tanggal Kustom -->
         <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 16px; margin-bottom: 20px;">
           <label style="display: block; font-size: 0.86rem; font-weight: 700; color: #1e293b; margin-bottom: 10px;">
-            📆 Atau Tentukan Rentang Tanggal Sendiri:
+            <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Atau Tentukan Rentang Tanggal Sendiri:
           </label>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
@@ -2018,7 +2018,7 @@
         <!-- Pratinjau Data Ringkas -->
         <div id="exportPreviewStats" style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px; padding: 16px; margin-bottom: 20px;">
           <div style="font-size: 0.84rem; font-weight: 700; color: #166534; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-            <span>📈 Pratinjau Data Periode Terpilih:</span>
+            <span><svg class="svg-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> Pratinjau Data Periode Terpilih:</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
             <div style="background: #ffffff; padding: 10px 8px; border-radius: 10px; border: 1px solid #bbf7d0;">
@@ -2041,7 +2041,7 @@
 
         <!-- Info Tambahan -->
         <div style="font-size: 0.8rem; color: #64748b; line-height: 1.45; margin-bottom: 24px; padding-left: 4px;">
-          💡 <b>Keterangan Ekspor:</b> File Excel yang diunduh mencakup detail 18 kolom lengkap: nomor nota faktur, ID tiket, waktu transaksi, identitas pelanggan, detail unit & perbaikan teknisi, rincian biaya & diskon voucher, total omset bersih, metode pembayaran, kembalian, status pembayaran, serta kasir penanggung jawab.
+          <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> <b>Keterangan Ekspor:</b> File Excel yang diunduh mencakup detail 18 kolom lengkap: nomor nota faktur, ID tiket, waktu transaksi, identitas pelanggan, detail unit & perbaikan teknisi, rincian biaya & diskon voucher, total omset bersih, metode pembayaran, kembalian, status pembayaran, serta kasir penanggung jawab.
         </div>
 
         <!-- Modal Footer Actions -->
@@ -2050,7 +2050,7 @@
             Batal
           </button>
           <button type="button" id="btnDoExportExcel" class="btn small" style="background: linear-gradient(135deg, #10b981, #047857); color: #ffffff; font-weight: 700; padding: 10px 24px; border-radius: 10px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;">
-            <span>📥 Unduh Laporan Excel (.xlsx)</span>
+            <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg> Unduh Laporan Excel (.xlsx)</span>
           </button>
         </div>
 
@@ -2068,7 +2068,7 @@
       const text = document.getElementById('dashFsText');
       function updateFs() {
         const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        if (icon) icon.textContent = isFs ? '🗗' : '⛶';
+        if (icon) icon.textContent = isFs ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
         if (text) text.textContent = isFs ? 'Normal' : 'Layar Penuh';
         if (btnFs) btnFs.style.background = isFs ? '#f5f3ff' : '#ffffff';
       }

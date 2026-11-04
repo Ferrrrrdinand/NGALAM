@@ -172,7 +172,7 @@
         if (new Date(startDate) > new Date(endDate)) {
           if (exportNoticeBox) {
             exportNoticeBox.style.display = 'block';
-            exportNoticeBox.innerHTML = '⚠️ <b>Rentang Tanggal Tidak Valid:</b> Tanggal mulai tidak boleh melebihi tanggal akhir.';
+            exportNoticeBox.innerHTML = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <b>Rentang Tanggal Tidak Valid:</b> Tanggal mulai tidak boleh melebihi tanggal akhir.';
           }
           if (submitExportBtn) submitExportBtn.disabled = true;
           return;
@@ -274,9 +274,9 @@
 
         // Notifikasi Toast
         if (typeof window.showToast === 'function') {
-          window.showToast(`🎉 File Excel "${filename}" berhasil diunduh!`, 'success');
+          window.showToast(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> File Excel "${filename}" berhasil diunduh!`, 'success');
         } else {
-          alert(`🎉 Berhasil!\nFile riwayat transaksi "${filename}" berhasil diekspor dan terunduh ke perangkat Anda.`);
+          alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil!\nFile riwayat transaksi "${filename}" berhasil diekspor dan terunduh ke perangkat Anda.`);
         }
 
       } catch (err) {

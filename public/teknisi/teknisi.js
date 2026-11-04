@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Populate header & desk profile
     if (techUserName) techUserName.textContent = currentUser.name || 'Ferdinand (Teknisi Lab)';
-    if (techUserAvatar) techUserAvatar.textContent = currentUser.avatar || '🔬';
+    if (techUserAvatar) techUserAvatar.textContent = currentUser.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>';
 
     if (deskTechName) deskTechName.textContent = currentUser.name || 'Ferdinand (Teknisi Lab)';
-    if (deskAvatarBig) deskAvatarBig.textContent = currentUser.avatar || '🔬';
+    if (deskAvatarBig) deskAvatarBig.textContent = currentUser.avatar || '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>';
     if (deskLocationBadge) deskLocationBadge.textContent = currentUser.desk || 'Meja Lab Workshop - Teknisi Utama';
     if (deskSpecialtyText) deskSpecialtyText.textContent = `Spesialisasi: ${currentUser.specialty || 'Spesialis Servis Smartphone & Hardware Lab'}`;
 
@@ -119,21 +119,21 @@ document.addEventListener('DOMContentLoaded', () => {
       // Step 1: 30%
       setTimeout(() => {
         if (logoutProgressFill) logoutProgressFill.style.width = '35%';
-        if (logoutCircleIcon) logoutCircleIcon.textContent = '🔒';
+        if (logoutCircleIcon) logoutCircleIcon.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
         if (logoutStatusStepText) logoutStatusStepText.textContent = 'Menyimpan log audit aktivitas meja lab...';
       }, 200);
 
       // Step 2: 75%
       setTimeout(() => {
         if (logoutProgressFill) logoutProgressFill.style.width = '80%';
-        if (logoutCircleIcon) logoutCircleIcon.textContent = '🚪';
+        if (logoutCircleIcon) logoutCircleIcon.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
         if (logoutStatusStepText) logoutStatusStepText.textContent = 'Menonaktifkan kehadiran status meja menjadi Offline...';
       }, 600);
 
       // Step 3: 100%
       setTimeout(() => {
         if (logoutProgressFill) logoutProgressFill.style.width = '100%';
-        if (logoutCircleIcon) logoutCircleIcon.textContent = '👋';
+        if (logoutCircleIcon) logoutCircleIcon.textContent = '';
         if (logoutStatusStepText) logoutStatusStepText.textContent = 'Sampai jumpa! Mengalihkan ke halaman login...';
       }, 1000);
     }
@@ -194,12 +194,12 @@ document.addEventListener('DOMContentLoaded', () => {
       techNotificationBox.style.background = 'rgba(16, 185, 129, 0.15)';
       techNotificationBox.style.border = '1.5px solid #10b981';
       techNotificationBox.style.color = '#047857';
-      techNotificationBox.innerHTML = `<b>🎉 Berhasil:</b> ${msg}`;
+      techNotificationBox.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil:</b> ${msg}`;
     } else {
       techNotificationBox.style.background = 'rgba(239, 68, 68, 0.15)';
       techNotificationBox.style.border = '1.5px solid #ef4444';
       techNotificationBox.style.color = '#dc2626';
-      techNotificationBox.innerHTML = `<b>⚠️ Pemberitahuan:</b> ${msg}`;
+      techNotificationBox.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Pemberitahuan:</b> ${msg}`;
     }
     setTimeout(() => {
       techNotificationBox.style.display = 'none';
@@ -264,11 +264,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (deskStatusBadge) {
       if (activeHandling) {
-        deskStatusBadge.innerHTML = `<span style="color: #b45309; font-weight: 800;">🟡 Sedang Menangani: ${activeHandling.phoneType} (Tiket: ${activeHandling.id})</span>`;
+        deskStatusBadge.innerHTML = `<span style="color: #b45309; font-weight: 800;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;box-shadow:0 0 6px #f59e0b;"></span> Sedang Menangani: ${activeHandling.phoneType} (Tiket: ${activeHandling.id})</span>`;
       } else if (myOrders.length > 0) {
-        deskStatusBadge.innerHTML = `<span style="color: #047857; font-weight: 800;">🟢 Standby: Ada ${myOrders.length} Unit Menunggu Tindakan Anda</span>`;
+        deskStatusBadge.innerHTML = `<span style="color: #047857; font-weight: 800;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Standby: Ada ${myOrders.length} Unit Menunggu Tindakan Anda</span>`;
       } else {
-        deskStatusBadge.innerHTML = `<span style="color: #475569; font-weight: 700;">⚪ Meja Standby (Status Kosong - Belum Ada Tugas dari Admin)</span>`;
+        deskStatusBadge.innerHTML = `<span style="color: #475569; font-weight: 700;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span> Meja Standby (Status Kosong - Belum Ada Tugas dari Admin)</span>`;
       }
     }
 
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (myOrders.length === 0) {
       technicianCardsContainer.innerHTML = `
         <div class="workbench-empty-card">
-          <div class="workbench-empty-icon">🔬✨</div>
+          <div class="workbench-empty-icon"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></div>
           <h3 style="font-size: 1.45rem; font-weight: 800; color: #0f172a; margin: 0 0 8px;">
             Meja Kerja Bersih & Standby
           </h3>
@@ -286,15 +286,15 @@ document.addEventListener('DOMContentLoaded', () => {
             Halo <b>${currentUser.name}</b>, saat ini meja kerja lab Anda dalam status standby (kosong). Belum ada unit HP yang dialokasikan oleh Admin counter ke akun meja Anda.
           </p>
           <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 999px; background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #047857; font-size: 0.88rem; font-weight: 800;">
-            🟢 Status Meja: Standby & Siap Menerima Pengerjaan Unit dari Admin
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Status Meja: Standby & Siap Menerima Pengerjaan Unit dari Admin
           </div>
           <div class="workbench-empty-grid">
             <div class="workbench-empty-hint">
-              <strong style="color: #0284c7; font-size: 0.9rem; display: block; margin-bottom: 4px;">📋 Alokasi Unit dari Admin:</strong>
+              <strong style="color: #0284c7; font-size: 0.9rem; display: block; margin-bottom: 4px;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Alokasi Unit dari Admin:</strong>
               <span style="font-size: 0.84rem; color: #64748b; line-height: 1.4; display: block;">Ketika Admin counter walk-in menugaskan unit HP ke meja Anda, tiket pengerjaan akan otomatis muncul di sini secara real-time.</span>
             </div>
             <div class="workbench-empty-hint">
-              <strong style="color: #059669; font-size: 0.9rem; display: block; margin-bottom: 4px;">🔄 Pemantauan 5 Tahapan:</strong>
+              <strong style="color: #059669; font-size: 0.9rem; display: block; margin-bottom: 4px;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Pemantauan 5 Tahapan:</strong>
               <span style="font-size: 0.84rem; color: #64748b; line-height: 1.4; display: block;">Anda dapat memperbarui 5 tahapan pengerjaan (HP Diterima s/d HP Selesai / Siap Diambil) dan menambahkan catatan lab langsung.</span>
             </div>
           </div>
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (visibleOrders.length === 0) {
       technicianCardsContainer.innerHTML = `
         <div class="workbench-empty-card" style="padding: 48px 24px;">
-          <div class="workbench-empty-icon" style="font-size: 2.2rem; width: 64px; height: 64px; margin-bottom: 14px;">🔍</div>
+          <div class="workbench-empty-icon" style="font-size: 2.2rem; width: 64px; height: 64px; margin-bottom: 14px;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <h3 style="color: #0f172a; font-size: 1.25rem; font-weight: 800; margin: 0 0 6px;">Tidak Ada Unit yang Cocok</h3>
           <p style="margin: 0 auto; font-size: 0.9rem; color: #64748b; max-width: 480px;">
             Tidak ditemukan unit yang sesuai dengan kata kunci pencarian. Silakan coba cari berdasarkan nomor tiket, tipe HP, atau nama pemilik lainnya.
@@ -332,10 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let iconContent = s.step;
         if (s.step < step) {
           nodeClass = 'completed';
-          iconContent = '✓';
+          iconContent = '<svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
         } else if (s.step === step) {
           nodeClass = 'active';
-          iconContent = '⚡';
+          iconContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
         }
 
         return `
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <!-- Current Stage Badge -->
               <div style="text-align: right;">
                 <span style="display: inline-block; font-size: 0.8rem; font-weight: 800; padding: 5px 12px; border-radius: 999px; background: ${isFinished ? '#ecfdf5' : '#eff6ff'}; color: ${isFinished ? '#047857' : '#0284c7'}; border: 1.5px solid ${isFinished ? '#a7f3d0' : '#bae6fd'};">
-                  ${isFinished ? '✅ ' : '⚡ '}Status: ${currentStageObj.label}
+                  ${isFinished ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> '}Status: ${currentStageObj.label}
                 </span>
                 <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Langkah ${step} dari 5</div>
               </div>
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 14px; font-size: 0.86rem;">
               <div style="margin-bottom: 6px;">
                 <span style="color: #64748b;">Gejala Kerusakan:</span>
-                <strong style="color: #dc2626; display: block; margin-top: 2px;">⚠️ ${order.damageDescription || '-'}</strong>
+                <strong style="color: #dc2626; display: block; margin-top: 2px;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${order.damageDescription || '-'}</strong>
               </div>
               <div style="display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 8px; flex-wrap: wrap; gap: 8px;">
                 <div><span style="color: #64748b;">Estimasi Biaya:</span> <strong style="color: #047857;">${order.cost || 'Rp 250.000'}</strong></div>
@@ -396,9 +396,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- Diagnosa Note Box -->
             <div style="background: #fefce8; border: 1.5px solid #fef08a; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 0.84rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="color: #a16207; font-weight: 800;">📋 Catatan Lab Teknisi:</span>
+                <span style="color: #a16207; font-weight: 800;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Catatan Lab Teknisi:</span>
                 <button type="button" onclick="openNoteModal('${order.id}')" style="background: none; border: none; color: #0284c7; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
-                  ✏️ Edit Catatan
+                  <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> Edit Catatan
                 </button>
               </div>
               <div style="color: #713f12; line-height: 1.4;">
@@ -412,15 +412,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               ${!isFinished ? `
                 <button type="button" class="btn small" onclick="advanceToNextStage('${order.id}', ${step})" style="flex: 1; padding: 12px; font-size: 0.9rem; font-weight: 800; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);">
-                  <span>Naik ke: ${nextStageObj ? nextStageObj.label : 'Tahap Berikutnya'} ➔</span>
+                  <span>Naik ke: ${nextStageObj ? nextStageObj.label : 'Tahap Berikutnya'} →</span>
                 </button>
               ` : `
                 <div style="flex: 1; padding: 12px; font-size: 0.88rem; font-weight: 800; border-radius: 10px; background: #ecfdf5; border: 1.5px solid #a7f3d0; color: #047857; text-align: center;">
-                  ✅ Pengerjaan Telah Selesai (Unit Siap Diambil / Diserahkan)
+                  <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Pengerjaan Telah Selesai (Unit Siap Diambil / Diserahkan)
                 </div>
               `}
               <button type="button" class="btn small outline" onclick="openNoteModal('${order.id}')" style="padding: 12px 16px; font-size: 0.86rem; font-weight: 700; border-radius: 10px; border: 1.5px solid #cbd5e1; color: #334155; background: #ffffff;">
-                <span>📝 Catatan</span>
+                <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> Catatan</span>
               </button>
             </div>
 
@@ -568,9 +568,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Refresh button
   refreshTechBtn?.addEventListener('click', async () => {
-    refreshTechBtn.innerHTML = '🔄 Memuat...';
+    refreshTechBtn.innerHTML = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Memuat...';
     await loadData();
-    refreshTechBtn.innerHTML = '🔄 Refresh Tugas';
+    refreshTechBtn.innerHTML = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Refresh Tugas';
     showNotification('Data antrean unit HP diperbarui dari server.');
   });
 

@@ -506,19 +506,19 @@
 
       <div style="display: flex; align-items: center; gap: 12px;">
         <div class="kasir-profile-widget">
-          <div class="kasir-avatar-box" id="kasirAvatar">👩‍💼</div>
+          <div class="kasir-avatar-box" id="kasirAvatar"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect width="8" height="6" x="14" y="15" rx="1"/></svg></div>
           <div>
             <div style="font-weight: 800; font-size: 0.88rem;" id="kasirNameDisplay">Kasir Meja 1</div>
-            <small style="color: #059669; font-weight: 700; font-size: 0.74rem;">🟢 Online & Bertugas</small>
+            <small style="color: #059669; font-weight: 700; font-size: 0.74rem;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span> Online & Bertugas</small>
           </div>
         </div>
 
         <button type="button" class="btn-kasir-outline" id="btnOpenDrawer" title="Buka laci kasir manual">
-          💵 Buka Laci Kas
+          <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> Buka Laci Kas
         </button>
 
         <button type="button" class="kasir-btn-logout" id="btnKasirLogout">
-          <span>Keluar Kasir 🚪</span>
+          <span>Keluar Kasir <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
         </button>
       </div>
     </div>
@@ -530,7 +530,7 @@
     <!-- METRICS OVERVIEW -->
     <section class="kasir-metrics-grid">
       <div class="metric-card">
-        <div class="metric-icon-box" style="background: #eff6ff; color: #2563eb;">📝</div>
+        <div class="metric-icon-box" style="background: #eff6ff; color: #2563eb;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg></div>
         <div>
           <h3 class="metric-num" id="metricTotalWalkin">0</h3>
           <p class="metric-label">Unit Masuk Hari Ini</p>
@@ -538,7 +538,7 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon-box" style="background: #fffbeb; color: #d97706;">⚡</div>
+        <div class="metric-icon-box" style="background: #fffbeb; color: #d97706;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         <div>
           <h3 class="metric-num" id="metricInLab">0</h3>
           <p class="metric-label">Sedang di Meja Lab</p>
@@ -546,7 +546,7 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon-box" style="background: #ecfdf5; color: #059669;">💰</div>
+        <div class="metric-icon-box" style="background: #ecfdf5; color: #059669;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v12"/></svg></div>
         <div>
           <h3 class="metric-num" id="metricKasHariIni">Rp 0</h3>
           <p class="metric-label">Kasir Diterima Hari Ini</p>
@@ -554,7 +554,7 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon-box" style="background: #fdf2f8; color: #db2777;">🛡️</div>
+        <div class="metric-icon-box" style="background: #fdf2f8; color: #db2777;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <div>
           <h3 class="metric-num" id="metricReadyPickup">0</h3>
           <p class="metric-label">Siap Diambil & Lunas</p>
@@ -565,13 +565,13 @@
     <!-- TAB NAVIGATION -->
     <nav class="kasir-tab-nav">
       <button type="button" class="kasir-tab-btn active" data-tab="walkinTab">
-        <span>📝 1. Penerimaan Unit Servis Walk-In</span>
+        <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> 1. Penerimaan Unit Servis Walk-In</span>
       </button>
       <button type="button" class="kasir-tab-btn" data-tab="posPaymentTab">
-        <span>💳 2. Kasir POS & Pelunasan Transaksi</span>
+        <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> 2. Kasir POS & Pelunasan Transaksi</span>
       </button>
       <button type="button" class="kasir-tab-btn" data-tab="rekapKasTab">
-        <span>📊 3. Rekap Kas Harian & Laci POS</span>
+        <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> 3. Rekap Kas Harian & Laci POS</span>
       </button>
     </nav>
 
@@ -579,7 +579,7 @@
     <section id="walkinTab" class="kasir-panel-card">
       <div class="panel-header">
         <div>
-          <h2 class="panel-title">📝 Registrasi Pendaftaran Servis Offline (Meja 1)</h2>
+          <h2 class="panel-title"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> Registrasi Pendaftaran Servis Offline (Meja 1)</h2>
           <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
             Input penerimaan unit HP pelanggan walk-in dan otomatis cetak tanda terima fisik/digital.
           </p>
@@ -649,7 +649,7 @@
             Reset Form
           </button>
           <button type="submit" class="btn-kasir-primary" id="btnSaveWalkin">
-            <span>Simpan & Cetak Tanda Terima 🖨️</span>
+            <span>Simpan & Cetak Tanda Terima <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
           </button>
         </div>
       </form>
@@ -659,13 +659,13 @@
     <section id="posPaymentTab" class="kasir-panel-card" style="display: none;">
       <div class="panel-header">
         <div>
-          <h2 class="panel-title">💳 Kasir POS & Pelunasan Transaksi</h2>
+          <h2 class="panel-title"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Kasir POS & Pelunasan Transaksi</h2>
           <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
             Kelola pembayaran unit selesai servis, cetak invoice lunas resmi bergaransi 90 hari.
           </p>
         </div>
         <div>
-          <input type="text" id="posSearchInput" class="form-control" placeholder="🔍 Cari Tiket / Nama / WA..." style="max-width: 280px;">
+          <input type="text" id="posSearchInput" class="form-control" placeholder="<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Cari Tiket / Nama / WA..." style="max-width: 280px;">
         </div>
       </div>
 
@@ -694,13 +694,13 @@
     <section id="rekapKasTab" class="kasir-panel-card" style="display: none;">
       <div class="panel-header">
         <div>
-          <h2 class="panel-title">📊 Rekap Buku Kas & Laci Kasir Meja 1</h2>
+          <h2 class="panel-title"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Rekap Buku Kas & Laci Kasir Meja 1</h2>
           <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
             Rincian penerimaan uang kasir hari ini (Tunai, QRIS, Transfer).
           </p>
         </div>
         <button type="button" class="btn-kasir-primary" id="btnPrintDailyReport">
-          <span>Cetak Rekap Kasir 🖨️</span>
+          <span>Cetak Rekap Kasir <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
         </button>
       </div>
 
@@ -749,8 +749,8 @@
   <div class="modal-backdrop" id="modalPaymentBackdrop">
     <div class="modal-content-receipt">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">💳 Kasir Pembayaran POS</h3>
-        <button type="button" id="btnClosePaymentModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Kasir Pembayaran POS</h3>
+        <button type="button" id="btnClosePaymentModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
@@ -767,9 +767,9 @@
       <div class="form-group" style="margin-bottom: 14px;">
         <label for="payMethodSelect">Metode Pembayaran</label>
         <select id="payMethodSelect" class="form-control">
-          <option value="Tunai">💵 Tunai (Cash)</option>
-          <option value="QRIS">📱 QRIS Statis / Dinamis</option>
-          <option value="Transfer Bank">🏦 Transfer Bank BCA/Mandiri</option>
+          <option value="Tunai"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/></svg> Tunai (Cash)</option>
+          <option value="QRIS"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> QRIS Statis / Dinamis</option>
+          <option value="Transfer Bank"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> Transfer Bank BCA/Mandiri</option>
         </select>
       </div>
 
@@ -786,7 +786,7 @@
       </div>
 
       <button type="button" class="btn-kasir-primary" id="btnConfirmPayment" style="width: 100%; justify-content: center;">
-        <span>Proses Lunas & Cetak Struk 🖨️</span>
+        <span>Proses Lunas & Cetak Struk <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
       </button>
     </div>
   </div>
@@ -795,8 +795,8 @@
   <div class="modal-backdrop" id="modalReceiptBackdrop">
     <div class="modal-content-receipt">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800;">🖨️ Pratinjau Struk POS Thermal</h3>
-        <button type="button" id="btnCloseReceiptModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Pratinjau Struk POS Thermal</h3>
+        <button type="button" id="btnCloseReceiptModal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;"><svg class="svg-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       </div>
 
       <!-- Thermal Paper Element -->
@@ -838,7 +838,7 @@
         </div>
         <hr>
         <div style="text-align: center; font-size: 0.78rem;">
-          <b>🛡️ GARANSI RESMI 90 HARI</b><br>
+          <b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> GARANSI RESMI 90 HARI</b><br>
           Simpan struk ini untuk klaim garansi.<br>
           Terima kasih atas kepercayaan Anda!
         </div>
@@ -846,10 +846,10 @@
 
       <div style="display: flex; gap: 10px;">
         <button type="button" class="btn-kasir-outline" style="flex: 1; justify-content: center;" id="btnDownloadReceipt">
-          📥 Simpan PDF
+          <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg> Simpan PDF
         </button>
         <button type="button" class="btn-kasir-primary" style="flex: 1; justify-content: center;" onclick="window.print()">
-          🖨️ Cetak Struk
+          <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Cetak Struk
         </button>
       </div>
     </div>

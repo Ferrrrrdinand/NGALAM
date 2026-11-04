@@ -1,0 +1,45 @@
+/* Admin Dashboard - Minimal reset to shield from legacy public/css/style.css */
+.admin-layout-root {
+  min-height: 100vh;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* Ensure clean contrast for admin sidebar buttons regardless of legacy css */
+.admin-sidebar-btn {
+  color: #ffffff !important;
+}
+
+.admin-sidebar-btn span {
+  color: #ffffff !important;
+}
+
+.admin-sidebar-btn svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.admin-sidebar-btn.active {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.admin-sidebar-btn.active span {
+  color: #ffffff !important;
+}
+
+.admin-sidebar-btn.active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Spinner helper */
+.admin-spinner {
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #d97706;
+  border-radius: 50%;
+  animation: adminSpin 0.8s linear infinite;
+}
+
+@keyframes adminSpin {
+  to { transform: rotate(360deg); }
+}

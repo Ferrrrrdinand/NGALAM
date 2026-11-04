@@ -10,7 +10,6 @@ const {
   appendOrder,
   updateOrder,
   clearAllOrders,
-  getOrderByAttemptId,
 } = require('../services/orderService');
 const { handleOrderStepChange } = require('../services/technicianService');
 const { incrementUsage } = require('../services/promoCodeService');
@@ -52,21 +51,6 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const orderData = { ...req.body };
-    const attemptId = (orderData.attemptId || req.headers['x-attempt-id'] || '').trim();
-
-    // 1. Idempotency Check: Jika attemptId ini sudah pernah berhasil diproses, kembalikan order lama
-    if (attemptId) {
-      const existingOrder = await getOrderByAttemptId(attemptId);
-      if (existingOrder) {
-        return res.status(200).json({
-          success: true,
-          isIdempotentReplay: true,
-          message: 'Pesanan sebelumnya telah berhasil diverifikasi. Membuka tiket aktif...',
-          data: existingOrder
-        });
-      }
-      orderData.attemptId = attemptId;
-    }
     if (!orderData.customerName && (orderData.buyerName || orderData.name)) {
       orderData.customerName = orderData.buyerName || orderData.name;
     }
@@ -92,25 +76,32 @@ router.post('/', async (req, res) => {
     const affiliateCode = (orderData.affiliateRef || orderData.referralCode || req.query.ref || '').trim().toUpperCase();
     if (affiliateCode) {
       try {
-        const { readUsers, recordMitraCommission } = require('../services/financeService');
+        const { readUsers } = require('../services/financeService');
         const users = readUsers();
         const mitra = users.find(u => (u.referralCode || '').toUpperCase() === affiliateCode);
-        if (mitra) {
+
+        // Validasi: Pelanggan hanya bisa menggunakan kode referral mitra 1 kali
+        const allExistingOrders = await getAllOrders();
+        const cleanCustPhone = String(orderData.whatsapp || orderData.phone || orderData.customerPhone || '').replace(/\D/g, '');
+        const hasUsedReferral = cleanCustPhone && cleanCustPhone.length >= 8 && allExistingOrders.some(o => {
+          const oPhone = String(o.whatsapp || o.customerPhone || o.phone || '').replace(/\D/g, '');
+          if (!oPhone || oPhone.length < 8) return false;
+          const matches = oPhone === cleanCustPhone || oPhone.endsWith(cleanCustPhone.slice(-8)) || cleanCustPhone.endsWith(oPhone.slice(-8));
+          return matches && (o.affiliateRef || o.referralCode);
+        });
+
+        if (mitra && !hasUsedReferral) {
           const rate = mitra.commissionRate !== undefined ? mitra.commissionRate : 10;
-          const numericCost = parseInt(String(orderData.cost || orderData.estimatedCost || '250000').replace(/\D/g, ''), 10) || 250000;
-          const commissionAmt = Math.round(numericCost * (rate / 100));
 
           orderData.isPartner = true;
           orderData.partnerName = mitra.name;
           orderData.affiliateRef = mitra.referralCode;
           orderData.affiliateMitraName = mitra.name;
           orderData.affiliateCommissionRate = rate;
-          orderData.affiliateCommission = commissionAmt;
-
-          // Catat komisi afiliasi untuk mitra ke sistem & database
-          recordMitraCommission(mitra.referralCode, commissionAmt, orderData.id).catch(e =>
-            console.warn('[OrderRoutes] Error awarding affiliate commission:', e.message)
-          );
+          orderData.affiliateCommission = 0; // Belum dibayar, menunggu konfirmasi kasir/admin
+          orderData.affiliateCommissionStatus = 'pending'; // Status awal: pending
+        } else if (hasUsedReferral) {
+          console.log(`[OrderRoutes] Nomor WA ${cleanCustPhone} sudah pernah menggunakan referral mitra. Kode diabaikan.`);
         }
       } catch (affErr) {
         console.warn('[OrderRoutes] Affiliate processing warning:', affErr.message);
@@ -128,19 +119,48 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PATCH /api/orders/:id
-router.patch('/:id', async (req, res) => {
+// Helper Handler untuk Update Order (PUT & PATCH)
+async function handleUpdateOrder(req, res) {
   try {
     const { id } = req.params;
-    const updates = req.body;
-    const updated = await updateOrder(id, updates);
-    if (!updated) {
+    const updates = { ...req.body };
+    const { getOrderById } = require('../services/orderService');
+    const existing = await getOrderById(id);
+
+    if (!existing) {
       return res.status(404).json({ success: false, message: 'Tiket tidak ditemukan untuk diperbarui.' });
     }
 
-    if (updates.step !== undefined) {
+    // Jika pembayaran lunas dikonfirmasi kasir/admin:
+    // Cek apakah order memiliki mitra referral berstatus pending untuk dicairkan komisinya
+    const isPayingNow = updates.paid === true;
+    const affiliateRef = existing.affiliateRef || updates.affiliateRef;
+    const isAffiliatePending = (existing.affiliateCommissionStatus === 'pending' || !existing.affiliateCommissionStatus) && affiliateRef;
+
+    if (isPayingNow && isAffiliatePending) {
       try {
-        handleOrderStepChange(updated, updates.step);
+        const { recordMitraCommission } = require('../services/financeService');
+        const finalCost = Number(String(updates.cost !== undefined ? updates.cost : existing.cost || 0).replace(/\D/g, '')) || 0;
+        const rate = existing.affiliateCommissionRate || updates.affiliateCommissionRate || 10;
+        const commissionAmt = Math.round(finalCost * (rate / 100));
+
+        if (commissionAmt > 0) {
+          await recordMitraCommission(affiliateRef, commissionAmt, id);
+          updates.affiliateCommission = commissionAmt;
+          updates.affiliateCommissionStatus = 'paid';
+          updates.affiliateCommissionPaidAt = new Date().toISOString();
+          console.log(`[OrderRoutes] Komisi mitra ${affiliateRef} sebesar Rp ${commissionAmt} berhasil dicatat dari order ${id}`);
+        }
+      } catch (commErr) {
+        console.warn('[OrderRoutes] Gagal memproses komisi kasir mitra:', commErr.message);
+      }
+    }
+
+    const updated = await updateOrder(id, updates);
+
+    if (updates.step !== undefined || updates.currentStep !== undefined) {
+      try {
+        handleOrderStepChange(updated, updates.step || updates.currentStep);
       } catch (syncErr) {
         console.warn('[OrderRoutes] Error syncing technician presence on step change:', syncErr.message);
       }
@@ -154,11 +174,34 @@ router.patch('/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
-});
+}
 
-// POST /api/orders/clear
+// PUT /api/orders/:id
+router.put('/:id', handleUpdateOrder);
+
+// PATCH /api/orders/:id
+router.patch('/:id', handleUpdateOrder);
+
+// POST /api/orders/clear - Dilindungi Autentikasi Admin Super User
 router.post('/clear', async (req, res) => {
   try {
+    const { verifySession, getAdminReferralCode } = require('../services/authService');
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '') || req.query.token;
+    const session = verifySession(token);
+    const code = req.body.adminCode || req.headers['x-admin-code'] || '';
+    const masterCode = getAdminReferralCode();
+
+    const isAuthorized = (session && (session.role === 'admin' || session.role === 'owner')) || 
+                         (code && code.toUpperCase() === masterCode.toUpperCase());
+
+    if (!isAuthorized) {
+      return res.status(403).json({
+        success: false,
+        message: 'Akses ditolak: Pengosongan data antrean memerlukan otorisasi Admin Super User.'
+      });
+    }
+
     const success = await clearAllOrders();
     res.json({
       success,
@@ -170,6 +213,3 @@ router.post('/clear', async (req, res) => {
 });
 
 module.exports = router;
-
-
-

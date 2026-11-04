@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyeOpen.style.display = isPass ? 'none' : 'block';
       eyeClosed.style.display = isPass ? 'block' : 'none';
     } else {
-      togglePasswordBtn.textContent = isPass ? '🔒' : '👁️';
+      togglePasswordBtn.textContent = isPass ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
     }
   });
 
@@ -128,12 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
       loginAlertBox.style.background = 'rgba(16, 185, 129, 0.15)';
       loginAlertBox.style.border = '1.5px solid #10b981';
       loginAlertBox.style.color = '#047857';
-      loginAlertBox.innerHTML = `<b>🎉 Berhasil:</b> ${message}`;
+      loginAlertBox.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil:</b> ${message}`;
     } else {
       loginAlertBox.style.background = 'rgba(239, 68, 68, 0.15)';
       loginAlertBox.style.border = '1.5px solid #ef4444';
       loginAlertBox.style.color = '#dc2626';
-      loginAlertBox.innerHTML = `<b>⚠️ Gagal:</b> ${message}`;
+      loginAlertBox.innerHTML = `<b><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Gagal:</b> ${message}`;
     }
   }
 
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       eyeOpen.style.display = isPass ? 'none' : 'block';
       eyeClosed.style.display = isPass ? 'block' : 'none';
     } else {
-      toggleRegPasswordBtn.textContent = isPass ? '🔒' : '👁️';
+      toggleRegPasswordBtn.textContent = isPass ? '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
     }
   });
 
@@ -274,8 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
             user: {
               name,
               role: 'teknisi',
-              roleText: '🔬 Teknisi Meja Kerja Lab',
-              avatar: '🔬'
+              roleText: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg> Teknisi Meja Kerja Lab',
+              avatar: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>'
             },
             duration: 1600,
             onComplete: () => {
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       if (regSubmitBtn) {
         regSubmitBtn.disabled = false;
-        regSubmitBtn.innerHTML = '<span>Daftarkan Akun Teknisi Lab 🚀</span>';
+        regSubmitBtn.innerHTML = '<span>Daftarkan Akun Teknisi Lab <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>';
         regSubmitBtn.style.opacity = '1';
       }
     }
@@ -350,10 +350,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
       }
 
+      const rememberCheck = document.getElementById('rememberMeCheck');
+      const isRemember = Boolean(rememberCheck ? rememberCheck.checked : true);
+
       const res = await fetch(`${apiBase}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password, role: 'teknisi' }),
+        body: JSON.stringify({ identifier, password, role: 'teknisi', rememberMe: isRemember }),
       });
       const data = await res.json();
 
@@ -371,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
           showAlert(rejectMsg);
           if (loginSubmitBtn) {
             loginSubmitBtn.disabled = false;
-            loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab 🚀</span>';
+            loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>';
             loginSubmitBtn.style.opacity = '1';
             loginSubmitBtn.style.transform = 'scale(1)';
           }
@@ -379,8 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Save session
-        localStorage.setItem('ngalam_tech_session', JSON.stringify(data.user));
-        document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=86400; SameSite=Lax`;
+        const storage = isRemember ? localStorage : sessionStorage;
+        const otherStorage = isRemember ? sessionStorage : localStorage;
+        storage.setItem('ngalam_tech_session', JSON.stringify(data.user));
+        otherStorage.removeItem('ngalam_tech_session');
+        const maxAge = data.user.maxAge || (isRemember ? 2592000 : 86400);
+        document.cookie = `ngalam_token=${data.user.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
 
         const redirectUrl = resolveSafeRedirect(urlParams.get('redirect'));
 
@@ -391,8 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
             user: {
               name: data.user.name,
               role: 'teknisi',
-              roleText: '🔬 Teknisi Meja Kerja Lab Workshop',
-              avatar: '🔬'
+              roleText: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg> Teknisi Meja Kerja Lab Workshop',
+              avatar: '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>'
             },
             redirectUrl: redirectUrl,
             duration: 1350
@@ -413,19 +420,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
           setTimeout(() => {
             if (fill) fill.style.width = '35%';
-            if (icon) icon.textContent = '⚡';
+            if (icon) icon.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
             if (stepText) stepText.textContent = 'Memverifikasi kredensial di database lab workshop...';
           }, 250);
 
           setTimeout(() => {
             if (fill) fill.style.width = '80%';
-            if (icon) icon.textContent = '🔬';
+            if (icon) icon.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18h8"/><path d="M3 22h18"/><path d="m14 22 3-3-3-3"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="m12 6 4-4 3 3-4 4"/></svg>';
             if (stepText) stepText.textContent = 'Akun terverifikasi! Menyiapkan antrean unit HP servis...';
           }, 650);
 
           setTimeout(() => {
             if (fill) fill.style.width = '100%';
-            if (icon) icon.textContent = '🚀';
+            if (icon) icon.textContent = '<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>';
             if (stepText) stepText.textContent = 'Meja lab siap! Membuka workbench...';
           }, 1050);
 
@@ -454,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showAlert(errMsg);
         if (loginSubmitBtn) {
           loginSubmitBtn.disabled = false;
-          loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab 🚀</span>';
+          loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>';
           loginSubmitBtn.style.opacity = '1';
           loginSubmitBtn.style.transform = 'scale(1)';
         }
@@ -470,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showAlert(errMsg);
       if (loginSubmitBtn) {
         loginSubmitBtn.disabled = false;
-        loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab 🚀</span>';
+        loginSubmitBtn.innerHTML = '<span>Masuk ke Meja Kerja Lab <svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>';
         loginSubmitBtn.style.opacity = '1';
         loginSubmitBtn.style.transform = 'scale(1)';
       }
