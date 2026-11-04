@@ -42,6 +42,12 @@
       }
     },
     {
+      "source": "/images/(.*)",
+      "destination": {
+        "service": "app"
+      }
+    },
+    {
       "source": "/(.*)",
       "destination": {
         "service": "client"

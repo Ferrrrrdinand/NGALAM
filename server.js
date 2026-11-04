@@ -12,7 +12,6 @@ const fs = require('fs');
 const { jsonSyntaxErrorHandler, globalErrorHandler } = require('./src/middlewares/errorHandler');
 const apiRoutes = require('./src/routes');
 const db = require('./src/models');
-const syncAll = require('./src/scripts/syncAll');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,11 +22,8 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(jsonSyntaxErrorHandler);
 
-// Serve Static Assets
+// Serve static images and promo uploads.
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
-app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
-app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
-app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Master API Routes
 app.use('/api', apiRoutes);
@@ -43,8 +39,6 @@ if (fs.existsSync(clientDist)) {
     }
     res.sendFile(path.join(clientDist, 'index.html'));
   });
-} else {
-  app.use(express.static(path.join(__dirname, 'public')));
 }
 
 // Fallback for unmatched API routes

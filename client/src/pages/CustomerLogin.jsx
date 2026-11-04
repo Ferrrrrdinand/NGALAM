@@ -218,7 +218,7 @@ export default function CustomerLogin() {
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '12px', borderRadius: '12px', fontWeight: 700, textDecoration: 'none' }}
             >
               <GoogleIcon />
-              <span>Lanjutkan dengan Google</span>
+              <span>{tab === 'register' ? 'Daftar Cepat dengan Google' : 'Masuk / Daftar dengan Google'}</span>
             </a>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '18px 0', color: '#94a3b8', fontSize: '0.78rem' }}>

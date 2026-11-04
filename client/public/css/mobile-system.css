@@ -927,7 +927,7 @@
   }
 
   /* ==========================================================================
-     7. HALAMAN BOOKING / PESAN SERVIS (public/pesan-servis/index.html)
+     7. HALAMAN BOOKING / PESAN SERVIS (/pesan-servis)
      ========================================================================== */
   /* Sembunyikan kolom intro & info di HP agar langsung fokus ke formulir service */
   .formpage > div:first-child,
@@ -1269,7 +1269,7 @@
   }
 
   /* ==========================================================================
-     8. HALAMAN LACAK STATUS (public/lacak/index.html)
+     8. HALAMAN LACAK STATUS (/lacak)
      ========================================================================== */
   .tracking-direct-section {
     margin: 16px auto 40px !important;
@@ -1335,7 +1335,7 @@
   }
 
   /* ==========================================================================
-     9. HALAMAN KONTAK & LOKASI (public/kontak/index.html)
+     9. HALAMAN KONTAK & LOKASI (/kontak)
      ========================================================================== */
   .kontak-hero {
     padding: 32px 0 24px !important;
@@ -1381,7 +1381,7 @@
   }
 
   /* ==========================================================================
-     10. HALAMAN KATALOG LAYANAN (public/layanan/index.html)
+     10. HALAMAN KATALOG LAYANAN (/layanan)
      ========================================================================== */
   .layanan-hero {
     padding: 28px 0 20px !important;
@@ -1417,7 +1417,7 @@
   }
 
   /* ==========================================================================
-     11. PORTAL MEMBER PELANGGAN (public/login/index.html)
+     11. PORTAL MEMBER PELANGGAN (/login)
      ========================================================================== */
   .customer-portal-container {
     width: 100% !important;
@@ -1452,7 +1452,7 @@
   }
 
   /* ==========================================================================
-     12. PORTAL MITRA AFILIASI (public/mitra/index.html)
+     12. PORTAL MITRA AFILIASI (/mitra)
      ========================================================================== */
   .mitra-container {
     padding: 0 12px !important;
@@ -1487,7 +1487,7 @@
   }
 
   /* ==========================================================================
-     13. DASHBOARD ADMIN MEJA 1 (public/admin/index.html)
+     13. DASHBOARD ADMIN MEJA 1 (/admin)
      ========================================================================== */
   .admin-header .nav {
     min-height: 58px !important;
@@ -1570,7 +1570,7 @@
   }
 
   /* ==========================================================================
-     14. DASHBOARD KASIR MEJA 1 (public/kasir/index.html)
+     14. DASHBOARD KASIR MEJA 1 (/kasir)
      ========================================================================== */
   .kasir-nav-container {
     padding: 8px 14px !important;
@@ -1610,7 +1610,7 @@
   }
 
   /* ==========================================================================
-     15. DASHBOARD TEKNISI LAB (public/teknisi/index.html)
+     15. DASHBOARD TEKNISI LAB (/teknisi)
      ========================================================================== */
   .lab-nav-container {
     padding: 8px 14px !important;
@@ -1744,7 +1744,7 @@
   }
 
   /* ==========================================================================
-     17. HALAMAN EKSPOR EXCEL (public/admin/export.html)
+     17. HALAMAN EKSPOR EXCEL (Admin export)
      ========================================================================== */
   .export-card {
     padding: 18px 14px !important;

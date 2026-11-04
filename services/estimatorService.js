@@ -256,7 +256,7 @@ function calculateEstimate({ brand = 'apple', model = '', damage = 'lcd' }) {
 
   const isIphone = brand === 'apple';
   const typeParam = isIphone ? 'iphone' : 'android';
-  const bookingUrl = `pesan-servis/index.html?type=${typeParam}&model=${encodeURIComponent(model)}&problem=${encodeURIComponent(damage)}`;
+  const bookingUrl = `/pesan-servis?type=${typeParam}&model=${encodeURIComponent(model)}&problem=${encodeURIComponent(damage)}`;
 
   return {
     success: true,

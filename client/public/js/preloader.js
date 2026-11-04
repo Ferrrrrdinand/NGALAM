@@ -108,11 +108,8 @@
     let overlay = document.getElementById('ngalamWelcomePromoOverlay');
     if (overlay) overlay.remove();
 
-    const basePath = getBasePath();
     const promoCode = 'MEMBERBARU30';
-    const registerUrl = (window.location.pathname.endsWith('.html') || basePath.includes('../'))
-      ? `${basePath}login/index.html?mode=register&promo=${promoCode}`
-      : `/login?mode=register&promo=${promoCode}`;
+    const registerUrl = `/login?mode=register&promo=${promoCode}`;
 
     overlay = document.createElement('div');
     overlay.id = 'ngalamWelcomePromoOverlay';

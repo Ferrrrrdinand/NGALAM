@@ -52,11 +52,12 @@ PG_SSL=true
 JWT_SECRET=<isi-dengan-secret-panjang-acak>
 
 # Google OAuth
-APP_URL=https://domain-anda.com
+# APP_URL dan redirect URI opsional; kosongkan agar otomatis mengikuti request host.
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
-GOOGLE_REDIRECT_URI=https://domain-anda.com/api/customer/auth/google/callback
-GOOGLE_REDIRECT_URI_MITRA=https://domain-anda.com/api/mitra/auth/google/callback
+# APP_URL=https://domain-anda.com
+# GOOGLE_REDIRECT_URI=https://domain-anda.com/api/customer/auth/google/callback
+# GOOGLE_REDIRECT_URI_MITRA=https://domain-anda.com/api/mitra/auth/google/callback
 ```
 
 > **Catatan Keamanan Penting**:
@@ -80,8 +81,12 @@ node server.js
 
 ### 3. Buka di Browser
 - **Portal Publik**: [http://localhost:3000](http://localhost:3000)
-- **Portal Login Terpadu**: [http://localhost:3000/login/index.html](http://localhost:3000/login/index.html)
-- **Portal Admin & Kasir**: [http://localhost:3000/admin/index.html](http://localhost:3000/admin/index.html)
+- **Login Pelanggan**: [http://localhost:3000/login](http://localhost:3000/login)
+- **Portal Mitra**: [http://localhost:3000/mitra](http://localhost:3000/mitra)
+- **Portal Admin & Kasir**: [http://localhost:3000/admin](http://localhost:3000/admin)
+- **Portal Teknisi**: [http://localhost:3000/teknisi](http://localhost:3000/teknisi)
+
+Untuk development frontend gunakan `npm run dev:server` dan `npm run dev:client` (Vite di port 5173).
 
 ---
 

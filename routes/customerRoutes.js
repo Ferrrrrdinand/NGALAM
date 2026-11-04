@@ -43,9 +43,11 @@ function cleanupOAuthStates() {
 }
 
 function getBaseUrl(req) {
-  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, '');
   const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
-  return `${proto}://${req.get('host')}`;
+  const host = req.headers['x-forwarded-host'] || req.get('host');
+  if (host) return `${proto}://${host}`;
+  const configured = (process.env.APP_URL || '').trim();
+  return configured ? configured.replace(/\/$/, '') : 'http://localhost:3000';
 }
 
 function getGoogleRedirectUri(req) {
@@ -589,7 +591,7 @@ router.post('/logout', (req, res) => {
 router.get('/auth/google', (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) {
-    return res.redirect(`${getBaseUrl(req)}/login/?auth=google&error=google_not_configured`);
+    return res.redirect(`${getBaseUrl(req)}/login?auth=google&error=google_not_configured`);
   }
 
   cleanupOAuthStates();
@@ -614,7 +616,7 @@ router.get('/auth/google', (req, res) => {
 // Callback URL resmi yang didaftarkan di Google Cloud Console.
 router.get('/auth/google/callback', async (req, res) => {
   const frontendBase = getBaseUrl(req);
-  const failRedirect = (reason) => res.redirect(`${frontendBase}/login/?auth=google&error=${encodeURIComponent(reason)}`);
+  const failRedirect = (reason) => res.redirect(`${frontendBase}/login?auth=google&error=${encodeURIComponent(reason)}`);
 
   try {
     const { code, state, error } = req.query;
@@ -668,7 +670,7 @@ router.get('/auth/google/callback', async (req, res) => {
     }, true);
 
     setCustomerTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
-    res.redirect(`${frontendBase}/login/?auth=google${cust.whatsapp ? '' : '&needsPhone=1'}`);
+    res.redirect(`${frontendBase}/login?auth=google${cust.whatsapp ? '' : '&needsPhone=1'}`);
   } catch (err) {
     console.error('[Google OAuth] Callback error:', err.message);
     return failRedirect('server_error');

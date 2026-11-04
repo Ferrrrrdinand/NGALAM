@@ -16,8 +16,8 @@ console.log('🧪 Starting Preloader & Welcome Promo System Verification...\n');
 const ROOT = path.join(__dirname, '..');
 
 // 1. Check CSS File
-const cssFile = path.join(ROOT, 'public', 'css', 'preloader.css');
-assert(fs.existsSync(cssFile), 'public/css/preloader.css must exist');
+const cssFile = path.join(ROOT, 'client', 'public', 'css', 'preloader.css');
+assert(fs.existsSync(cssFile), 'client/public/css/preloader.css must exist');
 const cssContent = fs.readFileSync(cssFile, 'utf8');
 assert(cssContent.includes('.splash-already-shown #ngalamInitialPreloader'), 'CSS must have instant zero-flash suppression rule');
 assert(cssContent.includes('#ngalamInitialPreloader'), 'CSS must define #ngalamInitialPreloader');
@@ -26,11 +26,11 @@ assert(cssContent.includes('preloaderAuraRotate'), 'CSS must define aura rotatio
 assert(cssContent.includes('.welcome-promo-overlay'), 'CSS must define .welcome-promo-overlay');
 assert(cssContent.includes('.welcome-promo-card'), 'CSS must define .welcome-promo-card');
 assert(cssContent.includes('.welcome-btn-primary'), 'CSS must define .welcome-btn-primary');
-console.log('✅ public/css/preloader.css verified: preloader styling & welcome promo modal styles present.');
+console.log('✅ client/public/css/preloader.css verified: preloader styling & welcome promo modal styles present.');
 
 // 2. Check JS File
-const jsFile = path.join(ROOT, 'public', 'js', 'preloader.js');
-assert(fs.existsSync(jsFile), 'public/js/preloader.js must exist');
+const jsFile = path.join(ROOT, 'client', 'public', 'js', 'preloader.js');
+assert(fs.existsSync(jsFile), 'client/public/js/preloader.js must exist');
 const jsContent = fs.readFileSync(jsFile, 'utf8');
 assert(jsContent.includes('ngalam_site_entered'), 'JS must check and set sessionStorage key ngalam_site_entered');
 assert(jsContent.includes('triggerWelcomePromoOffer'), 'JS must define triggerWelcomePromoOffer');
@@ -38,26 +38,15 @@ assert(jsContent.includes('MEMBERBARU30'), 'JS must supply welcome voucher code 
 assert(jsContent.includes('mode=register'), 'JS must link directly to registration mode');
 assert(jsContent.includes('ngalam_welcome_promo_dismissed'), 'JS must track promo dismissal');
 assert(jsContent.includes('resetNgalamPreloader'), 'JS must export helper resetNgalamPreloader');
-console.log('✅ public/js/preloader.js verified: preloader lifecycle & welcome promo offer integration present.');
+console.log('✅ client/public/js/preloader.js verified: preloader lifecycle & welcome promo offer integration present.');
 
-// 3. Check Pages Integration
-const targetPages = [
-  'public/index.html',
-  'public/layanan/index.html',
-  'public/pesan-servis/index.html',
-  'public/kontak/index.html',
-  'public/lacak/index.html'
-];
-
-targetPages.forEach(relPath => {
-  const fullPath = path.join(ROOT, relPath);
-  assert(fs.existsSync(fullPath), `${relPath} must exist`);
-  const content = fs.readFileSync(fullPath, 'utf8');
-
-  assert(content.includes('preloader.css'), `${relPath} must link preloader.css`);
-  assert(content.includes('preloader.js'), `${relPath} must include preloader.js`);
-  console.log(`✅ ${relPath} fully integrated with preloader & welcome promo.`);
-});
+// 3. Check React entry integration
+const indexPath = path.join(ROOT, 'client', 'index.html');
+assert(fs.existsSync(indexPath), 'client/index.html must exist');
+const indexContent = fs.readFileSync(indexPath, 'utf8');
+assert(indexContent.includes('preloader.css'), 'client/index.html must link preloader.css');
+assert(indexContent.includes('preloader.js'), 'client/index.html must include preloader.js');
+console.log('✅ client/index.html fully integrated with preloader & welcome promo.');
 
 // 4. Simulate State Machine Logic
 console.log('\n--- Simulation of Repeating Preloader & Welcome Promo Lifecycle ---');

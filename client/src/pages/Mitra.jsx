@@ -177,8 +177,8 @@ export default function Mitra() {
         }
       });
 
-      if (res.ok && res.data.success && res.data.driver) {
-        const driver = res.data.driver;
+      const driver = res.data.driver || res.data.mitra || res.data.data;
+      if (res.ok && res.data.success && driver) {
         setMitraSession(driver);
         localStorage.setItem('ngalam_mitra_session', JSON.stringify(driver));
         setAlert({
@@ -336,7 +336,7 @@ export default function Mitra() {
                 <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/>
                 <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C36.9 40.4 44 36 44 24c0-1.3-.1-2.3-.4-3.5z"/>
               </svg>
-              <span>{googleLoading ? 'Menghubungkan...' : 'Masuk / Daftar dengan Google'}</span>
+              <span>{googleLoading ? 'Menghubungkan...' : authTab === 'register' ? 'Daftar Cepat dengan Google' : 'Masuk / Daftar dengan Google'}</span>
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <span style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
@@ -484,6 +484,7 @@ export default function Mitra() {
                     <input
                       type="tel"
                       required
+                      autoComplete="tel"
                       className="form-control-input"
                       placeholder="Contoh: 081234567899"
                       value={regForm.phone}
@@ -502,6 +503,7 @@ export default function Mitra() {
                       <input
                         type="text"
                         required
+                        autoComplete="username"
                         className="form-control-input"
                         placeholder="mitra_budi"
                         value={regForm.username}
@@ -515,6 +517,8 @@ export default function Mitra() {
                       <input
                         type="password"
                         required
+                        minLength={6}
+                        autoComplete="new-password"
                         className="form-control-input"
                         placeholder="Minimal 6 karakter"
                         value={regForm.password}
@@ -529,6 +533,7 @@ export default function Mitra() {
                     </label>
                     <input
                       type="email"
+                      autoComplete="email"
                       className="form-control-input"
                       placeholder="budi@gmail.com"
                       value={regForm.email}

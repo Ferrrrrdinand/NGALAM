@@ -55,10 +55,8 @@ function phonesMatch(p1, p2) {
  * Generate full affiliate link and QR code image URL
  */
 function buildMitraAffiliateDetails(req, refCode) {
-  const host = req.get('host') || 'localhost:3000';
-  const protocol = req.protocol || 'http';
   // Scan QR mengarahkan ke dashboard utama, kode ref disimpan otomatis di localStorage
-  const affiliateUrl = `${protocol}://${host}/?ref=${encodeURIComponent(refCode)}`;
+  const affiliateUrl = `${getBaseUrl(req)}/?ref=${encodeURIComponent(refCode)}`;
   const qrCodeUrl = `https://quickchart.io/qr?size=350&margin=2&text=${encodeURIComponent(affiliateUrl)}`;
 
   return {
@@ -81,13 +79,15 @@ function cleanupOAuthStates() {
 }
 
 function getBaseUrl(req) {
-  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, '');
   const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
-  return `${proto}://${req.get('host')}`;
+  const host = req.headers['x-forwarded-host'] || req.get('host');
+  if (host) return `${proto}://${host}`;
+  const configured = (process.env.APP_URL || '').trim();
+  return configured ? configured.replace(/\/$/, '') : 'http://localhost:3000';
 }
 
-function getGoogleRedirectUri() {
-  return process.env.GOOGLE_REDIRECT_URI_MITRA || `${process.env.APP_URL ? process.env.APP_URL.replace(/\/$/, '') : 'http://localhost:3000'}/api/mitra/auth/google/callback`;
+function getGoogleRedirectUri(req) {
+  return process.env.GOOGLE_REDIRECT_URI_MITRA || `${getBaseUrl(req)}/api/mitra/auth/google/callback`;
 }
 
 function parseCookies(req) {
@@ -212,7 +212,7 @@ router.get('/auth/google', (req, res) => {
 
   const params = new URLSearchParams({
     client_id: clientId,
-    redirect_uri: getGoogleRedirectUri(),
+    redirect_uri: getGoogleRedirectUri(req),
     response_type: 'code',
     scope: 'openid email profile',
     state,
@@ -250,7 +250,7 @@ router.get('/auth/google/callback', async (req, res) => {
         code: String(code),
         client_id: clientId,
         client_secret: clientSecret,
-        redirect_uri: getGoogleRedirectUri(),
+        redirect_uri: getGoogleRedirectUri(req),
         grant_type: 'authorization_code'
       }).toString()
     });
@@ -528,11 +528,19 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Nomor WhatsApp aktif wajib diisi.' });
     }
 
-    const cleanPhone = phone.trim();
+    const cleanPhone = normalizePhone(phone);
+    if (!cleanPhone || cleanPhone.length < 8 || cleanPhone.length > 15) {
+      return res.status(400).json({ success: false, message: 'Nomor WhatsApp aktif tidak valid.' });
+    }
+
     const cleanUser = (username && username.trim()) 
       ? username.trim().toLowerCase() 
       : `${name.trim().toLowerCase().replace(/[^a-z0-9]/g, '_')}_${cleanPhone.slice(-4)}`;
-    const cleanPass = (password && password.trim()) ? password.trim() : `mitra_${cleanPhone.slice(-4)}`;
+    const explicitPassword = (password || '').trim();
+    if (explicitPassword && explicitPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'Kata sandi minimal 6 karakter.' });
+    }
+    const cleanPass = explicitPassword || `mitra_${cleanPhone.slice(-4)}`;
 
     const users = readUsers();
 
@@ -543,22 +551,10 @@ router.post('/register', async (req, res) => {
     );
 
     if (existing) {
-      const details = buildMitraAffiliateDetails(req, existing.referralCode);
-      const safeExisting = { ...existing };
-      delete safeExisting.password;
-      return res.status(200).json({
-        success: true,
-        message: `Nomor WhatsApp Anda sudah terdaftar sebagai mitra (${existing.name}).`,
-        data: {
-          ...safeExisting,
-          affiliateUrl: details.affiliateUrl,
-          qrCodeUrl: details.qrCodeUrl
-        },
-        mitra: {
-          ...safeExisting,
-          affiliateUrl: details.affiliateUrl,
-          qrCodeUrl: details.qrCodeUrl
-        }
+      return res.status(409).json({
+        success: false,
+        code: 'MITRA_ALREADY_REGISTERED',
+        message: `Nomor WhatsApp atau username sudah terdaftar sebagai mitra (${existing.name}). Silakan masuk melalui tab Masuk Akun Mitra.`
       });
     }
 
@@ -603,20 +599,33 @@ router.post('/register', async (req, res) => {
     await saveUsers(users);
 
     const details = buildMitraAffiliateDetails(req, refCode);
+    const safeMitra = { ...newMitra };
+    delete safeMitra.password;
+
+    const jwtInfo = generateToken({
+      id: newMitra.id,
+      username: newMitra.username,
+      role: newMitra.role,
+      referralCode: newMitra.referralCode
+    }, false);
+    setMitraTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
+
+    const driver = {
+      ...safeMitra,
+      affiliateUrl: details.affiliateUrl,
+      qrCodeUrl: details.qrCodeUrl,
+      totalReferredOrders: 0,
+      referredOrders: [],
+      needsPhone: false
+    };
 
     res.status(201).json({
       success: true,
       message: `Pendaftaran Mitra berhasil! Kode unik afiliasi Anda "${refCode}" telah aktif.`,
-      data: {
-        ...newMitra,
-        affiliateUrl: details.affiliateUrl,
-        qrCodeUrl: details.qrCodeUrl
-      },
-      mitra: {
-        ...newMitra,
-        affiliateUrl: details.affiliateUrl,
-        qrCodeUrl: details.qrCodeUrl
-      }
+      token: jwtInfo.token,
+      driver,
+      data: driver,
+      mitra: driver
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -49,12 +49,12 @@ async function processChatMessage(rawMessage = '') {
             `• Teknisi: <b>${found.technician || 'Meja Pengerjaan'}</b><br/>` +
             `• Status: <span style="color:#38bdf8;font-weight:700;">${found.status || 'Diproses'} (Step ${found.step || 1} dari 5)</span><br/>` +
             `• Catatan Teknisi: <i>"${found.diagnoseNote || 'Unit dalam observasi'}"</i><br/><br/>` +
-            `👉 <a href="lacak/index.html?track=${encodeURIComponent(found.id)}" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Buka 5-Step Tracker Lengkap ↗</a>`,
+            `👉 <a href="/lacak?track=${encodeURIComponent(found.id)}" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Buka 5-Step Tracker Lengkap ↗</a>`,
           chips: ['Cek Status Tiket Lain', 'Hubungi Teknisi', 'Lokasi Workshop'],
         };
       } else {
         return {
-          reply: `⚠️ Nomor tiket <b>${searchedTicket}</b> belum terdaftar di antrian sistem. Pastikan format nomor tiket benar (contoh: NGF-20261023-0001) atau masukkan nomor WhatsApp Anda di halaman <a href="lacak/index.html" style="color:#38bdf8;text-decoration:underline;"><b>Lacak Tiket</b></a>.`,
+          reply: `⚠️ Nomor tiket <b>${searchedTicket}</b> belum terdaftar di antrian sistem. Pastikan format nomor tiket benar (contoh: NGF-20261023-0001) atau masukkan nomor WhatsApp Anda di halaman <a href="/lacak" style="color:#38bdf8;text-decoration:underline;"><b>Lacak Tiket</b></a>.`,
           chips: ['Lacak Tiket', 'Tanya PIC Mas Hingky', 'Biaya Servis'],
         };
       }
@@ -208,7 +208,7 @@ async function processChatMessage(rawMessage = '') {
     return {
       reply: `🔍 <b>Lacak Progres Pengerjaan Real-Time:</b><br/>` +
         `Anda dapat memantau setiap langkah (Step 1 s/d 5) unit Anda secara langsung.<br/>` +
-        `Silakan ketik nomor tiket Anda di sini (contoh: <code>NGF-20261023-0001</code>) atau buka halaman <a href="login/index.html" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Lacak Tiket Servis ↗</a>.`,
+        `Silakan ketik nomor tiket Anda di sini (contoh: <code>NGF-20261023-0001</code>) atau buka halaman <a href="/login" style="color:#38bdf8;text-decoration:underline;font-weight:700;">Lacak Tiket Servis ↗</a>.`,
       chips: ['Lokasi Workshop', 'Biaya Ganti Baterai', 'Kontak WhatsApp'],
     };
   }

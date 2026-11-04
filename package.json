@@ -13,8 +13,6 @@
     "dev": "node server.js",
     "build:client": "npm --prefix client run build",
     "build": "npm --prefix client run build",
-    "start:admin": "node server_admin.js",
-    "dev:admin": "node server_admin.js",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:seed": "sequelize-cli db:seed:all",

@@ -1,4 +1,4 @@
-/* Admin Dashboard - Minimal reset to shield from legacy public/css/style.css */
+/* Admin Dashboard - Minimal reset to isolate dashboard styles */
 .admin-layout-root {
   min-height: 100vh;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;

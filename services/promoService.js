@@ -23,7 +23,7 @@ const DEFAULT_PROMOS = [
     theme: 'red',
     promoCode: 'NGALAMPROMO30',
     buttonText: 'Klaim Promo Servis ↗',
-    buttonLink: 'pesan-servis/index.html?promo=NGALAMPROMO30',
+    buttonLink: '/pesan-servis?promo=NGALAMPROMO30',
     image: 'images/promo-banner-1.jpg',
     active: true,
     createdAt: '2026-10-23T08:00:00.000Z'
@@ -51,7 +51,7 @@ const DEFAULT_PROMOS = [
     theme: 'purple',
     promoCode: 'FREEGLASS9H',
     buttonText: 'Pesan Ganti Layar ↗',
-    buttonLink: 'pesan-servis/index.html?promo=FREEGLASS9H',
+    buttonLink: '/pesan-servis?promo=FREEGLASS9H',
     image: 'images/promo-banner-1.jpg',
     active: true,
     createdAt: '2026-10-23T08:10:00.000Z'
