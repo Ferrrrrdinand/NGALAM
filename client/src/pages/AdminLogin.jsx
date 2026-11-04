@@ -1,36 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { 
-  ShieldCheck, Lock, User, AlertCircle, CheckCircle2,
+  ShieldCheck, Lock, User, AlertCircle,
   Maximize2, Minimize2, ArrowLeft, Eye, EyeOff,
-  Users, KeyRound, Shield, Zap, Building2, UserPlus, LogIn, ExternalLink, Wrench
+  Users, Shield, Zap, Building2, LogIn, Wrench
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { fetchApi } from '../utils/api';
 import './AdminLogin.css';
 
 export default function AdminLogin() {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register'
-  
-  // Login Form State
-  const [identifier, setIdentifier] = useState('');
+  const [identifier, setIdentifier] = useState('admin');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Register Form State
-  const [regName, setRegName] = useState('');
-  const [regUsername, setRegUsername] = useState('');
-  const [regEmail, setRegEmail] = useState('');
-  const [regPhone, setRegPhone] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [showRegPassword, setShowRegPassword] = useState(false);
-  const [regRole, setRegRole] = useState('admin');
-  const [regReferral, setRegReferral] = useState('');
-  const [regLoading, setRegLoading] = useState(false);
 
   // Live Clock & Fullscreen State
   const [clockStr, setClockStr] = useState('Memuat Waktu...');
@@ -78,7 +62,6 @@ export default function AdminLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setSuccessMsg('');
     setLoading(true);
 
     try {
@@ -87,47 +70,12 @@ export default function AdminLogin() {
         const redirect = searchParams.get('redirect') || '/admin';
         navigate(redirect);
       } else {
-        setErrorMsg(res.error || 'Username atau password salah.');
-      }
-    } catch {
-      setErrorMsg('Gagal terhubung ke server autentikasi.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-    setRegLoading(true);
-
-    try {
-      const data = await fetchApi('/api/auth/register-admin', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: regName.trim(),
-          username: regUsername.trim(),
-          email: regEmail.trim(),
-          phone: regPhone.trim(),
-          password: regPassword,
-          role: regRole,
-          referralCode: regReferral.trim()
-        })
-      });
-
-      if (data.success) {
-        setSuccessMsg(data.message || 'Pendaftaran staf berhasil! Silakan masuk sistem.');
-        setActiveTab('login');
-        setIdentifier(regUsername.trim());
-        setPassword('');
-      } else {
-        setErrorMsg(data.message || data.error || 'Pendaftaran staf gagal.');
+        setErrorMsg(res.error || 'Username atau kata sandi admin salah.');
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Terjadi kesalahan sistem saat mendaftar.');
+      setErrorMsg(err.message || 'Gagal terhubung ke server autentikasi.');
     } finally {
-      setRegLoading(false);
+      setLoading(false);
     }
   };
 
@@ -159,7 +107,7 @@ export default function AdminLogin() {
 
           <h1 className="showcase-hero-title">
             Pusat Kontrol Operasional Bengkel.<br />
-            <span className="showcase-gradient-text">Akses Khusus Super Admin &amp; Owner.</span>
+            <span className="showcase-gradient-text">Akses Khusus Admin.</span>
           </h1>
 
           <p className="showcase-desc">
@@ -254,74 +202,20 @@ export default function AdminLogin() {
               style={{ width: '68px', height: '68px', borderRadius: '18px', margin: '0 auto 12px', display: 'block', border: '2px solid rgba(212, 175, 55, 0.6)', boxShadow: '0 8px 25px rgba(212, 175, 55, 0.25)' }} 
             />
             <h2 style={{ fontSize: '1.35rem', color: '#000000', margin: '0 0 6px', fontWeight: 800, fontFamily: "'Outfit', sans-serif" }}>
-              Otentikasi Super Admin &amp; Owner
+              Otentikasi Admin
             </h2>
             <p style={{ color: '#64748b', fontSize: '0.88rem', margin: 0, fontWeight: 600 }}>
-              Masukkan kredensial akun Admin atau Owner untuk membuka kontrol sistem.
+              Masukkan kata sandi akun admin untuk membuka kontrol sistem.
             </p>
           </div>
 
-          {/* Toggle Tabs: Login vs Registrasi Staf */}
-          <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '14px', marginBottom: '16px', border: '1px solid #e2e8f0' }}>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('login'); setErrorMsg(''); setSuccessMsg(''); }}
-              style={{
-                flex: 1,
-                padding: '10px 14px',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '0.88rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: activeTab === 'login' ? '#ffffff' : 'transparent',
-                color: activeTab === 'login' ? '#b45309' : '#64748b',
-                boxShadow: activeTab === 'login' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <KeyRound className="w-4 h-4" />
-              <span>Masuk Sistem</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('register'); setErrorMsg(''); setSuccessMsg(''); }}
-              style={{
-                flex: 1,
-                padding: '10px 14px',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '0.88rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: activeTab === 'register' ? '#ffffff' : 'transparent',
-                color: activeTab === 'register' ? '#b45309' : '#64748b',
-                boxShadow: activeTab === 'register' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Registrasi Staf Baru</span>
-            </button>
-          </div>
-
-          {/* Portal Kasir Quick Switcher Banner */}
           <div style={{ background: '#f0f9ff', border: '1.5px solid #bae6fd', borderRadius: '12px', padding: '10px 14px', marginBottom: '18px', fontSize: '0.84rem', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
             <span style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <ShieldCheck className="w-4 h-4 text-sky-600" /> Akses Terpadu Kasir Meja 1 &amp; Lab Teknisi
+              <ShieldCheck className="w-4 h-4 text-sky-600" /> Akses Admin Tunggal
             </span>
-            <span style={{ color: '#0284c7', fontWeight: 800, fontSize: '0.78rem' }}>2 Akun Pimpinan</span>
+            <span style={{ color: '#0284c7', fontWeight: 800, fontSize: '0.78rem' }}>1 Akun Admin</span>
           </div>
 
-          {/* Alert Messages */}
           {errorMsg && (
             <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', marginBottom: '18px', fontSize: '0.86rem', color: '#991b1b', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
@@ -329,18 +223,9 @@ export default function AdminLogin() {
             </div>
           )}
 
-          {successMsg && (
-            <div style={{ padding: '12px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', marginBottom: '18px', fontSize: '0.86rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-              <span>{successMsg}</span>
-            </div>
-          )}
-
-          {/* LOGIN TAB */}
-          {activeTab === 'login' && (
-            <form onSubmit={handleLogin} noValidate>
+          <form onSubmit={handleLogin} noValidate>
               <div className="auth-input-wrapper">
-                <label htmlFor="adminIdentifier">Username atau Email Akun *</label>
+                <label htmlFor="adminIdentifier">Username Admin *</label>
                 <div className="auth-input-inner">
                   <span className="auth-input-icon">
                     <User className="w-4 h-4" />
@@ -349,11 +234,12 @@ export default function AdminLogin() {
                     type="text"
                     id="adminIdentifier"
                     className="auth-input-control"
-                    placeholder="Masukkan username atau email"
+                    placeholder="admin"
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     autoComplete="username"
+                    readOnly
                   />
                 </div>
               </div>
@@ -402,168 +288,13 @@ export default function AdminLogin() {
 
               <button type="submit" disabled={loading} className="auth-submit-btn">
                 <LogIn className="w-4 h-4" />
-                <span>{loading ? 'Memvalidasi Kredensial...' : 'Buka Akses Penuh Admin Super User'}</span>
+                <span>{loading ? 'Memvalidasi Kredensial...' : 'Masuk Sebagai Admin'}</span>
               </button>
             </form>
-          )}
 
-          {/* REGISTER TAB */}
-          {activeTab === 'register' && (
-            <form onSubmit={handleRegister} noValidate>
-              <div className="auth-input-wrapper">
-                <label htmlFor="regAdminName">Nama Lengkap Admin / Manager *</label>
-                <div className="auth-input-inner">
-                  <span className="auth-input-icon"><User className="w-4 h-4" /></span>
-                  <input
-                    type="text"
-                    id="regAdminName"
-                    className="auth-input-control"
-                    placeholder="Contoh: Ferdinand / Super Admin"
-                    required
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    autoComplete="name"
-                  />
-                </div>
-              </div>
-
-              <div className="auth-input-wrapper">
-                <label htmlFor="regAdminUser">Username Login *</label>
-                <div className="auth-input-inner">
-                  <span className="auth-input-icon"><Shield className="w-4 h-4" /></span>
-                  <input
-                    type="text"
-                    id="regAdminUser"
-                    className="auth-input-control"
-                    placeholder="Contoh: admin atau owner"
-                    required
-                    value={regUsername}
-                    onChange={(e) => setRegUsername(e.target.value)}
-                    autoComplete="username"
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="auth-input-wrapper">
-                  <label htmlFor="regAdminEmail">Email (Opsional)</label>
-                  <div className="auth-input-inner">
-                    <input
-                      type="email"
-                      id="regAdminEmail"
-                      className="auth-input-control"
-                      style={{ paddingLeft: '14px' }}
-                      placeholder="admin@ngalamfix.com"
-                      value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
-                      autoComplete="email"
-                    />
-                  </div>
-                </div>
-                <div className="auth-input-wrapper">
-                  <label htmlFor="regAdminPhone">No. WhatsApp (Opsional)</label>
-                  <div className="auth-input-inner">
-                    <input
-                      type="tel"
-                      id="regAdminPhone"
-                      className="auth-input-control"
-                      style={{ paddingLeft: '14px' }}
-                      placeholder="081234567890"
-                      value={regPhone}
-                      onChange={(e) => setRegPhone(e.target.value)}
-                      autoComplete="tel"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="auth-input-wrapper">
-                <label htmlFor="regAdminPass">Kata Sandi (Password) *</label>
-                <div className="auth-input-inner">
-                  <span className="auth-input-icon"><Lock className="w-4 h-4" /></span>
-                  <input
-                    type={showRegPassword ? 'text' : 'password'}
-                    id="regAdminPass"
-                    className="auth-input-control"
-                    placeholder="Minimal 6 karakter"
-                    required
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="auth-password-toggle"
-                    onClick={() => setShowRegPassword(!showRegPassword)}
-                    title={showRegPassword ? 'Sembunyikan' : 'Tampilkan'}
-                  >
-                    {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="auth-input-wrapper">
-                <label htmlFor="regAdminRole">Peran / Hak Akses Staf *</label>
-                <select
-                  id="regAdminRole"
-                  className="auth-input-control"
-                  style={{ cursor: 'pointer', fontWeight: 700, color: '#000000', paddingLeft: '16px' }}
-                  value={regRole}
-                  onChange={(e) => setRegRole(e.target.value)}
-                >
-                  <option value="admin">Admin Super User (Akses &amp; Kontrol Penuh Seluruh Sistem)</option>
-                  <option value="kasir">Kasir Meja 1 (Input Unit Servis &amp; Struk)</option>
-                </select>
-              </div>
-
-              <div className="auth-input-wrapper" style={{ background: '#fffdf5', border: '1.5px dashed #d4af37', padding: '14px', borderRadius: '14px', marginTop: '10px' }}>
-                <label htmlFor="regAdminReferral" style={{ color: '#000000', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <KeyRound className="w-4 h-4 text-amber-700" />
-                  <span>Kode Referral Otorisasi Super Admin *</span>
-                </label>
-                <div className="auth-input-inner">
-                  <input
-                    type="text"
-                    id="regAdminReferral"
-                    className="auth-input-control"
-                    placeholder="MASUKKAN KODE REFERRAL OTORISASI..."
-                    value={regReferral}
-                    onChange={(e) => setRegReferral(e.target.value)}
-                    style={{ borderColor: '#d4af37', background: '#ffffff', letterSpacing: '1.5px', fontFamily: 'monospace', fontSize: '0.92rem', fontWeight: 700, textTransform: 'uppercase', color: '#000000', paddingLeft: '14px' }}
-                  />
-                </div>
-                <small style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px', color: '#78350f', fontSize: '0.78rem', fontWeight: 600 }}>
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
-                  <span>Calon pimpinan workshop wajib memasukkan kode referral otorisasi resmi untuk verifikasi keamanan.</span>
-                </small>
-              </div>
-
-              <button
-                type="submit"
-                disabled={regLoading}
-                className="btn"
-                style={{ width: '100%', padding: '14px', fontSize: '1.02rem', fontWeight: 700, borderRadius: '14px', background: 'linear-gradient(135deg, #059669, #10b981)', color: '#ffffff', border: 'none', boxShadow: '0 8px 25px rgba(16, 185, 129, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '18px', cursor: 'pointer' }}
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>{regLoading ? 'Memproses Pendaftaran...' : 'Daftarkan Akun Staf Admin'}</span>
-              </button>
-            </form>
-          )}
-
-          {/* Bottom Separation Links */}
           <div className="auth-bottom-links">
-            <div style={{ marginBottom: '10px' }}>
-              <span>Petugas Kasir Front Desk? </span>
-              <button 
-                type="button" 
-                onClick={() => { setActiveTab('login'); setIdentifier('admin'); }} 
-                style={{ color: '#0284c7', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" /> Login Kasir Meja 1 ↗
-              </button>
-            </div>
             <div>
-              <span>Bukan Staf Workshop? </span>
+              <span>Butuh akses lab? </span>
               <Link to="/teknisi/login" style={{ color: '#0f172a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <Wrench className="w-3.5 h-3.5 text-amber-700" />
                 <span>Login Teknisi</span>

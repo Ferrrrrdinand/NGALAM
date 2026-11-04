@@ -10,7 +10,7 @@ async function runJwtTests() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       identifier: 'admin',
-      password: 'admin123',
+      password: 'fixprongalam2026',
       role: 'admin',
       rememberMe: true
     })
@@ -54,7 +54,7 @@ async function runJwtTests() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       identifier: 'admin',
-      password: 'admin123',
+      password: 'fixprongalam2026',
       role: 'admin',
       rememberMe: false
     })

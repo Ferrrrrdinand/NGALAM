@@ -21,7 +21,24 @@ function phonesMatch(p1, p2) {
   return false;
 }
 
+function isValidPhone(val) {
+  const digits = normalizePhone(val);
+  return /^0\d{8,14}$/.test(digits);
+}
+
+function normalizeEmail(val) {
+  return String(val || '').trim().toLowerCase();
+}
+
+function isValidEmail(val) {
+  const email = normalizeEmail(val);
+  return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 module.exports = {
   normalizePhone,
-  phonesMatch
+  phonesMatch,
+  isValidPhone,
+  normalizeEmail,
+  isValidEmail
 };

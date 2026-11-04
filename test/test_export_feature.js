@@ -61,7 +61,7 @@ async function runTests() {
   console.log('🧪 MULAI PENGUJIAN FITUR EXPORT TRANSAKSI EXCEL NGALAM FIX PRO\n');
 
   // 1. Login Admin
-  const adminLogin = await postJSON('/api/auth/login', { username: 'admin', password: 'password123' });
+  const adminLogin = await postJSON('/api/auth/login', { username: 'admin', password: 'fixprongalam2026' });
   const adminToken = adminLogin.data?.user?.token;
   console.log(`1. Login Admin: ${adminLogin.status === 200 ? '✅ Sukses' : '❌ Gagal'} (Token: ${adminToken ? 'OK' : 'NULL'})`);
 

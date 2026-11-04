@@ -1,31 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Wrench, Lock, User, AlertCircle, CheckCircle2,
+  Wrench, Lock, User, AlertCircle,
   Maximize2, Minimize2, ArrowLeft, Eye, EyeOff,
-  Clock, Cpu, ShieldCheck, LogIn, Database, KeyRound, UserPlus
+  Clock, Cpu, ShieldCheck, LogIn
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { fetchApi } from '../utils/api';
 import './TechnicianLogin.css';
 
 export default function TechnicianLogin() {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register'
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Register state
-  const [regName, setRegName] = useState('');
-  const [regUsername, setRegUsername] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [regSpecialty, setRegSpecialty] = useState('Hardware & Board Micro-Soldering');
-  const [regReferral, setRegReferral] = useState('');
-  const [regLoading, setRegLoading] = useState(false);
 
   // Clock & Fullscreen
   const [clockStr, setClockStr] = useState('Memuat Waktu...');
@@ -72,7 +61,6 @@ export default function TechnicianLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setSuccessMsg('');
     setLoading(true);
 
     try {
@@ -86,39 +74,6 @@ export default function TechnicianLogin() {
       setErrorMsg('Gagal terhubung ke server autentikasi.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-    setRegLoading(true);
-
-    try {
-      const data = await fetchApi('/api/auth/register-technician', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: regName.trim(),
-          username: regUsername.trim(),
-          password: regPassword,
-          specialty: regSpecialty,
-          referralCode: regReferral.trim()
-        })
-      });
-
-      if (data.success) {
-        setSuccessMsg(data.message || 'Pendaftaran teknisi berhasil! Silakan masuk meja kerja.');
-        setActiveTab('login');
-        setUsername(regUsername.trim());
-        setPassword('');
-      } else {
-        setErrorMsg(data.message || data.error || 'Pendaftaran teknisi gagal.');
-      }
-    } catch (err) {
-      setErrorMsg(err.message || 'Terjadi kesalahan sistem saat mendaftar.');
-    } finally {
-      setRegLoading(false);
     }
   };
 
@@ -147,7 +102,7 @@ export default function TechnicianLogin() {
             <span className="showcase-gradient-text">Kelola Antrean &amp; Pengerjaan Unit.</span>
           </h1>
           <p className="showcase-desc">
-            Sistem otentikasi mandiri staf teknisi workshop Ngalam Fix Pro. Akses unit HP yang ditugaskan, update status 5 tahapan pengerjaan, dan pencatatan riwayat pergantian sparepart secara real-time.
+            Portal login staf teknisi workshop Ngalam Fix Pro. Akses unit HP yang ditugaskan, update status 5 tahapan pengerjaan, dan pencatatan riwayat pergantian sparepart secara real-time.
           </p>
 
           {/* Feature Cards */}
@@ -254,7 +209,7 @@ export default function TechnicianLogin() {
           {/* Unified Desk Banner */}
           <div style={{ background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: '12px', padding: '10px 14px', marginBottom: '18px', fontSize: '0.82rem', color: '#b45309', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShieldCheck className="w-4 h-4 shrink-0 text-amber-600" />
-            <span>Akses Teknisi Lab dapat langsung dibuka menggunakan akun <b>Admin / Owner</b>.</span>
+            <span>Gunakan akun teknisi yang terdaftar atau akun <b>admin</b> untuk membuka meja lab.</span>
           </div>
 
           {/* Alert Notification Box */}
@@ -265,68 +220,7 @@ export default function TechnicianLogin() {
             </div>
           )}
 
-          {successMsg && (
-            <div style={{ padding: '12px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', marginBottom: '18px', fontSize: '0.88rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-              <span>{successMsg}</span>
-            </div>
-          )}
-
-          {/* Toggle Tabs */}
-          <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: '14px', marginBottom: '22px', border: '1px solid #e2e8f0' }}>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('login'); setErrorMsg(''); setSuccessMsg(''); }}
-              style={{
-                flex: 1,
-                padding: '10px 14px',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '0.88rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: activeTab === 'login' ? '#ffffff' : 'transparent',
-                color: activeTab === 'login' ? '#b45309' : '#64748b',
-                boxShadow: activeTab === 'login' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <KeyRound className="w-4 h-4" />
-              <span>Masuk Meja Kerja</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('register'); setErrorMsg(''); setSuccessMsg(''); }}
-              style={{
-                flex: 1,
-                padding: '10px 14px',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '0.88rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: activeTab === 'register' ? '#ffffff' : 'transparent',
-                color: activeTab === 'register' ? '#b45309' : '#64748b',
-                boxShadow: activeTab === 'register' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Registrasi Teknisi Baru</span>
-            </button>
-          </div>
-
-          {/* LOGIN TAB */}
-          {activeTab === 'login' && (
-            <form onSubmit={handleLogin} noValidate>
+          <form onSubmit={handleLogin} noValidate>
               <div className="auth-input-wrapper">
                 <label htmlFor="loginIdentifier">Username Akun Teknisi *</label>
                 <div className="auth-input-inner">
@@ -335,7 +229,7 @@ export default function TechnicianLogin() {
                     type="text"
                     id="loginIdentifier"
                     className="auth-input-control"
-                    placeholder="Contoh: ferdinand / admin"
+                    placeholder="Username teknisi atau admin"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -388,109 +282,13 @@ export default function TechnicianLogin() {
                 <span>{loading ? 'Memvalidasi Sesi Lab...' : 'Buka Meja Kerja Teknisi'}</span>
               </button>
             </form>
-          )}
-
-          {/* REGISTER TAB */}
-          {activeTab === 'register' && (
-            <form onSubmit={handleRegister} noValidate>
-              <div className="auth-input-wrapper">
-                <label htmlFor="regName">Nama Lengkap Teknisi *</label>
-                <div className="auth-input-inner">
-                  <span className="auth-input-icon"><User className="w-4 h-4" /></span>
-                  <input
-                    type="text"
-                    id="regName"
-                    className="auth-input-control"
-                    placeholder="Contoh: Ferdinand / Teknisi Pro"
-                    required
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="auth-input-wrapper">
-                <label htmlFor="regUsername">Username Login *</label>
-                <div className="auth-input-inner">
-                  <span className="auth-input-icon"><Wrench className="w-4 h-4" /></span>
-                  <input
-                    type="text"
-                    id="regUsername"
-                    className="auth-input-control"
-                    placeholder="Contoh: ferdinand"
-                    required
-                    value={regUsername}
-                    onChange={(e) => setRegUsername(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="auth-input-wrapper">
-                <label htmlFor="regPassword">Kata Sandi (Password) *</label>
-                <div className="auth-input-inner">
-                  <span className="auth-input-icon"><Lock className="w-4 h-4" /></span>
-                  <input
-                    type="password"
-                    id="regPassword"
-                    className="auth-input-control"
-                    placeholder="Minimal 6 karakter"
-                    required
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="auth-input-wrapper">
-                <label htmlFor="regSpecialty">Spesialisasi Lab *</label>
-                <select
-                  id="regSpecialty"
-                  className="auth-input-control"
-                  style={{ cursor: 'pointer', fontWeight: 700, color: '#000000', paddingLeft: '14px' }}
-                  value={regSpecialty}
-                  onChange={(e) => setRegSpecialty(e.target.value)}
-                >
-                  <option value="Hardware & Board Micro-Soldering">Hardware &amp; Board Micro-Soldering</option>
-                  <option value="Spesialis Layar OLED & Glass OCA">Spesialis Layar OLED &amp; Glass OCA</option>
-                  <option value="Spesialis Mesin Mati Total & IC">Spesialis Mesin Mati Total &amp; IC</option>
-                  <option value="General Smartphone Hardware">General Smartphone Hardware</option>
-                </select>
-              </div>
-
-              <div className="auth-input-wrapper" style={{ background: '#fffdf5', border: '1.5px dashed #d4af37', padding: '12px', borderRadius: '12px' }}>
-                <label htmlFor="regReferral" style={{ color: '#000000', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <KeyRound className="w-4 h-4 text-amber-700" />
-                  <span>Kode Referral Otorisasi Workshop *</span>
-                </label>
-                <input
-                  type="text"
-                  id="regReferral"
-                  className="auth-input-control"
-                  placeholder="KODE REFERRAL..."
-                  value={regReferral}
-                  onChange={(e) => setRegReferral(e.target.value)}
-                  style={{ borderColor: '#d4af37', background: '#ffffff', letterSpacing: '1px', textTransform: 'uppercase', paddingLeft: '14px' }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={regLoading}
-                className="btn"
-                style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 700, borderRadius: '14px', background: 'linear-gradient(135deg, #059669, #10b981)', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '16px', cursor: 'pointer' }}
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>{regLoading ? 'Memproses...' : 'Daftarkan Teknisi'}</span>
-              </button>
-            </form>
-          )}
 
           {/* Separation Notice */}
           <div className="auth-bottom-links">
             <div style={{ marginBottom: '8px' }}>
               <span>Akses Pimpinan &amp; Kasir? </span>
               <Link to="/admin/login" style={{ color: '#0284c7', fontWeight: 800 }}>
-                Portal Owner &amp; Admin ↗
+                Portal Admin ↗
               </Link>
             </div>
             <div>

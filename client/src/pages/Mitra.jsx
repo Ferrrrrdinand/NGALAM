@@ -62,7 +62,15 @@ export default function Mitra() {
 
     const oauthError = params.get('error');
     if (oauthError) {
-      setAlert({ type: 'error', message: `Login Google gagal: ${oauthError}` });
+      const messages = {
+        customer_account_exists: 'Email ini sudah terdaftar sebagai pelanggan. Gunakan email lain untuk akun mitra.',
+        staff_account_exists: 'Email ini terdaftar sebagai akun staf. Gunakan email lain.',
+        google_not_configured: 'Login Google belum dikonfigurasi di server.',
+        invalid_state: 'Sesi login Google tidak valid. Silakan coba lagi.',
+        token_exchange_failed: 'Gagal menukar kode otorisasi Google.',
+        profile_fetch_failed: 'Gagal mengambil profil Google.'
+      };
+      setAlert({ type: 'error', message: messages[oauthError] || `Login Google gagal: ${oauthError}` });
       window.history.replaceState({}, '', '/mitra');
       return;
     }
@@ -395,7 +403,7 @@ export default function Mitra() {
                   Masuk ke Portal Mitra
                 </h2>
                 <p style={{ fontSize: '0.85rem', color: '#000000', margin: '0 0 20px' }}>
-                  Hanya akun mitra yang terdaftar resmi di database sistem yang dapat mengakses.
+                  Hanya akun mitra yang terdaftar resmi di database sistem yang dapat mengakses. Akun mitra juga dapat masuk ke portal pelanggan dengan kredensial yang sama.
                 </p>
 
                 <form onSubmit={handleLogin}>

@@ -13,6 +13,9 @@ const fs = require('fs');
 const userService = require('../services/userService');
 const { hashPassword, verifyPassword } = require('../src/utils/security');
 const { generateToken, verifyToken } = require('../src/utils/jwt');
+const { sendAuthError } = require('../src/utils/authError');
+const { isValidEmail, normalizeEmail } = require('../src/utils/phone');
+const { refreshCustomersFromDb, findCustomerByPhone, findCustomerByEmail } = require('../services/customerService');
 
 const {
   generateMitraCode,
@@ -265,9 +268,19 @@ router.get('/auth/google/callback', async (req, res) => {
     const profile = await profileRes.json().catch(() => ({}));
     if (!profileRes.ok || !profile.email) return failRedirect('profile_fetch_failed');
 
+    const profileEmail = normalizeEmail(profile.email);
     const users = readUsers();
     let mitra = findMitraByGoogle(users, profile);
     if (!mitra) {
+      await refreshCustomersFromDb();
+      await userService.refreshUsersFromDb();
+      if (findCustomerByEmail(profileEmail)) {
+        return failRedirect('customer_account_exists');
+      }
+      const linkedUser = userService.findUser(profileEmail);
+      if (linkedUser && !['mitra', 'ojol', 'kurir'].includes(String(linkedUser.role || '').toLowerCase())) {
+        return failRedirect('staff_account_exists');
+      }
       mitra = await createMitraFromGoogle(users, profile);
     } else if (!mitra.googleId) {
       mitra.googleId = String(profile.sub || '');
@@ -314,25 +327,53 @@ router.post('/auth/complete-profile', async (req, res) => {
   try {
     const payload = verifyToken(getMitraToken(req));
     if (!payload) {
-      return res.status(401).json({ success: false, message: 'Sesi mitra tidak valid atau sudah kedaluwarsa.' });
+      return res.status(401).json({
+        success: false,
+        code: 'SESSION_INVALID',
+        message: 'Sesi mitra tidak valid atau sudah kedaluwarsa. Silakan login ulang.'
+      });
     }
     const phone = String(req.body.phone || '').trim();
     const normalized = normalizePhone(phone);
-    if (!normalized || normalized.length < 8 || normalized.length > 15) {
-      return res.status(400).json({ success: false, message: 'Nomor WhatsApp aktif wajib diisi dengan benar.' });
+    if (!normalized || normalized.length < 9 || normalized.length > 15) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PHONE',
+        field: 'phone',
+        message: 'Nomor WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx.'
+      });
     }
 
+    await userService.refreshUsersFromDb();
+    await refreshCustomersFromDb();
     const users = readUsers();
     const mitra = users.find(u => u.id === payload.id || u.username === payload.username);
     if (!mitra) {
-      return res.status(404).json({ success: false, message: 'Akun mitra tidak ditemukan.' });
+      return res.status(404).json({
+        success: false,
+        code: 'MITRA_ACCOUNT_NOT_FOUND',
+        message: 'Akun mitra tidak ditemukan.'
+      });
     }
-    const duplicate = users.find(u => u !== mitra && phonesMatch(u.phone, phone));
+    const duplicate = userService.getAllUsers().find(u => String(u.id) !== String(mitra.id) && phonesMatch(u.phone, normalized));
     if (duplicate) {
-      return res.status(409).json({ success: false, message: 'Nomor WhatsApp sudah terdaftar pada akun mitra lain.' });
+      return res.status(409).json({
+        success: false,
+        code: 'PHONE_TAKEN',
+        field: 'phone',
+        message: 'Nomor WhatsApp sudah digunakan akun lain.'
+      });
+    }
+    if (findCustomerByPhone(normalized)) {
+      return res.status(409).json({
+        success: false,
+        code: 'PHONE_TAKEN',
+        field: 'phone',
+        message: 'Nomor WhatsApp sudah terdaftar sebagai akun pelanggan.'
+      });
     }
 
-    mitra.phone = phone;
+    mitra.phone = normalized;
     mitra.lastActive = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ', Profil Dilengkapi';
     await saveUsers(users);
 
@@ -342,7 +383,7 @@ router.post('/auth/complete-profile', async (req, res) => {
       driver: buildMitraAuthPayload(req, mitra)
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    return sendAuthError(res, err, 'Gagal melengkapi profil mitra.');
   }
 });
 
@@ -529,8 +570,22 @@ router.post('/register', async (req, res) => {
     }
 
     const cleanPhone = normalizePhone(phone);
-    if (!cleanPhone || cleanPhone.length < 8 || cleanPhone.length > 15) {
-      return res.status(400).json({ success: false, message: 'Nomor WhatsApp aktif tidak valid.' });
+    const cleanEmail = normalizeEmail(email);
+    if (!cleanPhone || cleanPhone.length < 9 || cleanPhone.length > 15) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PHONE',
+        field: 'phone',
+        message: 'Nomor WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx.'
+      });
+    }
+    if (!isValidEmail(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_EMAIL',
+        field: 'email',
+        message: 'Format email tidak valid.'
+      });
     }
 
     const cleanUser = (username && username.trim()) 
@@ -538,23 +593,57 @@ router.post('/register', async (req, res) => {
       : `${name.trim().toLowerCase().replace(/[^a-z0-9]/g, '_')}_${cleanPhone.slice(-4)}`;
     const explicitPassword = (password || '').trim();
     if (explicitPassword && explicitPassword.length < 6) {
-      return res.status(400).json({ success: false, message: 'Kata sandi minimal 6 karakter.' });
+      return res.status(400).json({
+        success: false,
+        code: 'WEAK_PASSWORD',
+        field: 'password',
+        message: 'Kata sandi minimal 6 karakter.'
+      });
     }
     const cleanPass = explicitPassword || `mitra_${cleanPhone.slice(-4)}`;
 
+    await userService.refreshUsersFromDb();
+    await refreshCustomersFromDb();
     const users = readUsers();
+    const allUsers = userService.getAllUsers();
 
-    // Cek apakah nomor WA atau username sudah terdaftar
-    const existing = users.find(u =>
-      phonesMatch(u.phone, cleanPhone) ||
-      (cleanUser && (u.username || '').toLowerCase() === cleanUser)
-    );
-
-    if (existing) {
+    const existingPhone = allUsers.find((user) => phonesMatch(user.phone, cleanPhone));
+    if (existingPhone) {
       return res.status(409).json({
         success: false,
-        code: 'MITRA_ALREADY_REGISTERED',
-        message: `Nomor WhatsApp atau username sudah terdaftar sebagai mitra (${existing.name}). Silakan masuk melalui tab Masuk Akun Mitra.`
+        code: 'PHONE_TAKEN',
+        field: 'phone',
+        message: 'Nomor WhatsApp sudah digunakan akun lain. Gunakan nomor lain atau masuk ke akun tersebut.'
+      });
+    }
+
+    const existingEmail = cleanEmail ? allUsers.find((user) => String(user.email || '').toLowerCase() === cleanEmail) : null;
+    if (existingEmail) {
+      return res.status(409).json({
+        success: false,
+        code: 'EMAIL_TAKEN',
+        field: 'email',
+        message: 'Email sudah digunakan akun lain. Gunakan email lain.'
+      });
+    }
+
+    const existingUsername = users.find((user) => String(user.username || '').toLowerCase() === cleanUser);
+    if (existingUsername) {
+      return res.status(409).json({
+        success: false,
+        code: 'USERNAME_TAKEN',
+        field: 'username',
+        message: 'Username sudah digunakan mitra lain. Pilih username yang berbeda.'
+      });
+    }
+
+    const existingCustomer = findCustomerByPhone(cleanPhone) || (cleanEmail ? findCustomerByEmail(cleanEmail) : null);
+    if (existingCustomer) {
+      return res.status(409).json({
+        success: false,
+        code: 'CUSTOMER_ACCOUNT_EXISTS',
+        field: findCustomerByPhone(cleanPhone) ? 'phone' : 'email',
+        message: 'Kontak ini sudah terdaftar sebagai pelanggan. Gunakan kontak lain untuk akun mitra.'
       });
     }
 
@@ -584,7 +673,7 @@ router.post('/register', async (req, res) => {
       bankAccount: (bankAccount || '').trim(),
       avatar: isBengkel ? '🏪' : '🛵',
       phone: cleanPhone,
-      email: (email || '').trim().toLowerCase(),
+      email: cleanEmail,
       referralCode: refCode,
       commissionRate: 10, // 10% komisi per servis
       totalCommission: 0,
@@ -628,7 +717,7 @@ router.post('/register', async (req, res) => {
       mitra: driver
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    return sendAuthError(res, err, 'Pendaftaran mitra gagal.');
   }
 });
 
@@ -661,34 +750,52 @@ router.post('/login', async (req, res) => {
     const cleanId = (identifier || '').trim();
     const cleanPass = (password || '').trim();
 
-    if (!cleanId || !cleanPass) {
+    if (!cleanId) {
       return res.status(400).json({
         success: false,
-        message: 'Username / Nomor WhatsApp dan kata sandi wajib diisi.'
+        code: 'IDENTIFIER_REQUIRED',
+        field: 'identifier',
+        message: 'Username, email, atau nomor WhatsApp akun mitra wajib diisi.'
+      });
+    }
+    if (!cleanPass) {
+      return res.status(400).json({
+        success: false,
+        code: 'PASSWORD_REQUIRED',
+        field: 'password',
+        message: 'Kata sandi akun mitra wajib diisi.'
       });
     }
 
+    await userService.refreshUsersFromDb();
     const users = readUsers();
-    const digitsOnly = cleanId.replace(/\D/g, '');
     const cleanLower = cleanId.toLowerCase();
 
-    let driver = users.find(u => {
-      if (u.role !== 'ojol' && u.role !== 'mitra') return false;
+    const matchedMitra = users.find(u => {
       const uUser = (u.username || '').toLowerCase();
       const uEmail = (u.email || '').toLowerCase();
-      const matchId = (uUser === cleanLower || uEmail === cleanLower || phonesMatch(u.phone, cleanId));
-      return matchId && verifyPassword(cleanPass, u.password);
+      return uUser === cleanLower || uEmail === cleanLower || phonesMatch(u.phone, cleanId);
     });
 
-    // Fallback: Jika admin workshop ingin masuk ke portal mitra
+    let driver = null;
+    if (matchedMitra && verifyPassword(cleanPass, matchedMitra.password)) {
+      driver = matchedMitra;
+    } else if (matchedMitra) {
+      return res.status(401).json({
+        success: false,
+        code: 'INVALID_PASSWORD',
+        field: 'password',
+        message: 'Kata sandi akun mitra salah. Periksa kembali kata sandi Anda.'
+      });
+    }
+
     if (!driver) {
       const allStaff = userService.getAllUsers();
       const staffUser = allStaff.find(u => {
         const uUser = (u.username || '').toLowerCase();
         const uEmail = (u.email || '').toLowerCase();
-        const matchId = (uUser === cleanLower || uEmail === cleanLower || phonesMatch(u.phone, cleanId) || (cleanLower === 'ferdinand' && (uUser === 'owner' || uUser === 'ferdinand')));
-        const passMatch = verifyPassword(cleanPass, u.password) || ((cleanLower === 'ferdinand' || phonesMatch(u.phone, cleanId) || uUser === 'owner') && (cleanPass === '123456' || cleanPass === 'password123'));
-        return matchId && passMatch && (u.role === 'admin' || u.role === 'owner');
+        const matchId = uUser === cleanLower || uEmail === cleanLower || phonesMatch(u.phone, cleanId);
+        return matchId && verifyPassword(cleanPass, u.password) && u.role === 'admin';
       });
 
       if (staffUser) {
@@ -711,9 +818,11 @@ router.post('/login', async (req, res) => {
     }
 
     if (!driver) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
-        message: 'Kredensial tidak valid: Username / No HP atau kata sandi salah.'
+        code: 'ACCOUNT_NOT_FOUND',
+        field: 'identifier',
+        message: 'Akun mitra tidak ditemukan. Periksa username, email, atau nomor WhatsApp Anda.'
       });
     }
 
@@ -751,7 +860,7 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    return sendAuthError(res, err, 'Login mitra gagal.');
   }
 });
 

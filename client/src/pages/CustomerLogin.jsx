@@ -42,6 +42,8 @@ export default function CustomerLogin() {
         google_not_configured: 'Login Google belum dikonfigurasi di server.',
         token_exchange_failed: 'Gagal menukar kode otorisasi Google.',
         profile_fetch_failed: 'Gagal mengambil profil Google.',
+        staff_account_exists: 'Email ini terdaftar sebagai akun staf. Gunakan portal staf.',
+        customer_account_exists: 'Email ini sudah terdaftar pada akun lain.',
         server_error: 'Terjadi kesalahan server saat login Google.'
       };
       setErrorMsg(messages[oauthError] || `Login Google gagal: ${oauthError}`);
@@ -320,7 +322,7 @@ export default function CustomerLogin() {
                   type="text"
                   required
                   className="form-control"
-                  placeholder="email@anda.com atau 08123456789"
+                  placeholder="Email, WhatsApp, atau username mitra"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   style={{ width: '100%', padding: '12px 14px 12px 40px', borderRadius: '12px', border: '1.5px solid #cbd5e1' }}
@@ -344,7 +346,7 @@ export default function CustomerLogin() {
                   style={{ width: '100%', padding: '12px 14px 12px 40px', borderRadius: '12px', border: '1.5px solid #cbd5e1' }}
                 />
               </div>
-              <small style={{ color: '#94a3b8', fontSize: '0.74rem' }}>Akun lama tetap bisa memakai PIN tanda terima.</small>
+              <small style={{ color: '#64748b', fontSize: '0.74rem' }}>Akun mitra juga bisa masuk di sini menggunakan username, email, atau nomor WhatsApp mitra.</small>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>

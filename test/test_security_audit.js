@@ -52,20 +52,20 @@ server.listen(0, async () => {
     assert(custData.every(c => c.pin.startsWith('$2')), 'Semua PIN customer wajib ter-hash bcrypt');
     console.log('✅ Semua password staf/mitra di tabel users dan PIN customer ter-hash dengan Bcrypt!');
 
-    // 2. Test Admin Login (admin / admin123)
-    console.log('\n[2] Uji Login Akun Admin: admin / admin123...');
+    // 2. Test Admin Login (admin / fixprongalam2026)
+    console.log('\n[2] Uji Login Akun Admin: admin / fixprongalam2026...');
     const resAdminOk = await request({
       hostname: '127.0.0.1',
       port,
       path: '/api/auth/login',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
-    }, { identifier: 'admin', password: 'admin123', role: 'admin' });
+    }, { identifier: 'admin', password: 'fixprongalam2026', role: 'admin' });
 
     assert.strictEqual(resAdminOk.status, 200, 'Admin login berhasil');
     assert.strictEqual(resAdminOk.body.user.role, 'admin');
     const adminToken = resAdminOk.body.user.token;
-    console.log('✅ Akun Admin berhasil login dengan kredensial baru (admin / admin123)!');
+    console.log('✅ Akun Admin berhasil login dengan kredensial baru (admin / fixprongalam2026)!');
 
     // 3. Test Admin Login with wrong password
     console.log('\n[3] Uji Login Akun Admin dengan Password Salah...');

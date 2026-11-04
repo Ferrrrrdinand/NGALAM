@@ -108,7 +108,13 @@ export function AuthProvider({ children }) {
       return { success: true, user: staffUser };
     }
 
-    return { success: false, error: res.data.error || res.data.message || 'Login gagal' };
+    return {
+      success: false,
+      error: res.data.message || res.data.error || 'Login gagal. Periksa kembali kredensial Anda.',
+      code: res.data.code || 'LOGIN_FAILED',
+      field: res.data.field || '',
+      status: res.status
+    };
   }, []);
 
   const logoutStaff = useCallback(async () => {

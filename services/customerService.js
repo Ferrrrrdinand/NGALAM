@@ -7,7 +7,10 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('./db');
+const userService = require('./userService');
 const { hashPassword } = require('../src/utils/security');
+const { AuthError } = require('../src/utils/authError');
+const { isValidEmail, normalizeEmail } = require('../src/utils/phone');
 
 const CUSTOMERS_FILE = path.join(__dirname, '..', 'data', 'customers.json');
 
@@ -220,16 +223,75 @@ function findCustomerByIdentifier(identifier) {
  */
 async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '', password = '', registeredVia = 'Portal Pelanggan Web', referredByMitra = '', googleId = '' }) {
   if (!name || !name.trim()) {
-    throw new Error('Nama lengkap pelanggan wajib diisi.');
+    throw new AuthError('Nama lengkap pelanggan wajib diisi.', {
+      status: 400,
+      code: 'NAME_REQUIRED',
+      field: 'name'
+    });
   }
   if (!whatsapp || !whatsapp.trim()) {
-    throw new Error('Nomor WhatsApp aktif wajib diisi.');
+    throw new AuthError('Nomor WhatsApp aktif wajib diisi.', {
+      status: 400,
+      code: 'PHONE_REQUIRED',
+      field: 'whatsapp'
+    });
   }
 
-  const cleanWa = whatsapp.trim();
-  const existing = findCustomerByIdentifier(cleanWa);
-  if (existing) {
-    throw new Error(`Nomor WhatsApp ${cleanWa} sudah terdaftar dengan nama ${existing.name}. Silakan langsung masuk.`);
+  const cleanWa = normalizePhone(whatsapp);
+  const cleanEmail = normalizeEmail(email);
+  if (cleanWa.length < 9 || cleanWa.length > 15) {
+    throw new AuthError('Nomor WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx.', {
+      status: 400,
+      code: 'INVALID_PHONE',
+      field: 'whatsapp'
+    });
+  }
+  if (!isValidEmail(cleanEmail)) {
+    throw new AuthError('Format email tidak valid.', {
+      status: 400,
+      code: 'INVALID_EMAIL',
+      field: 'email'
+    });
+  }
+
+  const existingPhone = findCustomerByPhone(cleanWa);
+  if (existingPhone) {
+    throw new AuthError(`Nomor WhatsApp sudah terdaftar dengan nama ${existingPhone.name}. Silakan langsung masuk.`, {
+      status: 409,
+      code: 'CUSTOMER_PHONE_TAKEN',
+      field: 'whatsapp'
+    });
+  }
+
+  const existingEmail = cleanEmail ? findCustomerByEmail(cleanEmail) : null;
+  if (existingEmail) {
+    throw new AuthError(`Email sudah terdaftar dengan nama ${existingEmail.name}. Silakan langsung masuk.`, {
+      status: 409,
+      code: 'CUSTOMER_EMAIL_TAKEN',
+      field: 'email'
+    });
+  }
+
+  try {
+    const usersReady = await userService.refreshUsersFromDb();
+    if (usersReady) {
+      const registeredUser = userService.findUser(cleanWa) || (cleanEmail ? userService.findUser(cleanEmail) : null);
+      if (registeredUser) {
+        const isMitra = ['mitra', 'ojol', 'kurir'].includes(String(registeredUser.role || '').toLowerCase());
+        throw new AuthError(
+          isMitra
+            ? 'Kontak ini sudah terdaftar sebagai mitra. Masuk ke portal pelanggan menggunakan akun mitra Anda.'
+            : 'Kontak ini sudah terdaftar sebagai akun staf. Gunakan kontak lain.',
+          {
+            status: 409,
+            code: isMitra ? 'MITRA_ACCOUNT_EXISTS' : 'STAFF_ACCOUNT_EXISTS',
+            field: userService.findUser(cleanWa) ? 'whatsapp' : 'email'
+          }
+        );
+      }
+    }
+  } catch (err) {
+    if (err instanceof AuthError) throw err;
   }
 
   const customers = getAllCustomers();
@@ -245,7 +307,7 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
     id: newId,
     name: name.trim(),
     whatsapp: cleanWa,
-    email: (email || '').trim().toLowerCase(),
+    email: cleanEmail,
     district: district.trim(),
     pin: passwordHash,
     passwordHash,
@@ -415,6 +477,11 @@ function findCustomerByEmail(email) {
   return getAllCustomers().find((c) => (c.email || '').toLowerCase() === clean) || null;
 }
 
+function findCustomerByPhone(phone) {
+  if (!phone) return null;
+  return getAllCustomers().find((c) => phonesMatch(c.whatsapp, phone)) || null;
+}
+
 /**
  * Cari pelanggan berdasarkan Google Account ID
  */
@@ -493,6 +560,7 @@ module.exports = {
   saveCustomers,
   findCustomerByIdentifier,
   findCustomerByEmail,
+  findCustomerByPhone,
   findCustomerByGoogleId,
   registerNewCustomer,
   ensureCustomerAccount,

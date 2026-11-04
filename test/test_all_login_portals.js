@@ -27,7 +27,7 @@ async function testAllLogins() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       identifier: 'admin',
-      password: 'password123',
+      password: 'fixprongalam2026',
       role: 'admin',
       referralCode: 'NGALAM-SUPER-2026'
     })
@@ -40,23 +40,21 @@ async function testAllLogins() {
   console.log('   ✅ Berhasil Login sebagai Admin:', admin.user.name);
   console.log('   🎯 Homepage Tujuan: /admin (Mode Super User Akses Penuh)');
 
-  // 3. Ferdinand (Owner / Super Admin)
-  console.log('\n3. Menguji Login Ferdinand (Owner & Super User)...');
+  // 3. Akun Admin Lain Wajib Ditolak
+  console.log('\n3. Menguji Penolakan Akun Admin Selain admin...');
   const ferdRes = await fetch('http://localhost:3000/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       identifier: 'ferdinand',
       password: '123456',
-      role: 'admin',
-      referralCode: 'NGALAM-SUPER-2026'
+      role: 'admin'
     })
   });
-  assert.strictEqual(ferdRes.status, 200);
+  assert.strictEqual(ferdRes.status, 403);
   const ferd = await ferdRes.json();
-  assert(ferd.success);
-  console.log('   ✅ Berhasil Login sebagai Ferdinand:', ferd.user.name);
-  console.log('   🎯 Homepage Tujuan: /admin (Owner / Super User)');
+  assert.strictEqual(ferd.code, 'ADMIN_ACCOUNT_ONLY');
+  console.log('   ✅ Akun admin lain berhasil ditolak (403 ADMIN_ACCOUNT_ONLY).');
 
   // 4. Teknisi Lab Workshop Login
   console.log('\n4. Menguji Login Teknisi Lab Workshop (Mas Rian)...');

@@ -78,7 +78,7 @@ async function run() {
       category: 'Mitra Kurir Ojek Online (Motor)'
     });
     assert.strictEqual(dup.status, 409, `duplicate register status ${dup.status}`);
-    assert.strictEqual(dup.body.code, 'MITRA_ALREADY_REGISTERED');
+    assert.strictEqual(dup.body.code, 'PHONE_TAKEN');
     console.log('✅ Duplicate mitra register returns 409 without logging in');
 
     const login = await request('POST', '/api/mitra/login', {

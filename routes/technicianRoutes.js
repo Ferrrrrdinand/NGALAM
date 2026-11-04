@@ -5,6 +5,8 @@
 
 const express = require('express');
 const router = express.Router();
+const { requireAuth } = require('../src/middlewares/authGuard');
+const { sendAuthError } = require('../src/utils/authError');
 const {
   getAllTechnicians,
   findTechnician,
@@ -15,8 +17,7 @@ const {
   getActivityLogs,
   createTechnician,
   updateTechnician,
-  deleteTechnician,
-  WORKSHOP_REGISTRATION_CODE
+  deleteTechnician
 } = require('../services/technicianService');
 
 // GET /api/technicians
@@ -35,22 +36,8 @@ router.get('/', (req, res) => {
   }
 });
 
-// POST /api/technicians/register - Registrasi Mandiri Teknisi dengan Kode Workshop Rahasia
-router.post('/register', async (req, res) => {
-  try {
-    const newTech = await createTechnician(req.body, { isAdmin: false });
-    res.json({
-      success: true,
-      message: `Registrasi teknisi "${newTech.name}" berhasil! Akun Anda telah aktif. Silakan login.`,
-      data: newTech
-    });
-  } catch (err) {
-    res.status(400).json({ success: false, error: err.message, message: err.message });
-  }
-});
-
 // POST /api/technicians - Tambah Teknisi Baru oleh Admin
-router.post('/', async (req, res) => {
+router.post('/', requireAuth(['admin']), async (req, res) => {
   try {
     const newTech = await createTechnician(req.body, { isAdmin: true });
     res.json({
@@ -59,7 +46,7 @@ router.post('/', async (req, res) => {
       data: newTech
     });
   } catch (err) {
-    res.status(400).json({ success: false, error: err.message, message: err.message });
+    return sendAuthError(res, err, 'Gagal menambahkan teknisi.');
   }
 });
 

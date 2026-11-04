@@ -99,68 +99,17 @@ async function runComprehensiveTests() {
     assert.strictEqual(data.redirectUrl, '/admin');
   });
 
-  await testCase('Login Admin Super User (username: admin, pass: password123)', async () => {
+  await testCase('Login Admin Super User (username: admin, pass: fixprongalam2026)', async () => {
     const res = await fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'admin', password: 'password123', role: 'admin' })
+      body: JSON.stringify({ identifier: 'admin', password: 'fixprongalam2026', role: 'admin' })
     });
     assert.strictEqual(res.status, 200);
     const data = await res.json();
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.user.role, 'admin');
     assert.strictEqual(data.user.isSuperAdmin, true);
-  });
-
-  await testCase('Login Owner & Super Admin (username: ferdinand, pass: 123456)', async () => {
-    const res = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'ferdinand', password: '123456', role: 'admin' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
-    assert.strictEqual(data.user.role, 'admin');
-    assert.strictEqual(data.user.isSuperAdmin, true);
-  });
-
-  await testCase('Login Akun Owner (username: owner, pass: password123)', async () => {
-    const res = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'owner', password: 'password123', role: 'admin' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
-    assert.strictEqual(data.user.role, 'admin');
-    assert.strictEqual(data.user.isSuperAdmin, true);
-  });
-
-  await testCase('Login Akun Owner Alternatif PIN (username: owner, pass: 123456)', async () => {
-    const res = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'owner', password: '123456', role: 'admin' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
-    assert.strictEqual(data.user.role, 'admin');
-    assert.strictEqual(data.user.isSuperAdmin, true);
-  });
-
-  await testCase('Login Owner via Nomor WhatsApp (082335493176, pass: 123456)', async () => {
-    const res = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: '082335493176', password: '123456', role: 'admin' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
-    assert.strictEqual(data.user.role, 'admin');
   });
 
   // =========================================================================
@@ -193,19 +142,6 @@ async function runComprehensiveTests() {
     assert.strictEqual(data.user.role, 'teknisi');
   });
 
-  await testCase('Login Owner Ferdinand ke Meja Lab Teknisi (username: ferdinand, role: teknisi)', async () => {
-    const res = await fetch('http://localhost:3000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'ferdinand', password: '123456', role: 'teknisi' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
-    assert.strictEqual(data.user.role, 'teknisi');
-    assert.strictEqual(data.redirectUrl, '/teknisi');
-  });
-
   // =========================================================================
   // 4. PORTAL MITRA DRIVER & TOKO REKANAN
   // =========================================================================
@@ -234,29 +170,6 @@ async function runComprehensiveTests() {
     const data = await res.json();
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.driver.referralCode, 'MTR-JAYA-888');
-  });
-
-  await testCase('Login Owner Ferdinand ke Portal Mitra (username: ferdinand, pass: 123456)', async () => {
-    const res = await fetch('http://localhost:3000/api/mitra/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: 'ferdinand', password: '123456' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
-    assert(data.driver.referralCode);
-  });
-
-  await testCase('Login Mitra via Nomor WhatsApp Terdaftar (+62 823-3549-3176)', async () => {
-    const res = await fetch('http://localhost:3000/api/mitra/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: '+62 823-3549-3176', password: '123456' })
-    });
-    assert.strictEqual(res.status, 200);
-    const data = await res.json();
-    assert.strictEqual(data.success, true);
   });
 
   // =========================================================================
@@ -298,24 +211,24 @@ async function runComprehensiveTests() {
     assert.strictEqual(data.success, false);
   });
 
-  await testCase('Tolak Login Owner dengan Password Salah (Harus 401)', async () => {
+  await testCase('Tolak Akun Admin Selain admin (Harus 403)', async () => {
     const res = await fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier: 'owner', password: 'passwordsalah123', role: 'admin' })
     });
-    assert.strictEqual(res.status, 401);
+    assert.strictEqual(res.status, 403);
     const data = await res.json();
-    assert.strictEqual(data.success, false);
+    assert.strictEqual(data.code, 'ADMIN_ACCOUNT_ONLY');
   });
 
-  await testCase('Tolak User Tidak Terdaftar (Harus 401)', async () => {
+  await testCase('Tolak User Tidak Terdaftar (Harus 404)', async () => {
     const res = await fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier: 'usernametidakada999', password: 'password123', role: 'kasir' })
     });
-    assert.strictEqual(res.status, 401);
+    assert.strictEqual(res.status, 404);
     const data = await res.json();
     assert.strictEqual(data.success, false);
   });

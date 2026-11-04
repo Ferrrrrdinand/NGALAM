@@ -22,8 +22,33 @@ export async function fetchApi(endpoint, options = {}) {
   options.credentials = 'same-origin';
   options.headers = { ...defaultHeaders, ...(options.headers || {}) };
 
-  const res = await fetch(url, options);
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch {
+    return {
+      ok: false,
+      status: 0,
+      data: {
+        success: false,
+        code: 'NETWORK_ERROR',
+        message: 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda lalu coba lagi.'
+      }
+    };
+  }
+
   const data = await res.json().catch(() => ({}));
+  if (!res.ok && !data.message && !data.error) {
+    data.message = res.status === 401
+      ? 'Sesi atau kredensial tidak valid. Silakan login kembali.'
+      : res.status === 403
+        ? 'Akses ditolak untuk akun ini.'
+        : res.status === 404
+          ? 'Data atau endpoint tidak ditemukan.'
+          : res.status >= 500
+            ? 'Server sedang bermasalah. Coba beberapa saat lagi.'
+            : `Permintaan gagal (HTTP ${res.status}).`;
+  }
   return { ok: res.ok, status: res.status, data };
 }
 

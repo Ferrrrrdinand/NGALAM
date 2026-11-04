@@ -12,15 +12,19 @@ const {
   refreshCustomersFromDb,
   findCustomerByIdentifier,
   findCustomerByEmail,
+  findCustomerByPhone,
   registerNewCustomer,
   getAllCustomers,
   upsertGoogleCustomer,
   updateCustomerById,
 } = require('../services/customerService');
 const { readTransactions } = require('../services/financeService');
+const userService = require('../services/userService');
 const db = require('../services/db');
 const { generateToken, verifyToken } = require('../src/utils/jwt');
 const { verifyPassword } = require('../src/utils/security');
+const { sendAuthError } = require('../src/utils/authError');
+const { isValidEmail, normalizeEmail } = require('../src/utils/phone');
 
 router.use(async (req, res, next) => {
   try {
@@ -84,7 +88,11 @@ function buildCustomerSession(cust, tokenInfo, rememberMe, extra = {}) {
   const hasPhone = Boolean(cust.whatsapp && String(cust.whatsapp).trim());
   return {
     isCustomer: true,
+    accountType: cust.accountType || 'customer',
     id: cust.id,
+    mitraId: cust.mitraId || '',
+    username: cust.username || '',
+    referralCode: cust.referralCode || '',
     name: cust.name,
     whatsapp: cust.whatsapp || '',
     email: cust.email || '',
@@ -103,6 +111,75 @@ function buildCustomerSession(cust, tokenInfo, rememberMe, extra = {}) {
     maxAge: tokenInfo ? tokenInfo.maxAge : 0,
     loginAt: new Date().toISOString()
   };
+}
+
+function isMitraRole(role) {
+  return ['mitra', 'ojol', 'kurir'].includes(String(role || '').toLowerCase());
+}
+
+function findMitraAccount(identifier) {
+  const clean = String(identifier || '').trim().toLowerCase();
+  if (!clean) return null;
+  return userService.getAllUsers().find((user) => {
+    if (!isMitraRole(user.role)) return false;
+    const username = String(user.username || '').toLowerCase();
+    const email = String(user.email || '').toLowerCase();
+    return username === clean || email === clean || phonesMatch(user.phone, clean);
+  }) || null;
+}
+
+function findMitraById(id) {
+  const clean = String(id || '').trim().toLowerCase();
+  if (!clean) return null;
+  return userService.getAllUsers().find((user) => {
+    if (!isMitraRole(user.role)) return false;
+    return String(user.id || '').toLowerCase() === clean || String(user.username || '').toLowerCase() === clean;
+  }) || null;
+}
+
+function buildMitraCustomerData(mitra) {
+  return {
+    accountType: 'mitra',
+    id: mitra.id,
+    mitraId: mitra.id,
+    username: mitra.username || '',
+    name: mitra.name || mitra.username || 'Mitra',
+    whatsapp: mitra.phone || '',
+    email: mitra.email || '',
+    district: '',
+    referralCode: mitra.referralCode || '',
+    avatar: mitra.avatar || '🛵',
+    needsPhone: !mitra.phone
+  };
+}
+
+async function buildMitraCustomerLogin(req, mitra, rememberMe) {
+  const contact = mitra.phone || mitra.email || '';
+  const matched = await getCombinedCustomerOrders(
+    String(contact).toLowerCase(),
+    mitra.phone || '',
+    mitra.email || ''
+  );
+  const formattedList = matched.map(formatCustomerOrder);
+  const activeWarrantiesCount = formattedList.filter((order) => order.warranty && order.warranty.isActive).length;
+  const jwtInfo = generateToken({
+    customerId: mitra.id,
+    userId: mitra.id,
+    name: mitra.name,
+    username: mitra.username,
+    whatsapp: mitra.phone || '',
+    email: mitra.email || '',
+    role: 'customer',
+    accountType: 'mitra',
+    mitraId: mitra.id
+  }, rememberMe);
+  const customer = buildCustomerSession(buildMitraCustomerData(mitra), jwtInfo, rememberMe, {
+    totalOrders: formattedList.length,
+    activeOrders: formattedList.filter((order) => order.step < 5).length,
+    completedOrders: formattedList.filter((order) => order.step >= 5).length,
+    activeWarranties: activeWarrantiesCount
+  });
+  return { customer, orders: formattedList, jwtInfo };
 }
 
 /**
@@ -338,20 +415,65 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Password wajib diisi minimal 6 karakter.' });
     }
 
-    const cleanWa = whatsapp.trim();
-    const existing = findCustomerByIdentifier(cleanWa);
-    if (existing) {
+    const cleanWa = normalizePhone(whatsapp);
+    const cleanEmail = normalizeEmail(email);
+    if (!cleanWa || cleanWa.length < 9 || cleanWa.length > 15) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PHONE',
+        field: 'whatsapp',
+        message: 'Nomor WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx.'
+      });
+    }
+    if (!isValidEmail(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_EMAIL',
+        field: 'email',
+        message: 'Format email tidak valid.'
+      });
+    }
+
+    const existingPhone = findCustomerByPhone(cleanWa);
+    if (existingPhone) {
       return res.status(409).json({
         success: false,
         alreadyRegistered: true,
-        message: `Nomor WhatsApp ${cleanWa} sudah terdaftar dengan nama ${existing.name}. Silakan langsung masuk.`
+        code: 'CUSTOMER_PHONE_TAKEN',
+        field: 'whatsapp',
+        message: `Nomor WhatsApp sudah terdaftar sebagai pelanggan (${existingPhone.name}). Silakan langsung masuk.`
+      });
+    }
+
+    const existingEmail = cleanEmail ? findCustomerByEmail(cleanEmail) : null;
+    if (existingEmail) {
+      return res.status(409).json({
+        success: false,
+        alreadyRegistered: true,
+        code: 'CUSTOMER_EMAIL_TAKEN',
+        field: 'email',
+        message: `Email sudah terdaftar sebagai pelanggan (${existingEmail.name}). Silakan langsung masuk.`
+      });
+    }
+
+    await userService.refreshUsersFromDb();
+    const registeredUser = userService.findUser(cleanWa) || (cleanEmail ? userService.findUser(cleanEmail) : null);
+    if (registeredUser) {
+      const isMitra = isMitraRole(registeredUser.role);
+      return res.status(409).json({
+        success: false,
+        code: isMitra ? 'MITRA_ACCOUNT_EXISTS' : 'STAFF_ACCOUNT_EXISTS',
+        field: userService.findUser(cleanWa) ? 'whatsapp' : 'email',
+        message: isMitra
+          ? 'Kontak ini sudah terdaftar sebagai mitra. Masuk ke portal pelanggan menggunakan username atau nomor WhatsApp akun mitra Anda.'
+          : 'Kontak ini sudah terdaftar sebagai akun staf. Gunakan kontak lain.'
       });
     }
 
     const newCust = await registerNewCustomer({
       name,
       whatsapp: cleanWa,
-      email,
+      email: cleanEmail,
       district,
       password: secret,
       pin: secret,
@@ -359,7 +481,7 @@ router.post('/register', async (req, res) => {
       registeredVia: 'Portal Pelanggan Web'
     });
 
-    const matched = await getCombinedCustomerOrders(cleanWa.toLowerCase(), cleanWa, email);
+    const matched = await getCombinedCustomerOrders(cleanWa.toLowerCase(), cleanWa, cleanEmail);
     const formattedList = matched.map(formatCustomerOrder);
     const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
 
@@ -401,7 +523,7 @@ router.post('/register', async (req, res) => {
       orders: formattedList
     });
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    return sendAuthError(res, err, 'Pendaftaran pelanggan gagal.');
   }
 });
 
@@ -414,85 +536,120 @@ router.post('/login', async (req, res) => {
     const secret = String(password || pin || '').trim();
 
     if (!cleanId) {
-      return res.status(400).json({ success: false, message: 'Nomor WhatsApp, Email, atau Nomor Tiket wajib diisi.' });
-    }
-
-    const registeredCust = findCustomerByIdentifier(cleanId);
-    if (!registeredCust) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        needRegister: true,
-        message: 'Nomor WhatsApp atau Email belum terdaftar. Silakan lakukan registrasi akun terlebih dahulu.'
+        code: 'IDENTIFIER_REQUIRED',
+        field: 'identifier',
+        message: 'Email, nomor WhatsApp, atau username mitra wajib diisi.'
       });
     }
-
     if (!secret) {
       return res.status(400).json({
         success: false,
+        code: 'PASSWORD_REQUIRED',
+        field: 'password',
         message: 'Password wajib diisi.'
       });
     }
 
-    const validCustSecret = registeredCust.passwordHash || registeredCust.pin || '';
-    if (!verifyPassword(secret, validCustSecret)) {
-      return res.status(401).json({
-        success: false,
-        message: 'Password atau PIN tidak sesuai. Silakan coba lagi.'
+    let mitraAccount = null;
+    try {
+      const usersReady = await userService.refreshUsersFromDb();
+      if (usersReady) mitraAccount = findMitraAccount(cleanId);
+    } catch (_) {}
+
+    if (mitraAccount && verifyPassword(secret, mitraAccount.password)) {
+      const result = await buildMitraCustomerLogin(req, mitraAccount, isRemember);
+      try {
+        db.logActivity('CUSTOMER_LOGIN', 'users', mitraAccount.id, {
+          name: mitraAccount.name,
+          whatsapp: mitraAccount.phone || '',
+          accountType: 'mitra',
+          loginAt: result.customer.loginAt
+        });
+      } catch (_) {}
+      res.setHeader('Set-Cookie', `ngalam_customer_token=${result.jwtInfo.token}; Path=/; Max-Age=${result.jwtInfo.maxAge}; SameSite=Lax`);
+      return res.json({
+        success: true,
+        message: `Selamat datang kembali, ${mitraAccount.name}! Akun mitra Anda juga aktif sebagai pelanggan.`,
+        customer: result.customer,
+        orders: result.orders
       });
     }
 
-    const matchedOrders = await getCombinedCustomerOrders(cleanId, registeredCust.whatsapp, registeredCust.email);
-    const formattedList = matchedOrders.map(formatCustomerOrder);
-    const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
+    const registeredCust = mitraAccount
+      ? (findCustomerByPhone(cleanId) || findCustomerByEmail(cleanId))
+      : findCustomerByIdentifier(cleanId);
 
-    const jwtInfo = generateToken({
-      customerId: registeredCust.id || registeredCust.whatsapp,
-      name: registeredCust.name,
-      whatsapp: registeredCust.whatsapp,
-      email: registeredCust.email,
-      role: 'customer'
-    }, isRemember);
+    if (registeredCust) {
+      const validCustSecret = registeredCust.passwordHash || registeredCust.pin || '';
+      if (verifyPassword(secret, validCustSecret)) {
+        const matchedOrders = await getCombinedCustomerOrders(cleanId, registeredCust.whatsapp, registeredCust.email);
+        const formattedList = matchedOrders.map(formatCustomerOrder);
+        const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
 
-    const customerSession = {
-      isCustomer: true,
-      id: registeredCust.id,
-      name: registeredCust.name,
-      whatsapp: registeredCust.whatsapp,
-      email: registeredCust.email,
-      district: registeredCust.district,
-      referredByMitra: registeredCust.referredByMitra || '',
-      needsPhone: !registeredCust.whatsapp,
-      totalOrders: formattedList.length,
-      activeOrders: formattedList.filter((o) => o.step < 5).length,
-      completedOrders: formattedList.filter((o) => o.step >= 5).length,
-      activeWarranties: activeWarrantiesCount,
-      databaseConnected: true,
-      token: jwtInfo.token,
-      rememberMe: isRemember,
-      expiresIn: jwtInfo.expiresIn,
-      maxAge: jwtInfo.maxAge,
-      loginAt: new Date().toISOString()
-    };
+        const jwtInfo = generateToken({
+          customerId: registeredCust.id || registeredCust.whatsapp,
+          name: registeredCust.name,
+          whatsapp: registeredCust.whatsapp,
+          email: registeredCust.email,
+          role: 'customer',
+          accountType: 'customer'
+        }, isRemember);
 
-    // Rekam login pelanggan ke activity logs
-    try {
-      db.logActivity('CUSTOMER_LOGIN', 'customers', registeredCust.id || registeredCust.whatsapp, {
-        name: registeredCust.name,
-        whatsapp: registeredCust.whatsapp,
-        district: registeredCust.district,
-        loginAt: customerSession.loginAt
+        const customerSession = buildCustomerSession(registeredCust, jwtInfo, isRemember, {
+          totalOrders: formattedList.length,
+          activeOrders: formattedList.filter((o) => o.step < 5).length,
+          completedOrders: formattedList.filter((o) => o.step >= 5).length,
+          activeWarranties: activeWarrantiesCount
+        });
+
+        try {
+          db.logActivity('CUSTOMER_LOGIN', 'customers', registeredCust.id || registeredCust.whatsapp, {
+            name: registeredCust.name,
+            whatsapp: registeredCust.whatsapp,
+            district: registeredCust.district,
+            loginAt: customerSession.loginAt
+          });
+        } catch (_) {}
+
+        res.setHeader('Set-Cookie', `ngalam_customer_token=${jwtInfo.token}; Path=/; Max-Age=${jwtInfo.maxAge}; SameSite=Lax`);
+        return res.json({
+          success: true,
+          message: `Selamat datang kembali, ${registeredCust.name}!`,
+          customer: customerSession,
+          orders: formattedList
+        });
+      }
+    }
+
+    if (mitraAccount) {
+      return res.status(401).json({
+        success: false,
+        code: 'INVALID_MITRA_PASSWORD',
+        field: 'password',
+        message: 'Kata sandi akun mitra salah. Periksa kembali kata sandi Anda.'
       });
-    } catch (_) {}
+    }
 
-    res.setHeader('Set-Cookie', `ngalam_customer_token=${jwtInfo.token}; Path=/; Max-Age=${jwtInfo.maxAge}; SameSite=Lax`);
-    res.json({
-      success: true,
-      message: `Selamat datang kembali, ${registeredCust.name}!`,
-      customer: customerSession,
-      orders: formattedList
+    if (registeredCust) {
+      return res.status(401).json({
+        success: false,
+        code: 'INVALID_PASSWORD',
+        field: 'password',
+        message: 'Password atau PIN pelanggan tidak sesuai. Silakan coba lagi.'
+      });
+    }
+
+    return res.status(404).json({
+      success: false,
+      needRegister: true,
+      code: 'ACCOUNT_NOT_FOUND',
+      field: 'identifier',
+      message: 'Akun tidak ditemukan. Daftar sebagai pelanggan atau masuk menggunakan akun mitra Anda.'
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    return sendAuthError(res, err, 'Login pelanggan gagal.');
   }
 });
 
@@ -654,9 +811,33 @@ router.get('/auth/google/callback', async (req, res) => {
     const profile = await profileRes.json().catch(() => ({}));
     if (!profileRes.ok || !profile.email) return failRedirect('profile_fetch_failed');
 
+    const profileEmail = normalizeEmail(profile.email);
+    const existingCustomer = findCustomerByEmail(profileEmail);
+    await userService.refreshUsersFromDb();
+    const linkedUser = userService.findUser(profileEmail);
+
+    if (!existingCustomer && linkedUser) {
+      if (!isMitraRole(linkedUser.role)) {
+        return failRedirect('staff_account_exists');
+      }
+      const jwtInfo = generateToken({
+        customerId: linkedUser.id,
+        userId: linkedUser.id,
+        name: linkedUser.name,
+        username: linkedUser.username,
+        whatsapp: linkedUser.phone || '',
+        email: linkedUser.email || profileEmail,
+        role: 'customer',
+        accountType: 'mitra',
+        mitraId: linkedUser.id
+      }, true);
+      setCustomerTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
+      return res.redirect(`${frontendBase}/login?auth=google${linkedUser.phone ? '' : '&needsPhone=1'}`);
+    }
+
     const cust = await upsertGoogleCustomer({
       googleId: profile.sub || '',
-      email: profile.email,
+      email: profileEmail,
       name: profile.name || '',
       avatar: profile.picture || ''
     });
@@ -666,7 +847,8 @@ router.get('/auth/google/callback', async (req, res) => {
       name: cust.name,
       whatsapp: cust.whatsapp || '',
       email: cust.email || '',
-      role: 'customer'
+      role: 'customer',
+      accountType: 'customer'
     }, true);
 
     setCustomerTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
@@ -683,7 +865,35 @@ router.get('/me', async (req, res) => {
     const token = getCustomerToken(req);
     const payload = verifyToken(token);
     if (!payload || payload.role !== 'customer') {
-      return res.status(401).json({ success: false, message: 'Sesi member tidak valid atau sudah kedaluwarsa.' });
+      return res.status(401).json({
+        success: false,
+        code: 'SESSION_INVALID',
+        message: 'Sesi member tidak valid atau sudah kedaluwarsa. Silakan login ulang.'
+      });
+    }
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    const maxAge = payload.exp ? Math.max(0, payload.exp - nowSec) : 86400;
+
+    if (payload.accountType === 'mitra') {
+      await userService.refreshUsersFromDb();
+      const mitra = findMitraById(payload.mitraId || payload.customerId || payload.username);
+      if (!mitra) {
+        return res.status(404).json({
+          success: false,
+          code: 'MITRA_ACCOUNT_NOT_FOUND',
+          message: 'Akun mitra untuk sesi ini tidak ditemukan.'
+        });
+      }
+      const matchedOrders = await getCombinedCustomerOrders(mitra.phone || mitra.email || '', mitra.phone || '', mitra.email || '');
+      const formattedList = matchedOrders.map(formatCustomerOrder);
+      const customerSession = buildCustomerSession(buildMitraCustomerData(mitra), { token, expiresIn: '', maxAge }, payload.rememberMe, {
+        totalOrders: formattedList.length,
+        activeOrders: formattedList.filter((order) => order.step < 5).length,
+        completedOrders: formattedList.filter((order) => order.step >= 5).length,
+        activeWarranties: formattedList.filter((order) => order.warranty && order.warranty.isActive).length
+      });
+      return res.json({ success: true, customer: customerSession });
     }
 
     const cust = findCustomerByIdentifier(payload.customerId) ||
@@ -691,15 +901,17 @@ router.get('/me', async (req, res) => {
       findCustomerByIdentifier(payload.whatsapp);
 
     if (!cust) {
-      return res.status(404).json({ success: false, message: 'Akun pelanggan tidak ditemukan.' });
+      return res.status(404).json({
+        success: false,
+        code: 'CUSTOMER_ACCOUNT_NOT_FOUND',
+        message: 'Akun pelanggan tidak ditemukan.'
+      });
     }
 
-    const nowSec = Math.floor(Date.now() / 1000);
-    const maxAge = payload.exp ? Math.max(0, payload.exp - nowSec) : 86400;
     const customerSession = buildCustomerSession(cust, { token, expiresIn: '', maxAge }, payload.rememberMe);
     res.json({ success: true, customer: customerSession });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendAuthError(res, err, 'Gagal memuat sesi pelanggan.');
   }
 });
 
@@ -709,24 +921,107 @@ router.post('/complete-profile', async (req, res) => {
     const token = getCustomerToken(req);
     const payload = verifyToken(token);
     if (!payload || payload.role !== 'customer') {
-      return res.status(401).json({ success: false, message: 'Sesi member tidak valid. Silakan login ulang.' });
+      return res.status(401).json({
+        success: false,
+        code: 'SESSION_INVALID',
+        message: 'Sesi member tidak valid. Silakan login ulang.'
+      });
+    }
+
+    const rawPhone = String(req.body.whatsapp || req.body.phone || '').trim();
+    const digits = normalizePhone(rawPhone);
+    if (!digits || digits.length < 9 || digits.length > 15) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PHONE',
+        field: 'whatsapp',
+        message: 'Nomor WhatsApp aktif wajib diisi dengan format yang benar.'
+      });
+    }
+
+    if (payload.accountType === 'mitra') {
+      await userService.refreshUsersFromDb();
+      const mitra = findMitraById(payload.mitraId || payload.customerId || payload.username);
+      if (!mitra) {
+        return res.status(404).json({
+          success: false,
+          code: 'MITRA_ACCOUNT_NOT_FOUND',
+          message: 'Akun mitra tidak ditemukan.'
+        });
+      }
+      const duplicateUser = userService.getAllUsers().find((user) =>
+        String(user.id || '') !== String(mitra.id || '') && phonesMatch(user.phone, digits)
+      );
+      if (duplicateUser) {
+        return res.status(409).json({
+          success: false,
+          code: 'PHONE_TAKEN',
+          field: 'whatsapp',
+          message: 'Nomor WhatsApp sudah digunakan akun lain.'
+        });
+      }
+      if (findCustomerByPhone(digits)) {
+        return res.status(409).json({
+          success: false,
+          code: 'PHONE_TAKEN',
+          field: 'whatsapp',
+          message: 'Nomor WhatsApp sudah terdaftar sebagai akun pelanggan.'
+        });
+      }
+
+      mitra.phone = digits;
+      await userService.saveMitraUsers(userService.getMitraUsers().map((user) =>
+        String(user.id) === String(mitra.id) ? mitra : user
+      ));
+      const jwtInfo = generateToken({
+        customerId: mitra.id,
+        userId: mitra.id,
+        name: mitra.name,
+        username: mitra.username,
+        whatsapp: mitra.phone,
+        email: mitra.email || '',
+        role: 'customer',
+        accountType: 'mitra',
+        mitraId: mitra.id
+      }, true);
+      setCustomerTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
+      return res.json({
+        success: true,
+        message: 'Nomor WhatsApp akun mitra berhasil disimpan.',
+        customer: buildCustomerSession(buildMitraCustomerData(mitra), jwtInfo, true)
+      });
     }
 
     const cust = findCustomerByIdentifier(payload.customerId) ||
       findCustomerByEmail(payload.email);
     if (!cust) {
-      return res.status(404).json({ success: false, message: 'Akun pelanggan tidak ditemukan.' });
+      return res.status(404).json({
+        success: false,
+        code: 'CUSTOMER_ACCOUNT_NOT_FOUND',
+        message: 'Akun pelanggan tidak ditemukan.'
+      });
     }
 
-    const rawPhone = String(req.body.whatsapp || req.body.phone || '').trim();
-    const digits = normalizePhone(rawPhone);
-    if (!digits || digits.length < 9) {
-      return res.status(400).json({ success: false, message: 'Nomor WhatsApp aktif wajib diisi dengan format yang benar.' });
+    const duplicate = findCustomerByPhone(digits);
+    if (duplicate && String(duplicate.id) !== String(cust.id)) {
+      return res.status(409).json({
+        success: false,
+        code: 'PHONE_TAKEN',
+        field: 'whatsapp',
+        message: 'Nomor WhatsApp ini sudah digunakan akun pelanggan lain.'
+      });
     }
-
-    const duplicate = findCustomerByIdentifier(digits);
-    if (duplicate && duplicate.id !== cust.id) {
-      return res.status(409).json({ success: false, message: 'Nomor WhatsApp ini sudah digunakan akun lain.' });
+    await userService.refreshUsersFromDb();
+    const staffOrMitra = userService.findUser(digits);
+    if (staffOrMitra) {
+      return res.status(409).json({
+        success: false,
+        code: isMitraRole(staffOrMitra.role) ? 'MITRA_ACCOUNT_EXISTS' : 'STAFF_ACCOUNT_EXISTS',
+        field: 'whatsapp',
+        message: isMitraRole(staffOrMitra.role)
+          ? 'Nomor WhatsApp ini terdaftar sebagai mitra. Masuk melalui akun mitra Anda.'
+          : 'Nomor WhatsApp ini terdaftar sebagai akun staf.'
+      });
     }
 
     const updated = await updateCustomerById(cust.id, {
@@ -739,7 +1034,8 @@ router.post('/complete-profile', async (req, res) => {
       name: updated.name,
       whatsapp: updated.whatsapp,
       email: updated.email,
-      role: 'customer'
+      role: 'customer',
+      accountType: 'customer'
     }, true);
 
     setCustomerTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
@@ -749,7 +1045,7 @@ router.post('/complete-profile', async (req, res) => {
       customer: buildCustomerSession(updated, jwtInfo, true)
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendAuthError(res, err, 'Gagal melengkapi profil pelanggan.');
   }
 });
 

@@ -8,11 +8,15 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { generateToken, verifyToken, decodeToken } = require('../src/utils/jwt');
-const { verifyPassword } = require('../src/utils/security');
+const { hashPassword, verifyPassword } = require('../src/utils/security');
+const { AuthError } = require('../src/utils/authError');
 
 const userService = require('./userService');
 const db = require('./db');
 const SESSIONS_FILE = path.join(__dirname, '..', 'data', 'sessions.json');
+
+const SINGLE_ADMIN_USERNAME = String(process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
+const SINGLE_ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || 'fixprongalam2026');
 
 // In-memory and persisted active tokens cache
 const activeSessions = new Map();
@@ -38,6 +42,47 @@ function loadPersistedSessions() {
   }
 }
 loadPersistedSessions();
+
+async function ensureSingleAdminAccount() {
+  const ready = await userService.refreshUsersFromDb(true);
+  if (!ready) {
+    throw new AuthError('Database akun admin belum dapat dihubungi. Coba beberapa saat lagi.', {
+      status: 503,
+      code: 'AUTH_DATABASE_UNAVAILABLE'
+    });
+  }
+
+  const adminUsers = userService.getAdminUsers();
+  const target = adminUsers.find((user) => String(user.username || '').toLowerCase() === SINGLE_ADMIN_USERNAME);
+  const otherAdmins = adminUsers.filter((user) => String(user.username || '').toLowerCase() !== SINGLE_ADMIN_USERNAME);
+  const passwordMatches = target ? verifyPassword(SINGLE_ADMIN_PASSWORD, target.password) : false;
+
+  if (target && passwordMatches && otherAdmins.length === 0) {
+    return target;
+  }
+
+  const source = target || adminUsers[0] || {};
+  const admin = {
+    ...source,
+    id: source.id || 'USR-ADMIN-01',
+    username: SINGLE_ADMIN_USERNAME,
+    password: hashPassword(SINGLE_ADMIN_PASSWORD),
+    name: source.name || 'Admin Super User',
+    role: 'admin',
+    category: source.category || 'Super Admin',
+    avatar: source.avatar || 'crown-shield',
+    phone: source.phone || '',
+    email: source.email || 'admin@ngalamfixpro.com',
+    desk: source.desk || 'Ruang Workshop Manager',
+    specialty: source.specialty || 'Super User Kontrol Sistem & Keuangan',
+    referralCode: source.referralCode || 'NGALAM-SUPER-2026',
+    status: 'Siaga / Aktif'
+  };
+
+  await userService.saveAdminUsers([admin]);
+  await userService.refreshUsersFromDb(true);
+  return admin;
+}
 
 /**
  * Save active sessions to disk
@@ -100,58 +145,92 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   const cleanPass = (password || '').trim();
 
   if (!cleanId) {
-    throw new Error('Username, Email, atau Nomor WhatsApp wajib diisi.');
+    throw new AuthError('Username, email, atau nomor WhatsApp wajib diisi.', {
+      status: 400,
+      code: 'IDENTIFIER_REQUIRED',
+      field: 'identifier'
+    });
   }
   if (!cleanPass) {
-    throw new Error('Kata sandi (password) wajib diisi.');
+    throw new AuthError('Kata sandi wajib diisi.', {
+      status: 400,
+      code: 'PASSWORD_REQUIRED',
+      field: 'password'
+    });
   }
 
-  // =========================================================================
-  // VERIFIKASI USER DARI TABEL POSTGRESQL/SUPABASE
-  // =========================================================================
-  await userService.refreshUsersFromDb();
-  const users = getUsers();
+  let user = null;
 
-  function checkPassword(userPass, inputPass, username) {
-    if (userPass === inputPass) return true;
-    if (verifyPassword(inputPass, userPass)) return true;
-    const cleanU = (username || '').toLowerCase();
-    if (cleanU === 'ferdinand' || cleanU === 'owner' || cleanU === 'admin' || cleanU === 'kasir' || cleanU === 'rian') {
-      if (inputPass === '123456' || inputPass === 'password123' || inputPass === 'admin123' || inputPass === 'owner123') {
-        return true;
+  if (role === 'admin' || role === 'owner' || cleanId === SINGLE_ADMIN_USERNAME) {
+    const admin = await ensureSingleAdminAccount();
+    if (role === 'admin' || role === 'owner') {
+      if (cleanId !== SINGLE_ADMIN_USERNAME) {
+        throw new AuthError('Portal admin hanya dapat diakses oleh akun admin.', {
+          status: 403,
+          code: 'ADMIN_ACCOUNT_ONLY',
+          field: 'identifier'
+        });
       }
+      if (cleanPass !== SINGLE_ADMIN_PASSWORD) {
+        throw new AuthError('Kata sandi admin salah.', {
+          status: 401,
+          code: 'INVALID_ADMIN_PASSWORD',
+          field: 'password'
+        });
+      }
+      user = admin;
+    } else if (cleanId === SINGLE_ADMIN_USERNAME) {
+      if (cleanPass !== SINGLE_ADMIN_PASSWORD) {
+        throw new AuthError('Kata sandi admin salah.', {
+          status: 401,
+          code: 'INVALID_ADMIN_PASSWORD',
+          field: 'password'
+        });
+      }
+      user = admin;
     }
-    return false;
   }
 
-  // 1. Exact match on username or email (highest priority)
-  let user = users.find((u) => {
-    if (!checkPassword(u.password, cleanPass, u.username)) return false;
-    const uUser = (u.username || '').toLowerCase();
-    const uEmail = (u.email || '').toLowerCase();
-    if (cleanId === 'ferdinand' && (uUser === 'owner' || uUser === 'ferdinand')) return true;
-    return uUser === cleanId || uEmail === cleanId;
-  });
-
-  // 2. Match on phone number with normalization (+62, 62, 08...)
   if (!user) {
+    const ready = await userService.refreshUsersFromDb();
+    if (!ready) {
+      throw new AuthError('Database akun belum dapat dihubungi. Coba beberapa saat lagi.', {
+        status: 503,
+        code: 'AUTH_DATABASE_UNAVAILABLE'
+      });
+    }
+    const users = getUsers();
+
     user = users.find((u) => {
-      if (!checkPassword(u.password, cleanPass, u.username)) return false;
-      return phonesMatch(u.phone, cleanId);
+      if (!verifyPassword(cleanPass, u.password)) return false;
+      const uUser = (u.username || '').toLowerCase();
+      const uEmail = (u.email || '').toLowerCase();
+      return uUser === cleanId || uEmail === cleanId;
     });
-  }
 
-  // 3. Match on full name
-  if (!user) {
-    user = users.find((u) => {
-      if (!checkPassword(u.password, cleanPass, u.username)) return false;
-      const uName = (u.name || '').toLowerCase();
-      return uName === cleanId;
-    });
-  }
+    if (!user) {
+      user = users.find((u) => verifyPassword(cleanPass, u.password) && phonesMatch(u.phone, cleanId));
+    }
 
-  if (!user) {
-    throw new Error('Kredensial salah: Username/Email/No. HP atau Kata Sandi tidak cocok.');
+    if (!user) {
+      const identifierExists = users.some((u) => {
+        const uUser = (u.username || '').toLowerCase();
+        const uEmail = (u.email || '').toLowerCase();
+        return uUser === cleanId || uEmail === cleanId || phonesMatch(u.phone, cleanId);
+      });
+      if (identifierExists) {
+        throw new AuthError('Kata sandi salah. Periksa kembali kata sandi akun Anda.', {
+          status: 401,
+          code: 'INVALID_PASSWORD',
+          field: 'password'
+        });
+      }
+      throw new AuthError('Akun tidak ditemukan. Periksa username, email, atau nomor WhatsApp Anda.', {
+        status: 404,
+        code: 'ACCOUNT_NOT_FOUND',
+        field: 'identifier'
+      });
+    }
   }
 
   // Referral Code & Access Tier Enforcement
@@ -165,16 +244,27 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
 
     if (role === 'admin' || role === 'owner') {
       if (!isSuperAdminUser) {
-        throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan ADMIN.`);
+        throw new AuthError(`Akun ini terdaftar sebagai ${String(user.role || '').toUpperCase()}, bukan admin.`, {
+          status: 403,
+          code: 'ROLE_MISMATCH',
+          field: 'role'
+        });
       }
     } else if (role === 'kasir' || role === 'teknisi') {
-      // Owner/Admin accounts have complete unified access to kasir and teknisi
       if (!isSuperAdminUser && user.role !== role) {
-        throw new Error(`Akun ini tidak memiliki hak akses.`);
+        throw new AuthError(`Akun ini bukan ${role}. Gunakan portal login yang sesuai.`, {
+          status: 403,
+          code: 'ROLE_MISMATCH',
+          field: 'role'
+        });
       }
     } else if (role === 'ojol' || role === 'mitra') {
       if (user.role !== 'ojol' && user.role !== 'mitra' && !isSuperAdminUser) {
-        throw new Error(`Akun ini terdaftar sebagai ${user.role.toUpperCase()}, bukan MITRA.`);
+        throw new AuthError(`Akun ini terdaftar sebagai ${String(user.role || '').toUpperCase()}, bukan mitra.`, {
+          status: 403,
+          code: 'ROLE_MISMATCH',
+          field: 'role'
+        });
       }
     }
   }
@@ -278,11 +368,22 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
 /**
  * Verify session token
  */
+function isAllowedAdminSession(session) {
+  const role = String(session && session.role || '').toLowerCase();
+  if (role !== 'admin' && role !== 'owner') return true;
+  return String(session.username || '').toLowerCase() === SINGLE_ADMIN_USERNAME;
+}
+
 function verifySession(token) {
   if (!token) return null;
 
   if (activeSessions.has(token)) {
     const session = activeSessions.get(token);
+    if (!isAllowedAdminSession(session)) {
+      activeSessions.delete(token);
+      saveSessionsToDisk();
+      return null;
+    }
     if (token.includes('.')) {
       const decoded = verifyToken(token);
       if (!decoded) {
@@ -296,6 +397,7 @@ function verifySession(token) {
 
   const decoded = verifyToken(token);
   if (!decoded) return null;
+  if (!isAllowedAdminSession(decoded)) return null;
 
   const userIsSuperAdmin = Boolean(decoded.isSuperAdmin || decoded.role === 'admin' || decoded.role === 'owner');
   const sessionData = {

@@ -47,7 +47,7 @@ async function runTests() {
   // 1. Admin Login
   const adminLogin = await authService.loginUser({
     identifier: 'admin',
-    password: 'password123',
+    password: 'fixprongalam2026',
     role: 'admin',
     referralCode: 'NGALAM-SUPER-2026'
   });
