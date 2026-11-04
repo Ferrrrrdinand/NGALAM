@@ -245,7 +245,7 @@ router.post('/register', async (req, res) => {
     }
 
     const cleanWa = whatsapp.trim();
-    const existing = findCustomerByIdentifier(cleanWa);
+    const existing = await findCustomerByIdentifier(cleanWa);
     if (existing) {
       return res.status(409).json({
         success: false,
@@ -254,7 +254,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    const newCust = registerNewCustomer({
+    const newCust = await registerNewCustomer({
       name,
       whatsapp: cleanWa,
       email,
@@ -305,7 +305,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Nomor WhatsApp, Email, atau Nomor Tiket wajib diisi.' });
     }
 
-    const registeredCust = findCustomerByIdentifier(cleanId);
+    const registeredCust = await findCustomerByIdentifier(cleanId);
     if (!registeredCust) {
       return res.status(404).json({
         success: false,
@@ -405,13 +405,13 @@ router.get('/orders', async (req, res) => {
 });
 
 // GET /api/customer/lookup (Pencarian data member terdaftar untuk auto-fill formulir)
-router.get('/lookup', (req, res) => {
+router.get('/lookup', async (req, res) => {
   try {
     const identifier = (req.query.identifier || req.query.phone || '').trim().toLowerCase();
     if (!identifier) {
       return res.status(400).json({ success: false, message: 'Nomor WhatsApp atau Email wajib diisi.' });
     }
-    const registeredCust = findCustomerByIdentifier(identifier);
+    const registeredCust = await findCustomerByIdentifier(identifier);
     if (!registeredCust) {
       return res.status(404).json({ success: false, message: 'Pelanggan belum terdaftar.' });
     }

@@ -75,7 +75,7 @@ router.post('/session/lock', async (req, res) => {
     const cleanRef = String(referralCode).trim().toUpperCase();
     const cleanAttempt = String(attemptId).trim();
 
-    const users = readUsers();
+    const users = await readUsers();
     const mitra = users.find(u => (u.referralCode || '').toUpperCase() === cleanRef);
 
     const sessionPayload = {
@@ -120,14 +120,14 @@ router.post('/session/lock', async (req, res) => {
 });
 
 // GET /api/mitra/ref/:code - Verifikasi kode afiliasi saat pelanggan membuka link booking / scan QR
-router.get('/ref/:code', (req, res) => {
+router.get('/ref/:code', async (req, res) => {
   try {
     const rawCode = (req.params.code || '').trim().toUpperCase();
     if (!rawCode) {
       return res.status(400).json({ success: false, message: 'Kode referral wajib disertakan.' });
     }
 
-    const users = readUsers();
+    const users = await readUsers();
     const mitra = users.find(u => (u.referralCode || '').toUpperCase() === rawCode);
 
     if (!mitra) {
@@ -158,9 +158,9 @@ router.get('/ref/:code', (req, res) => {
 });
 
 // GET /api/mitra/list - Daftar seluruh mitra driver & toko rekanan beserta kode unik & QR
-router.get('/list', (req, res) => {
+router.get('/list', async (req, res) => {
   try {
-    const users = readUsers();
+    const users = await readUsers();
     const drivers = users.filter(u => u.role === 'ojol' || u.role === 'mitra');
 
     const formatted = drivers.map(d => {
@@ -224,7 +224,7 @@ router.post('/register', async (req, res) => {
 
     const cleanUser = username.trim().toLowerCase();
     const cleanPhone = phone.trim();
-    const users = readUsers();
+    const users = await readUsers();
 
     // Cek apakah username atau no telp sudah ada
     const existing = users.find(u =>
@@ -303,7 +303,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const users = readUsers();
+    const users = await readUsers();
     const digitsOnly = cleanId.replace(/\D/g, '');
     const cleanLower = cleanId.toLowerCase();
 
@@ -354,7 +354,7 @@ router.post('/login', async (req, res) => {
     const details = buildMitraAffiliateDetails(req, driver.referralCode);
 
     // Ambil riwayat order yang menggunakan kode afiliasi mitra ini
-    const allOrders = readOrders();
+    const allOrders = await getAllOrders();
     const myReferredOrders = allOrders.filter(o =>
       (o.affiliateRef && o.affiliateRef.toUpperCase() === driver.referralCode.toUpperCase()) ||
       (o.partnerName && o.partnerName.toLowerCase().includes(driver.name.toLowerCase()))
@@ -378,21 +378,21 @@ router.post('/login', async (req, res) => {
 });
 
 // GET /api/mitra/dashboard - Data Dashboard & Performa Afiliasi Mitra
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', async (req, res) => {
   try {
     const refCode = (req.query.ref || '').trim().toUpperCase();
     if (!refCode) {
       return res.status(400).json({ success: false, message: 'Kode referral mitra wajib disertakan.' });
     }
 
-    const users = readUsers();
+    const users = await readUsers();
     const mitra = users.find(u => (u.referralCode || '').toUpperCase() === refCode);
 
     if (!mitra) {
       return res.status(404).json({ success: false, message: 'Akun mitra tidak ditemukan.' });
     }
 
-    const allOrders = readOrders();
+    const allOrders = await getAllOrders();
     const myReferredOrders = allOrders.filter(o =>
       (o.affiliateRef && o.affiliateRef.toUpperCase() === refCode) ||
       (o.partnerName && o.partnerName.toLowerCase().includes(mitra.name.toLowerCase()))

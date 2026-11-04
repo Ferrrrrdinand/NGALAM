@@ -233,7 +233,7 @@ async function appendOrder(order) {
   try {
     const { ensureCustomerAccount } = require('./customerService');
     if (customerPhone && customerPhone !== '-') {
-      ensureCustomerAccount({
+      await ensureCustomerAccount({
         name: order.customerName,
         whatsapp: customerPhone,
         email: order.email || '',

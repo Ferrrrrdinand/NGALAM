@@ -108,7 +108,7 @@ router.post('/', async (req, res) => {
           orderData.affiliateCommission = commissionAmt;
 
           // Catat komisi afiliasi untuk mitra ke sistem & database
-          recordMitraCommission(mitra.referralCode, commissionAmt).catch(e =>
+          recordMitraCommission(mitra.referralCode, commissionAmt, orderData.id).catch(e =>
             console.warn('[OrderRoutes] Error awarding affiliate commission:', e.message)
           );
         }

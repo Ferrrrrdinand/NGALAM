@@ -121,16 +121,31 @@ function getMitraUsers() {
   return readJson(FILE_PATHS.mitra);
 }
 
+async function getMitraUsersAsync() {
+  if (db.isDbConnected()) {
+    try {
+      const res = await db.query("SELECT raw_data FROM users WHERE role = 'mitra' OR role = 'ojol' OR raw_data->>'role' = 'mitra' OR raw_data->>'role' = 'ojol'");
+      if (res && res.rows && res.rows.length > 0) {
+        return res.rows.map(r => r.raw_data || r);
+      }
+    } catch (e) {
+      console.warn('[UserService] getMitraUsersAsync PostgreSQL error:', e.message);
+    }
+  }
+  return getMitraUsers();
+}
+
 function saveMitraUsers(users) {
   const ok = writeJson(FILE_PATHS.mitra, users);
   syncLegacyUsersFile();
+  if (Array.isArray(users)) {
+    users.forEach(u => {
+      syncUserToNeon(u, 'MITRA_SYNC').catch(() => {});
+    });
+  }
   return ok;
 }
 
-/**
- * Sinkronkan file legacy data/users.json sebagai cermin gabungan
- * agar kompatibilitas ke belakang tetap terjaga 100%
- */
 function syncLegacyUsersFile() {
   try {
     const admins = readJson(FILE_PATHS.admin);
@@ -468,6 +483,7 @@ module.exports = {
   getTeknisiUsers,
   saveTeknisiUsers,
   getMitraUsers,
+  getMitraUsersAsync,
   saveMitraUsers,
   getAllUsers,
   findUser,

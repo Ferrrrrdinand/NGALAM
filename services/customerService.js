@@ -1,7 +1,7 @@
 /**
  * NGALAM FIX PRO - Customer Management Service
  * Mengelola database akun dan profil pelanggan smartphone.
- * Terintegrasi ke PostgreSQL Database via services/db.js (dengan fallback data/ lokal).
+ * Terintegrasi realtime ke PostgreSQL Database via services/db.js (dengan fallback data/ lokal).
  */
 
 const fs = require('fs');
@@ -11,7 +11,7 @@ const db = require('./db');
 const CUSTOMERS_FILE = path.join(__dirname, '..', 'data', 'customers.json');
 
 /**
- * Baca seluruh pelanggan dari file lokal
+ * Baca seluruh pelanggan dari file lokal (fallback)
  */
 function getLocalCustomers() {
   try {
@@ -27,7 +27,7 @@ function getLocalCustomers() {
 }
 
 /**
- * Simpan data pelanggan ke file lokal
+ * Simpan data pelanggan ke file lokal (cadangan aman)
  */
 function saveCustomers(customers) {
   try {
@@ -40,8 +40,22 @@ function saveCustomers(customers) {
 }
 
 /**
- * Ambil seluruh data pelanggan (sinkron / lokal)
+ * Ambil seluruh data pelanggan realtime (Prioritas: PostgreSQL Database)
  */
+async function getAllCustomersAsync() {
+  if (db.isDbConnected()) {
+    try {
+      const res = await db.query('SELECT raw_data FROM customers ORDER BY created_at DESC');
+      if (res && res.rows && res.rows.length > 0) {
+        return res.rows.map(r => r.raw_data || r);
+      }
+    } catch (err) {
+      console.warn('[CustomerService] PostgreSQL getAllCustomersAsync fallback:', err.message);
+    }
+  }
+  return getLocalCustomers();
+}
+
 function getAllCustomers() {
   return getLocalCustomers();
 }
@@ -70,14 +84,35 @@ function phonesMatch(p1, p2) {
 }
 
 /**
- * Cari pelanggan berdasarkan identifier (ID, No. WA, Email, atau No. Tiket Servis)
+ * Cari pelanggan realtime berdasarkan identifier (ID, No. WA, Email, atau No. Tiket Servis)
  */
-function findCustomerByIdentifier(identifier) {
+async function findCustomerByIdentifier(identifier) {
   if (!identifier) return null;
-  const customers = getAllCustomers();
   const clean = identifier.trim().toLowerCase();
   const digits = clean.replace(/\D/g, '');
 
+  // 1. Prioritas Database PostgreSQL Realtime
+  if (db.isDbConnected()) {
+    try {
+      const res = await db.query(`
+        SELECT raw_data FROM customers 
+        WHERE LOWER(id) = $1 
+           OR LOWER(email) = $1 
+           OR whatsapp = $1 
+           OR (LENGTH($2) >= 6 AND whatsapp LIKE $3)
+        LIMIT 1
+      `, [clean, digits, `%${digits}%`]);
+
+      if (res && res.rows && res.rows.length > 0) {
+        return res.rows[0].raw_data;
+      }
+    } catch (err) {
+      console.warn('[CustomerService] PostgreSQL findCustomerByIdentifier error:', err.message);
+    }
+  }
+
+  // 2. Fallback Memori Lokal
+  const customers = getAllCustomers();
   let found = customers.find(c => {
     const cId = (c.id || '').toLowerCase();
     const cWa = c.whatsapp || '';
@@ -91,85 +126,60 @@ function findCustomerByIdentifier(identifier) {
 
   if (found) return found;
 
-  // Fallback: Periksa apakah identifier cocok dengan tiket servis di data/orders.json
+  // 3. Fallback Tiket Servis Orders (Orders Table di PostgreSQL)
   try {
-    const ordersFile = path.join(__dirname, '..', 'data', 'orders.json');
-    if (fs.existsSync(ordersFile)) {
-      const ordersRaw = fs.readFileSync(ordersFile, 'utf8');
-      const orders = JSON.parse(ordersRaw.replace(/^\uFEFF/, ''));
-      if (Array.isArray(orders)) {
-        const matchedOrder = orders.find(o => {
-          const oId = (o.id || '').toLowerCase();
-          const oWa = o.whatsapp || o.customerPhone || o.phone || '';
-          const oEmail = (o.email || '').toLowerCase();
-          return oId === clean || phonesMatch(oWa, clean) || (oEmail && oEmail === clean);
-        });
+    const { getAllOrders } = require('./orderService');
+    const orders = await getAllOrders();
+    if (Array.isArray(orders)) {
+      const matchedOrder = orders.find(o => {
+        const oId = (o.id || '').toLowerCase();
+        const oWa = o.whatsapp || o.customerPhone || o.phone || '';
+        const oEmail = (o.email || '').toLowerCase();
+        return oId === clean || phonesMatch(oWa, clean) || (oEmail && oEmail === clean);
+      });
 
-        if (matchedOrder) {
-          const autoWa = matchedOrder.whatsapp || matchedOrder.customerPhone || matchedOrder.phone || clean;
-          const autoCust = {
-            id: `CUST-${(matchedOrder.id || '').replace(/[^0-9]/g, '') || Date.now()}`,
-            name: matchedOrder.customerName || matchedOrder.name || 'Pelanggan Ngalam Fix Pro',
-            whatsapp: autoWa,
-            email: matchedOrder.email || '',
-            district: matchedOrder.district || matchedOrder.address || 'Malang Raya',
-            pin: '123456',
-            registeredAt: matchedOrder.createdAt || new Date().toLocaleDateString('id-ID'),
-            registeredVia: 'Otomatisasi Tiket Servis'
-          };
-          // Simpan ke customers.json agar sesi berikutnya instan
-          customers.push(autoCust);
-          saveCustomers(customers);
-          return autoCust;
+      if (matchedOrder) {
+        const autoWa = matchedOrder.whatsapp || matchedOrder.customerPhone || matchedOrder.phone || clean;
+        const autoCust = {
+          id: `CUST-${(matchedOrder.id || '').replace(/[^0-9]/g, '') || Date.now()}`,
+          name: matchedOrder.customerName || matchedOrder.name || 'Pelanggan Ngalam Fix Pro',
+          whatsapp: autoWa,
+          email: matchedOrder.email || '',
+          district: matchedOrder.district || matchedOrder.address || 'Malang Raya',
+          pin: '123456',
+          registeredAt: matchedOrder.createdAt || new Date().toLocaleDateString('id-ID'),
+          registeredVia: 'Otomatisasi Tiket Servis'
+        };
+
+        // Simpan langsung ke PostgreSQL
+        if (db.isDbConnected()) {
+          db.query(`
+            INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            ON CONFLICT (id) DO UPDATE SET raw_data = EXCLUDED.raw_data
+          `, [
+            autoCust.id, autoCust.name, autoCust.whatsapp, autoCust.email,
+            autoCust.district, autoCust.pin, autoCust.registeredAt, autoCust.registeredVia,
+            JSON.stringify(autoCust)
+          ], 'customers').catch(() => {});
         }
+
+        customers.push(autoCust);
+        saveCustomers(customers);
+        return autoCust;
       }
     }
   } catch (err) {
     console.warn('[CustomerService] Fallback order search error:', err.message);
   }
 
-  // Fallback 2: Periksa apakah identifier cocok dengan nomor tiket di data/transactions.json
-  try {
-    const txFile = path.join(__dirname, '..', 'data', 'transactions.json');
-    if (fs.existsSync(txFile)) {
-      const txRaw = fs.readFileSync(txFile, 'utf8');
-      const txList = JSON.parse(txRaw.replace(/^\uFEFF/, ''));
-      if (Array.isArray(txList)) {
-        const matchedTx = txList.find(t => {
-          const tId = (t.ticketId || t.orderId || '').toLowerCase();
-          const tInv = (t.invoiceNumber || t.invoiceNo || '').toLowerCase();
-          return tId === clean || tInv === clean;
-        });
-
-        if (matchedTx) {
-          const autoWa = matchedTx.customerPhone || clean;
-          const autoCust = {
-            id: `CUST-${(matchedTx.ticketId || matchedTx.id || '').replace(/[^0-9]/g, '') || Date.now()}`,
-            name: matchedTx.customerName || 'Pelanggan Ngalam Fix Pro',
-            whatsapp: autoWa,
-            email: matchedTx.customerEmail || '',
-            district: 'Malang Raya',
-            pin: '123456',
-            registeredAt: matchedTx.date || new Date().toISOString(),
-            registeredVia: 'Otomatisasi Faktur Transaksi'
-          };
-          customers.push(autoCust);
-          saveCustomers(customers);
-          return autoCust;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('[CustomerService] Fallback transaction search error:', err.message);
-  }
-
   return null;
 }
 
 /**
- * Daftarkan akun pelanggan baru
+ * Daftarkan akun pelanggan baru secara Realtime ke PostgreSQL Database
  */
-function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', registeredVia = 'Portal Pelanggan Web', referredByMitra = '' }) {
+async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', registeredVia = 'Portal Pelanggan Web', referredByMitra = '' }) {
   if (!name || !name.trim()) {
     throw new Error('Nama lengkap pelanggan wajib diisi.');
   }
@@ -178,12 +188,11 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
   }
 
   const cleanWa = whatsapp.trim();
-  const existing = findCustomerByIdentifier(cleanWa);
+  const existing = await findCustomerByIdentifier(cleanWa);
   if (existing) {
     throw new Error(`Nomor WhatsApp ${cleanWa} sudah terdaftar dengan nama ${existing.name}. Silakan langsung masuk.`);
   }
 
-  const customers = getAllCustomers();
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
@@ -202,34 +211,36 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
     registeredVia: registeredVia
   };
 
-  // 1. Simpan ke PostgreSQL jika terhubung
+  // 1. Simpan ke PostgreSQL jika terhubung (Await Realtime)
   if (db.isDbConnected()) {
-    db.query(`
-      INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        email = EXCLUDED.email,
-        district = EXCLUDED.district,
-        raw_data = EXCLUDED.raw_data
-    `, [
-      newCust.id,
-      newCust.name,
-      newCust.whatsapp,
-      newCust.email,
-      newCust.district,
-      newCust.pin,
-      newCust.registeredAt,
-      newCust.registeredVia,
-      JSON.stringify(newCust)
-    ], 'customers').catch(err => {
+    try {
+      await db.query(`
+        INSERT INTO customers (id, name, whatsapp, email, district, pin, registered_at, registered_via, raw_data)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          email = EXCLUDED.email,
+          district = EXCLUDED.district,
+          raw_data = EXCLUDED.raw_data
+      `, [
+        newCust.id,
+        newCust.name,
+        newCust.whatsapp,
+        newCust.email,
+        newCust.district,
+        newCust.pin,
+        newCust.registeredAt,
+        newCust.registeredVia,
+        JSON.stringify(newCust)
+      ], 'customers');
+    } catch (err) {
       console.warn('[CustomerService] PostgreSQL insert customer warning:', err.message);
-    });
+    }
   }
 
   // Catat aktivitas registrasi pelanggan
   try {
-    db.logActivity('CUSTOMER_REGISTER', 'customers', newCust.id, {
+    await db.logActivity('CUSTOMER_REGISTER', 'customers', newCust.id, {
       name: newCust.name,
       whatsapp: newCust.whatsapp,
       district: newCust.district,
@@ -237,19 +248,22 @@ function registerNewCustomer({ name, whatsapp, email = '', district = 'Klojen, K
     });
   } catch (_) {}
 
-  // 2. Simpan ke lokal
-  customers.push(newCust);
-  saveCustomers(customers);
+  // 2. Simpan cadangan ke file lokal jika diperbolehkan
+  try {
+    const customers = getLocalCustomers();
+    customers.push(newCust);
+    saveCustomers(customers);
+  } catch (_) {}
 
   return newCust;
 }
 
 /**
- * Pastikan akun pelanggan tersedia (otomatis dibuat jika belum ada)
+ * Pastikan akun pelanggan tersedia secara Realtime (otomatis dibuat jika belum ada)
  */
-function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', registeredVia = 'Sistem Servis', referredByMitra = '' }) {
+async function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen, Kota Malang', pin = '123456', registeredVia = 'Sistem Servis', referredByMitra = '' }) {
   if (!whatsapp) return null;
-  const existing = findCustomerByIdentifier(whatsapp);
+  const existing = await findCustomerByIdentifier(whatsapp);
   if (existing) {
     let changed = false;
     if (email && !existing.email) {
@@ -265,18 +279,27 @@ function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen,
       changed = true;
     }
     if (changed) {
-      const customers = getAllCustomers();
-      const idx = customers.findIndex(c => c.id === existing.id);
-      if (idx !== -1) {
-        customers[idx] = existing;
-        saveCustomers(customers);
+      if (db.isDbConnected()) {
+        try {
+          await db.query(`
+            UPDATE customers SET email = $1, district = $2, raw_data = $3 WHERE id = $4
+          `, [existing.email, existing.district, JSON.stringify(existing), existing.id]);
+        } catch (_) {}
       }
+      try {
+        const customers = getLocalCustomers();
+        const idx = customers.findIndex(c => c.id === existing.id);
+        if (idx !== -1) {
+          customers[idx] = existing;
+          saveCustomers(customers);
+        }
+      } catch (_) {}
     }
     return existing;
   }
 
   try {
-    return registerNewCustomer({
+    return await registerNewCustomer({
       name: name || 'Pelanggan Setia',
       whatsapp: whatsapp,
       email: email,
@@ -286,15 +309,18 @@ function ensureCustomerAccount({ name, whatsapp, email = '', district = 'Klojen,
       registeredVia: registeredVia
     });
   } catch (err) {
-    console.warn('[CustomerService] ensureCustomerAccount fallback:', err.message);
+    console.warn('[CustomerService] ensureCustomerAccount auto-register warning:', err.message);
     return null;
   }
 }
 
 module.exports = {
   getAllCustomers,
-  saveCustomers,
+  getAllCustomersAsync,
   findCustomerByIdentifier,
   registerNewCustomer,
-  ensureCustomerAccount
+  ensureCustomerAccount,
+  saveCustomers,
+  normalizePhone,
+  phonesMatch
 };

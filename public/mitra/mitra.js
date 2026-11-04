@@ -382,9 +382,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch(`${apiBase}/api/mitra/dashboard?ref=${encodeURIComponent(mitra.referralCode)}`);
       const json = await res.json();
       if (json.success) {
+        if (json.mitra) {
+          localStorage.setItem('ngalam_mitra_session', JSON.stringify(json.mitra));
+          dashMitraName.textContent = json.mitra.name;
+          dashCategory.textContent = `${json.mitra.category || 'Mitra Resmi'} • WA: ${json.mitra.phone || '-'}`;
+          dashRefCode.textContent = json.mitra.referralCode;
+        }
         if (json.stats) {
           dashTotalOrders.textContent = json.stats.totalOrders || 0;
-          dashTotalComm.textContent = 'Rp ' + Number(json.stats.totalCommission || mitra.totalCommission || 0).toLocaleString('id-ID');
+          dashTotalComm.textContent = 'Rp ' + Number(json.stats.totalCommission || (json.mitra && json.mitra.totalCommission) || mitra.totalCommission || 0).toLocaleString('id-ID');
           if (orderCountBadge) orderCountBadge.textContent = `${json.stats.totalOrders || 0} Unit`;
         }
 
