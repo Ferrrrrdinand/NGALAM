@@ -11,11 +11,9 @@ import Kontak from './pages/Kontak';
 import Mitra from './pages/Mitra';
 import CustomerLogin from './pages/CustomerLogin';
 import AdminLogin from './pages/AdminLogin';
-import TechnicianLogin from './pages/TechnicianLogin';
 
 // Dashboard berat dimuat terpisah agar halaman publik lebih cepat
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const TechnicianDashboard = lazy(() => import('./pages/TechnicianDashboard'));
 
 export default function App() {
   const location = useLocation();
@@ -57,15 +55,17 @@ export default function App() {
         <Route path="/login" element={<CustomerLogin />} />
       </Route>
 
-      {/* Staff Auth Portals (Dedicated Split-Screen) */}
+      {/* Single Admin Auth Portal */}
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/kasir/login" element={<AdminLogin />} />
-      <Route path="/teknisi/login" element={<TechnicianLogin />} />
 
-      {/* Staff & Workshop Dashboards (Full-Screen Workspace with Dedicated Sidebar & Topbar) */}
-      <Route path="/kasir" element={<AdminDashboard />} />
+      {/* Single Admin Workspace */}
       <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/teknisi" element={<TechnicianDashboard />} />
+
+      {/* Legacy staff portal URLs now use the single admin portal */}
+      <Route path="/kasir/login" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/teknisi/login" element={<Navigate to="/admin/login" replace />} />
+      <Route path="/kasir" element={<Navigate to="/admin" replace />} />
+      <Route path="/teknisi" element={<Navigate to="/admin" replace />} />
 
       {/* Catch-all redirect to Home */}
       <Route path="*" element={<Navigate to="/" replace />} />

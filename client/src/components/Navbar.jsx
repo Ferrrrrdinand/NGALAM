@@ -169,7 +169,7 @@ export default function Navbar() {
               <div className="nav-dropdown-divider"></div>
 
               <div className="nav-dropdown-section">
-                <span className="nav-dropdown-subtitle" style={{ color: '#000000', fontWeight: 800 }}>PORTAL MITRA & OWNER/ADMIN</span>
+                <span className="nav-dropdown-subtitle" style={{ color: '#000000', fontWeight: 800 }}>PORTAL MITRA & ADMIN</span>
                 <Link 
                   to="/mitra" 
                   onClick={() => setMobileMenuOpen(false)}
@@ -195,8 +195,8 @@ export default function Navbar() {
                     <ShieldCheck className="w-4 h-4 text-rose-600" />
                   </span>
                   <div className="nav-dropdown-item-text">
-                    <strong style={{ color: '#e11d48' }}>Portal Owner & Admin</strong>
-                    <small style={{ color: '#000000' }}>Akses terpadu: Kasir Meja & Lab Teknisi</small>
+                    <strong style={{ color: '#e11d48' }}>Portal Admin</strong>
+                    <small style={{ color: '#000000' }}>Kelola operasional workshop</small>
                   </div>
                 </Link>
               </div>

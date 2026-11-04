@@ -26,6 +26,9 @@ export default function CustomerLogin() {
   const [rememberMe, setRememberMe] = useState(true);
 
   const [loading, setLoading] = useState(false);
+  const [googleAuthPending, setGoogleAuthPending] = useState(() => (
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('auth') === 'google'
+  ));
   const [errorMsg, setErrorMsg] = useState('');
   const { customer, loginCustomer, logoutCustomer } = useAuth();
 
@@ -47,6 +50,7 @@ export default function CustomerLogin() {
         server_error: 'Terjadi kesalahan server saat login Google.'
       };
       setErrorMsg(messages[oauthError] || `Login Google gagal: ${oauthError}`);
+      setGoogleAuthPending(false);
       return;
     }
 
@@ -62,7 +66,10 @@ export default function CustomerLogin() {
           }
         })
         .catch(() => setErrorMsg('Gagal memuat sesi Google.'))
-        .finally(() => setLoading(false));
+        .finally(() => {
+          setLoading(false);
+          setGoogleAuthPending(false);
+        });
     } else if (mode === 'register') {
       setTab('register');
     }
@@ -142,6 +149,22 @@ export default function CustomerLogin() {
   };
 
   const needsPhone = customer && (!customer.whatsapp || customer.needsPhone === true);
+
+  if (googleAuthPending) {
+    return (
+      <div className="wrap" style={{ maxWidth: '520px', marginTop: '60px', marginBottom: '80px' }}>
+        <div className="card" style={{ padding: '36px', borderRadius: '24px', textAlign: 'center' }}>
+          <User className="w-8 h-8 text-emerald-600" style={{ margin: '0 auto 12px' }} />
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#000000', marginBottom: '8px' }}>
+            Menghubungkan Akun Google
+          </h2>
+          <p style={{ color: '#64748b', fontSize: '0.86rem', margin: 0 }}>
+            Memeriksa sesi pelanggan dan status nomor WhatsApp...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (customer && !needsPhone) {
     return (

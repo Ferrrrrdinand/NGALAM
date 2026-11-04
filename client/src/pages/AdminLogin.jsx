@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   ShieldCheck, Lock, User, AlertCircle,
   Maximize2, Minimize2, ArrowLeft, Eye, EyeOff,
-  Users, Shield, Zap, Building2, LogIn, Wrench
+  Shield, Zap, Building2, LogIn
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './AdminLogin.css';
@@ -96,13 +96,13 @@ export default function AdminLogin() {
                 </small>
               </div>
             </Link>
-            <span className="showcase-badge">SUPER ADMIN &amp; OWNER</span>
+            <span className="showcase-badge">AKSES ADMIN</span>
           </div>
 
           {/* Hero Headline */}
           <div className="eyebrow-pill" style={{ marginBottom: '14px', background: '#fffdf5', border: '1.5px solid #d4af37', color: '#000000', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 800 }}>
             <ShieldCheck className="w-4 h-4 text-amber-700" />
-            <span>PUSAT KENDALI SUPER ADMIN &amp; OWNER</span>
+            <span>PUSAT KENDALI ADMIN WORKSHOP</span>
           </div>
 
           <h1 className="showcase-hero-title">
@@ -111,32 +111,19 @@ export default function AdminLogin() {
           </h1>
 
           <p className="showcase-desc">
-            Kelola pembukuan kas besar, analitik omset, master data teknisi lab, pengaturan sistem, dan pengawasan operasional servis HP Ngalam Fix Pro.
+            Kelola data servis, pembayaran, promosi, laporan, dan seluruh operasional workshop Ngalam Fix Pro dari satu akun admin.
           </p>
 
           {/* Role Highlights */}
           <div className="showcase-cards">
-            {/* Unified Lab & Front Desk Banner */}
-            <div className="showcase-card" style={{ background: '#f0f9ff', border: '1.5px solid #bae6fd' }}>
-              <div className="showcase-card-icon" style={{ background: '#e0f2fe', color: '#0284c7', border: '1.5px solid #7dd3fc' }}>
-                <Users className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="showcase-card-title" style={{ color: '#0369a1' }}>Petugas Kasir &amp; Front Desk Meja 1</div>
-                <p className="showcase-card-text" style={{ color: '#0c4a6e' }}>
-                  Sistem Kasir POS &amp; Penerimaan Unit Walk-in kini terpadu langsung ke akun pimpinan workshop.
-                </p>
-              </div>
-            </div>
-
             <div className="showcase-card">
               <div className="showcase-card-icon" style={{ background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', borderColor: '#fde68a', color: '#b45309' }}>
                 <Shield className="w-6 h-6" />
               </div>
               <div>
-                <div className="showcase-card-title">Admin &amp; Workshop Super User</div>
+                <div className="showcase-card-title">Akses Admin Tunggal</div>
                 <p className="showcase-card-text">
-                  Akses kontrol penuh seluruh sistem, pembukuan kas besar/omset, banner promosi, dan database teknisi.
+                  Satu akun admin mengelola seluruh operasional workshop dari intake unit hingga laporan.
                 </p>
               </div>
             </div>
@@ -163,7 +150,7 @@ export default function AdminLogin() {
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
             <Zap className="w-3.5 h-3.5 text-amber-500" />
-            Dual-Role Session Guard
+            Sesi Admin Terlindungi
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
             <Building2 className="w-3.5 h-3.5 text-blue-500" />
@@ -294,12 +281,7 @@ export default function AdminLogin() {
 
           <div className="auth-bottom-links">
             <div>
-              <span>Butuh akses lab? </span>
-              <Link to="/teknisi/login" style={{ color: '#0f172a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Wrench className="w-3.5 h-3.5 text-amber-700" />
-                <span>Login Teknisi</span>
-              </Link>
-              <span> atau </span>
+              <span>Butuh cek status unit? </span>
               <Link to="/lacak" style={{ color: '#0f172a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
                 <span>Lacak Servis Pelanggan</span>

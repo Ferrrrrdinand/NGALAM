@@ -56,7 +56,7 @@ export default function Footer() {
           </Link>
           <Link to="/admin/login" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
             <ShieldCheck style={{ width: '14px', height: '14px', color: '#f59e0b' }} />
-            <span>Portal Owner &amp; Admin (Kasir &amp; Lab)</span>
+            <span>Portal Admin Workshop</span>
           </Link>
           <Link to="/kontak">Kebijakan Garansi 90 Hari</Link>
         </div>

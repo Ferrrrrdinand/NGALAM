@@ -14,6 +14,9 @@ export default function Mitra() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null); // { type: 'success' | 'error', message: '' }
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleAuthPending, setGoogleAuthPending] = useState(() => (
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('auth') === 'google'
+  ));
   const [needsPhone, setNeedsPhone] = useState(false);
   const [profilePhone, setProfilePhone] = useState('');
   const [phoneLoading, setPhoneLoading] = useState(false);
@@ -44,6 +47,8 @@ export default function Mitra() {
 
   // Check stored session on mount
   useEffect(() => {
+    const isGoogleCallback = new URLSearchParams(window.location.search).get('auth') === 'google';
+    if (isGoogleCallback) return;
     try {
       const stored = localStorage.getItem('ngalam_mitra_session') || sessionStorage.getItem('ngalam_mitra_session');
       if (stored) {
@@ -63,7 +68,6 @@ export default function Mitra() {
     const oauthError = params.get('error');
     if (oauthError) {
       const messages = {
-        customer_account_exists: 'Email ini sudah terdaftar sebagai pelanggan. Gunakan email lain untuk akun mitra.',
         staff_account_exists: 'Email ini terdaftar sebagai akun staf. Gunakan email lain.',
         google_not_configured: 'Login Google belum dikonfigurasi di server.',
         invalid_state: 'Sesi login Google tidak valid. Silakan coba lagi.',
@@ -71,6 +75,7 @@ export default function Mitra() {
         profile_fetch_failed: 'Gagal mengambil profil Google.'
       };
       setAlert({ type: 'error', message: messages[oauthError] || `Login Google gagal: ${oauthError}` });
+      setGoogleAuthPending(false);
       window.history.replaceState({}, '', '/mitra');
       return;
     }
@@ -94,6 +99,7 @@ export default function Mitra() {
       .catch(() => setAlert({ type: 'error', message: 'Gagal memulihkan sesi Google.' }))
       .finally(() => {
         setGoogleLoading(false);
+        setGoogleAuthPending(false);
         window.history.replaceState({}, '', '/mitra');
       });
   }, []);
@@ -254,7 +260,19 @@ export default function Mitra() {
 
   return (
     <main className="mitra-container">
-      {needsPhone ? (
+      {googleAuthPending ? (
+        <div style={{ maxWidth: '520px', margin: '0 auto' }}>
+          <div className="mitra-card" style={{ textAlign: 'center', padding: '36px 24px' }}>
+            <Sparkles className="w-8 h-8 text-emerald-600" style={{ margin: '0 auto 12px' }} />
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 8px', color: '#000000' }}>
+              Menghubungkan Akun Google
+            </h2>
+            <p style={{ fontSize: '0.86rem', color: '#475569', margin: 0 }}>
+              Memeriksa sesi mitra dan status nomor WhatsApp...
+            </p>
+          </div>
+        </div>
+      ) : needsPhone ? (
         <div style={{ maxWidth: '520px', margin: '0 auto' }}>
           <div className="mitra-card">
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 8px', color: '#000000' }}>

@@ -812,11 +812,10 @@ router.get('/auth/google/callback', async (req, res) => {
     if (!profileRes.ok || !profile.email) return failRedirect('profile_fetch_failed');
 
     const profileEmail = normalizeEmail(profile.email);
-    const existingCustomer = findCustomerByEmail(profileEmail);
     await userService.refreshUsersFromDb();
     const linkedUser = userService.findUser(profileEmail);
 
-    if (!existingCustomer && linkedUser) {
+    if (linkedUser) {
       if (!isMitraRole(linkedUser.role)) {
         return failRedirect('staff_account_exists');
       }

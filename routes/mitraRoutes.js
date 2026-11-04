@@ -269,19 +269,22 @@ router.get('/auth/google/callback', async (req, res) => {
     if (!profileRes.ok || !profile.email) return failRedirect('profile_fetch_failed');
 
     const profileEmail = normalizeEmail(profile.email);
-    const users = readUsers();
+    await userService.refreshUsersFromDb();
+    let users = readUsers();
     let mitra = findMitraByGoogle(users, profile);
     if (!mitra) {
-      await refreshCustomersFromDb();
-      await userService.refreshUsersFromDb();
-      if (findCustomerByEmail(profileEmail)) {
-        return failRedirect('customer_account_exists');
-      }
       const linkedUser = userService.findUser(profileEmail);
-      if (linkedUser && !['mitra', 'ojol', 'kurir'].includes(String(linkedUser.role || '').toLowerCase())) {
+      const linkedIsMitra = linkedUser && ['mitra', 'ojol', 'kurir'].includes(String(linkedUser.role || '').toLowerCase());
+      if (linkedUser && !linkedIsMitra) {
         return failRedirect('staff_account_exists');
       }
-      mitra = await createMitraFromGoogle(users, profile);
+      if (linkedIsMitra) {
+        users = readUsers();
+        mitra = users.find((user) => String(user.id || '') === String(linkedUser.id || '')) || findMitraByGoogle(users, profile);
+      }
+      if (!mitra) {
+        mitra = await createMitraFromGoogle(users, profile);
+      }
     } else if (!mitra.googleId) {
       mitra.googleId = String(profile.sub || '');
       mitra.authProvider = mitra.authProvider || 'google';

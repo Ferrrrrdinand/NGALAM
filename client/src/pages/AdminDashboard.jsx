@@ -4,8 +4,7 @@ import {
   ShieldCheck, Wrench, RefreshCw, 
   LogOut, Plus, 
   Database, Users, Banknote, Menu,
-  ClipboardList, History, Gift,
-  ExternalLink
+  ClipboardList, History, Gift
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { fetchApi } from "../utils/api";
@@ -55,7 +54,7 @@ export default function AdminDashboard() {
     phoneType: 'iPhone 11',
     damage: '',
     estimatedCost: 200000,
-    technician: 'Ferdinand (Owner & Super Admin)'
+    technician: 'Admin Workshop'
   });
   const [walkinSuccess, setWalkinSuccess] = useState('');
 
@@ -144,7 +143,7 @@ export default function AdminDashboard() {
           phoneType: 'iPhone 11',
           damage: '',
           estimatedCost: 200000,
-          technician: 'Ferdinand (Teknisi Lab Workshop)'
+          technician: 'Admin Workshop'
         });
         loadData();
         setTimeout(() => setWalkinSuccess(''), 5000);
@@ -161,7 +160,7 @@ export default function AdminDashboard() {
         body: {
           currentStep: newStep,
           statusText: statusText,
-          technician: user?.name || user?.username || 'Ferdinand (Owner & Super Admin)'
+          technician: user?.name || user?.username || 'Admin Workshop'
         }
       });
       if (res.ok && res.data.success) {
@@ -213,7 +212,7 @@ export default function AdminDashboard() {
         body: {
           referralCode: payoutModalMitra.referralCode,
           amount: amt,
-          note: `Pencairan tunai oleh kasir ${user?.name || user?.username || 'Kasir Meja 1'}`
+          note: `Pencairan tunai oleh kasir ${user?.name || user?.username || 'Admin Workshop'}`
         }
       });
       if (res.ok && res.data.success) {
@@ -245,7 +244,7 @@ export default function AdminDashboard() {
           paymentMethod: paymentForm.paymentMethod,
           paymentNotes: paymentForm.notes,
           currentStep: 5,
-          statusText: 'Pembayaran Lunas di Kasir Meja 1'
+          statusText: 'Pembayaran Lunas di Admin Workshop'
         }
       });
 
@@ -262,7 +261,7 @@ export default function AdminDashboard() {
           totalPaid: finalCost,
           paymentMethod: paymentForm.paymentMethod,
           notes: paymentForm.notes,
-          cashier: user?.name || user?.username || 'Kasir Meja 1'
+          cashier: user?.name || user?.username || 'Admin Workshop'
         }
       });
 
@@ -275,7 +274,7 @@ export default function AdminDashboard() {
           phoneType: paymentOrder.phoneType,
           totalPaid: finalCost,
           paymentMethod: paymentForm.paymentMethod,
-          cashier: user?.name || 'Kasir Meja 1',
+          cashier: user?.name || 'Admin Workshop',
           createdAt: new Date().toISOString()
         };
 
@@ -406,15 +405,6 @@ export default function AdminDashboard() {
             );
           })}
 
-          <div className="mt-auto pt-3 border-t border-slate-800/80">
-            <Link
-              to="/teknisi"
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 border border-cyan-500/20 transition-all"
-            >
-              <ExternalLink className="w-4 h-4 shrink-0" />
-              <span>Portal Meja Teknisi</span>
-            </Link>
-          </div>
         </nav>
 
         {/* User Card & Logout */}
