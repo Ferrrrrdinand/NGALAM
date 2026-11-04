@@ -17,7 +17,6 @@ credentials.json
 
 # Data Runtime Lokal & Data Akun Rahasia
 data/sessions.json
-data/users.json
 data/technician_logs.json
 
 # Logs

@@ -403,7 +403,7 @@
       </button>
       <button type="button" class="admin-nav-tab" data-tab="activity-logs" id="activityLogsTabBtn">
         <span style="font-size: 1.05rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
-        <span>Audit Log & Neon Sync</span>
+        <span>Audit Log & Database Sync</span>
         <span id="activityLogBadge" class="nav-tab-badge" style="background: rgba(124, 58, 237, 0.15); color: #7c3aed; border-color: rgba(124, 58, 237, 0.3);">Dual Sync</span>
       </button>
       <a href="../teknisi/index.html" class="admin-nav-tab" style="margin-left: auto; text-decoration: none; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25);">
@@ -1481,7 +1481,7 @@
         <div class="card" style="background: #ffffff; border: 1px solid #fde68a; border-radius: 14px; padding: 18px;">
           <span style="color: #d97706; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Database Mitra</span>
           <div style="font-size: 1.8rem; font-weight: 800; color: #d97706; margin: 4px 0;">Tersimpan</div>
-          <small style="color: #000000; font-size: 0.76rem;">Penyimpanan: data/users_mitra.json (.env ready)</small>
+          <small style="color: #000000; font-size: 0.76rem;">Penyimpanan: tabel users PostgreSQL / Supabase</small>
         </div>
       </div>
 
@@ -1511,7 +1511,7 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- TAB 8: AUDIT LOG AKTIVITAS & NEON CLOUD DUAL SYNC -->
+    <!-- TAB 8: AUDIT LOG AKTIVITAS & POSTGRESQL CLOUD DUAL SYNC -->
     <!-- ============================================== -->
     <div class="admin-tab-panel" id="tab-activity-logs">
       <div class="card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
@@ -1519,18 +1519,18 @@
           <div>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
               <span style="font-size: 1.6rem;"><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></span>
-              <h2 style="font-size: 1.35rem; color: #0f172a; margin: 0; font-weight: 800;">Audit Log Aktivitas &amp; Neon Dual-Sync</h2>
+              <h2 style="font-size: 1.35rem; color: #0f172a; margin: 0; font-weight: 800;">Audit Log Aktivitas &amp; PostgreSQL Dual-Sync</h2>
               <span style="background: #ede9fe; color: #7c3aed; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1px solid #ddd6fe;">REAL-TIME</span>
             </div>
             <p style="color: #64748b; font-size: 0.88rem; margin: 0; max-width: 780px;">
-              Memantau seluruh jejak aktivitas pengguna, pendaftaran akun baru, pembaruan status teknisi, login, dan transaksi. Seluruh data otomatis disinkronisasi ke <strong>Neon PostgreSQL Cloud</strong> dan file lokal di <strong>data/</strong>.
+              Memantau seluruh jejak aktivitas pengguna, pendaftaran akun baru, pembaruan status teknisi, login, dan transaksi. Seluruh data otomatis disinkronisasi ke <strong>PostgreSQL / Supabase Cloud</strong> dan file lokal di <strong>data/</strong>.
             </p>
           </div>
 
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <button type="button" class="btn small" id="btnTriggerNeonSync" style="background: linear-gradient(135deg, #059669, #047857); color: #ffffff; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5,150,105,0.25);">
+            <button type="button" class="btn small" id="btnTriggerDatabaseSync" style="background: linear-gradient(135deg, #059669, #047857); color: #ffffff; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5,150,105,0.25);">
               <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-              <span>Sinkronkan ke Neon Cloud Sekarang</span>
+              <span>Sinkronkan ke PostgreSQL Sekarang</span>
             </button>
             <button type="button" class="btn small outline darkoutline" id="btnRefreshActivityLogs" style="border-radius: 10px; display: inline-flex; align-items: center; gap: 6px;">
               <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg></span>
@@ -1540,12 +1540,12 @@
         </div>
 
         <!-- Sync & Database Status Banner -->
-        <div id="neonSyncStatusBanner" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+        <div id="databaseSyncStatusBanner" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.4rem;" id="neonStatusDot"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span></span>
+            <span style="font-size: 1.4rem;" id="databaseStatusDot"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span></span>
             <div>
-              <strong style="color: #0f172a; font-size: 0.92rem; display: block;" id="neonStatusTitle">Dual-Storage Siaga (Neon PostgreSQL &amp; data/)</strong>
-              <small style="color: #64748b; font-size: 0.8rem;" id="neonStatusSubtitle">Setiap perubahan akun staf dan pelanggan otomatis tersimpan di 2 lokasi secara bersamaan.</small>
+              <strong style="color: #0f172a; font-size: 0.92rem; display: block;" id="databaseStatusTitle">Dual-Storage Siaga (PostgreSQL / Supabase &amp; data/)</strong>
+              <small style="color: #64748b; font-size: 0.8rem;" id="databaseStatusSubtitle">Setiap perubahan akun staf dan pelanggan otomatis tersimpan di 2 lokasi secara bersamaan.</small>
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -1762,7 +1762,7 @@
             <div style="padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
               <div>
                 <strong style="font-size: 0.88rem; color: #000000;">3. Tabel Users Terpisah (Admin, Teknisi & Mitra)</strong>
-                <div style="font-size: 0.78rem; color: #000000;">users_admin.json, users_teknisi.json, users_mitra.json • Terkoneksi via .env</div>
+                <div style="font-size: 0.78rem; color: #000000;">Tabel users PostgreSQL / Supabase • admin, kasir, teknisi, mitra</div>
               </div>
               <span style="font-size: 0.76rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 3px 8px; border-radius: 6px;">Aktif</span>
             </div>

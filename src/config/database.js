@@ -8,11 +8,11 @@ require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const { Sequelize } = require('sequelize');
 
 const databaseUrl = process.env.DATABASE_URL || '';
-const isNeonOrSsl = /neon\.tech|supabase\.(co|com)/i.test(databaseUrl) || databaseUrl.includes('sslmode=require') || process.env.PG_SSL === 'true';
+const isSslConnection = /supabase\.(co|com)/i.test(databaseUrl) || databaseUrl.includes('sslmode=require') || process.env.PG_SSL === 'true';
 
 function makeDialectOptions() {
   return {
-    ssl: isNeonOrSsl ? { require: true, rejectUnauthorized: false } : false
+    ssl: isSslConnection ? { require: true, rejectUnauthorized: false } : false
   };
 }
 

@@ -41,15 +41,15 @@ function createPool() {
       // Keep defaults
     }
 
-    const isNeonOrSsl =
-      /neon\.tech|supabase\.(co|com)/i.test(connectionString) ||
+    const isSslConnection =
+      /supabase\.(co|com)/i.test(connectionString) ||
       connectionString.includes('sslmode=require') ||
       process.env.PG_SSL === 'true';
 
     return new Pool({
       connectionString: connectionString,
-      ssl: isNeonOrSsl ? { rejectUnauthorized: false } : undefined,
-      connectionTimeoutMillis: 5000,
+      ssl: isSslConnection ? { rejectUnauthorized: false } : undefined,
+      connectionTimeoutMillis: 15000,
       idleTimeoutMillis: 10000,
       max: 10
     });
@@ -64,7 +64,7 @@ function createPool() {
     user: process.env.PGUSER || 'postgres',
     password: process.env.PGPASSWORD || '',
     ssl: isSslLocal ? { rejectUnauthorized: false } : undefined,
-    connectionTimeoutMillis: 5000,
+    connectionTimeoutMillis: 15000,
     idleTimeoutMillis: 10000,
     max: 10
   });

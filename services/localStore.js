@@ -1,4 +1,4 @@
-// Local JSON storage for quick offline access and sync with Neon PostgreSQL
+// Local JSON storage for quick offline access and sync with PostgreSQL
 // Data is stored under the project root "data" folder.
 // Each table gets its own JSON file (e.g., data/users.json, data/customers.json, data/activity_logs.json).
 

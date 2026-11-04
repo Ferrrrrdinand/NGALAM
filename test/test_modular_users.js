@@ -9,19 +9,18 @@ const technicianService = require('../services/technicianService');
 const financeService = require('../services/financeService');
 
 async function runTests() {
-  console.log('=== TEST 1: Check File Details & .env Connection ===');
-  const details = userService.getUserFileDetails();
+  console.log('=== TEST 1: Check PostgreSQL users table connection ===');
+  await userService.refreshUsersFromDb(true);
+  const details = userService.getUserTableDetails();
   console.log('Details:', JSON.stringify(details, null, 2));
 
-  assert.strictEqual(details.admin.envVar, 'USERS_ADMIN_FILE');
-  assert.strictEqual(details.teknisi.envVar, 'USERS_TEKNISI_FILE');
-  assert.strictEqual(details.mitra.envVar, 'USERS_MITRA_FILE');
-  assert.strictEqual(details.admin.exists, true);
-  assert.strictEqual(details.teknisi.exists, true);
-  assert.strictEqual(details.mitra.exists, true);
-  console.log('-> TEST 1 PASSED: All 3 user files exist and match .env variables!\n');
+  assert.strictEqual(details.admin.table, 'users');
+  assert.strictEqual(details.teknisi.table, 'users');
+  assert.strictEqual(details.mitra.table, 'users');
+  assert.strictEqual(details.admin.connected, true);
+  console.log('-> TEST 1 PASSED: Admin, kasir, teknisi, and mitra are served from the users table!\n');
 
-  console.log('=== TEST 2: Verify File Segregation ===');
+  console.log('=== TEST 2: Verify Role Buckets ===');
   const admins = userService.getAdminUsers();
   const techs = userService.getTeknisiUsers();
   const mitras = userService.getMitraUsers();
@@ -42,7 +41,7 @@ async function runTests() {
   mitras.forEach(m => {
     assert(['ojol', 'mitra', 'kurir'].includes(m.role), `Expected mitra role, got ${m.role}`);
   });
-  console.log('-> TEST 2 PASSED: Each user category strictly resides in its own file!\n');
+  console.log('-> TEST 2 PASSED: Each user category is filtered by role from the users table!\n');
 
   console.log('=== TEST 3: Login Across All 3 Roles ===');
   // 1. Admin Login
@@ -81,38 +80,39 @@ async function runTests() {
   });
   assert.strictEqual(mitraLogin.success, true);
   console.log('Mitra login OK:', mitraLogin.user.name);
-  console.log('-> TEST 3 PASSED: Authentication seamlessly resolves users from their separate files!\n');
+  console.log('-> TEST 3 PASSED: Authentication resolves users from the PostgreSQL users table!\n');
 
-  console.log('=== TEST 4: Technician Live Status Update (writes to users_teknisi.json) ===');
-  const updatedTech = technicianService.setTechnicianOnline('rian');
+  console.log('=== TEST 4: Technician Live Status Update (writes to users table) ===');
+  const updatedTech = await technicianService.setTechnicianOnline('rian');
   assert.strictEqual(updatedTech.onlineStatus, 'online');
-  // Verify users_teknisi.json contains updated status
-  const freshTechs = JSON.parse(fs.readFileSync(userService.FILE_PATHS.teknisi, 'utf-8'));
-  const rianInFile = freshTechs.find(t => t.username === 'rian');
-  assert.strictEqual(rianInFile.onlineStatus, 'online');
-  console.log('-> TEST 4 PASSED: Technician status update wrote strictly to users_teknisi.json!\n');
+  await userService.refreshUsersFromDb(true);
+  const rianInDb = userService.getTeknisiUsers().find(t => t.username === 'rian');
+  assert.strictEqual(rianInDb.onlineStatus, 'online');
+  await technicianService.setTechnicianOffline('rian');
+  console.log('-> TEST 4 PASSED: Technician status update persisted to the users table!\n');
 
-  console.log('=== TEST 5: Mitra Commission Recording (writes to users_mitra.json) ===');
-  const initialCommission = mitras.find(m => m.username === 'mitra_demo').totalCommission || 0;
+  console.log('=== TEST 5: Mitra Commission Recording (writes to users table) ===');
+  await userService.refreshUsersFromDb(true);
+  const initialCommission = userService.getMitraUsers().find(m => m.username === 'mitra_demo').totalCommission || 0;
   const commResult = await financeService.recordMitraCommission('MTR-DEMO-001', 25000);
   assert.strictEqual(commResult.success, true);
-  const freshMitras = JSON.parse(fs.readFileSync(userService.FILE_PATHS.mitra, 'utf-8'));
-  const demoMitraInFile = freshMitras.find(m => m.username === 'mitra_demo');
-  assert.strictEqual(demoMitraInFile.totalCommission, initialCommission + 25000);
-  console.log(`Mitra commission updated from ${initialCommission} to ${demoMitraInFile.totalCommission}`);
-  // Reset commission back for clean state
-  demoMitraInFile.totalCommission = initialCommission;
-  userService.saveMitraUsers(freshMitras);
-  console.log('-> TEST 5 PASSED: Mitra commission wrote strictly to users_mitra.json!\n');
+  await userService.refreshUsersFromDb(true);
+  const freshMitras = userService.getMitraUsers();
+  const demoMitraInDb = freshMitras.find(m => m.username === 'mitra_demo');
+  assert.strictEqual(demoMitraInDb.totalCommission, initialCommission + 25000);
+  console.log(`Mitra commission updated from ${initialCommission} to ${demoMitraInDb.totalCommission}`);
+  demoMitraInDb.totalCommission = initialCommission;
+  demoMitraInDb.balance = Math.max(0, (demoMitraInDb.balance || 0) - 25000);
+  await userService.saveMitraUsers(freshMitras);
+  console.log('-> TEST 5 PASSED: Mitra commission persisted to the users table!\n');
 
-  console.log('=== TEST 6: Legacy users.json Synchronization ===');
-  assert.strictEqual(fs.existsSync(userService.FILE_PATHS.legacy), true);
-  const legacyUsers = JSON.parse(fs.readFileSync(userService.FILE_PATHS.legacy, 'utf-8'));
-  assert(legacyUsers.length >= 7, `Expected at least 7 legacy users, got ${legacyUsers.length}`);
-  console.log('-> TEST 6 PASSED: Legacy data/users.json is kept in sync as a combined mirror!\n');
+  console.log('=== TEST 6: Combined User List ===');
+  const allUsers = userService.getAllUsers();
+  assert(allUsers.length >= 7, `Expected at least 7 users, got ${allUsers.length}`);
+  console.log(`-> TEST 6 PASSED: ${allUsers.length} users are available from PostgreSQL.\n`);
 
   console.log('=============================================');
-  console.log('🎉 ALL MODULAR USER FILE TESTS PASSED 100%! 🎉');
+  console.log('🎉 ALL MODULAR USER DATABASE TESTS PASSED 100%! 🎉');
   console.log('=============================================');
 }
 

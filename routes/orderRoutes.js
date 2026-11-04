@@ -160,7 +160,7 @@ async function handleUpdateOrder(req, res) {
 
     if (updates.step !== undefined || updates.currentStep !== undefined) {
       try {
-        handleOrderStepChange(updated, updates.step || updates.currentStep);
+        await handleOrderStepChange(updated, updates.step || updates.currentStep);
       } catch (syncErr) {
         console.warn('[OrderRoutes] Error syncing technician presence on step change:', syncErr.message);
       }

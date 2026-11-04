@@ -12,16 +12,16 @@ const { hashPassword } = require('../src/utils/security');
 const LOGS_FILE = path.join(__dirname, '..', 'data', 'technician_logs.json');
 
 /**
- * Load technician users from USERS_TEKNISI_FILE (.env)
+ * Load technician users from the PostgreSQL users table
  */
 function readUsers() {
   return userService.getTeknisiUsers();
 }
 
 /**
- * Write technician users safely to USERS_TEKNISI_FILE (.env)
+ * Persist technician users to the PostgreSQL users table
  */
-function writeUsers(users) {
+async function writeUsers(users) {
   return userService.saveTeknisiUsers(users);
 }
 
@@ -146,7 +146,7 @@ function findTechnician(identifier) {
 /**
  * Set technician status to ONLINE & STANDBY when they login
  */
-function setTechnicianOnline(identifier) {
+async function setTechnicianOnline(identifier) {
   const users = readUsers();
   const clean = (identifier || '').trim().toLowerCase();
   let updatedTech = null;
@@ -172,7 +172,7 @@ function setTechnicianOnline(identifier) {
   });
 
   if (updatedTech) {
-    writeUsers(users);
+    await writeUsers(users);
     addAuditLog({
       technicianName: updatedTech.name,
       username: updatedTech.username,
@@ -188,7 +188,7 @@ function setTechnicianOnline(identifier) {
 /**
  * Set technician status to OFFLINE when they logout
  */
-function setTechnicianOffline(identifier) {
+async function setTechnicianOffline(identifier) {
   const users = readUsers();
   const clean = (identifier || '').trim().toLowerCase();
   let updatedTech = null;
@@ -203,7 +203,7 @@ function setTechnicianOffline(identifier) {
   });
 
   if (updatedTech) {
-    writeUsers(users);
+    await writeUsers(users);
     addAuditLog({
       technicianName: updatedTech.name,
       username: updatedTech.username,
@@ -219,7 +219,7 @@ function setTechnicianOffline(identifier) {
 /**
  * Set technician status to "handled phone" when they work on a smartphone
  */
-function setTechnicianHandledPhone(identifier, jobDetails = {}) {
+async function setTechnicianHandledPhone(identifier, jobDetails = {}) {
   const users = readUsers();
   const clean = (identifier || '').trim().toLowerCase();
   let updatedTech = null;
@@ -264,7 +264,7 @@ function setTechnicianHandledPhone(identifier, jobDetails = {}) {
   }
 
   if (updatedTech) {
-    writeUsers(users);
+    await writeUsers(users);
     addAuditLog({
       technicianName: updatedTech.name,
       username: updatedTech.username,
@@ -280,7 +280,7 @@ function setTechnicianHandledPhone(identifier, jobDetails = {}) {
 /**
  * Set technician status to "standby" when repair is finished (Step 5)
  */
-function setTechnicianStandby(identifier, completedOrderInfo = null) {
+async function setTechnicianStandby(identifier, completedOrderInfo = null) {
   const users = readUsers();
   const clean = (identifier || '').trim().toLowerCase();
   let updatedTech = null;
@@ -315,7 +315,7 @@ function setTechnicianStandby(identifier, completedOrderInfo = null) {
   }
 
   if (updatedTech) {
-    writeUsers(users);
+    await writeUsers(users);
     const orderText = completedOrderInfo ? ` Tiket: ${completedOrderInfo.orderId || completedOrderInfo.id || '-'}` : '';
     addAuditLog({
       technicianName: updatedTech.name,
@@ -332,7 +332,7 @@ function setTechnicianStandby(identifier, completedOrderInfo = null) {
 /**
  * Auto-route order status update to matching technician
  */
-function handleOrderStepChange(order, newStep) {
+async function handleOrderStepChange(order, newStep) {
   if (!order) return;
   const techStr = (order.technician || '').toLowerCase();
   let matchedTechUsername = order.assignedTechnicianUsername ? order.assignedTechnicianUsername.toLowerCase() : null;
@@ -346,7 +346,7 @@ function handleOrderStepChange(order, newStep) {
   const stepNum = parseInt(newStep, 10);
   if (stepNum >= 2 && stepNum <= 4) {
     // Under active repair -> handled phone
-    setTechnicianHandledPhone(matchedTechUsername, {
+    await setTechnicianHandledPhone(matchedTechUsername, {
       orderId: order.id,
       phoneType: order.phoneType,
       customerName: order.customerName,
@@ -354,7 +354,7 @@ function handleOrderStepChange(order, newStep) {
     });
   } else if (stepNum >= 5) {
     // Finished -> standby
-    setTechnicianStandby(matchedTechUsername, {
+    await setTechnicianStandby(matchedTechUsername, {
       orderId: order.id,
       phoneType: order.phoneType
     });
@@ -431,7 +431,7 @@ async function createTechnician(payload = {}, { isAdmin = false } = {}) {
   };
 
   users.push(newTech);
-  writeUsers(users);
+  await writeUsers(users);
 
   // 5. Catat ke Audit Log
   const creatorLabel = isAdmin ? 'Akses Admin Panel' : 'Registrasi Mandiri (Kode Workshop)';
@@ -512,7 +512,7 @@ async function updateTechnician(idOrUsername, updates = {}) {
   }
 
   users[techIndex] = tech;
-  writeUsers(users);
+  await writeUsers(users);
 
   // Catat Audit Log
   addAuditLog({
@@ -564,7 +564,7 @@ async function deleteTechnician(idOrUsername) {
   }
 
   const newUsers = users.filter(u => u !== target);
-  writeUsers(newUsers);
+  await writeUsers(newUsers);
 
   // Catat Audit Log
   addAuditLog({

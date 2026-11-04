@@ -25,39 +25,8 @@ async function syncAll() {
   console.log('🔄 [Sequelize Sync] Memulai sinkronisasi data ke PostgreSQL...');
   const stats = {};
 
-  // 1. Sync Users
-  const adminUsers = readJson('users_admin.json');
-  const kasirUsers = readJson('users_kasir.json');
-  const techUsers = readJson('users_teknisi.json');
-  const mitraUsers = readJson('users_mitra.json');
-  const allUsers = [...adminUsers, ...kasirUsers, ...techUsers, ...mitraUsers];
-
-  let usersSynced = 0;
-  for (const u of allUsers) {
-    if (!u.id && !u.username) continue;
-    const id = u.id || `USR-${u.username}`;
-    await db.User.upsert({
-      id,
-      username: u.username || id,
-      password: u.password || '',
-      name: u.name || 'User',
-      role: u.role || 'kasir',
-      category: u.category || u.role || 'Staff',
-      avatar: u.avatar || '👤',
-      phone: u.phone || '',
-      email: u.email || '',
-      referral_code: u.referralCode || u.referral_code || '',
-      commission_rate: parseNumeric(u.commissionRate || u.commission_rate, 10),
-      total_commission: parseNumeric(u.totalCommission || u.total_commission, 0),
-      status: u.status || 'Siaga / Aktif',
-      last_active: u.lastActive || u.last_active || 'Baru Saja',
-      desk: u.desk || '',
-      specialty: u.specialty || '',
-      raw_data: u
-    });
-    usersSynced++;
-  }
-  stats.users = usersSynced;
+  // 1. Users are managed directly in the PostgreSQL users table (not from JSON files).
+  stats.users = 0;
 
   // 2. Sync Customers
   const customers = readJson('customers.json');

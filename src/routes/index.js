@@ -119,7 +119,7 @@ router.get('/database/status', async (req, res) => {  try {
     res.json({
       success: true,
       connected: true,
-      database: db.sequelize.config.database || 'neondb',
+      database: db.sequelize.config.database || 'postgres',
       mode: 'sequelize_postgresql',
       stats,
       message: `Terhubung ke database PostgreSQL via Sequelize ORM.`
@@ -137,12 +137,12 @@ router.get('/database/status', async (req, res) => {  try {
 
 // Database 2-way sync trigger endpoint
 const syncAll = require('../scripts/syncAll');
-router.all(['/database/sync', '/sync-neon'], async (req, res) => {
+router.all(['/database/sync', '/sync-database'], async (req, res) => {
   try {
     const stats = await syncAll();
     res.json({
       success: true,
-      message: 'Sinkronisasi seluruh data ke Neon PostgreSQL berhasil.',
+      message: 'Sinkronisasi seluruh data ke PostgreSQL berhasil.',
       stats
     });
   } catch (err) {
@@ -159,7 +159,7 @@ router.get('/activity-logs', async (req, res) => {
       limit: 100
     });
     if (dbLogs && dbLogs.length > 0) {
-      return res.json({ success: true, source: 'sequelize_neon', logs: dbLogs });
+      return res.json({ success: true, source: 'sequelize_postgresql', logs: dbLogs });
     }
   } catch (_) {}
   const localLogs = loadTable('activity_logs');

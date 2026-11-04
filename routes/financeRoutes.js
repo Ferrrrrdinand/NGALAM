@@ -53,30 +53,30 @@ router.get('/status', async (req, res) => {
         },
         usersAdmin: {
           name: 'Tabel Pengguna Admin & Kasir',
-          file: userService.getUserFileDetails().admin.path,
-          envVar: 'USERS_ADMIN_FILE',
-          count: userService.getUserFileDetails().admin.count,
-          connected: true,
+          table: 'users',
+          roles: userService.getUserTableDetails().admin.roles,
+          count: userService.getUserTableDetails().admin.count,
+          connected: userService.getUserTableDetails().admin.connected,
           mode: 'database',
-          message: 'Tersimpan aman terpisah (.env ready)'
+          message: 'Tersimpan di tabel users PostgreSQL/Supabase'
         },
         usersTeknisi: {
           name: 'Tabel Teknisi Lab Workshop',
-          file: userService.getUserFileDetails().teknisi.path,
-          envVar: 'USERS_TEKNISI_FILE',
-          count: userService.getUserFileDetails().teknisi.count,
-          connected: true,
+          table: 'users',
+          roles: userService.getUserTableDetails().teknisi.roles,
+          count: userService.getUserTableDetails().teknisi.count,
+          connected: userService.getUserTableDetails().teknisi.connected,
           mode: 'database',
-          message: 'Tersimpan aman terpisah (.env ready)'
+          message: 'Tersimpan di tabel users PostgreSQL/Supabase'
         },
         usersMitra: {
           name: 'Tabel Mitra Driver & Rekanan',
-          file: userService.getUserFileDetails().mitra.path,
-          envVar: 'USERS_MITRA_FILE',
-          count: userService.getUserFileDetails().mitra.count,
-          connected: true,
+          table: 'users',
+          roles: userService.getUserTableDetails().mitra.roles,
+          count: userService.getUserTableDetails().mitra.count,
+          connected: userService.getUserTableDetails().mitra.connected,
           mode: 'database',
-          message: 'Tersimpan aman terpisah (.env ready)'
+          message: 'Tersimpan di tabel users PostgreSQL/Supabase'
         },
         orders: {
           name: 'Tabel Antrian Tiket Servis (orders)',

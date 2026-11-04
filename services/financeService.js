@@ -394,7 +394,7 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
     });
 
     updatedMitra = mitras[mitraIdx];
-    userService.saveMitraUsers(mitras);
+    await userService.saveMitraUsers(mitras);
   }
 
   return {
@@ -441,7 +441,7 @@ async function payoutMitraCommission(refCode, amount = null, note = 'Pencairan k
     note
   });
 
-  userService.saveMitraUsers(mitras);
+  await userService.saveMitraUsers(mitras);
 
   return {
     success: true,

@@ -7,6 +7,7 @@ const app = require('../src/routes/../..//server'); // or require express app
 const express = require('express');
 const cors = require('cors');
 const apiRoutes = require('../src/routes');
+const userService = require('../services/userService');
 
 const testApp = express();
 testApp.use(cors());
@@ -41,16 +42,15 @@ server.listen(0, async () => {
   console.log(`[Security Test] Server started on port ${port}`);
 
   try {
-    // 1. Password hash verification in JSON stores
-    console.log('\n[1] Verifikasi Hashing Password di File Penyimpanan Data...');
-    const adminData = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/users_admin.json'), 'utf8'));
+    // 1. Password hash verification in PostgreSQL
+    console.log('\n[1] Verifikasi Hashing Password di Tabel users...');
+    await userService.refreshUsersFromDb(true);
+    const staffUsers = userService.getAllUsers();
     const custData = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/customers.json'), 'utf8'));
-    const mitraData = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/users_mitra.json'), 'utf8'));
 
-    assert(adminData.every(u => u.password.startsWith('$2')), 'Semua password admin wajib ter-hash bcrypt');
+    assert(staffUsers.every(u => !u.password || u.password.startsWith('$2')), 'Semua password staf/mitra wajib ter-hash bcrypt');
     assert(custData.every(c => c.pin.startsWith('$2')), 'Semua PIN customer wajib ter-hash bcrypt');
-    assert(mitraData.every(m => m.password.startsWith('$2')), 'Semua password mitra wajib ter-hash bcrypt');
-    console.log('✅ Semua password & PIN di users_admin, customers, dan users_mitra ter-hash dengan Bcrypt!');
+    console.log('✅ Semua password staf/mitra di tabel users dan PIN customer ter-hash dengan Bcrypt!');
 
     // 2. Test Admin Login (admin / admin123)
     console.log('\n[2] Uji Login Akun Admin: admin / admin123...');

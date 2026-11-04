@@ -18,8 +18,7 @@
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:seed": "sequelize-cli db:seed:all",
-    "db:sync": "node src/scripts/syncAll.js",
-    "db:pull": "node src/scripts/pullNeon.js"
+    "db:sync": "node src/scripts/syncAll.js"
   },
   "keywords": [
     "servis-hp",

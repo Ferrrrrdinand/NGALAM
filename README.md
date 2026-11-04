@@ -24,7 +24,7 @@ Platform Manajemen Workshop Servis Handphone & Gadget Modern (Kota Malang).
    - **Member Pelanggan**: Riwayat servis, garansi aktif, dan klaim promo.
 
 4. **Integrasi Database Hybrid (PostgreSQL & JSON File Storage)**
-   - Mendukung PostgreSQL cloud (Supabase, Neon, Railway, Aiven, atau VPS lokal).
+   - Mendukung PostgreSQL cloud (Supabase, Railway, Aiven, atau VPS lokal). Seluruh akun admin, kasir, teknisi, dan mitra disimpan di tabel `users`.
    - Fallback otomatis ke penyimpanan file JSON lokal jika PostgreSQL offline.
 
 ---
@@ -41,25 +41,22 @@ cp .env.example .env
 
 ### 2. Konfigurasi Variabel di `.env`
 ```env
-# Port Server
+# Port Server Lokal
 PORT=3000
-ADMIN_PORT=3001
 
-# Kode Referral Master Super Admin
-ADMIN_REFERRAL_CODE=NGALAM-SUPER-2026
+# Koneksi PostgreSQL/Supabase (gunakan Transaction Pooler port 6543 untuk Vercel)
+DATABASE_URL=postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+PG_SSL=true
 
-# Pemisahan File User Data
-USERS_ADMIN_FILE=data/users_admin.json
-USERS_TEKNISI_FILE=data/users_teknisi.json
-USERS_MITRA_FILE=data/users_mitra.json
+# JWT Production
+JWT_SECRET=<isi-dengan-secret-panjang-acak>
 
-# Koneksi Database PostgreSQL (Opsional / Recommended)
-DATABASE_URL=postgresql://postgres:password@localhost:5432/ngalam_fix_pro
-PGDATABASE=ngalam_fix_pro
-PGUSER=postgres
-PGPASSWORD=password
-PGHOST=localhost
-PGPORT=5432
+# Google OAuth
+APP_URL=https://domain-anda.com
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=https://domain-anda.com/api/customer/auth/google/callback
+GOOGLE_REDIRECT_URI_MITRA=https://domain-anda.com/api/mitra/auth/google/callback
 ```
 
 > **Catatan Keamanan Penting**:
@@ -93,7 +90,7 @@ node server.js
 Saat men-deploy ke cloud (seperti **Railway**, **Render**, **Heroku**, **Vercel**, atau **VPS**):
 1. Buka dashboard layanan hosting Anda.
 2. Masuk ke tab **Variables** / **Environment Variables**.
-3. Tambahkan variabel yang sama dengan file `.env` Anda (seperti `DATABASE_URL`, `ADMIN_REFERRAL_CODE`, `PORT`).
+3. Import file `.env` atau tambahkan variabel yang sama (`DATABASE_URL`, `PG_SSL`, `JWT_SECRET`, kredensial Google OAuth).
 4. Server hosting akan otomatis menyuntikkan variabel tersebut ke `process.env` saat aplikasi berjalan.
 
 ---

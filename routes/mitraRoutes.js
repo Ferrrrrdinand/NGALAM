@@ -175,8 +175,7 @@ async function createMitraFromGoogle(users, profile) {
     lastActive: `${dateStr}, Baru Terdaftar via Google`
   };
   users.push(mitra);
-  saveUsers(users);
-  await userService.syncUserToNeon(mitra, 'MITRA_GOOGLE_REGISTER').catch(() => {});
+  await saveUsers(users);
   return mitra;
 }
 
@@ -274,8 +273,7 @@ router.get('/auth/google/callback', async (req, res) => {
       mitra.googleId = String(profile.sub || '');
       mitra.authProvider = mitra.authProvider || 'google';
       if (!mitra.email) mitra.email = String(profile.email || '').trim().toLowerCase();
-      saveUsers(users);
-      await userService.syncUserToNeon(mitra, 'MITRA_GOOGLE_LINK').catch(() => {});
+      await saveUsers(users);
     }
 
     const jwtInfo = generateToken({
@@ -336,8 +334,7 @@ router.post('/auth/complete-profile', async (req, res) => {
 
     mitra.phone = phone;
     mitra.lastActive = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ', Profil Dilengkapi';
-    saveUsers(users);
-    await userService.syncUserToNeon(mitra, 'MITRA_PROFILE_COMPLETE').catch(() => {});
+    await saveUsers(users);
 
     res.json({
       success: true,
@@ -603,7 +600,7 @@ router.post('/register', async (req, res) => {
     };
 
     users.push(newMitra);
-    saveUsers(users);
+    await saveUsers(users);
 
     const details = buildMitraAffiliateDetails(req, refCode);
 

@@ -66,13 +66,13 @@ router.get('/me', (req, res) => {
 });
 
 // POST /api/auth/logout
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
   try {
     const authHeader = req.headers.authorization || '';
     const cookies = parseCookies(req);
     const token = authHeader.replace(/^Bearer\s+/i, '') || req.body.token || cookies.ngalam_token;
     const username = req.body.username || '';
-    logoutUser(token, username);
+    await logoutUser(token, username);
     res.setHeader('Set-Cookie', `ngalam_token=; Path=/; Max-Age=0; SameSite=Lax`);
     res.json({ success: true, message: 'Berhasil keluar dari akun.' });
   } catch (err) {
@@ -122,7 +122,7 @@ router.post('/register-admin', async (req, res) => {
         kasirUsers[existingKasirIndex].password = hashPassword(password.trim());
         if (email) kasirUsers[existingKasirIndex].email = email.trim().toLowerCase();
         if (phone) kasirUsers[existingKasirIndex].phone = phone.trim();
-        userService.saveKasirUsers(kasirUsers);
+        await userService.saveKasirUsers(kasirUsers);
         return res.status(200).json({
           success: true,
           message: `Profil akun Kasir "${kasirUsers[existingKasirIndex].name}" berhasil diperbarui. Silakan login.`,
@@ -149,7 +149,7 @@ router.post('/register-admin', async (req, res) => {
         referralCode: getAdminReferralCode()
       };
       kasirUsers.push(newKasir);
-      userService.saveKasirUsers(kasirUsers);
+      await userService.saveKasirUsers(kasirUsers);
       return res.status(201).json({
         success: true,
         message: `Akun Kasir Meja 1 "${newKasir.name}" berhasil dibuat di database! Silakan login.`,
@@ -172,7 +172,7 @@ router.post('/register-admin', async (req, res) => {
       adminUsers[existingIndex].role = 'admin';
       if (email) adminUsers[existingIndex].email = email.trim().toLowerCase();
       if (phone) adminUsers[existingIndex].phone = phone.trim();
-      userService.saveAdminUsers(adminUsers);
+      await userService.saveAdminUsers(adminUsers);
       return res.status(200).json({
         success: true,
         message: `Profil akun Admin "${adminUsers[existingIndex].name}" berhasil diperbarui. Silakan login.`,
@@ -207,7 +207,7 @@ router.post('/register-admin', async (req, res) => {
     };
 
     adminUsers.push(newStaff);
-    userService.saveAdminUsers(adminUsers);
+    await userService.saveAdminUsers(adminUsers);
 
     res.status(201).json({
       success: true,

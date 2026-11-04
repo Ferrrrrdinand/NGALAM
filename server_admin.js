@@ -15,6 +15,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { loginUser, verifySession, logoutUser, getUsers } = require('./services/authService');
+const userService = require('./services/userService');
 
 // Modular Route Handlers
 const authRoutes = require('./routes/authRoutes');
@@ -28,12 +29,18 @@ const mitraRoutes = require('./routes/mitraRoutes');
 const exportRoutes = require('./routes/exportRoutes');
 
 const app = express();
-const ADMIN_PORT = process.env.ADMIN_PORT || 3001;
+const ADMIN_PORT = 3001;
 
 // Middlewares
 app.use(cors());
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+
+// Hydrate user cache from PostgreSQL before handling API requests.
+app.use('/api', async (req, res, next) => {
+  try { await userService.refreshUsersFromDb(); } catch (_) {}
+  next();
+});
 
 // Gracefully handle malformed JSON payload errors without crashing
 app.use((err, req, res, next) => {
@@ -193,12 +200,12 @@ app.get('/api/auth/me', (req, res) => {
   }
 });
 
-app.post('/api/auth/logout', (req, res) => {
+app.post('/api/auth/logout', async (req, res) => {
   try {
     const authHeader = req.headers.authorization || '';
     const cookies = parseCookies(req);
     const token = authHeader.replace(/^Bearer\s+/i, '') || req.body.token || cookies.ngalam_token;
-    logoutUser(token);
+    await logoutUser(token);
     res.setHeader('Set-Cookie', 'ngalam_token=; Path=/; Max-Age=0; SameSite=Lax');
     res.json({ success: true, message: 'Berhasil keluar dari dashboard admin.' });
   } catch (err) {

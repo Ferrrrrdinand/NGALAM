@@ -3127,7 +3127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('refreshMitraBtn')?.addEventListener('click', fetchMitras);
 
   // ==============================================================
-  // TAB AUDIT LOG AKTIVITAS & NEON CLOUD DUAL-SYNC CONTROLLER
+  // TAB AUDIT LOG AKTIVITAS & POSTGRESQL CLOUD DUAL-SYNC CONTROLLER
   // ==============================================================
   let allActivityLogs = [];
   let currentLogFilter = 'all';
@@ -3238,7 +3238,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td style="padding: 12px 14px; text-align: center;">
             <span style="background: #f0fdf4; color: #166534; font-size: 0.74rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid #bbf7d0; display: inline-flex; align-items: center; gap: 4px;">
-              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Neon</span>
+              <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> PostgreSQL</span>
               <span>•</span>
               <span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg> data/</span>
             </span>
@@ -3248,12 +3248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
-  // Trigger Full Sync to Neon PostgreSQL
-  async function triggerNeonSync() {
-    const btn = document.getElementById('btnTriggerNeonSync');
+  // Trigger Full Sync to PostgreSQL / Supabase
+  async function triggerDatabaseSync() {
+    const btn = document.getElementById('btnTriggerDatabaseSync');
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = `<span>⏳</span><span>Menyinkronkan ke Neon Cloud...</span>`;
+      btn.innerHTML = `<span>⏳</span><span>Menyinkronkan ke PostgreSQL Cloud...</span>`;
     }
 
     try {
@@ -3262,22 +3262,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data && data.success) {
         const counts = data.syncedCounts || {};
         const countSummary = Object.entries(counts).map(([k, v]) => `${k}: ${v}`).join(', ');
-        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil menyinkronkan seluruh tabel ke Neon PostgreSQL!\n\nJumlah baris tersinkron:\n${countSummary || 'Semua tabel diperbarui.'}`);
+        alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg> Berhasil menyinkronkan seluruh tabel ke PostgreSQL / Supabase!\n\nJumlah baris tersinkron:\n${countSummary || 'Semua tabel diperbarui.'}`);
       } else {
         alert(`ℹ️ Status Sinkronisasi: ${data.message || 'Berjalan dalam mode lokal data/'}`);
       }
       fetchActivityLogs();
     } catch (err) {
-      alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Terjadi kesalahan saat sinkronisasi ke Neon: ${err.message}`);
+      alert(`<svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Terjadi kesalahan saat sinkronisasi ke PostgreSQL: ${err.message}`);
     } finally {
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = `<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span>Sinkronkan ke Neon Cloud Sekarang</span>`;
+        btn.innerHTML = `<span><svg class="svg-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span>Sinkronkan ke PostgreSQL Sekarang</span>`;
       }
     }
   }
 
-  document.getElementById('btnTriggerNeonSync')?.addEventListener('click', triggerNeonSync);
+  document.getElementById('btnTriggerDatabaseSync')?.addEventListener('click', triggerDatabaseSync);
   document.getElementById('btnRefreshActivityLogs')?.addEventListener('click', fetchActivityLogs);
 
   // Filter Buttons Handler

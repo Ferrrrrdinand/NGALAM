@@ -59,18 +59,13 @@ function getUsers() {
 }
 
 /**
- * Retrieve master referral code for full super-admin access
+ * Retrieve the super-admin referral code stored on the owner/admin account.
  */
 function getAdminReferralCode() {
-  if (process.env.ADMIN_REFERRAL_CODE && process.env.ADMIN_REFERRAL_CODE.trim()) {
-    return process.env.ADMIN_REFERRAL_CODE.trim();
-  }
   const users = getUsers();
-  const owner = users.find((u) => u.role === 'owner');
-  if (owner && owner.referralCode) {
-    return owner.referralCode.trim();
-  }
-  return 'NGALAM-SUPER-2026';
+  const owner = users.find((u) => u.role === 'owner' && u.referralCode) ||
+    users.find((u) => (u.role === 'admin' || u.role === 'superadmin') && u.referralCode);
+  return owner && owner.referralCode ? owner.referralCode.trim() : '';
 }
 
 /**
@@ -112,8 +107,9 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   }
 
   // =========================================================================
-  // VERIFIKASI USER DATABASE SISTEM (Siap PostgreSQL)
+  // VERIFIKASI USER DARI TABEL POSTGRESQL/SUPABASE
   // =========================================================================
+  await userService.refreshUsersFromDb();
   const users = getUsers();
 
   function checkPassword(userPass, inputPass, username) {
@@ -255,13 +251,13 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
   if (effectiveRole === 'teknisi' || user.role === 'teknisi') {
     try {
       const { setTechnicianOnline } = require('./technicianService');
-      setTechnicianOnline(user.username);
+      await setTechnicianOnline(user.username);
     } catch (e) {
       console.warn('[AuthService] Could not set technician online:', e.message);
     }
   }
 
-  // Catat riwayat login akun ke activity logs (dual Neon & local)
+  // Catat riwayat login akun ke activity logs (PostgreSQL & local)
   try {
     db.logActivity('STAFF_LOGIN', 'users', user.id, {
       username: user.username,
@@ -329,7 +325,7 @@ function verifySession(token) {
 /**
  * Invalidate session token and mark technician offline
  */
-function logoutUser(token, usernameFallback = '') {
+async function logoutUser(token, usernameFallback = '') {
   let loggedOutUser = null;
   if (token && activeSessions.has(token)) {
     loggedOutUser = activeSessions.get(token);
@@ -355,7 +351,7 @@ function logoutUser(token, usernameFallback = '') {
   if (targetRole === 'teknisi' || (!targetRole && targetUsername)) {
     try {
       const { setTechnicianOffline } = require('./technicianService');
-      setTechnicianOffline(targetUsername);
+      await setTechnicianOffline(targetUsername);
     } catch (e) {
       console.warn('[AuthService] Could not set technician offline:', e.message);
     }

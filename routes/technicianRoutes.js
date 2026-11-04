@@ -92,7 +92,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST /api/technicians/status
-router.post('/status', (req, res) => {
+router.post('/status', async (req, res) => {
   try {
     const { username, action, orderId, orderDetails } = req.body;
     if (!username) {
@@ -103,18 +103,18 @@ router.post('/status', (req, res) => {
     const cleanAction = (action || req.body.workStatus || '').toLowerCase().trim();
 
     if (cleanAction === 'online') {
-      updated = setTechnicianOnline(username);
+      updated = await setTechnicianOnline(username);
     } else if (cleanAction === 'offline') {
-      updated = setTechnicianOffline(username);
+      updated = await setTechnicianOffline(username);
     } else if (cleanAction === 'handled phone' || cleanAction === 'handled') {
-      updated = setTechnicianHandledPhone(username, {
+      updated = await setTechnicianHandledPhone(username, {
         orderId: orderId || (orderDetails && orderDetails.id),
         phoneType: (orderDetails && orderDetails.phoneType) || 'Smartphone',
         customerName: (orderDetails && orderDetails.customerName) || 'Pelanggan',
         step: (orderDetails && orderDetails.step) || 3
       });
     } else if (cleanAction === 'standby') {
-      updated = setTechnicianStandby(username, { orderId });
+      updated = await setTechnicianStandby(username, { orderId });
     } else {
       return res.status(400).json({ success: false, message: `Action status "${action}" tidak valid.` });
     }
