@@ -206,19 +206,6 @@ export default function Home() {
 
   const defaultSlides = [
     {
-      img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
-      alt: 'Promo Spesial Servis HP Android & iPhone - Ngalam Fix Pro',
-      badge: 'PROMO SPESIAL BULAN INI',
-      pill: 'DISKON S/D 30%',
-      pillBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
-      hint: 'Klik Banner untuk Info Promo & Klaim',
-      cta: 'Klaim Promo ↗',
-      title: 'Diskon Servis Hingga 30% Ganti Layar OLED & Baterai Original',
-      desc: 'Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi (khusus baterai 90 hari, servis lain 7–30 hari).',
-      code: 'NGALAMPROMO30',
-      link: '/pesan-servis?promo=NGALAMPROMO30'
-    },
-    {
       img: banner1, fallbackImg: '/images/spesialis-hp-banner.jpg',
       alt: 'Workshop Spesialis Servis HP - Ngalam Fix Pro',
       badge: 'WORKSHOP MEJA TERBUKA',
@@ -230,6 +217,32 @@ export default function Home() {
       desc: 'Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal.',
       code: 'MEJA-TERBUKA',
       link: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu'
+    },
+    {
+      img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
+      alt: 'Tawaran Member VIP Diskon 10% - Ngalam Fix Pro',
+      badge: 'TAWARAN MEMBER VIP',
+      pill: 'DISKON 10% MEMBER BARU',
+      pillBg: 'linear-gradient(135deg, #f59e0b, #d97706)',
+      hint: 'Klik Banner untuk Daftar Member & Klaim 10%',
+      cta: 'Daftar Member ↗',
+      title: 'Gabung Member VIP Ngalam Fix Pro: Potongan Diskon 10% Servis HP',
+      desc: 'Daftar akun gratis sekarang & nikmati potongan otomatis 10% untuk seluruh perbaikan smartphone, cek riwayat servis, klaim garansi resmi online, dan antrean prioritas Meja 1.',
+      code: 'MEMBER10',
+      link: '/akun-pelanggan?tab=register&promo=MEMBER10'
+    },
+    {
+      img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
+      alt: 'Promo Spesial Servis HP Android & iPhone - Ngalam Fix Pro',
+      badge: 'PROMO SPESIAL BULAN INI',
+      pill: 'DISKON S/D 30%',
+      pillBg: 'linear-gradient(135deg, #ef4444, #dc2626)',
+      hint: 'Klik Banner untuk Info Promo & Klaim',
+      cta: 'Klaim Promo ↗',
+      title: 'Diskon Servis Hingga 30% Ganti Layar OLED & Baterai Original',
+      desc: 'Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi (khusus baterai 90 hari, servis lain 7–30 hari).',
+      code: 'NGALAMPROMO30',
+      link: '/pesan-servis?promo=NGALAMPROMO30'
     },
     {
       img: banner3, fallbackImg: '/images/promo-banner-tempered-glass.jpg',
@@ -364,7 +377,82 @@ export default function Home() {
     <>
       {/* HERO SECTION */}
       <section className="hero">
-        {/* HERO TEXT CONTENT (UNIFIED HEADLINE AT TOP) */}
+        {/* TOP PROMOTIONAL BANNER SLIDER (BAGIAN ATAS HERO) */}
+        <div className="wrap hero-banner-wrap" id="heroBannerWrap">
+          <div className="hero-banner-card">
+            {slides.map((s, idx) => (
+              <div
+                key={idx}
+                className={`promo-slide ${activeSlide === idx ? 'active' : ''}`}
+                style={{ display: activeSlide === idx ? 'block' : 'none', cursor: 'pointer' }}
+                onClick={() => openPromoModal(s)}
+              >
+                <img 
+                  src={s.img} 
+                  alt={s.alt} 
+                  className="promo-slide-image" 
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = s.fallbackImg;
+                  }} 
+                />
+                <div className="promo-slide-overlay">
+                  <div className="promo-top-row" style={{ justifyContent: 'flex-end' }}>
+                    <div className="promo-discount-pill" style={{ background: s.pillBg, color: '#ffffff' }}>
+                      <span style={{ color: '#ffffff', fontWeight: 800, textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)' }}>
+                        {s.pill}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="promo-bottom-hint-row">
+                    <div className="promo-click-hint" style={{ background: 'rgba(15, 23, 42, 0.88)', border: '1.5px solid rgba(255, 255, 255, 0.3)', color: '#ffffff' }}>
+                      <span className="hint-pulse" style={{ background: '#ef4444', boxShadow: '0 0 10px #ef4444' }}></span>
+                      <span className="hint-text" style={{ color: '#ffffff', fontWeight: 700, textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)' }}>
+                        {s.hint}
+                      </span>
+                      <span className="hint-cta-badge" style={{ background: '#f59e0b', color: '#0f172a', fontWeight: 800 }}>
+                        {s.cta}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* SLIDER NAVIGATION ARROWS */}
+            <button
+              type="button"
+              className="promo-nav-btn prev"
+              onClick={() => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+              aria-label="Banner Sebelumnya"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button
+              type="button"
+              className="promo-nav-btn next"
+              onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
+              aria-label="Banner Selanjutnya"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            {/* PAGINATION DOTS */}
+            <div className="promo-dots">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`promo-dot ${activeSlide === i ? 'active' : ''}`}
+                  onClick={() => setActiveSlide(i)}
+                  aria-label={`Slide ${i + 1}`}
+                ></button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* HERO TEXT CONTENT */}
         <div className="wrap hero-centered">
           <div>
             <h1>
