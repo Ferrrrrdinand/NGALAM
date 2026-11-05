@@ -570,7 +570,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === "promos" && (
-            <PromosTab promos={promos} />
+            <PromosTab promos={promos} onRefresh={loadData} setPromos={setPromos} />
           )}
 
           {activeTab === "logs" && (

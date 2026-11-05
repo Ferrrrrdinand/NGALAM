@@ -135,7 +135,7 @@ export default function Home() {
 
   const currentModels = modelsByBrand[selectedBrand] || modelsByBrand.apple;
 
-  const slides = [
+  const defaultSlides = [
     {
       img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
       alt: 'Promo Spesial Servis HP Android & iPhone - Ngalam Fix Pro',
@@ -176,6 +176,40 @@ export default function Home() {
       link: '/pesan-servis?promo=FREEGLASS9H'
     }
   ];
+
+  const [slides, setSlides] = useState(defaultSlides);
+
+  useEffect(() => {
+    fetchApi('/api/promos')
+      .then((res) => {
+        if (res.ok && res.data && res.data.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+          const themes = res.data.themes || {};
+          const mapped = res.data.data.map((p: any) => {
+            const th = themes[p.theme] || { pillGradient: 'linear-gradient(135deg, #f59e0b, #d97706)' };
+            const img = p.image?.startsWith('http') || p.image?.startsWith('data:image')
+              ? p.image
+              : `/${(p.image || 'images/spesialis-hp-banner.jpg').replace(/^\//, '')}`;
+            return {
+              img,
+              fallbackImg: '/images/spesialis-hp-banner.jpg',
+              alt: p.title,
+              badge: p.badgeTag || 'PROMO SPESIAL',
+              pill: p.badgePill || 'DISKON',
+              pillBg: th.pillGradient || 'linear-gradient(135deg, #f59e0b, #d97706)',
+              hint: 'Klik Banner untuk Info Promo & Klaim',
+              cta: p.buttonText || 'Klaim Promo ↗',
+              title: p.title,
+              desc: p.description || '',
+              code: p.promoCode || 'PROMO',
+              link: p.buttonLink || '/pesan-servis'
+            };
+          });
+          setSlides(mapped);
+          setActiveSlide((prev) => (prev >= mapped.length ? 0 : prev));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
