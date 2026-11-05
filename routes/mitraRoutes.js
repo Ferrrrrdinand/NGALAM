@@ -531,9 +531,15 @@ router.get('/list', (req, res) => {
         name: d.name,
         role: d.role,
         category: d.category || (d.role === 'ojol' ? 'Mitra Kurir Ojek Online' : 'Mitra Bengkel / Toko Rekanan'),
+        vehicleType: d.vehicleType || d.category || '',
+        plateNumber: d.plateNumber || '',
+        bankAccount: d.bankAccount || '',
         avatar: d.avatar || (d.role === 'ojol' ? '🛵' : '🏪'),
         phone: d.phone,
-        email: d.email,
+        email: d.email || '',
+        password: d.password || '',
+        plainPassword: d.plainPassword || (d.password && !String(d.password).startsWith('$2') ? d.password : ''),
+        isPasswordHashed: Boolean(d.password && String(d.password).startsWith('$2')),
         referralCode: refCode,
         commissionRate: d.commissionRate !== undefined ? d.commissionRate : 10,
         totalCommission: d.totalCommission || 0,
@@ -675,6 +681,7 @@ router.post('/register', async (req, res) => {
       id: `USR-MITRA-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}-${String(Math.floor(1000 + Math.random() * 9000))}`,
       username: cleanUser,
       password: hashPassword(cleanPass),
+      plainPassword: cleanPass,
       name: name.trim(),
       role: isBengkel ? 'mitra' : 'ojol',
       category: chosenCategory.trim(),
@@ -750,6 +757,25 @@ router.post('/payout', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PATCH /api/mitra/:id - Ubah / edit data mitra oleh admin
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body || {};
+    const updated = await userService.updateUserById(id, updates);
+    if (!updated) {
+      return res.status(404).json({ success: false, message: `Mitra dengan ID "${id}" tidak ditemukan.` });
+    }
+    res.json({
+      success: true,
+      message: `Data mitra "${updated.name}" berhasil diperbarui.`,
+      data: updated
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
   }
 });
 

@@ -879,6 +879,82 @@ router.get('/database-status', async (req, res) => {
   });
 });
 
+// GET /api/customer/list - Daftar semua akun pelanggan untuk admin
+router.get('/list', async (req, res) => {
+  try {
+    await refreshCustomersFromDb();
+    const customers = getAllCustomers();
+    const orders = getAllOrders();
+
+    const formatted = customers.map(c => {
+      const custPhone = normalizePhone(c.whatsapp || c.phone || '');
+      const custEmail = String(c.email || '').toLowerCase();
+      const custOrders = orders.filter(o => {
+        const oPhone = normalizePhone(o.whatsapp || o.phone || o.customerWa || '');
+        const oEmail = String(o.email || o.customerEmail || '').toLowerCase();
+        return (custPhone && oPhone && phonesMatch(custPhone, oPhone)) ||
+               (custEmail && oEmail && custEmail === oEmail) ||
+               (o.customerId && o.customerId === c.id);
+      });
+
+      const totalSpent = custOrders.reduce((sum, o) => sum + (Number(o.price || o.totalAmount || o.paidAmount) || 0), 0);
+
+      return {
+        id: c.id,
+        name: c.name,
+        username: c.username || `cust_${(c.whatsapp || c.id || '').replace(/\D/g, '')}`,
+        whatsapp: c.whatsapp,
+        phone: c.whatsapp,
+        email: c.email || '',
+        district: c.district || 'Kota Malang',
+        password: c.pin || c.passwordHash || '',
+        plainPassword: c.plainPassword || (c.pin && !String(c.pin).startsWith('$2') ? c.pin : ''),
+        isPasswordHashed: Boolean((c.pin && String(c.pin).startsWith('$2')) || (c.passwordHash && String(c.passwordHash).startsWith('$2'))),
+        referredByMitra: c.referredByMitra || '',
+        registeredAt: c.registeredAt || 'Baru Terdaftar',
+        registeredVia: c.registeredVia || 'Web',
+        status: c.status || 'Aktif',
+        ordersCount: custOrders.length,
+        totalSpent,
+        orders: custOrders.slice(0, 5).map(o => ({
+          id: o.id,
+          phoneType: o.phoneType,
+          status: o.status,
+          price: o.price,
+          createdAt: o.createdAt
+        }))
+      };
+    });
+
+    res.json({
+      success: true,
+      count: formatted.length,
+      data: formatted
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PATCH /api/customer/:id - Ubah / edit data pelanggan oleh admin
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body || {};
+    const updated = await updateCustomerById(id, updates);
+    if (!updated) {
+      return res.status(404).json({ success: false, message: `Pelanggan dengan ID "${id}" tidak ditemukan.` });
+    }
+    res.json({
+      success: true,
+      message: `Data pelanggan "${updated.name}" berhasil diperbarui.`,
+      data: updated
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
 // POST /api/customer/logout
 router.post('/logout', (req, res) => {
   res.setHeader('Set-Cookie', 'ngalam_customer_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');

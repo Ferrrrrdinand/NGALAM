@@ -95,7 +95,11 @@ function normalizeDbUser(row) {
     registeredVia: raw.registeredVia || '',
     googleId: raw.googleId || '',
     referredByMitra: raw.referredByMitra || '',
-    passwordHash: raw.passwordHash || raw.pin || row.password || ''
+    passwordHash: raw.passwordHash || raw.pin || row.password || '',
+    plainPassword: raw.plainPassword || (row.password && !row.password.startsWith('$2') ? row.password : ''),
+    vehicleType: raw.vehicleType || raw.category || row.category || '',
+    plateNumber: raw.plateNumber || '',
+    bankAccount: raw.bankAccount || ''
   };
 }
 
@@ -384,6 +388,39 @@ function getUserTableDetails() {
   return details;
 }
 
+async function updateUserById(id, updates = {}) {
+  await refreshUsersFromDb();
+  const allUsers = getAllUsers();
+  const user = allUsers.find(u => u.id === id || u.username === id);
+  if (!user) return null;
+
+  const merged = {
+    ...user,
+    ...updates,
+    id: user.id
+  };
+
+  if (updates.password && String(updates.password).trim().length > 0) {
+    const { hashPassword } = require('../src/utils/security');
+    const cleanPass = String(updates.password).trim();
+    merged.password = hashPassword(cleanPass);
+    merged.passwordHash = merged.password;
+    merged.plainPassword = cleanPass;
+  }
+
+  const bucket = bucketForRole(merged.role);
+  const list = [...getBucket(bucket)];
+  const idx = list.findIndex(u => u.id === user.id);
+  if (idx !== -1) {
+    list[idx] = merged;
+  } else {
+    list.push(merged);
+  }
+
+  await saveRoleBucket(bucket, list);
+  return merged;
+}
+
 module.exports = {
   refreshUsersFromDb,
   syncUserToPostgres,
@@ -400,6 +437,7 @@ module.exports = {
   getAllUsers,
   findUser,
   saveUserByRole,
+  updateUserById,
   getUserTableDetails,
   syncAllUsersToPostgres
 };

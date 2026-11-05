@@ -41,6 +41,7 @@ router.get('/admin/dashboard', async (req, res) => {
   const { readTransactions, generateMitraCode } = require('../../services/financeService');
   const { getAllPromos } = require('../../services/promoService');
   const userService = require('../../services/userService');
+  const customerService = require('../../services/customerService');
   const pgDb = require('../../services/db');
   const { loadTable } = require('../../services/localStore');
 
@@ -53,7 +54,7 @@ router.get('/admin/dashboard', async (req, res) => {
     }
   };
 
-  const [orders, transactions, promos, activityLogs, mitraUsers] = await Promise.all([
+  const [orders, transactions, promos, activityLogs, mitraUsers, customerList] = await Promise.all([
     safe(() => getAllOrders(), []),
     safe(async () => readTransactions(), []),
     safe(async () => getAllPromos(true), []),
@@ -64,7 +65,11 @@ router.get('/admin/dashboard', async (req, res) => {
       });
       return dbLogs && dbLogs.length > 0 ? dbLogs : loadTable('activity_logs');
     }, loadTable('activity_logs')),
-    safe(async () => userService.getMitraUsers(), [])
+    safe(async () => userService.getMitraUsers(), []),
+    safe(async () => {
+      await customerService.refreshCustomersFromDb();
+      return customerService.getAllCustomers();
+    }, [])
   ]);
 
   const mitras = (mitraUsers || [])
@@ -77,9 +82,15 @@ router.get('/admin/dashboard', async (req, res) => {
         name: d.name,
         role: d.role,
         category: d.category || (d.role === 'ojol' ? 'Mitra Kurir Ojek Online' : 'Mitra Bengkel / Toko Rekanan'),
+        vehicleType: d.vehicleType || d.category || '',
+        plateNumber: d.plateNumber || '',
+        bankAccount: d.bankAccount || '',
         avatar: d.avatar || (d.role === 'ojol' ? '🛵' : '🏪'),
         phone: d.phone,
-        email: d.email,
+        email: d.email || '',
+        password: d.password || '',
+        plainPassword: d.plainPassword || (d.password && !String(d.password).startsWith('$2') ? d.password : ''),
+        isPasswordHashed: Boolean(d.password && String(d.password).startsWith('$2')),
         referralCode: refCode,
         commissionRate: d.commissionRate !== undefined ? d.commissionRate : 10,
         totalCommission: d.totalCommission || 0,
@@ -90,6 +101,39 @@ router.get('/admin/dashboard', async (req, res) => {
       };
     });
 
+  const customers = (customerList || []).map((c) => {
+    const custOrders = orders.filter((o) => {
+      const oPhone = String(o.whatsapp || o.phone || o.customerWa || '').replace(/\D/g, '');
+      const cPhone = String(c.whatsapp || c.phone || '').replace(/\D/g, '');
+      const oEmail = String(o.email || o.customerEmail || '').toLowerCase();
+      const cEmail = String(c.email || '').toLowerCase();
+      return (cPhone && oPhone && (cPhone === oPhone || (cPhone.length >= 8 && oPhone.endsWith(cPhone.slice(-8))))) ||
+             (cEmail && oEmail && cEmail === oEmail) ||
+             (o.customerId && o.customerId === c.id);
+    });
+
+    const totalSpent = custOrders.reduce((sum, o) => sum + (Number(o.price || o.totalAmount || o.paidAmount) || 0), 0);
+
+    return {
+      id: c.id,
+      name: c.name,
+      username: c.username || `cust_${(c.whatsapp || c.id || '').replace(/\D/g, '')}`,
+      whatsapp: c.whatsapp,
+      phone: c.whatsapp,
+      email: c.email || '',
+      district: c.district || 'Kota Malang',
+      password: c.pin || c.passwordHash || '',
+      plainPassword: c.plainPassword || (c.pin && !String(c.pin).startsWith('$2') ? c.pin : ''),
+      isPasswordHashed: Boolean((c.pin && String(c.pin).startsWith('$2')) || (c.passwordHash && String(c.passwordHash).startsWith('$2'))),
+      referredByMitra: c.referredByMitra || '',
+      registeredAt: c.registeredAt || 'Baru Terdaftar',
+      registeredVia: c.registeredVia || 'Web',
+      status: c.status || 'Aktif',
+      ordersCount: custOrders.length,
+      totalSpent
+    };
+  });
+
   res.json({
     success: true,
     orders,
@@ -97,6 +141,7 @@ router.get('/admin/dashboard', async (req, res) => {
     promos,
     activityLogs,
     mitras,
+    customers,
     dbStatus: {
       connected: pgDb.isDbConnected(),
       mode: pgDb.isDbConnected() ? 'postgresql' : 'fallback'

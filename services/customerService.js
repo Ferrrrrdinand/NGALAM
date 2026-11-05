@@ -30,6 +30,8 @@ function normalizeDbCustomer(row) {
     district: raw.district || row.district || '',
     pin: raw.pin || row.password || row.pin || '',
     passwordHash: raw.passwordHash || raw.pin || row.password || row.pin || '',
+    plainPassword: raw.plainPassword || (row.password && !String(row.password).startsWith('$2') ? row.password : ''),
+    status: raw.status || row.status || 'Aktif',
     googleId: raw.googleId || '',
     referredByMitra: raw.referredByMitra || '',
     registeredAt: raw.registeredAt || row.registered_at || '',
@@ -271,7 +273,8 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
 
   const newId = `CUST-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(Math.floor(1000 + Math.random() * 9000))}`;
 
-  const passwordHash = hashPassword(password || pin || '123456');
+  const rawPass = password || pin || '123456';
+  const passwordHash = hashPassword(rawPass);
 
   const newCust = {
     id: newId,
@@ -281,6 +284,8 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
     district: district.trim(),
     pin: passwordHash,
     passwordHash,
+    plainPassword: rawPass,
+    status: 'Aktif',
     googleId: googleId || '',
     referredByMitra: (referredByMitra || '').trim().toUpperCase(),
     registeredAt: `${dateStr}, ${timeStr}`,
@@ -449,20 +454,30 @@ async function upsertGoogleCustomer({ googleId = '', email = '', name = '', avat
  * Perbarui data pelanggan berdasarkan ID
  */
 async function updateCustomerById(id, updates = {}) {
+  await refreshCustomersFromDb();
   const customers = getAllCustomers();
-  const idx = customers.findIndex((c) => c.id === id);
+  const idx = customers.findIndex((c) => c.id === id || c.whatsapp === id);
   if (idx === -1) return null;
-  const updated = { ...customers[idx], ...updates };
-  customers[idx] = updated;
+
+  const merged = { ...customers[idx], ...updates };
+
+  if (updates.password && String(updates.password).trim().length > 0) {
+    const cleanPass = String(updates.password).trim();
+    merged.passwordHash = hashPassword(cleanPass);
+    merged.pin = merged.passwordHash;
+    merged.plainPassword = cleanPass;
+  }
+
+  customers[idx] = merged;
   saveCustomers(customers);
 
   try {
-    await persistCustomerUser(updated);
+    await persistCustomerUser(merged);
   } catch (pgErr) {
     console.warn('[CustomerService] PostgreSQL update customer warning:', pgErr.message);
   }
 
-  return updated;
+  return merged;
 }
 
 module.exports = {

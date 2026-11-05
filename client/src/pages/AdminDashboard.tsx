@@ -4,7 +4,7 @@ import {
   ShieldCheck, Wrench, RefreshCw, 
   LogOut, Plus, 
   Database, Users, Banknote, Menu,
-  ClipboardList, History, Gift
+  ClipboardList, History, Gift, UserCheck
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import logoImg from "../assets/images/logo-ngalam-fix-pro.jpg";
@@ -18,6 +18,7 @@ import WalkinTab from "./admin/WalkinTab";
 import CashierTab from "./admin/CashierTab";
 import TransactionsTab from "./admin/TransactionsTab";
 import MitraTab from "./admin/MitraTab";
+import CustomersTab from "./admin/CustomersTab";
 import PromosTab from "./admin/PromosTab";
 import LogsTab from "./admin/LogsTab";
 import ReceiptModal from "./admin/ReceiptModal";
@@ -25,14 +26,15 @@ export default function AdminDashboard() {
   const { user, loading: authLoading, logoutStaff } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'technician' | 'walkin' | 'cashier' | 'transactions' | 'promos' | 'logs' | 'mitra'
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'technician' | 'walkin' | 'cashier' | 'transactions' | 'promos' | 'logs' | 'mitra' | 'customers'
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [orders, setOrders] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [promos, setPromos] = useState([]);
-  const [activityLogs, setActivityLogs] = useState([]);
-  const [mitras, setMitras] = useState([]);
-  const [dbStatus, setDbStatus] = useState(null);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [promos, setPromos] = useState<any[]>([]);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
+  const [mitras, setMitras] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [dbStatus, setDbStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Search & Filter
@@ -45,8 +47,16 @@ export default function AdminDashboard() {
   const [bookingSearchError, setBookingSearchError] = useState('');
 
   // Payout Modal
-  const [payoutModalMitra, setPayoutModalMitra] = useState(null);
+  const [payoutModalMitra, setPayoutModalMitra] = useState<any>(null);
   const [payoutAmount, setPayoutAmount] = useState('');
+
+  const handleMitraUpdated = (updated: any) => {
+    setMitras((prev) => prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m)));
+  };
+
+  const handleCustomerUpdated = (updated: any) => {
+    setCustomers((prev) => prev.map((c) => (c.id === updated.id ? { ...c, ...updated } : c)));
+  };
 
   // Walk-in form state
   const [walkin, setWalkin] = useState({
@@ -60,7 +70,7 @@ export default function AdminDashboard() {
   const [walkinSuccess, setWalkinSuccess] = useState('');
 
   // Cashier payment modal/state
-  const [paymentOrder, setPaymentOrder] = useState(null);
+  const [paymentOrder, setPaymentOrder] = useState<any>(null);
   const [paymentForm, setPaymentForm] = useState({
     finalAmount: 0,
     paymentMethod: 'Tunai (Cash)',
@@ -68,8 +78,8 @@ export default function AdminDashboard() {
   });
 
   // Struk Modal state
-  const [receiptTx, setReceiptTx] = useState(null);
-  const printAreaRef = useRef(null);
+  const [receiptTx, setReceiptTx] = useState<any>(null);
+  const printAreaRef = useRef<any>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -81,18 +91,20 @@ export default function AdminDashboard() {
         setPromos(dashRes.data.promos || []);
         setActivityLogs(dashRes.data.activityLogs || []);
         setMitras(dashRes.data.mitras || []);
+        setCustomers(dashRes.data.customers || []);
         setDbStatus(dashRes.data.dbStatus || null);
         return;
       }
 
-      // Fallback ke endpoint lama bila agregat tidak tersedia
-      const [ordRes, dbRes, promoRes, logRes, txRes, mitraRes] = await Promise.all([
+      // Fallback ke endpoint individual bila agregat tidak tersedia
+      const [ordRes, dbRes, promoRes, logRes, txRes, mitraRes, custRes] = await Promise.all([
         fetchApi('/api/orders'),
         fetchApi('/api/database/status'),
         fetchApi('/api/promos?all=true'),
         fetchApi('/api/activity-logs'),
         fetchApi('/api/finance/transactions'),
-        fetchApi('/api/mitra/list')
+        fetchApi('/api/mitra/list'),
+        fetchApi('/api/customer/list')
       ]);
 
       if (ordRes.ok && ordRes.data.success) setOrders(ordRes.data.data || []);
@@ -101,6 +113,7 @@ export default function AdminDashboard() {
       if (logRes.ok && logRes.data.success) setActivityLogs(logRes.data.logs || []);
       if (txRes.ok && txRes.data.success) setTransactions(txRes.data.data || []);
       if (mitraRes.ok && mitraRes.data.success) setMitras(mitraRes.data.data || []);
+      if (custRes.ok && custRes.data.success) setCustomers(custRes.data.data || []);
     } catch (err) {
       console.error('Error loading dashboard data', err);
     } finally {
@@ -319,6 +332,7 @@ export default function AdminDashboard() {
     { section: 'Workshop & Teknisi' },
     { id: 'technician', label: 'Meja Kerja Lab Teknisi', icon: <Wrench className="w-4 h-4 shrink-0" /> },
     { id: 'mitra', label: 'Mitra & Komisi Driver', icon: <Users className="w-4 h-4 shrink-0" />, count: mitras.length },
+    { id: 'customers', label: 'Akun Pelanggan (Customer)', icon: <UserCheck className="w-4 h-4 shrink-0" />, count: customers.length },
 
     { section: 'Promosi & Sistem' },
     { id: 'promos', label: 'Banner & Voucher Promo', icon: <Gift className="w-4 h-4 shrink-0" />, count: promos.length },
@@ -566,6 +580,15 @@ export default function AdminDashboard() {
               payoutAmount={payoutAmount}
               setPayoutAmount={setPayoutAmount}
               handlePayoutSubmit={handlePayoutSubmit}
+              onMitraUpdated={handleMitraUpdated}
+            />
+          )}
+
+          {activeTab === "customers" && (
+            <CustomersTab
+              customers={customers}
+              loading={loading}
+              onCustomerUpdated={handleCustomerUpdated}
             />
           )}
 
