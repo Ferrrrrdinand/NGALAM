@@ -1,5 +1,57 @@
 [
   {
+    "id": "LOG-1793870130103-601",
+    "action": "COMMISSION_RECORDED",
+    "table_name": "commissions",
+    "record_id": "NGF-20261105-5755",
+    "payload": {
+      "referralCode": "MTR-RUDIG-5632",
+      "orderId": "NGF-20261105-5755",
+      "amount": 20000,
+      "mitraName": "Rudi Grab Driver"
+    },
+    "performed_at": "2026-11-05T09:15:30.103Z"
+  },
+  {
+    "id": "LOG-1793870127857-380",
+    "action": "COMMISSION_RECORDED",
+    "table_name": "commissions",
+    "record_id": "NGF-20261105-1687",
+    "payload": {
+      "referralCode": "MTR-RUDIG-5632",
+      "orderId": "NGF-20261105-1687",
+      "amount": 45000,
+      "mitraName": "Rudi Grab Driver"
+    },
+    "performed_at": "2026-11-05T09:15:27.857Z"
+  },
+  {
+    "id": "LOG-1793870125662-335",
+    "action": "COMMISSION_RECORDED",
+    "table_name": "commissions",
+    "record_id": "NGF-20261105-9191",
+    "payload": {
+      "referralCode": "MTR-RUDIG-5632",
+      "orderId": "NGF-20261105-9191",
+      "amount": 150000,
+      "mitraName": "Rudi Grab Driver"
+    },
+    "performed_at": "2026-11-05T09:15:25.662Z"
+  },
+  {
+    "id": "LOG-1793870123237-628",
+    "action": "CUSTOMER_REGISTER",
+    "table_name": "customers",
+    "record_id": "CUST-20261105-6641",
+    "payload": {
+      "name": "Bu Dewi Pelanggan Tamu",
+      "whatsapp": "087788889285",
+      "district": "Malang",
+      "registeredVia": "guest_booking_referral"
+    },
+    "performed_at": "2026-11-05T09:15:23.237Z"
+  },
+  {
     "id": "LOG-1793868786369-622",
     "action": "COMMISSION_RECORDED",
     "table_name": "commissions",

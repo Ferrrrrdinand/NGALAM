@@ -25,6 +25,18 @@ export interface AdItem {
 
 const DEFAULT_FALLBACK_ADS: AdItem[] = [
   {
+    id: 'ad-workshop-presisi',
+    title: 'Workshop Meja Terbuka',
+    headline: 'Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA Terbuka',
+    description: 'Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal. Transparan, aman, suku cadang original, dan bisa ditunggu 30–60 menit.',
+    badge: '⚡ BISA DITUNGGU (30–60 MENIT)',
+    ctaText: 'Konsultasi Teknisi Langsung ↗',
+    targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
+    imageUrl: '/images/spesialis-hp-banner.jpg',
+    theme: 'gold',
+    active: true
+  },
+  {
     id: 'ad-baterai-90hari',
     title: 'Garansi Baterai 90 Hari',
     headline: 'Ganti Baterai Original iPhone & Android — Garansi Resmi 90 Hari Penuh!',
@@ -140,155 +152,211 @@ export default function HomeAdBanner() {
   const isExternalLink = currentAd.targetUrl?.startsWith('http') || currentAd.targetUrl?.startsWith('https');
 
   return (
-    <section className="wrap my-8 sm:my-12 transition-all duration-300">
+    <section className="wrap my-8 sm:my-12 transition-all duration-300" id="homeAdSection">
+      {/* ======================================================== */}
+      {/* 1. CINEMATIC VISUAL PROMO & AD BANNER (UNIFIED HERO BANNER) */}
+      {/* ======================================================== */}
       <div 
-        className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${getThemeGradient(currentAd.theme)} p-6 sm:p-8 lg:p-10 border shadow-2xl transition-all duration-500`}
+        className="relative overflow-hidden rounded-3xl border-2 border-amber-400/40 shadow-2xl bg-slate-950 group cursor-pointer"
         style={{
-          boxShadow: '0 20px 50px -15px rgba(212, 175, 55, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2)'
+          boxShadow: '0 25px 60px -15px rgba(212, 175, 55, 0.3), 0 0 0 1px rgba(212, 175, 55, 0.25)',
+          aspectRatio: '16 / 7.2',
+          minHeight: '320px'
+        }}
+        onClick={() => {
+          handleAdClick(currentAd);
+          if (isExternalLink) {
+            window.open(currentAd.targetUrl, '_blank', 'noopener,noreferrer');
+          } else {
+            window.location.href = currentAd.targetUrl || '/pesan-servis';
+          }
         }}
       >
-        {/* Subtle background luxury glow */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-amber-500/15 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+        {/* Full-Bleed Banner Image with Zoom on Hover */}
+        <img
+          src={currentAd.imageUrl?.startsWith('http') || currentAd.imageUrl?.startsWith('/') ? currentAd.imageUrl : `/${currentAd.imageUrl}`}
+          alt={currentAd.title}
+          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/images/spesialis-hp-banner.jpg';
+          }}
+        />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-          
-          {/* LEFT: TEXT CONTENT & ACTIONS (7 COLS) */}
-          <div className="lg:col-span-7 space-y-4">
-            
-            {/* Top Badge & Live Indicator */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border shadow-xs ${getBadgeStyle(currentAd.theme)}`}>
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>{currentAd.badge}</span>
-              </span>
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40 pointer-events-none"></div>
 
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-amber-300/80 bg-white/5 border border-white/10">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>IKLAN RESMI SPONSOR</span>
-              </span>
-            </div>
+        {/* Top-Right Badge (e.g. BISA DITUNGGU (30–60 MENIT)) */}
+        <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-10 pointer-events-none">
+          <div 
+            className="px-3 sm:px-4 py-1.5 rounded-full font-black text-xs sm:text-sm uppercase tracking-wide shadow-lg border border-white/30 backdrop-blur-md flex items-center gap-1.5"
+            style={{
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              color: '#ffffff',
+              textShadow: '0 1px 3px rgba(0, 0, 0, 0.8)'
+            }}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+            <span>{currentAd.badge || 'PROMO RESMI BERGARANSI'}</span>
+          </div>
+        </div>
 
-            {/* Headline */}
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight tracking-tight">
-              {currentAd.headline}
-            </h3>
+        {/* Left & Right Round Arrow Navigation Buttons */}
+        {ads.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length);
+              }}
+              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-black/55 hover:bg-black/85 text-white/90 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all z-20 cursor-pointer shadow-lg active:scale-95"
+              aria-label="Banner Sebelumnya"
+            >
+              <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentIndex((prev) => (prev + 1) % ads.length);
+              }}
+              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-black/55 hover:bg-black/85 text-white/90 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all z-20 cursor-pointer shadow-lg active:scale-95"
+              aria-label="Banner Selanjutnya"
+            >
+              <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6" />
+            </button>
+          </>
+        )}
 
-            {/* Description */}
-            <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed font-normal">
-              {currentAd.description}
-            </p>
-
-            {/* Feature Highlights */}
-            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-amber-200/90 pt-1">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Teknisi Berpengalaman &amp; Bergaransi</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Bisa Ditunggu di Meja Transparan</span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
-              {isExternalLink ? (
-                <a
-                  href={currentAd.targetUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => handleAdClick(currentAd)}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
-                >
-                  <span>{currentAd.ctaText || 'Lihat Penawaran ↗'}</span>
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              ) : (
-                <Link
-                  to={currentAd.targetUrl}
-                  onClick={() => handleAdClick(currentAd)}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
-                >
-                  <span>{currentAd.ctaText || 'Klaim Sekarang ↗'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              )}
-
-              <a
-                href={`https://wa.me/6281330304321?text=${encodeURIComponent(
-                  `Halo Admin Ngalam Fix Pro, saya tertarik dengan iklan promo "${currentAd.title}". Mohon info ketersediaan promo hari ini.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer"
-              >
-                <PhoneCall className="w-4 h-4 text-emerald-400" />
-                <span>Konsultasi WA</span>
-              </a>
-            </div>
+        {/* Bottom Interactive Bar (Click Hint Pill + Dots) */}
+        <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 z-10 flex flex-wrap items-center justify-between gap-3">
+          {/* Bottom-Left Interactive Pill */}
+          <div 
+            className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold shadow-xl border border-white/30 backdrop-blur-md transition-transform group-hover:scale-102"
+            style={{
+              background: 'rgba(15, 23, 42, 0.88)',
+              color: '#ffffff'
+            }}
+          >
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444] animate-pulse"></span>
+            <span className="text-white font-medium text-xs sm:text-sm drop-shadow-sm">
+              Klik Banner untuk Info Promo &amp; Klaim
+            </span>
+            <span 
+              className="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider shadow-sm flex items-center gap-1"
+              style={{
+                background: '#f59e0b',
+                color: '#0f172a'
+              }}
+            >
+              <span>{currentAd.ctaText || 'Konsultasi Teknisi Langsung ↗'}</span>
+            </span>
           </div>
 
-          {/* RIGHT: IMAGE CARD PREVIEW (5 COLS) */}
-          <div className="lg:col-span-5 relative group">
-            <div className="relative overflow-hidden rounded-2xl border-2 border-amber-400/30 shadow-2xl bg-slate-900 aspect-16/10">
-              <img
-                src={currentAd.imageUrl?.startsWith('http') || currentAd.imageUrl?.startsWith('/') ? currentAd.imageUrl : `/${currentAd.imageUrl}`}
-                alt={currentAd.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/images/promo-banner-1.jpg';
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-              
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
-                <span className="font-bold truncate drop-shadow-md">{currentAd.title}</span>
-                <span className="px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs font-mono text-[10px] text-amber-300 border border-amber-400/30">
-                  Unit Terbatas
-                </span>
-              </div>
+          {/* Bottom-Right Pagination Dots */}
+          {ads.length > 1 && (
+            <div className="flex items-center gap-1.5 p-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15">
+              {ads.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentIndex(dotIdx);
+                  }}
+                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                    currentIndex === dotIdx 
+                      ? 'w-7 bg-amber-400 shadow-[0_0_8px_#f59e0b]' 
+                      : 'w-2.5 bg-white/40 hover:bg-white/80'
+                  }`}
+                  aria-label={`Slide ${dotIdx + 1}`}
+                />
+              ))}
             </div>
+          )}
+        </div>
+      </div>
 
-            {/* Slider Navigation Dots if multiple ads */}
-            {ads.length > 1 && (
-              <div className="flex items-center justify-between mt-3 pt-1">
-                <div className="flex items-center gap-1.5">
-                  {ads.map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      type="button"
-                      onClick={() => setCurrentIndex(dotIdx)}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        currentIndex === dotIdx ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'
-                      }`}
-                      aria-label={`Slide iklan ${dotIdx + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length)}
-                    className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
-                    aria-label="Iklan Sebelumnya"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentIndex((prev) => (prev + 1) % ads.length)}
-                    className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
-                    aria-label="Iklan Selanjutnya"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
+      {/* ======================================================== */}
+      {/* 2. DYNAMIC AD & PROMO DETAILS BAR (CONNECTED TO DATABASE) */}
+      {/* ======================================================== */}
+      <div 
+        className="mt-4 p-5 sm:p-6 lg:p-7 rounded-2xl bg-white border border-amber-200/80 shadow-lg flex flex-col lg:flex-row lg:items-center justify-between gap-5"
+        style={{
+          boxShadow: '0 10px 30px -5px rgba(212, 175, 55, 0.15)'
+        }}
+      >
+        <div className="space-y-2 max-w-3xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>IKLAN &amp; PROMO RESMI WORKSHOP</span>
+            </span>
+            <span className="text-[11px] font-semibold text-slate-500">
+              Diperbarui secara live dari Admin Dashboard
+            </span>
           </div>
+
+          <h3 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 leading-snug">
+            {currentAd.headline}
+          </h3>
+
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+            {currentAd.description}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-amber-900 pt-1">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Teknisi Berpengalaman Meja Terbuka</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Bisa Ditunggu 30–60 Menit</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
+              <span>Garansi Resmi Tertulis Hingga 90 Hari</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 lg:pt-0">
+          {isExternalLink ? (
+            <a
+              href={currentAd.targetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handleAdClick(currentAd)}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
+            >
+              <span>{currentAd.ctaText || 'Lihat Penawaran ↗'}</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          ) : (
+            <Link
+              to={currentAd.targetUrl}
+              onClick={() => handleAdClick(currentAd)}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
+            >
+              <span>{currentAd.ctaText || 'Klaim Sekarang ↗'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
+
+          <a
+            href={`https://wa.me/6281330304321?text=${encodeURIComponent(
+              `Halo Admin Ngalam Fix Pro, saya tertarik dengan promo/iklan "${currentAd.title}". Mohon info pengerjaan & garansinya hari ini.`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 transition-all cursor-pointer"
+          >
+            <PhoneCall className="w-4 h-4 text-emerald-600" />
+            <span>Konsultasi WA</span>
+          </a>
         </div>
       </div>
     </section>

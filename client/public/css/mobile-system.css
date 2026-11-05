@@ -1837,8 +1837,8 @@
   }
 
   .chatbot-container {
-    left: 24px !important;
-    right: auto !important;
+    right: 24px !important;
+    left: auto !important;
     bottom: 24px !important;
   }
 

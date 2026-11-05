@@ -79,8 +79,21 @@ const DEFAULT_PROMO_CODES = [
 // In-memory cache for fast read/writes and serverless resilience
 let promoCache = null;
 
-// Helper: Ensure directory and file exists safely (handles read-only filesystems on Vercel)
+// Safe detector for Vercel Serverless / AWS Lambda read-only filesystem (/var/task)
+function isReadOnlyEnv() {
+  return Boolean(
+    process.env.VERCEL ||
+    process.env.VERCEL_ENV ||
+    process.env.NOW_REGION ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    process.env.LAMBDA_TASK_ROOT ||
+    (typeof __dirname === 'string' && __dirname.startsWith('/var/task'))
+  );
+}
+
+// Helper: Ensure directory and file exists safely (never throws on read-only filesystems)
 function ensureFile() {
+  if (isReadOnlyEnv()) return;
   try {
     const dir = path.dirname(PROMO_CODES_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -88,7 +101,7 @@ function ensureFile() {
       fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(DEFAULT_PROMO_CODES, null, 2), 'utf8');
     }
   } catch (err) {
-    // Read-only filesystem on Vercel: safely ignore disk creation
+    console.warn('[PromoCodeService] Read-only filesystem detected, disk initialization skipped:', err.message);
   }
 }
 
@@ -157,7 +170,7 @@ function getAllPromoCodes(onlyUsable = false) {
 function savePromoCodes(promos) {
   promoCache = [...promos];
 
-  if (!process.env.VERCEL) {
+  if (!isReadOnlyEnv()) {
     // 1. Coba tulis ke PROMO_CODES_FILE jika local environment (non-serverless)
     try {
       ensureFile();

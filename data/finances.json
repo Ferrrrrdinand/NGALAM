@@ -167,5 +167,44 @@
     "credit": 0,
     "balance": 6050000,
     "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261105-5562",
+    "date": "2026-11-05T09:15:23.689Z",
+    "displayDate": "5 Nov 2026, 16.15",
+    "ref": "INV-20261105-9331",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261105-9191 - iPhone 15 Pro Max (Bu Dewi Pelanggan Tamu) via QRIS",
+    "debit": 1500000,
+    "credit": 0,
+    "balance": 7550000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261105-1100",
+    "date": "2026-11-05T09:15:26.774Z",
+    "displayDate": "5 Nov 2026, 16.15",
+    "ref": "INV-20261105-4774",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261105-1687 - iPhone 15 Pro Max (Bu Dewi Pelanggan Tamu) via Tunai (Cash)",
+    "debit": 450000,
+    "credit": 0,
+    "balance": 8000000,
+    "cashier": "Ibu Sarah (Meja 1)"
+  },
+  {
+    "id": "FIN-20261105-8796",
+    "date": "2026-11-05T09:15:29.036Z",
+    "displayDate": "5 Nov 2026, 16.15",
+    "ref": "INV-20261105-2552",
+    "type": "pemasukan",
+    "category": "Jasa Servis Smartphone",
+    "description": "Pembayaran tiket NGF-20261105-5755 - Samsung S24 Ultra (Pak Hendra Walk-in) via QRIS",
+    "debit": 200000,
+    "credit": 0,
+    "balance": 8200000,
+    "cashier": "Ibu Sarah (Meja 1)"
   }
 ]

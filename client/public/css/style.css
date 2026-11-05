@@ -6892,8 +6892,8 @@ footer.footer {
   pointer-events: none;
   position: absolute;
   bottom: 0;
-  left: 0 !important;
-  right: auto !important;
+  right: 0 !important;
+  left: auto !important;
   width: 390px;
   max-width: calc(100vw - 32px);
   height: 560px;
@@ -9633,8 +9633,8 @@ html[data-device="mobile"] .chatbot-container {
   }
 
   .chatbot-panel {
-    left: 0 !important;
-    right: auto !important;
+    right: 0 !important;
+    left: auto !important;
     bottom: 66px !important;
     width: calc(100vw - 28px) !important;
     max-width: 380px !important;

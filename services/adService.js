@@ -9,8 +9,24 @@ const path = require('path');
 
 const ADS_FILE = path.join(__dirname, '..', 'data', 'ads.json');
 
-// Default initial high-converting advertisements
+// Default initial high-converting advertisements (Unified Banners & Ads)
 const DEFAULT_ADS = [
+  {
+    id: 'ad-workshop-presisi',
+    title: 'Workshop Meja Terbuka',
+    headline: 'Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA Terbuka',
+    description: 'Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal. Transparan, aman, suku cadang original, dan bisa ditunggu 30–60 menit.',
+    badge: '⚡ BISA DITUNGGU (30–60 MENIT)',
+    ctaText: 'Konsultasi Teknisi Langsung ↗',
+    targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
+    imageUrl: 'images/spesialis-hp-banner.jpg',
+    theme: 'gold',
+    active: true,
+    location: 'home_under_steps',
+    viewsCount: 2450,
+    clicksCount: 520,
+    createdAt: '2026-11-05T07:45:00.000Z'
+  },
   {
     id: 'ad-baterai-90hari',
     title: 'Garansi Baterai 90 Hari',
@@ -23,8 +39,8 @@ const DEFAULT_ADS = [
     theme: 'gold',
     active: true,
     location: 'home_under_steps',
-    viewsCount: 1420,
-    clicksCount: 285,
+    viewsCount: 1820,
+    clicksCount: 385,
     createdAt: '2026-11-05T08:00:00.000Z'
   },
   {
@@ -39,8 +55,8 @@ const DEFAULT_ADS = [
     theme: 'emerald',
     active: true,
     location: 'home_under_steps',
-    viewsCount: 1190,
-    clicksCount: 312,
+    viewsCount: 1690,
+    clicksCount: 412,
     createdAt: '2026-11-05T08:15:00.000Z'
   },
   {
@@ -55,19 +71,31 @@ const DEFAULT_ADS = [
     theme: 'dark',
     active: true,
     location: 'home_under_steps',
-    viewsCount: 890,
-    clicksCount: 164,
+    viewsCount: 1190,
+    clicksCount: 264,
     createdAt: '2026-11-05T08:30:00.000Z'
   }
 ];
 
 let adsCache = null;
 
+// Safe detector for Vercel Serverless / AWS Lambda read-only filesystem (/var/task)
+function isReadOnlyEnv() {
+  return Boolean(
+    process.env.VERCEL ||
+    process.env.VERCEL_ENV ||
+    process.env.NOW_REGION ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    process.env.LAMBDA_TASK_ROOT ||
+    (typeof __dirname === 'string' && __dirname.startsWith('/var/task'))
+  );
+}
+
 // Safe save helper handling Vercel serverless read-only filesystem
 function saveAdsToDisk(adsList) {
   adsCache = [...adsList];
 
-  if (!process.env.VERCEL) {
+  if (!isReadOnlyEnv()) {
     try {
       const dir = path.dirname(ADS_FILE);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });

@@ -270,8 +270,8 @@
       chatbot.style.bottom = '20px';
     } else {
       chatbot.classList.remove('mobile-docked');
-      chatbot.style.left = '24px';
-      chatbot.style.right = 'auto';
+      chatbot.style.left = 'auto';
+      chatbot.style.right = '24px';
       chatbot.style.bottom = '24px';
     }
   }
