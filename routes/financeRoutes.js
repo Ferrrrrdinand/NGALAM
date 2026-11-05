@@ -199,7 +199,16 @@ router.post('/transactions', async (req, res) => {
         const { recordMitraCommission } = require('../services/financeService');
         const targetOrder = await getOrderById(txData.ticketId);
         if (targetOrder) {
-          const refCode = targetOrder.affiliateRef || targetOrder.referralCode;
+          let refCode = targetOrder.affiliateRef || targetOrder.referralCode || txData.affiliateRef || txData.referralCode;
+          if (!refCode) {
+            try {
+              const { findCustomerByIdentifier } = require('../services/customerService');
+              const phone = targetOrder.whatsapp || targetOrder.phone || txData.customerPhone || txData.whatsapp || '';
+              const c = findCustomerByIdentifier(phone);
+              if (c && c.referredByMitra) refCode = c.referredByMitra;
+            } catch (_) {}
+          }
+
           if (refCode && targetOrder.affiliateCommissionStatus !== 'paid') {
             const finalCost = Number(txData.totalPaid) || Number(targetOrder.cost) || 0;
             const rate = Number(targetOrder.affiliateCommissionRate || 10);
@@ -208,6 +217,7 @@ router.post('/transactions', async (req, res) => {
               await recordMitraCommission(refCode, commAmt, targetOrder.id);
               await updateOrder(targetOrder.id, {
                 paid: true,
+                affiliateRef: refCode,
                 affiliateCommission: commAmt,
                 affiliateCommissionStatus: 'paid',
                 affiliateCommissionPaidAt: new Date().toISOString()
@@ -218,6 +228,20 @@ router.post('/transactions', async (req, res) => {
         }
       } catch (affErr) {
         console.warn('[FinanceRoutes] Affiliate auto-commission recording warning:', affErr.message);
+      }
+    } else if (txData.referralCode || txData.affiliateRef) {
+      // Transaksi kasir langsung (tanpa tiket servis) yang menyertakan kode mitra
+      try {
+        const { recordMitraCommission } = require('../services/financeService');
+        const ref = (txData.referralCode || txData.affiliateRef).trim().toUpperCase();
+        const finalCost = Number(txData.totalPaid) || 0;
+        const commAmt = Math.round(finalCost * 0.1); // 10% komisi mitra
+        if (commAmt > 0) {
+          await recordMitraCommission(ref, commAmt, newTx.invoiceNumber);
+          console.log(`[FinanceRoutes] Komisi mitra direct ${ref} sebesar Rp ${commAmt} berhasil dialokasikan.`);
+        }
+      } catch (directAffErr) {
+        console.warn('[FinanceRoutes] Direct affiliate recording warning:', directAffErr.message);
       }
     }
 

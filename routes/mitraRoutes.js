@@ -921,13 +921,23 @@ router.get('/dashboard', async (req, res) => {
     }
 
     const { getAllOrders } = require('../services/orderService');
+    const { findCustomerByIdentifier } = require('../services/customerService');
     const allOrders = await getAllOrders();
-    const myReferredOrders = allOrders.filter(o =>
-      (o.affiliateRef && o.affiliateRef.toUpperCase() === refCode) ||
-      (o.partnerName && o.partnerName.toLowerCase().includes(mitra.name.toLowerCase()))
-    );
+    const myReferredOrders = allOrders.filter(o => {
+      const orderRef = (o.affiliateRef || o.referralCode || '').toUpperCase();
+      if (orderRef === refCode) return true;
+      if (o.partnerName && o.partnerName.toLowerCase().includes(mitra.name.toLowerCase())) return true;
+      
+      const phone = o.whatsapp || o.phone || o.customerPhone || '';
+      if (phone) {
+        const c = findCustomerByIdentifier(phone);
+        if (c && c.referredByMitra && c.referredByMitra.toUpperCase() === refCode) return true;
+      }
+      return false;
+    });
 
     const details = buildMitraAffiliateDetails(req, refCode);
+    const balance = mitra.balance !== undefined ? mitra.balance : (mitra.totalCommission || 0);
 
     res.json({
       success: true,
@@ -943,16 +953,19 @@ router.get('/dashboard', async (req, res) => {
         referralCode: mitra.referralCode,
         commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 10,
         totalCommission: mitra.totalCommission || 0,
+        balance: balance,
         status: mitra.status || 'Siaga / Aktif',
         lastActive: mitra.lastActive,
         affiliateUrl: details.affiliateUrl,
-        qrCodeUrl: details.qrCodeUrl
+        qrCodeUrl: details.qrCodeUrl,
+        commissionHistory: Array.isArray(mitra.commissionHistory) ? mitra.commissionHistory : []
       },
       stats: {
         totalOrders: myReferredOrders.length,
-        completedOrders: myReferredOrders.filter(o => o.currentStep >= 5 || o.step >= 5).length,
-        activeOrders: myReferredOrders.filter(o => (o.currentStep || o.step || 1) < 5).length,
-        totalCommission: mitra.totalCommission || 0
+        completedOrders: myReferredOrders.filter(o => o.currentStep >= 5 || o.step >= 5 || o.paid === true).length,
+        activeOrders: myReferredOrders.filter(o => (o.currentStep || o.step || 1) < 5 && !o.paid).length,
+        totalCommission: mitra.totalCommission || 0,
+        balance: balance
       },
       orders: myReferredOrders
     });

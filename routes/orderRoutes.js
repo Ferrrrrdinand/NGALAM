@@ -109,6 +109,24 @@ router.post('/', async (req, res) => {
           orderData.affiliateCommission = 0; // Menunggu pelunasan kasir/admin
           orderData.affiliateCommissionStatus = 'pending';
           console.log(`[OrderRoutes] Order berhasil dikoneksikan ke mitra ${mitra.name} (${orderData.affiliateRef}) dengan komisi ${rate}%`);
+
+          // Hubungkan pelanggan (baik tamu maupun akun terdaftar) ke mitra ini secara permanen
+          try {
+            const customerService = require('../services/customerService');
+            const custPhone = orderData.whatsapp || orderData.phone || orderData.customerPhone || '';
+            if (custPhone) {
+              await customerService.ensureCustomerAccount({
+                name: orderData.customerName || 'Pelanggan Tamu',
+                whatsapp: custPhone,
+                email: orderData.email || '',
+                district: orderData.district || 'Malang',
+                referredByMitra: orderData.affiliateRef,
+                registeredVia: 'guest_booking_referral'
+              });
+            }
+          } catch (linkErr) {
+            console.warn('[OrderRoutes] Auto-linking customer to mitra warning:', linkErr.message);
+          }
         }
       } catch (affErr) {
         console.warn('[OrderRoutes] Affiliate processing warning:', affErr.message);

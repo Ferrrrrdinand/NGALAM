@@ -562,3 +562,4 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
     </div>
   );
 }
+
