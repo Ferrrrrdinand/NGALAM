@@ -9,15 +9,15 @@ const path = require('path');
 
 const ADS_FILE = path.join(__dirname, '..', 'data', 'ads.json');
 
-// Default initial high-converting advertisements (Unified Banners & Ads)
+// Default initial high-converting advertisements (Unified Banners & Ads - Ringkas & Padat)
 const DEFAULT_ADS = [
   {
     id: 'ad-member-vip-10',
-    title: 'Tawaran Member VIP Diskon 10%',
-    headline: 'Gabung Member VIP Ngalam Fix Pro — Dapatkan Potongan Diskon 10% Servis HP!',
-    description: 'Daftar akun gratis sekarang & nikmati potongan otomatis 10% seluruh servis smartphone (ganti LCD, baterai original, kamera & IC), pantau riwayat servis, klaim garansi online, dan nikmati prioritas pengerjaan di Meja 1.',
-    badge: '👑 TAWARAN MEMBER: DISKON 10%',
-    ctaText: 'Daftar Member & Klaim 10% ↗',
+    title: 'Member Diskon 10%',
+    headline: 'Daftar Member & Dapatkan Diskon 10% Servis HP',
+    description: 'Daftar gratis & klaim voucher kode MEMBER10 untuk potongan 10% perbaikan LCD, baterai, dan mesin.',
+    badge: '👑 MEMBER BARU DISKON 10%',
+    ctaText: 'Daftar & Klaim 10% ↗',
     targetUrl: '/akun-pelanggan?tab=register&promo=MEMBER10',
     imageUrl: 'images/spesialis-hp-banner.jpg',
     theme: 'gold',
@@ -28,27 +28,11 @@ const DEFAULT_ADS = [
     createdAt: '2026-11-05T09:00:00.000Z'
   },
   {
-    id: 'ad-workshop-presisi',
-    title: 'Workshop Meja Terbuka',
-    headline: 'Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA Terbuka',
-    description: 'Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal. Transparan, aman, suku cadang original, dan bisa ditunggu 30–60 menit.',
-    badge: '⚡ BISA DITUNGGU (30–60 MENIT)',
-    ctaText: 'Konsultasi Teknisi Langsung ↗',
-    targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
-    imageUrl: 'images/spesialis-hp-banner.jpg',
-    theme: 'gold',
-    active: true,
-    location: 'home_under_steps',
-    viewsCount: 2450,
-    clicksCount: 520,
-    createdAt: '2026-11-05T07:45:00.000Z'
-  },
-  {
     id: 'ad-baterai-90hari',
     title: 'Garansi Baterai 90 Hari',
-    headline: 'Ganti Baterai Original iPhone & Android — Garansi Resmi 90 Hari Penuh!',
-    description: 'Baterai cepat drop atau kembung? Ganti di tempat dengan sel baterai Grade Original 100% Health, pengerjaan express 30–45 menit di meja transparan, dan jaminan perlindungan 90 hari tertulis resmi.',
-    badge: '⚡ GARANSI SPESIAL 90 HARI',
+    headline: 'Ganti Baterai Original iPhone & Android — Garansi 90 Hari',
+    description: 'Baterai Grade Original 100% Health, pengerjaan cepat 30–45 menit bergaransi resmi.',
+    badge: '⚡ GARANSI 90 HARI',
     ctaText: 'Klaim Servis Baterai ↗',
     targetUrl: '/pesan-servis?problem=baterai',
     imageUrl: 'images/promo-banner-1.jpg',
@@ -61,9 +45,9 @@ const DEFAULT_ADS = [
   },
   {
     id: 'ad-lcd-tempered',
-    title: 'Paket Komplit Layar OLED + Bonus 9H',
-    headline: 'Ganti Layar Super Retina / OLED — Gratis Pasang Tempered Glass 9H Presisi!',
-    description: 'Layar retak, blank hitam, atau touch error? Dapatkan diskon suku cadang hingga 30%, warna tajam 120Hz smooth, sensor responsif, plus bonus tempered glass 9H gratis langsung terpasang rapi.',
+    title: 'Paket Komplit Layar OLED',
+    headline: 'Ganti Layar OLED / Retina — Gratis Tempered Glass 9H Presisi',
+    description: 'Diskon suku cadang hingga 30% plus bonus pelindung layar 9H langsung terpasang.',
     badge: '🔥 DISKON S/D 30% + BONUS 9H',
     ctaText: 'Lihat Estimasi LCD ↗',
     targetUrl: '/pesan-servis?problem=lcd&promo=FREEGLASS9H',
@@ -78,8 +62,8 @@ const DEFAULT_ADS = [
   {
     id: 'ad-antar-jemput',
     title: 'Layanan Antar-Jemput Malang',
-    headline: 'Sibuk Kerja? Manfaatkan Pickup & Delivery Servis HP Seluruh Area Malang Raya',
-    description: 'Unit HP Anda dijemput kurir profesional langsung ke kantor atau rumah. Pengecekan transparan di Meja 1 dan update pengerjaan dilaporkan langsung ke WhatsApp Anda.',
+    headline: 'Layanan Servis HP Antar-Jemput Seluruh Area Malang Raya',
+    description: 'Unit dijemput dan diantar ke rumah/kantor dengan laporan pengerjaan real-time via WhatsApp.',
     badge: '🛵 PICKUP & DELIVERY MALANG',
     ctaText: 'Pesan Antar Jemput WA ↗',
     targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20mau%20layanan%20antar%20jemput%20servis%20HP',
@@ -90,6 +74,22 @@ const DEFAULT_ADS = [
     viewsCount: 1190,
     clicksCount: 264,
     createdAt: '2026-11-05T08:30:00.000Z'
+  },
+  {
+    id: 'ad-workshop-presisi',
+    title: 'Workshop Meja Terbuka',
+    headline: 'Servis HP Transparan Bisa Ditunggu (30–60 Menit)',
+    description: 'Peralatan micro-soldering & mesin OCA terbuka, tonton langsung pengerjaan di depan Anda.',
+    badge: '⏱️ BISA DITUNGGU (30–60 MENIT)',
+    ctaText: 'Konsultasi Teknisi ↗',
+    targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
+    imageUrl: 'images/spesialis-hp-banner.jpg',
+    theme: 'gold',
+    active: true,
+    location: 'home_under_steps',
+    viewsCount: 2450,
+    clicksCount: 520,
+    createdAt: '2026-11-05T07:45:00.000Z'
   }
 ];
 
