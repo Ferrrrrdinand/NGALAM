@@ -166,60 +166,101 @@ export default function HomeAdBanner() {
   return (
     <section className="wrap my-8 sm:my-12 transition-all duration-300" id="homeAdSection">
       {/* ======================================================== */}
-      {/* DEDICATED LUXURY ADVERTISEMENT CARD (IKLAN RESMI SPONSOR & PROMO) */}
+      {/* TEXT-ONLY LUXURY ADVERTISEMENT CARD (TANPA GAMBAR) */}
       {/* ======================================================== */}
       <div 
-        className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${getThemeGradient(currentAd.theme)} p-6 sm:p-8 lg:p-10 border shadow-2xl transition-all duration-500`}
+        className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${getThemeGradient(currentAd.theme)} p-6 sm:p-8 lg:p-9 border shadow-2xl transition-all duration-500`}
         style={{
           boxShadow: '0 20px 50px -15px rgba(212, 175, 55, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2)'
         }}
       >
         {/* Subtle background luxury glow */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-amber-500/15 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-amber-500/15 blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-          
-          {/* LEFT: TEXT CONTENT & ACTIONS (7 COLS) */}
-          <div className="lg:col-span-7 space-y-4">
-            
-            {/* Top Badge & Live Indicator */}
+        <div className="relative z-10 space-y-4 sm:space-y-5">
+          {/* TOP BAR: BADGE, LIVE SPONSOR, & SLIDER NAVIGATION */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border shadow-xs ${getBadgeStyle(currentAd.theme)}`}>
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>{currentAd.badge || 'PROMO SPESIAL'}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-amber-300/80 bg-white/5 border border-white/10">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold text-amber-300/90 bg-white/5 border border-white/10">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>IKLAN RESMI SPONSOR</span>
               </span>
             </div>
 
-            {/* Headline */}
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight tracking-tight">
-              {currentAd.headline}
-            </h3>
+            {/* Slider Navigation Controls (Dots & Arrows) */}
+            {ads.length > 1 && (
+              <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-1.5 p-1 rounded-full bg-white/5 border border-white/10">
+                  {ads.map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      type="button"
+                      onClick={() => setCurrentIndex(dotIdx)}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        currentIndex === dotIdx ? 'w-6 bg-amber-400 shadow-[0_0_8px_#f59e0b]' : 'w-2 bg-white/30 hover:bg-white/60'
+                      }`}
+                      aria-label={`Slide iklan ${dotIdx + 1}`}
+                    />
+                  ))}
+                </div>
 
-            {/* Description */}
-            <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed font-normal">
-              {currentAd.description}
-            </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+                    aria-label="Iklan Sebelumnya"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentIndex((prev) => (prev + 1) % ads.length)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
+                    aria-label="Iklan Selanjutnya"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
-            {/* Feature Highlights */}
-            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-amber-200/90 pt-1">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Teknisi Berpengalaman &amp; Bergaransi</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Bisa Ditunggu di Meja Transparan</span>
-              </div>
+          {/* HEADLINE */}
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight tracking-tight max-w-4xl">
+            {currentAd.headline}
+          </h3>
+
+          {/* DESCRIPTION */}
+          <p className="text-xs sm:text-sm lg:text-[15px] text-slate-300/90 leading-relaxed font-normal max-w-5xl">
+            {currentAd.description}
+          </p>
+
+          {/* FEATURE HIGHLIGHTS */}
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm font-semibold text-amber-200/90 pt-1">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>Teknisi Berpengalaman &amp; Bergaransi Resmi</span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Bisa Ditunggu di Meja Transparan (30–60 Menit)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0" />
+              <span>Suku Cadang Grade Original &amp; QC 24 Titik Fungsi</span>
+            </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+          {/* ACTION BUTTONS */}
+          <div className="pt-2 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-3">
               {isExternalLink ? (
                 <a
                   href={currentAd.targetUrl}
@@ -248,73 +289,17 @@ export default function HomeAdBanner() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer"
               >
                 <PhoneCall className="w-4 h-4 text-emerald-400" />
                 <span>Konsultasi WA</span>
               </a>
             </div>
-          </div>
 
-          {/* RIGHT: IMAGE CARD PREVIEW (5 COLS) */}
-          <div className="lg:col-span-5 relative group">
-            <div className="relative overflow-hidden rounded-2xl border-2 border-amber-400/30 shadow-2xl bg-slate-900 aspect-16/10">
-              <img
-                src={currentAd.imageUrl?.startsWith('http') || currentAd.imageUrl?.startsWith('/') ? currentAd.imageUrl : `/${currentAd.imageUrl}`}
-                alt={currentAd.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/images/spesialis-hp-banner.jpg';
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-              
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
-                <span className="font-bold truncate drop-shadow-md">{currentAd.title}</span>
-                <span className="px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs font-mono text-[10px] text-amber-300 border border-amber-400/30">
-                  Unit Terbatas
-                </span>
-              </div>
+            <div className="text-[11px] text-slate-400 hidden md:flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Diperbarui otomatis dari database iklan Ngalam Fix Pro</span>
             </div>
-
-            {/* Slider Navigation Dots & Controls if multiple ads */}
-            {ads.length > 1 && (
-              <div className="flex items-center justify-between mt-3 pt-1">
-                <div className="flex items-center gap-1.5">
-                  {ads.map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      type="button"
-                      onClick={() => setCurrentIndex(dotIdx)}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        currentIndex === dotIdx ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'
-                      }`}
-                      aria-label={`Slide iklan ${dotIdx + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length)}
-                    className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
-                    aria-label="Iklan Sebelumnya"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentIndex((prev) => (prev + 1) % ads.length)}
-                    className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
-                    aria-label="Iklan Selanjutnya"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
