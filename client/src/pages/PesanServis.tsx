@@ -31,7 +31,11 @@ export default function PesanServis() {
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [promoError, setPromoError] = useState('');
   const [availablePromoCodes, setAvailablePromoCodes] = useState([]);
-  const [referralMitra, setReferralMitra] = useState(null);
+  const [referralMitra, setReferralMitra] = useState<any>(null);
+  const [referralInput, setReferralInput] = useState(() => {
+    return (searchParams.get('ref') || searchParams.get('referral') || localStorage.getItem('ngalam_affiliate_ref') || '').trim().toUpperCase();
+  });
+  const [referralStatus, setReferralStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
   const [submitError, setSubmitError] = useState('');
@@ -200,26 +204,42 @@ export default function PesanServis() {
     window.addEventListener('storage', handleStorage);
     window.addEventListener('focus', loadPromos);
 
-    const scannedRef = (searchParams.get('ref') || searchParams.get('referral') || localStorage.getItem('ngalam_affiliate_ref') || '').trim().toUpperCase();
+    const scannedRef = (searchParams.get('ref') || searchParams.get('referral') || localStorage.getItem('ngalam_affiliate_ref') || sessionStorage.getItem('ngalam_affiliate_ref') || '').trim().toUpperCase();
     if (scannedRef) {
-      // Cek apakah kode ini sudah pernah dipakai booking di browser ini
-      let used = [];
+      setReferralInput(scannedRef);
+      localStorage.setItem('ngalam_affiliate_ref', scannedRef);
+
+      // Cek apakah data mitra sudah ada di cache lokal agar instan
       try {
-        used = JSON.parse(localStorage.getItem('ngalam_used_referrals') || '[]');
+        const cached = localStorage.getItem('ngalam_affiliate_mitra');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && (parsed.referralCode === scannedRef || parsed.code === scannedRef)) {
+            setReferralMitra(parsed);
+            setReferralStatus('valid');
+          }
+        }
       } catch (_) {}
 
-      if (Array.isArray(used) && used.includes(scannedRef)) {
-        localStorage.removeItem('ngalam_affiliate_ref');
-        setReferralMitra(null);
-      } else {
-        localStorage.setItem('ngalam_affiliate_ref', scannedRef);
-        fetchApi(`/api/mitra/ref/${encodeURIComponent(scannedRef)}`).then(({ ok, data }) => {
-          if (ok && data.success && data.mitra) {
-            setReferralMitra(data.mitra);
-          }
-        });
-      }
+      // Verifikasi ke server untuk data terbaru
+      fetchApi(`/api/mitra/ref/${encodeURIComponent(scannedRef)}`).then(({ ok, data }) => {
+        if (ok && data && data.success && data.mitra) {
+          setReferralMitra(data.mitra);
+          setReferralStatus('valid');
+          localStorage.setItem('ngalam_affiliate_ref', scannedRef);
+          localStorage.setItem('ngalam_affiliate_mitra', JSON.stringify(data.mitra));
+        }
+      });
     }
+
+    const handleAffiliateEvent = (e: any) => {
+      if (e.detail) {
+        setReferralMitra(e.detail);
+        setReferralInput(e.detail.referralCode || e.detail.code || '');
+        setReferralStatus('valid');
+      }
+    };
+    window.addEventListener('ngalam_affiliate_connected', handleAffiliateEvent);
 
     if (customer) {
       setFormData((prev) => ({
@@ -239,8 +259,44 @@ export default function PesanServis() {
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('focus', loadPromos);
+      window.removeEventListener('ngalam_affiliate_connected', handleAffiliateEvent);
     };
   }, [customer]);
+
+  const handleCheckReferral = async (rawCode?: string) => {
+    const code = (rawCode || referralInput).trim().toUpperCase();
+    if (!code) {
+      setReferralMitra(null);
+      setReferralStatus('idle');
+      return;
+    }
+    setReferralStatus('checking');
+    try {
+      const res = await fetchApi(`/api/mitra/ref/${encodeURIComponent(code)}`);
+      if (res.ok && res.data && res.data.success && res.data.mitra) {
+        setReferralMitra(res.data.mitra);
+        setReferralInput(code);
+        setReferralStatus('valid');
+        localStorage.setItem('ngalam_affiliate_ref', code);
+        localStorage.setItem('ngalam_affiliate_mitra', JSON.stringify(res.data.mitra));
+        sessionStorage.setItem('ngalam_affiliate_ref', code);
+      } else {
+        setReferralMitra(null);
+        setReferralStatus('invalid');
+      }
+    } catch {
+      setReferralStatus('invalid');
+    }
+  };
+
+  const handleClearReferral = () => {
+    localStorage.removeItem('ngalam_affiliate_ref');
+    localStorage.removeItem('ngalam_affiliate_mitra');
+    sessionStorage.removeItem('ngalam_affiliate_ref');
+    setReferralMitra(null);
+    setReferralInput('');
+    setReferralStatus('idle');
+  };
 
   const handlePhoneBlur = async () => {
     const rawVal = (formData.whatsapp || '').trim();
@@ -311,7 +367,7 @@ export default function PesanServis() {
       ? selectedModelName
       : `${brandNameUpper} ${selectedModelName}`;
 
-    const activeRefCode = localStorage.getItem('ngalam_affiliate_ref') || '';
+    const activeRefCode = (referralInput || localStorage.getItem('ngalam_affiliate_ref') || '').trim().toUpperCase();
     const payload = {
       customerName: formData.customerName.trim(),
       whatsapp: formData.whatsapp.trim(),
@@ -334,17 +390,9 @@ export default function PesanServis() {
         setSuccessOrder(res.data.data);
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
-        // Invalidate referral code di localstorage setelah booking selesai (hanya berlaku 1x)
+        // Simpan konfirmasi referral di local storage agar riwayat tetap terkoneksi
         if (activeRefCode) {
-          try {
-            const used = JSON.parse(localStorage.getItem('ngalam_used_referrals') || '[]');
-            if (Array.isArray(used) && !used.includes(activeRefCode)) {
-              used.push(activeRefCode);
-              localStorage.setItem('ngalam_used_referrals', JSON.stringify(used));
-            }
-          } catch (_) {}
-          localStorage.removeItem('ngalam_affiliate_ref');
-          setReferralMitra(null);
+          localStorage.setItem('ngalam_affiliate_ref', activeRefCode);
         }
       } else {
         setSubmitError(res.data.error || res.data.message || 'Gagal menyimpan pesanan servis.');
@@ -477,9 +525,14 @@ export default function PesanServis() {
             <p style={{ color: '#000000', fontSize: '0.9rem', marginTop: '6px' }}>
               Tiket resmi Anda telah dibuat. Silakan simpan nomor tiket berikut:
             </p>
-            <div style={{ margin: '20px auto', padding: '16px', background: '#ecfdf5', border: '2px solid #10b981', borderRadius: '16px', maxWidth: '300px' }}>
+            <div style={{ margin: '20px auto', padding: '16px', background: '#ecfdf5', border: '2px solid #10b981', borderRadius: '16px', maxWidth: '320px' }}>
               <span style={{ fontSize: '0.8rem', color: '#047857', fontWeight: 700, display: 'block' }}>NOMOR TIKET:</span>
               <strong style={{ fontSize: '1.6rem', color: '#065f46', fontFamily: 'monospace' }}>{successOrder.id}</strong>
+              {(referralMitra || successOrder.affiliateRef) && (
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #a7f3d0', fontSize: '0.78rem', color: '#065f46', textAlign: 'center' }}>
+                  ✨ <b>Terkoneksi Mitra:</b> {referralMitra?.name || successOrder.partnerName || successOrder.affiliateRef} ({referralMitra?.referralCode || successOrder.affiliateRef})
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
               <a
@@ -728,6 +781,61 @@ export default function PesanServis() {
                   <span>Voucher {formData.promoCode} aktif! Hemat {formatRp(appliedPromo.discountAmount || 20000)}</span>
                 </div>
               )}
+            </div>
+
+            {/* Step 5: Kode Referral Mitra Afiliasi */}
+            <div className="b-form-group" style={{ marginTop: '16px' }}>
+              <label className="b-form-label">
+                <span>
+                  <span className="b-form-step-badge" style={{ background: '#059669', color: '#ffffff' }}>MITRA</span>
+                  <span>Kode Referral Mitra Rekomendasi (Opsional)</span>
+                </span>
+                <span className="sub" style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', marginTop: '3px' }}>
+                  Otomatis tersimpan &amp; terhubung saat Anda scan QR Code mitra rekanan kami
+                </span>
+              </label>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="Kode Referral Mitra (Cth: MTR-FERDI-12)"
+                  className="b-input form-control"
+                  style={{ textTransform: 'uppercase', fontFamily: 'monospace' }}
+                  value={referralInput}
+                  onChange={(e) => {
+                    setReferralInput(e.target.value.toUpperCase());
+                    setReferralStatus('idle');
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn small"
+                  onClick={() => handleCheckReferral()}
+                  style={{ padding: '0 20px', borderRadius: '10px', background: '#059669', borderColor: '#059669' }}
+                >
+                  {referralStatus === 'checking' ? 'Mengecek...' : 'Hubungkan'}
+                </button>
+              </div>
+
+              {referralMitra ? (
+                <div style={{ color: '#059669', fontSize: '0.82rem', fontWeight: 700, marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ecfdf5', padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #a7f3d0' }}>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Terhubung dengan Mitra: <b>{referralMitra.name}</b> ({referralMitra.referralCode || referralMitra.code})</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClearReferral}
+                    style={{ fontSize: '0.75rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}
+                  >
+                    Lepas
+                  </button>
+                </div>
+              ) : referralStatus === 'invalid' ? (
+                <div style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '6px' }}>
+                  Kode referral mitra tidak ditemukan. Pastikan kode sesuai dengan QR Code mitra.
+                </div>
+              ) : null}
             </div>
 
             <button type="submit" className="btn full" disabled={isSubmitting} style={{ padding: '16px', fontSize: '1rem', fontWeight: 800, borderRadius: '14px', marginTop: '14px' }}>

@@ -18,23 +18,27 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 export default function App() {
   const location = useLocation();
 
-  // Tangkap parameter referral link/scan QR secara global
+  // Tangkap parameter referral link/scan QR secara global & simpan secara permanen di storage
   useEffect(() => {
     try {
       const searchParams = new URLSearchParams(location.search);
-      const refParam = searchParams.get('ref') || searchParams.get('referral');
+      const refParam = searchParams.get('ref') || searchParams.get('referral') || searchParams.get('m');
       if (refParam) {
         const cleanRef = refParam.trim().toUpperCase();
-        // Cek apakah kode referral ini sudah pernah digunakan untuk booking di browser ini
-        let used = [];
-        try {
-          used = JSON.parse(localStorage.getItem('ngalam_used_referrals') || '[]');
-        } catch (_) {}
-
-        if (Array.isArray(used) && used.includes(cleanRef)) {
-          console.warn(`[Affiliate] Kode referral ${cleanRef} sudah pernah digunakan dan tidak valid lagi untuk pemesanan berikutnya.`);
-        } else {
+        if (cleanRef) {
           localStorage.setItem('ngalam_affiliate_ref', cleanRef);
+          sessionStorage.setItem('ngalam_affiliate_ref', cleanRef);
+
+          // Ambil detail profil mitra secara real-time dan simpan ke local storage
+          fetch(`/api/mitra/ref/${encodeURIComponent(cleanRef)}`)
+            .then((r) => r.json())
+            .then((data) => {
+              if (data && data.success && data.mitra) {
+                localStorage.setItem('ngalam_affiliate_mitra', JSON.stringify(data.mitra));
+                window.dispatchEvent(new CustomEvent('ngalam_affiliate_connected', { detail: data.mitra }));
+              }
+            })
+            .catch(() => {});
         }
       }
     } catch (_) {}

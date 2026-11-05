@@ -1061,10 +1061,22 @@ export default function CustomerLogin() {
     setErrorMsg('');
     setLoading(true);
 
+    const savedMitraRef = (localStorage.getItem('ngalam_affiliate_ref') || '').trim();
+
     try {
       const res = await fetchApi('/api/customer/register', {
         method: 'POST',
-        body: { name, phone, whatsapp: phone, email, district, pin, password: pin, rememberMe }
+        body: { 
+          name, 
+          phone, 
+          whatsapp: phone, 
+          email, 
+          district, 
+          pin, 
+          password: pin, 
+          rememberMe,
+          referredByMitra: savedMitraRef
+        }
       });
 
       if (res.ok && res.data.success) {
