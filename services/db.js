@@ -209,8 +209,64 @@ async function runInitDb() {
             payload JSONB,
             performed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
           );
+
+          -- Tabel Kode Promo & Voucher Diskon
+          CREATE TABLE IF NOT EXISTS promo_codes (
+            id VARCHAR(100) PRIMARY KEY,
+            code VARCHAR(100) UNIQUE,
+            name VARCHAR(255),
+            description TEXT,
+            discount_type VARCHAR(50),
+            discount_value NUMERIC DEFAULT 0,
+            min_spend NUMERIC DEFAULT 0,
+            max_discount NUMERIC DEFAULT 0,
+            valid_from VARCHAR(50),
+            valid_until VARCHAR(50),
+            usage_limit INTEGER DEFAULT 0,
+            used_count INTEGER DEFAULT 0,
+            active BOOLEAN DEFAULT TRUE,
+            raw_data JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          -- Tabel Banner Promo Beranda
+          CREATE TABLE IF NOT EXISTS banners (
+            id VARCHAR(100) PRIMARY KEY,
+            title VARCHAR(255),
+            description TEXT,
+            badge_tag VARCHAR(100),
+            badge_pill VARCHAR(100),
+            theme VARCHAR(50),
+            promo_code VARCHAR(100),
+            button_text VARCHAR(100),
+            button_link VARCHAR(255),
+            image_url TEXT,
+            active BOOLEAN DEFAULT TRUE,
+            raw_data JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          -- Pastikan kolom tabel promo_codes dan banners selalu lengkap (idempotent migration)
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS name VARCHAR(255);
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS max_discount NUMERIC DEFAULT 0;
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS valid_from VARCHAR(50);
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS valid_until VARCHAR(50);
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS usage_limit INTEGER DEFAULT 0;
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS used_count INTEGER DEFAULT 0;
+          ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS raw_data JSONB;
+
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS badge_tag VARCHAR(100);
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS badge_pill VARCHAR(100);
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS theme VARCHAR(50);
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS promo_code VARCHAR(100);
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS button_text VARCHAR(100);
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS button_link VARCHAR(255);
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS image_url TEXT;
+          ALTER TABLE banners ADD COLUMN IF NOT EXISTS raw_data JSONB;
         `);
-        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs) siap.')
+        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners) siap.');
     } finally {
       client.release();
     }

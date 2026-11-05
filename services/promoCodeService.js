@@ -76,12 +76,19 @@ const DEFAULT_PROMO_CODES = [
   }
 ];
 
-// Helper: Ensure directory and file exists
+// In-memory cache for fast read/writes and serverless resilience
+let promoCache = null;
+
+// Helper: Ensure directory and file exists safely (handles read-only filesystems on Vercel)
 function ensureFile() {
-  const dir = path.dirname(PROMO_CODES_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(PROMO_CODES_FILE)) {
-    fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(DEFAULT_PROMO_CODES, null, 2), 'utf8');
+  try {
+    const dir = path.dirname(PROMO_CODES_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(PROMO_CODES_FILE)) {
+      fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(DEFAULT_PROMO_CODES, null, 2), 'utf8');
+    }
+  } catch (err) {
+    // Read-only filesystem on Vercel: safely ignore disk creation
   }
 }
 
@@ -103,39 +110,104 @@ function computeStatus(promo) {
 
 // Read all promo codes with computed status
 function getAllPromoCodes(onlyUsable = false) {
-  ensureFile();
-  try {
-    const raw = fs.readFileSync(PROMO_CODES_FILE, 'utf8');
-    const list = JSON.parse(raw);
-    if (!Array.isArray(list)) return [];
+  let list = [];
 
-    const enriched = list.map((p) => {
-      const status = computeStatus(p);
-      const expired = isExpired(p);
-      return {
-        ...p,
-        status,
-        isExpired: expired,
-      };
-    });
-
-    if (onlyUsable) {
-      // "jika masa sudah selesai maka promo akan hilang"
-      return enriched.filter((p) => p.status === 'ACTIVE');
+  if (promoCache && Array.isArray(promoCache) && promoCache.length > 0) {
+    list = promoCache;
+  } else {
+    try {
+      if (fs.existsSync(PROMO_CODES_FILE)) {
+        const raw = fs.readFileSync(PROMO_CODES_FILE, 'utf8');
+        list = JSON.parse(raw);
+      }
+    } catch (_) {
+      try {
+        const tmpFile = path.join('/tmp', 'promo_codes.json');
+        if (fs.existsSync(tmpFile)) {
+          const raw = fs.readFileSync(tmpFile, 'utf8');
+          list = JSON.parse(raw);
+        }
+      } catch (_) {}
     }
 
-    return enriched;
-  } catch (err) {
-    console.error('[PromoService] Error reading promo_codes.json:', err.message);
-    return [];
+    if (!Array.isArray(list) || list.length === 0) {
+      list = [...DEFAULT_PROMO_CODES];
+    }
+    promoCache = list;
   }
+
+  const enriched = list.map((p) => {
+    const status = computeStatus(p);
+    const expired = isExpired(p);
+    return {
+      ...p,
+      status,
+      isExpired: expired,
+    };
+  });
+
+  if (onlyUsable) {
+    return enriched.filter((p) => p.status === 'ACTIVE');
+  }
+
+  return enriched;
 }
 
-// Save promo codes to file
+// Save promo codes to cache & file (Safe for Vercel Serverless EROFS)
 function savePromoCodes(promos) {
-  ensureFile();
-  fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(promos, null, 2), 'utf8');
+  promoCache = [...promos];
+
+  // 1. Coba tulis ke PROMO_CODES_FILE jika writable
+  try {
+    ensureFile();
+    fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(promos, null, 2), 'utf8');
+  } catch (err) {
+    // 2. Jika EROFS (Vercel read-only), cadangkan ke /tmp yang selalu writable
+    try {
+      const tmpFile = path.join('/tmp', 'promo_codes.json');
+      fs.writeFileSync(tmpFile, JSON.stringify(promos, null, 2), 'utf8');
+    } catch (_) {}
+    console.warn('[PromoCodeService] Disk write skipped for read-only filesystem, cached in memory & /tmp');
+  }
   return true;
+}
+
+// Hydrate promo codes from PostgreSQL database
+async function hydrateFromPostgres() {
+  try {
+    const db = require('./db');
+    if (!db || !db.isDbConnected()) return;
+    const res = await db.query('SELECT * FROM promo_codes ORDER BY created_at DESC');
+    if (res && res.rows && res.rows.length > 0) {
+      promoCache = res.rows.map(row => {
+        let raw = {};
+        if (row.raw_data) {
+          if (typeof row.raw_data === 'object') raw = row.raw_data;
+          else if (typeof row.raw_data === 'string') {
+            try { raw = JSON.parse(row.raw_data); } catch (_) {}
+          }
+        }
+        return {
+          ...raw,
+          id: row.id,
+          code: row.code,
+          name: row.name || raw.name || row.code,
+          description: row.description || raw.description || '',
+          discountType: row.discount_type || raw.discountType || 'percentage',
+          discountValue: Number(row.discount_value !== undefined && row.discount_value !== null ? row.discount_value : (raw.discountValue || 0)),
+          minSpend: Number(row.min_spend !== undefined && row.min_spend !== null ? row.min_spend : (raw.minSpend || 0)),
+          maxDiscount: Number(row.max_discount !== undefined && row.max_discount !== null ? row.max_discount : (raw.maxDiscount || 0)),
+          validFrom: row.valid_from || raw.validFrom || '',
+          validUntil: row.valid_until || raw.validUntil || '',
+          usageLimit: Number(row.usage_limit !== undefined && row.usage_limit !== null ? row.usage_limit : (raw.usageLimit || 0)),
+          usedCount: Number(row.used_count !== undefined && row.used_count !== null ? row.used_count : (raw.usedCount || 0)),
+          active: row.active !== false
+        };
+      });
+    }
+  } catch (err) {
+    // Table may not yet be initialized or query error
+  }
 }
 
 // Find promo code by string
@@ -242,25 +314,37 @@ async function syncPromoCodeToPostgres(promo, isDelete = false) {
 
     await db.query(`
       INSERT INTO promo_codes (
-        id, code, discount_type, discount_value, min_spend, description, active, raw_data, created_at, updated_at
+        id, code, name, description, discount_type, discount_value, min_spend, max_discount, valid_from, valid_until, usage_limit, used_count, active, raw_data, created_at, updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       ON CONFLICT (id) DO UPDATE SET
         code = EXCLUDED.code,
+        name = EXCLUDED.name,
+        description = EXCLUDED.description,
         discount_type = EXCLUDED.discount_type,
         discount_value = EXCLUDED.discount_value,
         min_spend = EXCLUDED.min_spend,
-        description = EXCLUDED.description,
+        max_discount = EXCLUDED.max_discount,
+        valid_from = EXCLUDED.valid_from,
+        valid_until = EXCLUDED.valid_until,
+        usage_limit = EXCLUDED.usage_limit,
+        used_count = EXCLUDED.used_count,
         active = EXCLUDED.active,
         raw_data = EXCLUDED.raw_data,
         updated_at = CURRENT_TIMESTAMP
     `, [
       promo.id,
       promo.code,
+      promo.name || promo.code,
+      promo.description || '',
       promo.discountType || 'percentage',
       promo.discountValue || 0,
       promo.minSpend || 0,
-      promo.description || '',
+      promo.maxDiscount || 0,
+      promo.validFrom || '',
+      promo.validUntil || '',
+      promo.usageLimit || 0,
+      promo.usedCount || 0,
       promo.active !== false,
       JSON.stringify(promo)
     ]);
@@ -404,5 +488,6 @@ module.exports = {
   incrementUsage,
   deletePromoCode,
   resetPromoCodes,
-  isExpired
+  isExpired,
+  hydrateFromPostgres
 };

@@ -58,6 +58,9 @@ const DEFAULT_PROMOS = [
   }
 ];
 
+// In-memory cache for fast read/writes & serverless resilience
+let bannerCache = null;
+
 /**
  * Get theme color styles based on selected preset theme
  */
@@ -111,43 +114,96 @@ function getThemeStyles(theme = 'blue') {
 }
 
 /**
+ * Hydrate banner list from PostgreSQL database
+ */
+async function hydrateBannersFromPostgres() {
+  try {
+    const db = require('./db');
+    if (!db || typeof db.isDbConnected !== 'function' || !db.isDbConnected()) return;
+    const res = await db.query('SELECT * FROM banners ORDER BY updated_at DESC');
+    if (res && res.rows && res.rows.length > 0) {
+      bannerCache = res.rows.map((row) => ({
+        id: row.id,
+        title: row.title || 'Promo Spesial',
+        description: row.description || '',
+        badgeTag: row.badge_tag || '🔥 PROMO SPESIAL',
+        badgePill: row.badge_pill || '✨ FLASH DEAL',
+        theme: row.theme || 'purple',
+        promoCode: row.promo_code || '',
+        buttonText: row.button_text || 'Klaim Sekarang ↗',
+        buttonLink: row.button_link || '#',
+        image: row.image_url || 'images/promo-banner-1.jpg',
+        active: row.active !== false,
+        createdAt: row.created_at || new Date().toISOString(),
+        updatedAt: row.updated_at || new Date().toISOString()
+      }));
+    }
+  } catch (err) {
+    console.warn('[Promos] hydrateBannersFromPostgres warning:', err.message);
+  }
+}
+
+/**
  * Read all promo items
  * @param {boolean} onlyActive 
  */
 function getAllPromos(onlyActive = false) {
-  try {
-    if (fs.existsSync(PROMOS_FILE)) {
-      const raw = fs.readFileSync(PROMOS_FILE, 'utf-8');
-      const list = JSON.parse(raw);
-      if (Array.isArray(list)) {
-        return onlyActive ? list.filter((p) => p.active !== false) : list;
+  let list = [];
+
+  if (bannerCache && Array.isArray(bannerCache) && bannerCache.length > 0) {
+    list = bannerCache;
+  } else {
+    try {
+      if (fs.existsSync(PROMOS_FILE)) {
+        const raw = fs.readFileSync(PROMOS_FILE, 'utf-8');
+        list = JSON.parse(raw);
       }
+    } catch (_) {
+      try {
+        const tmpFile = path.join('/tmp', 'promos.json');
+        if (fs.existsSync(tmpFile)) {
+          const raw = fs.readFileSync(tmpFile, 'utf-8');
+          list = JSON.parse(raw);
+        }
+      } catch (_) {}
     }
-  } catch (err) {
-    console.warn('[Promos] Error reading promos.json, using defaults:', err.message);
+
+    if (!Array.isArray(list) || list.length === 0) {
+      list = [...DEFAULT_PROMOS];
+    }
+    bannerCache = list;
   }
-  return onlyActive ? DEFAULT_PROMOS.filter((p) => p.active !== false) : DEFAULT_PROMOS;
+
+  return onlyActive ? list.filter((p) => p.active !== false) : list;
 }
 
 /**
- * Save promo list to file
+ * Save promo list to file & cache (Safe for Vercel Serverless EROFS)
  * @param {Array} promos 
  */
 function savePromos(promos) {
+  bannerCache = [...promos];
+
   try {
     const dir = path.dirname(PROMOS_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(PROMOS_FILE, JSON.stringify(promos, null, 2), 'utf-8');
     return true;
   } catch (err) {
-    console.error('[Promos] Error saving promos.json:', err);
-    throw err;
+    // Read-only filesystem on Vercel: fallback to /tmp
+    try {
+      const tmpFile = path.join('/tmp', 'promos.json');
+      fs.writeFileSync(tmpFile, JSON.stringify(promos, null, 2), 'utf-8');
+    } catch (_) {}
+    console.warn('[Promos] Disk write skipped for read-only filesystem, cached in memory & /tmp');
+    return true;
   }
 }
 
 /**
  * Helper to process image input:
- * If base64 string, write to public/images/uploads/ and return relative path
+ * If base64 string, write to public/images/uploads/ and return relative path.
+ * If running on read-only serverless, fall back to returning data URI directly.
  */
 function processImageInput(imageData) {
   if (!imageData || typeof imageData !== 'string') {
@@ -157,13 +213,18 @@ function processImageInput(imageData) {
   // Check if base64 data URI
   const match = imageData.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
   if (match) {
-    const ext = match[1] === 'jpeg' ? 'jpg' : match[1].replace('+xml', '');
-    const base64Content = match[2];
-    const fileName = `banner_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
-    const filePath = path.join(UPLOADS_DIR, fileName);
+    try {
+      const ext = match[1] === 'jpeg' ? 'jpg' : match[1].replace('+xml', '');
+      const base64Content = match[2];
+      const fileName = `banner_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
+      const filePath = path.join(UPLOADS_DIR, fileName);
 
-    fs.writeFileSync(filePath, Buffer.from(base64Content, 'base64'));
-    return `images/uploads/${fileName}`;
+      fs.writeFileSync(filePath, Buffer.from(base64Content, 'base64'));
+      return `images/uploads/${fileName}`;
+    } catch (err) {
+      console.warn('[Promos] Could not write image to disk (read-only filesystem), keeping data URI directly:', err.message);
+      return imageData; // fallback to base64 data URI directly
+    }
   }
 
   // Already a URL or relative path
@@ -330,5 +391,6 @@ module.exports = {
   deletePromo,
   resetPromos,
   getThemeStyles,
+  hydrateBannersFromPostgres,
 };
 

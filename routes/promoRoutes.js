@@ -13,6 +13,7 @@ const {
   deletePromo,
   resetPromos,
   getThemeStyles,
+  hydrateBannersFromPostgres,
 } = require('../services/promoService');
 const {
   getAllPromoCodes,
@@ -20,6 +21,7 @@ const {
   addPromoCode,
   updatePromoCode,
   deletePromoCode,
+  hydrateFromPostgres,
 } = require('../services/promoCodeService');
 
 // ==========================================
@@ -27,8 +29,9 @@ const {
 // ==========================================
 
 // GET /api/promos
-router.get('/promos', (req, res) => {
+router.get('/promos', async (req, res) => {
   try {
+    await hydrateBannersFromPostgres();
     const onlyActive = req.query.active !== 'false' && req.query.all !== 'true';
     const list = getAllPromos(onlyActive);
     res.json({
@@ -140,8 +143,9 @@ router.post('/promos/reset', async (req, res) => {
 // ==========================================
 
 // GET /api/promo-codes
-router.get('/promo-codes', (req, res) => {
+router.get('/promo-codes', async (req, res) => {
   try {
+    await hydrateFromPostgres();
     const list = getAllPromoCodes(true);
     res.json({ success: true, data: list });
   } catch (err) {
@@ -150,8 +154,9 @@ router.get('/promo-codes', (req, res) => {
 });
 
 // GET /api/promo-codes/admin
-router.get('/promo-codes/admin', (req, res) => {
+router.get('/promo-codes/admin', async (req, res) => {
   try {
+    await hydrateFromPostgres();
     const list = getAllPromoCodes(false);
     res.json({ success: true, data: list });
   } catch (err) {
