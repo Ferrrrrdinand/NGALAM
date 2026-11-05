@@ -1,148 +1,433 @@
 import React, { useState } from 'react';
-import { Zap, ShieldCheck, MessageSquare, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { 
+  MapPin, Phone, MessageSquare, Clock, ShieldCheck, 
+  Zap, Sparkles, Navigation, Send, CheckCircle2, 
+  ExternalLink, Calendar, Check, MessageCircle, ArrowRight
+} from 'lucide-react';
 
 export default function Kontak() {
-  const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', message: '' });
+  const [form, setForm] = useState({
+    name: '',
+    whatsapp: '',
+    device: '',
+    problem: '',
+    message: ''
+  });
+  const [isCopied, setIsCopied] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    const text = `Halo Admin Ngalam Fix Pro, saya ingin konsultasi servis HP:\n` +
+      `• Nama: ${form.name || '-'}\n` +
+      `• WhatsApp: ${form.whatsapp || '-'}\n` +
+      `• Tipe HP: ${form.device || '-'}\n` +
+      `• Kerusakan: ${form.problem || '-'}\n` +
+      `• Keterangan Tambahan: ${form.message || '-'}\n\n` +
+      `Apakah suku cadangnya tersedia dan bisa ditunggu hari ini?`;
+    
+    window.open(`https://wa.me/6281330304321?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const copyAddress = () => {
+    navigator.clipboard?.writeText('Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang, Jawa Timur 65115 (Workshop Ngalam Fix Pro)');
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2500);
   };
 
   return (
-    <>
-      {/* PAGE HERO SECTION */}
-      <section className="kontak-hero">
-        <div className="wrap">
-          <div className="kontak-hero-badge">
-            <span className="kontak-badge-dot"></span>
-            <span>PUSAT BANTUAN &amp; LOKASI WORKSHOP RESMI</span>
-            <span className="kontak-badge-city">KOTA MALANG</span>
+    <div className="bg-[#fcfbf7] min-h-screen text-slate-900 pb-20">
+      {/* ======================================================== */}
+      {/* 1. HERO HEADER SECTION */}
+      {/* ======================================================== */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-amber-500/12 via-amber-400/5 to-transparent pt-10 pb-10 sm:pt-16 sm:pb-14 border-b border-amber-200/40">
+        <div className="absolute top-0 right-1/4 -mt-20 w-96 h-96 rounded-full bg-amber-400/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/4 -ml-20 w-96 h-96 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none"></div>
+
+        <div className="wrap max-w-5xl mx-auto px-4 text-center relative z-10">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500/20 via-amber-400/25 to-amber-600/20 border border-amber-400/60 text-amber-950 shadow-2xs mb-4">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>Pusat Bantuan &amp; Lokasi Workshop Resmi • Kota Malang</span>
           </div>
 
-          <h1 className="kontak-hero-title">
-            Ada yang Ingin Ditanyakan?<br />
-            <span className="kontak-gradient-title">Tim Ahli Kami Siap Membantu.</span>
+          {/* Title */}
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-tight leading-tight mb-3">
+            Ada yang Ingin Ditanyakan?<br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 bg-clip-text text-transparent">
+              Tim Spesialis Kami Siap Membantu Anda.
+            </span>
           </h1>
 
-          <p className="kontak-hero-desc">
-            Konsultasikan kendala HP Android atau iPhone Anda secara online atau datang langsung ke workshop kami. Pengecekan awal selalu <b>100% Gratis Tanpa Biaya Bongkar</b>.
+          {/* Subtitle */}
+          <p className="text-xs sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 font-normal">
+            Konsultasikan kerusakan smartphone Android atau iPhone Anda secara online atau langsung kunjungi meja lab teknisi kami. Pengecekan awal selalu <b>100% Gratis Tanpa Biaya Bongkar</b>.
           </p>
 
-          <div className="kontak-status-bar">
-            <div className="kontak-status-pill highlight-open flex items-center gap-1.5">
-              <span style={{ display: 'inline-block', width: '9px', height: '9px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 8px #22c55e' }}></span>
-              <span>Workshop Buka Sekarang</span>
+          {/* Status Badges Row */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 max-w-4xl mx-auto text-xs sm:text-sm font-bold text-slate-800">
+            <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-emerald-400/60 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse"></span>
+              <span className="text-emerald-900 font-extrabold">Workshop Buka Sekarang</span>
             </div>
-            <div className="kontak-status-pill">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+              <Clock className="w-4 h-4 text-amber-500 shrink-0" />
               <span>Senin – Minggu: 10.00 – 20.00 WIB</span>
             </div>
-            <div className="kontak-status-pill flex items-center gap-1">
-              <Zap className="w-4 h-4 text-amber-500" />
-              <span>Respon Cepat Online &lt; 10 Menit</span>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+              <Zap className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>Respon Online &lt; 10 Menit</span>
             </div>
-            <div className="kontak-status-pill flex items-center gap-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Garansi Baterai 90 Hari / Servis 7–30 Hari</span>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>Garansi s/d 90 Hari</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3 MAIN CONTACT CHANNELS */}
-      <section className="kontak-cards-section wrap">
-        <div className="kontak-grid">
-          {/* CARD 1 */}
-          <article className="kontak-card">
+      {/* ======================================================== */}
+      {/* 2. THREE PRIMARY CONTACT CARDS GRID */}
+      {/* ======================================================== */}
+      <section className="wrap max-w-6xl mx-auto px-4 -mt-6 sm:-mt-8 relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          
+          {/* CARD 1: WHATSAPP CONSULTATION */}
+          <div 
+            className="flex flex-col justify-between rounded-3xl bg-white border-2 border-amber-400/50 hover:border-amber-500 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            style={{ boxShadow: '0 10px 30px -10px rgba(212, 175, 55, 0.2)' }}
+          >
             <div>
-              <div className="kontak-card-top">
-                <div className="kontak-icon-box icon-box-map flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-amber-600" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-600 shadow-xs">
+                  <MessageSquare className="w-6 h-6" />
                 </div>
-                <span className="kontak-card-tag tag-map">Konsultasi Online</span>
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-800 border border-amber-500/30">
+                  Konsultasi Online
+                </span>
               </div>
-              <h2 className="kontak-card-title">Konsultasi Kerusakan &amp; Biaya</h2>
-              <p className="kontak-card-desc">
-                Ingin mengetahui estimasi biaya perbaikan atau ketersediaan suku cadang HP? Gunakan formulir konsultasi kilat online atau tanyakan langsung pada AI Asisten kami.
+
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 mb-2">
+                Konsultasi Kerusakan &amp; Biaya
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                Tanyakan estimasi biaya, ketersediaan suku cadang original, dan jadwal pengerjaan langsung pada teknisi workshop kami.
               </p>
-              <div className="kontak-info-box">
-                <div style={{ fontWeight: 700, color: '#b45309', fontSize: '0.98rem', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }}></span>
+
+              {/* Highlight Chip */}
+              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 mb-5">
+                <div className="flex items-center gap-2 text-xs font-black text-amber-900 mb-0.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                   <span>Diagnosa 100% Gratis</span>
                 </div>
-                <div style={{ fontSize: '0.83rem', color: '#000000' }}>
-                  Pengecekan awal tanpa biaya bongkar oleh teknisi lab tersertifikasi.
-                </div>
+                <p className="text-[11px] text-slate-600 leading-snug">
+                  Pengecekan awal tanpa biaya bongkar sama sekali jika batal servis.
+                </p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20servis%20HP" target="_blank" rel="noopener noreferrer" className="btn-wa-action" style={{ padding: '12px 18px', fontSize: '0.92rem', flex: '1.2' }}>
-                <span>Hubungi WhatsApp Kami ↗</span>
-              </a>
-            </div>
-          </article>
 
-          {/* CARD 2 */}
-          <article className="kontak-card">
+            <a
+              href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kerusakan%20smartphone%20saya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Chat WhatsApp Resmi ↗</span>
+            </a>
+          </div>
+
+          {/* CARD 2: WORKSHOP LOCATION */}
+          <div 
+            className="flex flex-col justify-between rounded-3xl bg-white border-2 border-rose-300/60 hover:border-rose-400 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            style={{ boxShadow: '0 10px 30px -10px rgba(244, 63, 94, 0.15)' }}
+          >
             <div>
-              <div className="kontak-card-top">
-                <div className="kontak-icon-box icon-box-map flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-rose-600" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex items-center justify-center text-rose-600 shadow-xs">
+                  <MapPin className="w-6 h-6" />
                 </div>
-                <span className="kontak-card-tag tag-map">Workshop Pusat</span>
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/15 text-rose-800 border border-rose-500/30">
+                  Workshop Pusat
+                </span>
               </div>
-              <h2 className="kontak-card-title">Lokasi Workshop Malang</h2>
-              <p className="kontak-card-desc">
-                Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang, Jawa Timur (Dekat Area Kampus UB &amp; UM).
+
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 mb-2">
+                Lokasi Workshop Malang
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang (Strategis dekat area kampus UB, UM, &amp; ITN).
               </p>
-              <div className="kontak-info-box">
-                <div style={{ fontWeight: 700, color: '#b45309', fontSize: '0.98rem', marginBottom: '4px' }}>
+
+              {/* Highlight Chip */}
+              <div className="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-200/80 mb-5">
+                <div className="text-xs font-black text-rose-900 mb-0.5">
                   Meja Lab Terbuka &amp; Ber-AC
                 </div>
-                <div style={{ fontSize: '0.83rem', color: '#000000' }}>
-                  Parkir luas, free Wi-Fi, dan ruang tunggu nyaman sambil menonton pengerjaan unit HP Anda.
-                </div>
+                <p className="text-[11px] text-slate-600 leading-snug">
+                  Parkir luas, free Wi-Fi, dan ruang tunggu nyaman sambil menonton pengerjaan teknisi.
+                </p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <a href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7" target="_blank" rel="noopener noreferrer" className="btn small full" style={{ borderRadius: '12px', padding: '12px' }}>
-                <span>Buka Google Maps ↗</span>
-              </a>
-            </div>
-          </article>
 
-          {/* CARD 3 */}
-          <article className="kontak-card">
-            <div>
-              <div className="kontak-card-top">
-                <div className="kontak-icon-box icon-box-map flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                </div>
-                <span className="kontak-card-tag tag-map">Layanan Garansi</span>
-              </div>
-              <h2 className="kontak-card-title">Klaim Garansi Servis</h2>
-              <p className="kontak-card-desc">
-                Seluruh pengerjaan perbaikan hardware dilindungi jaminan garansi resmi lab (khusus pergantian baterai 90 hari, perbaikan lainnya 1 minggu hingga 1 bulan). Klaim mudah dengan nomor tiket servis Anda.
-              </p>
-              <div className="kontak-info-box">
-                <div style={{ fontWeight: 700, color: '#059669', fontSize: '0.98rem', marginBottom: '4px' }}>
-                  Garansi Resmi Tertulis Tanpa Ribet
-                </div>
-                <div style={{ fontSize: '0.83rem', color: '#000000' }}>
-                  Khusus baterai 90 hari, layar & mesin 30 hari, software/port 7-14 hari. Penggantian part ulang gratis jika kendala kambuh.
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <a href="https://wa.me/6281330304321?text=Halo%20Admin,%20saya%20ingin%20klaim%20garansi%20servis" target="_blank" rel="noopener noreferrer" className="btn small full outline" style={{ borderRadius: '12px', padding: '12px' }}>
-                <span>Klaim Garansi via WA ↗</span>
+            <div className="flex items-center gap-2">
+              <a
+                href="https://maps.app.goo.gl/q7oQM5TJbKacRHKj7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-gradient-to-r from-rose-500 via-rose-600 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white font-black text-xs sm:text-sm shadow-md shadow-rose-500/25 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Petunjuk Arah Maps ↗</span>
               </a>
+              <button
+                type="button"
+                onClick={copyAddress}
+                className="px-3 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-200 transition-colors cursor-pointer"
+                title="Salin Alamat Lengkap"
+              >
+                {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : 'Salin'}
+              </button>
             </div>
-          </article>
+          </div>
+
+          {/* CARD 3: WARRANTY & AFTER-SALES */}
+          <div 
+            className="flex flex-col justify-between rounded-3xl bg-white border-2 border-emerald-300/60 hover:border-emerald-400 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+            style={{ boxShadow: '0 10px 30px -10px rgba(16, 185, 129, 0.15)' }}
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 shadow-xs">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-800 border border-emerald-500/30">
+                  Layanan Garansi
+                </span>
+              </div>
+
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 mb-2">
+                Klaim Garansi Servis Resmi
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                Seluruh pengerjaan hardware dilindungi garansi resmi lab tertulis. Klaim kilat cukup sebutkan nomor tiket servis Anda.
+              </p>
+
+              {/* Highlight Chip */}
+              <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 mb-5">
+                <div className="text-xs font-black text-emerald-900 mb-0.5">
+                  Garansi Baterai 90 Hari (3 Bulan)
+                </div>
+                <p className="text-[11px] text-slate-600 leading-snug">
+                  Layar &amp; Mesin 30 Hari, Software 7–14 Hari. Ganti unit baru gratis jika kendala kambuh.
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="https://wa.me/6281330304321?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20ingin%20klaim%20garansi%20servis"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Klaim Garansi via WA ↗</span>
+            </a>
+          </div>
+
         </div>
       </section>
-    </>
+
+      {/* ======================================================== */}
+      {/* 3. INTERACTIVE SECTION: FORMULIR KONSULTASI & PETA WORKSHOP */}
+      {/* ======================================================== */}
+      <section className="wrap max-w-6xl mx-auto px-4 mt-12 sm:mt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT: FORMULIR KONSULTASI KILAT (7 COLS) */}
+          <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
+            <div className="mb-6">
+              <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Formulir Cepat
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-2">
+                Kirim Pertanyaan ke Teknisi Kami
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Isi data di bawah ini, pesan akan langsung terformat rapi dan terhubung ke WhatsApp CS kami.
+              </p>
+            </div>
+
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Nama Lengkap <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Budi Santoso"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 text-xs sm:text-sm text-slate-900 outline-none transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Nomor WhatsApp <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="Contoh: 081234567890"
+                    value={form.whatsapp}
+                    onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 text-xs sm:text-sm text-slate-900 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Tipe Smartphone <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: iPhone 13 / Samsung S23"
+                    value={form.device}
+                    onChange={(e) => setForm({ ...form, device: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 text-xs sm:text-sm text-slate-900 outline-none transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Kendala Utama <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Ganti Baterai / LCD Retak"
+                    value={form.problem}
+                    onChange={(e) => setForm({ ...form, problem: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 text-xs sm:text-sm text-slate-900 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Keterangan Tambahan / Gejala Lainnya
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Ceritakan kronologi singkat kendala smartphone Anda..."
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 text-xs sm:text-sm text-slate-900 outline-none transition-all"
+                ></textarea>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span className="text-xs text-slate-500 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>Respon teknisi langsung via WhatsApp resmi</span>
+                </span>
+
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Kirim Konsultasi ke WhatsApp ↗</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* RIGHT: INFO LOKASI, FASILITAS & JAM BUKA (5 COLS) */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Box Alamat & Jam Kerja */}
+            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-sm space-y-5">
+              <div className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 shrink-0">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <b className="block text-sm font-black text-slate-900 mb-1">
+                    Alamat Workshop Utama
+                  </b>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang, Jawa Timur 65115.
+                  </p>
+                  <span className="text-[11px] text-amber-700 font-bold block mt-1">
+                    Patokan: Dekat perempatan Ijen &amp; area kampus UB/UM.
+                  </span>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4 flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 shrink-0">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <b className="block text-sm font-black text-slate-900 mb-1">
+                    Jam Operasional Servis
+                  </b>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Senin s/d Minggu: <b>10.00 – 20.00 WIB</b> (Buka Setiap Hari).
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Konsultasi chat WhatsApp online aktif 24 jam.
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4 flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-600 shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <b className="block text-sm font-black text-slate-900 mb-1">
+                    Fasilitas Ruang Tunggu Meja 1
+                  </b>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {['Meja Lab Terbuka', 'Full AC', 'Free Wi-Fi', 'Free Charging', 'Free Diagnosa'].map((tag, idx) => (
+                      <span key={idx} className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Banner Quick Booking Direct */}
+            <div className="rounded-3xl bg-gradient-to-r from-amber-500/15 via-amber-400/25 to-amber-600/15 border border-amber-400/60 p-5 sm:p-6 flex items-center justify-between gap-4 shadow-sm">
+              <div>
+                <b className="text-sm font-black text-slate-950 block">
+                  Sudah Tahu Kerusakan HP Anda?
+                </b>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Gunakan formulir booking servis untuk dapat antrean Meja 1.
+                </p>
+              </div>
+
+              <Link
+                to="/pesan-servis"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-xs shadow-md shadow-amber-500/25 active:scale-95 transition-all whitespace-nowrap shrink-0"
+              >
+                <span>Pesan Servis ↗</span>
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
   );
 }
