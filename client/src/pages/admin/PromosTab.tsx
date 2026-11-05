@@ -121,6 +121,28 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
   // Delete Confirm Modal State
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'banner' | 'voucher'; id: string; name: string } | null>(null);
 
+  // Periodic background sync for banners and vouchers
+  useEffect(() => {
+    const pollTimer = setInterval(() => {
+      fetchApi('/api/promos?all=true').then((res) => {
+        if (res.ok && res.data && res.data.success && Array.isArray(res.data.data)) {
+          setBanners(res.data.data);
+          if (setPromos) setPromos(res.data.data);
+        }
+      }).catch(() => {});
+
+      if (activeSubTab === 'vouchers') {
+        fetchApi('/api/promo-codes/admin').then((res) => {
+          if (res.ok && res.data && res.data.success && Array.isArray(res.data.data)) {
+            setVouchers(res.data.data);
+          }
+        }).catch(() => {});
+      }
+    }, 6000);
+
+    return () => clearInterval(pollTimer);
+  }, [activeSubTab]);
+
   // Sync banners when props change
   useEffect(() => {
     if (promos && promos.length > 0) {
@@ -237,6 +259,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
               prev.map((item) => (item.id === editingBanner.id ? res.data.data : item))
             );
           }
+          localStorage.setItem('ngalam_banner_updated', String(Date.now()));
           setBannerModalOpen(false);
           onRefresh?.();
         } else {
@@ -252,6 +275,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
           showToast('success', res.data.message || 'Banner promo baru berhasil ditambahkan.');
           setBanners((prev) => [...prev, res.data.data]);
           if (setPromos) setPromos((prev) => [...prev, res.data.data]);
+          localStorage.setItem('ngalam_banner_updated', String(Date.now()));
           setBannerModalOpen(false);
           onRefresh?.();
         } else {
@@ -272,6 +296,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
         const updated = res.data.data;
         setBanners((prev) => prev.map((b) => (b.id === id ? updated : b)));
         if (setPromos) setPromos((prev) => prev.map((b) => (b.id === id ? updated : b)));
+        localStorage.setItem('ngalam_banner_updated', String(Date.now()));
         showToast(
           'success',
           `Status banner diubah menjadi: ${updated.active ? 'Aktif Tayang' : 'Nonaktif'}`
@@ -295,6 +320,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
         showToast('success', 'Banner promo telah direset ke default.');
         setBanners(res.data.data || []);
         if (setPromos) setPromos(res.data.data || []);
+        localStorage.setItem('ngalam_banner_updated', String(Date.now()));
         onRefresh?.();
       } else {
         showToast('error', res.data?.error || 'Gagal mereset banner promo.');
@@ -357,6 +383,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
           setVouchers((prev) =>
             prev.map((item) => (item.id === editingVoucher.id ? res.data.data : item))
           );
+          localStorage.setItem('ngalam_promo_updated', String(Date.now()));
           setVoucherModalOpen(false);
         } else {
           showToast('error', res.data?.error || 'Gagal memperbarui voucher.');
@@ -369,6 +396,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
         if (res.ok && res.data && res.data.success) {
           showToast('success', res.data.message || 'Kode voucher baru berhasil dibuat.');
           setVouchers((prev) => [...prev, res.data.data]);
+          localStorage.setItem('ngalam_promo_updated', String(Date.now()));
           setVoucherModalOpen(false);
         } else {
           showToast('error', res.data?.error || 'Gagal membuat voucher.');
@@ -388,6 +416,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
       if (res.ok && res.data && res.data.success) {
         const updated = res.data.data;
         setVouchers((prev) => prev.map((item) => (item.id === v.id ? updated : item)));
+        localStorage.setItem('ngalam_promo_updated', String(Date.now()));
         showToast('success', `Status voucher "${v.code}" diubah menjadi: ${updated.active ? 'Aktif' : 'Non-aktif'}`);
       }
     } catch (err: any) {
@@ -408,6 +437,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
           showToast('success', `Banner promo "${deleteTarget.name}" berhasil dihapus.`);
           setBanners((prev) => prev.filter((b) => b.id !== deleteTarget.id));
           if (setPromos) setPromos((prev) => prev.filter((b) => b.id !== deleteTarget.id));
+          localStorage.setItem('ngalam_banner_updated', String(Date.now()));
           onRefresh?.();
         } else {
           showToast('error', res.data?.error || 'Gagal menghapus banner.');
@@ -419,6 +449,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
         if (res.ok && res.data && res.data.success) {
           showToast('success', `Kode voucher "${deleteTarget.name}" berhasil dihapus.`);
           setVouchers((prev) => prev.filter((v) => v.id !== deleteTarget.id));
+          localStorage.setItem('ngalam_promo_updated', String(Date.now()));
         } else {
           showToast('error', res.data?.error || 'Gagal menghapus voucher.');
         }

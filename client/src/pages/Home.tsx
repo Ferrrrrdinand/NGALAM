@@ -179,7 +179,7 @@ export default function Home() {
 
   const [slides, setSlides] = useState(defaultSlides);
 
-  useEffect(() => {
+  const loadLivePromos = () => {
     fetchApi('/api/promos')
       .then((res) => {
         if (res.ok && res.data && res.data.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
@@ -209,6 +209,32 @@ export default function Home() {
         }
       })
       .catch(() => {});
+  };
+
+  // Real-time synchronization for banner updates
+  useEffect(() => {
+    loadLivePromos();
+
+    // 1. Polling interval every 5 seconds for background changes
+    const pollTimer = setInterval(loadLivePromos, 5000);
+
+    // 2. Storage event listener for instant cross-tab sync when admin updates banners
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'ngalam_banner_updated' || e.key === 'ngalam_promo_updated') {
+        loadLivePromos();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // 3. Focus listener when returning to tab
+    const handleFocus = () => loadLivePromos();
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(pollTimer);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   useEffect(() => {

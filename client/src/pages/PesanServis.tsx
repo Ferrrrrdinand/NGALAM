@@ -181,11 +181,24 @@ export default function PesanServis() {
   const currentModels = modelsByBrand[formData.brand] || modelsByBrand.apple;
 
   useEffect(() => {
-    fetchApi('/api/promo-codes').then(({ ok, data }) => {
-      if (ok && data.success && Array.isArray(data.data)) {
-        setAvailablePromoCodes(data.data);
+    const loadPromos = () => {
+      fetchApi('/api/promo-codes').then(({ ok, data }) => {
+        if (ok && data && data.success && Array.isArray(data.data)) {
+          setAvailablePromoCodes(data.data);
+        }
+      }).catch(() => {});
+    };
+
+    loadPromos();
+
+    // Realtime storage listener for promo updates from admin console
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'ngalam_promo_updated') {
+        loadPromos();
       }
-    });
+    };
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('focus', loadPromos);
 
     const scannedRef = (searchParams.get('ref') || searchParams.get('referral') || localStorage.getItem('ngalam_affiliate_ref') || '').trim().toUpperCase();
     if (scannedRef) {
@@ -222,6 +235,11 @@ export default function PesanServis() {
     if (paramDamage) {
       setSelectedProblems(new Set([paramDamage]));
     }
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', loadPromos);
+    };
   }, [customer]);
 
   const handlePhoneBlur = async () => {

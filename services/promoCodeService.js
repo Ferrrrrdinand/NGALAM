@@ -228,8 +228,56 @@ function validateAndCalculate(code, rawPrice = 350000) {
   };
 }
 
+// Helper: Sync single promo code to PostgreSQL
+async function syncPromoCodeToPostgres(promo, isDelete = false) {
+  try {
+    const db = require('./db');
+    if (!db || !db.isDbConnected()) return;
+
+    if (isDelete) {
+      await db.query('DELETE FROM promo_codes WHERE id = $1', [promo.id]);
+      await db.logActivity('PROMO_CODE_DELETE', 'promo_codes', promo.id, { id: promo.id, code: promo.code });
+      return;
+    }
+
+    await db.query(`
+      INSERT INTO promo_codes (
+        id, code, discount_type, discount_value, min_spend, description, active, raw_data, created_at, updated_at
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      ON CONFLICT (id) DO UPDATE SET
+        code = EXCLUDED.code,
+        discount_type = EXCLUDED.discount_type,
+        discount_value = EXCLUDED.discount_value,
+        min_spend = EXCLUDED.min_spend,
+        description = EXCLUDED.description,
+        active = EXCLUDED.active,
+        raw_data = EXCLUDED.raw_data,
+        updated_at = CURRENT_TIMESTAMP
+    `, [
+      promo.id,
+      promo.code,
+      promo.discountType || 'percentage',
+      promo.discountValue || 0,
+      promo.minSpend || 0,
+      promo.description || '',
+      promo.active !== false,
+      JSON.stringify(promo)
+    ]);
+
+    await db.logActivity(promo.updatedAt ? 'PROMO_CODE_UPDATE' : 'PROMO_CODE_CREATE', 'promo_codes', promo.id, {
+      code: promo.code,
+      discountType: promo.discountType,
+      discountValue: promo.discountValue,
+      active: promo.active
+    });
+  } catch (err) {
+    console.warn('[PromoCodeService] PostgreSQL sync error:', err.message);
+  }
+}
+
 // Add a new promo code (Admin)
-function addPromoCode(data) {
+async function addPromoCode(data) {
   if (!data.code || !data.code.trim()) {
     throw new Error('Kode promo wajib diisi.');
   }
@@ -272,6 +320,10 @@ function addPromoCode(data) {
 
   all.unshift(newPromo);
   savePromoCodes(all);
+
+  // Sync ke database PostgreSQL
+  await syncPromoCodeToPostgres(newPromo);
+
   return {
     ...newPromo,
     status: computeStatus(newPromo)
@@ -279,7 +331,7 @@ function addPromoCode(data) {
 }
 
 // Update existing promo code (Admin)
-function updatePromoCode(id, updates) {
+async function updatePromoCode(id, updates) {
   const all = getAllPromoCodes(false);
   const idx = all.findIndex((p) => p.id === id);
   if (idx === -1) {
@@ -297,6 +349,10 @@ function updatePromoCode(id, updates) {
   };
 
   savePromoCodes(all);
+
+  // Sync ke database PostgreSQL
+  await syncPromoCodeToPostgres(all[idx]);
+
   return {
     ...all[idx],
     status: computeStatus(all[idx])
@@ -304,7 +360,7 @@ function updatePromoCode(id, updates) {
 }
 
 // Increment usage count when order is placed
-function incrementUsage(code) {
+async function incrementUsage(code) {
   if (!code) return;
   const cleanCode = code.trim().toUpperCase();
   const all = getAllPromoCodes(false);
@@ -312,11 +368,12 @@ function incrementUsage(code) {
   if (promo) {
     promo.usedCount = (promo.usedCount || 0) + 1;
     savePromoCodes(all);
+    await syncPromoCodeToPostgres(promo);
   }
 }
 
 // Delete promo code (Admin)
-function deletePromoCode(id) {
+async function deletePromoCode(id) {
   const all = getAllPromoCodes(false);
   const target = all.find((p) => p.id === id);
   if (!target) {
@@ -325,6 +382,10 @@ function deletePromoCode(id) {
 
   const filtered = all.filter((p) => p.id !== id);
   savePromoCodes(filtered);
+
+  // Hapus dari PostgreSQL
+  await syncPromoCodeToPostgres(target, true);
+
   return { success: true, deletedId: id, code: target.code };
 }
 

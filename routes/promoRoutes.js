@@ -175,9 +175,9 @@ router.post('/promo-codes/validate', (req, res) => {
 });
 
 // POST /api/promo-codes
-router.post('/promo-codes', (req, res) => {
+router.post('/promo-codes', async (req, res) => {
   try {
-    const newPromo = addPromoCode(req.body);
+    const newPromo = await addPromoCode(req.body);
     res.status(201).json({
       success: true,
       message: `Kode promo "${newPromo.code}" berhasil dibuat dan diaktifkan.`,
@@ -189,10 +189,10 @@ router.post('/promo-codes', (req, res) => {
 });
 
 // PATCH /api/promo-codes/:id
-router.patch('/promo-codes/:id', (req, res) => {
+router.patch('/promo-codes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = updatePromoCode(id, req.body);
+    const updated = await updatePromoCode(id, req.body);
     res.json({
       success: true,
       message: `Kode promo "${updated.code}" berhasil diperbarui.`,
@@ -204,10 +204,10 @@ router.patch('/promo-codes/:id', (req, res) => {
 });
 
 // DELETE /api/promo-codes/:id
-router.delete('/promo-codes/:id', (req, res) => {
+router.delete('/promo-codes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = deletePromoCode(id);
+    const result = await deletePromoCode(id);
     res.json({
       success: true,
       message: `Kode promo berhasil dihapus dari sistem.`,
