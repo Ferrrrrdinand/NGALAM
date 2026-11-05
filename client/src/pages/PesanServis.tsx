@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { 
   Check, Zap, ShieldCheck, Lock, UserCheck, Sparkles, 
   Bike, AlertCircle, Smartphone, Battery, Gem, Camera, 
-  PowerOff, CheckCircle2 
+  PowerOff, CheckCircle2, ChevronDown, Search
 } from 'lucide-react';
 import { fetchApi, formatRp } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
@@ -39,6 +39,27 @@ export default function PesanServis() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
   const [submitError, setSubmitError] = useState('');
+
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const [modelSearchQuery, setModelSearchQuery] = useState('');
+  const modelDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target as Node)) {
+        setModelDropdownOpen(false);
+      }
+    };
+    if (modelDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [modelDropdownOpen]);
 
   const brandsList = [
     {
@@ -183,6 +204,9 @@ export default function PesanServis() {
   };
 
   const currentModels = modelsByBrand[formData.brand] || modelsByBrand.apple;
+  const filteredModels = currentModels.filter((m: string) =>
+    m.toLowerCase().includes(modelSearchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const loadPromos = () => {
@@ -637,15 +661,102 @@ export default function PesanServis() {
                 })}
               </div>
 
-              <select
-                className="b-select form-control"
-                value={formData.phoneType || currentModels[0]}
-                onChange={(e) => setFormData({ ...formData, phoneType: e.target.value })}
-              >
-                {currentModels.map((m) => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+              {/* CUSTOM LUXURY DROPDOWN FOR MODEL */}
+              <div className="relative w-full mt-3" ref={modelDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all cursor-pointer text-left bg-white shadow-xs ${
+                    modelDropdownOpen 
+                      ? 'border-amber-500 ring-3 ring-amber-400/20 shadow-md' 
+                      : 'border-amber-300/80 hover:border-amber-500 hover:shadow-xs'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                      <Smartphone className="w-4 h-4 text-amber-600" />
+                    </span>
+                    <div className="truncate">
+                      <span className="block text-[10px] sm:text-[11px] font-bold text-amber-600/90 uppercase tracking-wider leading-none mb-0.5">
+                        Tipe Seri Terpilih
+                      </span>
+                      <span className="block text-xs sm:text-sm md:text-base font-extrabold text-slate-900 truncate">
+                        {formData.phoneType || currentModels[0] || 'Pilih Tipe Smartphone'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0 pl-2">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 hidden sm:inline-block">
+                      {currentModels.length} Tipe
+                    </span>
+                    <ChevronDown className={`w-4 h-4 sm:w-5 sm:h-5 text-amber-600 transition-transform duration-200 ${modelDropdownOpen ? 'rotate-180' : ''}`} />
+                  </div>
+                </button>
+
+                {modelDropdownOpen && (
+                  <div 
+                    className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl bg-white border-2 border-amber-400/80 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                    style={{
+                      boxShadow: '0 20px 40px -10px rgba(212, 175, 55, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2)'
+                    }}
+                  >
+                    {currentModels.length > 5 && (
+                      <div className="p-2 sm:p-2.5 bg-slate-50 border-b border-amber-200/50">
+                        <div className="relative">
+                          <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="text"
+                            placeholder="Cari tipe seri smartphone..."
+                            value={modelSearchQuery}
+                            onChange={(e) => setModelSearchQuery(e.target.value)}
+                            className="w-full pl-8 sm:pl-9 pr-3 py-1.5 text-xs sm:text-sm bg-white rounded-lg border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 outline-none text-slate-800 placeholder:text-slate-400"
+                            autoFocus
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="max-h-56 sm:max-h-72 overflow-y-auto divide-y divide-slate-100">
+                      {filteredModels.length > 0 ? (
+                        filteredModels.map((m: string) => {
+                          const isSelected = (formData.phoneType || currentModels[0]) === m;
+                          return (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => {
+                                setFormData({ ...formData, phoneType: m });
+                                setModelDropdownOpen(false);
+                                setModelSearchQuery('');
+                              }}
+                              className={`w-full flex items-center justify-between gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 text-left transition-colors cursor-pointer text-xs sm:text-sm ${
+                                isSelected 
+                                  ? 'bg-amber-50 text-amber-950 font-black border-l-4 border-amber-500' 
+                                  : 'text-slate-700 hover:bg-amber-50/50 hover:text-amber-900 font-medium'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5 truncate">
+                                <Smartphone className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-amber-600' : 'text-slate-400'}`} />
+                                <span className="truncate">{m}</span>
+                              </div>
+                              {isSelected && (
+                                <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 shadow-xs">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })
+                      ) : (
+                        <div className="p-4 text-center text-xs text-slate-500">
+                          Tidak ada tipe model yang sesuai "{modelSearchQuery}"
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Step 2: Keluhan */}

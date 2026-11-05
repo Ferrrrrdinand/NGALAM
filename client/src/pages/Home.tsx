@@ -1,12 +1,12 @@
 import banner1 from '../assets/images/spesialis-hp-banner.jpg';
 import banner2 from '../assets/images/promo-banner-1.jpg';
 import banner3 from '../assets/images/promo-banner-tempered-glass.jpg';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Zap, ShieldCheck, Smartphone, RefreshCw, Battery, 
   Gem, Cable, Camera, PowerOff, Microscope, PenTool, 
-  X, Copy, CheckCircle2, Sparkles, Star, Gift, Flame, Rocket, Search, Check
+  X, Copy, CheckCircle2, Sparkles, Star, Gift, Flame, Rocket, Search, Check, ChevronDown
 } from 'lucide-react';
 import { fetchApi } from '../utils/api';
 import HomeAdBanner from '../components/HomeAdBanner';
@@ -18,6 +18,26 @@ export default function Home() {
   const [selectedBrand, setSelectedBrand] = useState('apple');
   const [selectedModel, setSelectedModel] = useState('iPhone 16 Pro / 16 Pro Max');
   const [selectedDamage, setSelectedDamage] = useState('lcd');
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const [modelSearchQuery, setModelSearchQuery] = useState('');
+  const modelDropdownRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(e.target)) {
+        setModelDropdownOpen(false);
+      }
+    };
+    if (modelDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [modelDropdownOpen]);
 
   // Promo Modal state
   const [promoModalOpen, setPromoModalOpen] = useState(false);
@@ -135,6 +155,9 @@ export default function Home() {
   };
 
   const currentModels = modelsByBrand[selectedBrand] || modelsByBrand.apple;
+  const filteredModels = currentModels.filter((m) =>
+    m.toLowerCase().includes(modelSearchQuery.toLowerCase())
+  );
 
   const repairMatrix: Record<string, { title: string; price: string; time: string; warranty: string; warrantyNote: string }> = {
     garis_lightsaber: {
@@ -328,6 +351,7 @@ export default function Home() {
 
   const handleBrandSelect = (brandId) => {
     setSelectedBrand(brandId);
+    setModelSearchQuery('');
     const list = modelsByBrand[brandId] || [];
     if (list.length > 0) {
       setSelectedModel(list[0]);
@@ -744,25 +768,112 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* 2. MODEL / TIPE HP */}
-                <div className="est-field-group">
-                  <label htmlFor="estModel" className="est-field-label">
+                {/* 2. MODEL / TIPE HP (CUSTOM LUXURY DROPDOWN) */}
+                <div className="est-field-group relative" ref={modelDropdownRef}>
+                  <label className="est-field-label">
                     <span className="est-step-num">2</span>
-                    <span>Pilih Seri & Tipe HP</span>
+                    <span>Pilih Seri &amp; Tipe HP</span>
                   </label>
-                  <div className="est-select-wrapper">
-                    <span className="est-select-icon" id="estSelectBrandIcon"><Smartphone className="w-4 h-4 text-slate-500" /></span>
-                    <select
-                      id="estModel"
-                      className="est-custom-select"
-                      value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
+
+                  <div className="relative w-full">
+                    {/* TRIGGER BUTTON */}
+                    <button
+                      type="button"
+                      id="estModelTrigger"
+                      onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+                      className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all cursor-pointer text-left bg-white shadow-xs ${
+                        modelDropdownOpen 
+                          ? 'border-amber-500 ring-3 ring-amber-400/20 shadow-md' 
+                          : 'border-amber-300/80 hover:border-amber-500 hover:shadow-xs'
+                      }`}
                     >
-                      {currentModels.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
-                    <span className="est-select-arrow">▼</span>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                          <Smartphone className="w-4 h-4 text-amber-600" />
+                        </span>
+                        <div className="truncate">
+                          <span className="block text-[10px] sm:text-[11px] font-bold text-amber-600/90 uppercase tracking-wider leading-none mb-0.5">
+                            Model Terpilih
+                          </span>
+                          <span className="block text-xs sm:text-sm md:text-base font-extrabold text-slate-900 truncate">
+                            {selectedModel || 'Pilih Tipe Smartphone'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0 pl-2">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 hidden sm:inline-block">
+                          {currentModels.length} Tipe
+                        </span>
+                        <ChevronDown className={`w-4 h-4 sm:w-5 sm:h-5 text-amber-600 transition-transform duration-200 ${modelDropdownOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                    </button>
+
+                    {/* LUXURY DROPDOWN MENU */}
+                    {modelDropdownOpen && (
+                      <div 
+                        className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl bg-white border-2 border-amber-400/80 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                        style={{
+                          boxShadow: '0 20px 40px -10px rgba(212, 175, 55, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2)'
+                        }}
+                      >
+                        {/* SEARCH INPUT IF > 5 MODELS */}
+                        {currentModels.length > 5 && (
+                          <div className="p-2 sm:p-2.5 bg-slate-50 border-b border-amber-200/50">
+                            <div className="relative">
+                              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                              <input
+                                type="text"
+                                placeholder={`Cari seri ${selectedBrand}...`}
+                                value={modelSearchQuery}
+                                onChange={(e) => setModelSearchQuery(e.target.value)}
+                                className="w-full pl-8 sm:pl-9 pr-3 py-1.5 text-xs sm:text-sm bg-white rounded-lg border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 outline-none text-slate-800 placeholder:text-slate-400"
+                                autoFocus
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* LIST ITEMS */}
+                        <div className="max-h-56 sm:max-h-72 overflow-y-auto divide-y divide-slate-100">
+                          {filteredModels.length > 0 ? (
+                            filteredModels.map((m) => {
+                              const isSelected = selectedModel === m;
+                              return (
+                                <button
+                                  key={m}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedModel(m);
+                                    setModelDropdownOpen(false);
+                                    setModelSearchQuery('');
+                                  }}
+                                  className={`w-full flex items-center justify-between gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 text-left transition-colors cursor-pointer text-xs sm:text-sm ${
+                                    isSelected 
+                                      ? 'bg-amber-50 text-amber-950 font-black border-l-4 border-amber-500' 
+                                      : 'text-slate-700 hover:bg-amber-50/50 hover:text-amber-900 font-medium'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2.5 truncate">
+                                    <Smartphone className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-amber-600' : 'text-slate-400'}`} />
+                                    <span className="truncate">{m}</span>
+                                  </div>
+                                  {isSelected && (
+                                    <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 shadow-xs">
+                                      <Check className="w-3 h-3 stroke-[3]" />
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })
+                          ) : (
+                            <div className="p-4 text-center text-xs text-slate-500">
+                              Tidak ada tipe model yang sesuai "{modelSearchQuery}"
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
