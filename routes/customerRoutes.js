@@ -679,7 +679,19 @@ router.post('/login', async (req, res) => {
 // GET /api/customer/orders
 router.get('/orders', async (req, res) => {
   try {
-    const query = (req.query.query || '').trim().toLowerCase();
+    let query = (req.query.query || '').trim().toLowerCase();
+    
+    // Auto-detect dari sesi token JWT jika query parameter tidak disertakan
+    if (!query) {
+      const token = getCustomerToken(req);
+      if (token) {
+        const payload = verifyToken(token);
+        if (payload) {
+          query = (payload.whatsapp || payload.phone || payload.email || payload.customerId || '').trim().toLowerCase();
+        }
+      }
+    }
+
     if (!query) {
       return res.status(400).json({ success: false, message: 'Nomor WhatsApp atau Nomor Tiket wajib diisi.' });
     }
@@ -687,9 +699,21 @@ router.get('/orders', async (req, res) => {
     const matched = await getCombinedCustomerOrders(query, cleanDigits);
 
     if (matched.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Tidak ada unit servis yang ditemukan untuk nomor tiket atau WhatsApp tersebut. Pastikan nomor yang dimasukkan sesuai tanda terima.'
+      return res.json({
+        success: true,
+        count: 0,
+        customer: {
+          name: 'Pelanggan Member',
+          whatsapp: query,
+          email: '',
+          district: 'Malang',
+          totalOrders: 0,
+          activeOrders: 0,
+          completedOrders: 0,
+          activeWarranties: 0
+        },
+        orders: [],
+        message: 'Belum ada riwayat transaksi atau unit servis untuk akun ini.'
       });
     }
 
@@ -714,6 +738,108 @@ router.get('/orders', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/customer/claim-warranty - Pengajuan Klaim Garansi Resmi dari Akun Pelanggan
+router.post('/claim-warranty', async (req, res) => {
+  try {
+    const {
+      ticketId,
+      warrantyCode,
+      phoneType,
+      customerName,
+      whatsapp,
+      damageDescription,
+      issueComplaint,
+      claimMethod = 'Datang Langsung ke Workshop',
+      notes = ''
+    } = req.body;
+
+    if (!ticketId) {
+      return res.status(400).json({ success: false, message: 'Nomor Tiket servis wajib disertakan.' });
+    }
+    if (!issueComplaint || !String(issueComplaint).trim()) {
+      return res.status(400).json({ success: false, message: 'Harap jelaskan kendala atau keluhan unit untuk pengajuan klaim garansi.' });
+    }
+
+    // Cari order terkait untuk verifikasi
+    const cleanId = String(ticketId).trim();
+    const cleanDigits = cleanId.replace(/\D/g, '');
+    const matched = await getCombinedCustomerOrders(cleanId, cleanDigits);
+    const targetOrder = matched.length > 0 ? formatCustomerOrder(matched[0]) : null;
+
+    const claimId = `CLM-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    const claimDate = new Date();
+    const claimDateFormatted = claimDate.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const finalCustomerName = customerName || (targetOrder ? targetOrder.customerName : 'Pelanggan');
+    const finalPhone = whatsapp || (targetOrder ? targetOrder.whatsapp : '');
+    const finalPhoneType = phoneType || (targetOrder ? targetOrder.phoneType : 'Smartphone');
+    const finalWarrantyCode = warrantyCode || (targetOrder && targetOrder.warranty ? targetOrder.warranty.warrantyCode : `GAR-CLAIM-${cleanId}`);
+    const warrantyType = targetOrder && targetOrder.warranty ? targetOrder.warranty.warrantyTypeLabel : 'Garansi Servis Resmi';
+
+    // Format pesan WhatsApp klaim garansi otomatis untuk CS / Meja Workshop
+    const waText = encodeURIComponent(
+      `Halo Tim Servis Ngalam Fix Pro,\n\n` +
+      `Saya ingin mengajukan KLAIM GARANSI resmi untuk unit servis saya:\n` +
+      `---------------------------------------\n` +
+      `📋 No. Tiket Klaim: ${claimId}\n` +
+      `🎫 No. Tiket Servis: ${cleanId}\n` +
+      `📱 Tipe HP: ${finalPhoneType}\n` +
+      `👤 Nama Pemilik: ${finalCustomerName}\n` +
+      `📞 WhatsApp: ${finalPhone}\n` +
+      `🛡️ Jenis Garansi: ${warrantyType}\n` +
+      `🏷️ Kode Sertifikat: ${finalWarrantyCode}\n` +
+      `🚗 Metode: ${claimMethod}\n` +
+      `---------------------------------------\n` +
+      `⚠️ Kendala / Keluhan Garansi:\n` +
+      `"${issueComplaint.trim()}"\n\n` +
+      `Mohon konfirmasi kesiapan teknisi lab untuk pengecekan unit. Terima kasih!`
+    );
+    const claimWaUrl = `https://wa.me/6281330304321?text=${waText}`;
+
+    // Catat ke Audit Trail / Log Aktivitas Database
+    try {
+      db.logActivity('WARRANTY_CLAIM_SUBMITTED', 'orders', cleanId, {
+        claimId,
+        ticketId: cleanId,
+        warrantyCode: finalWarrantyCode,
+        customerName: finalCustomerName,
+        whatsapp: finalPhone,
+        phoneType: finalPhoneType,
+        complaint: issueComplaint.trim(),
+        claimMethod,
+        claimedAt: claimDateFormatted
+      });
+    } catch (e) {
+      console.warn('[Claim Warranty] Audit log warning:', e.message);
+    }
+
+    return res.json({
+      success: true,
+      claimId,
+      ticketId: cleanId,
+      customerName: finalCustomerName,
+      whatsapp: finalPhone,
+      phoneType: finalPhoneType,
+      warrantyCode: finalWarrantyCode,
+      warrantyType,
+      claimDate: claimDateFormatted,
+      complaint: issueComplaint.trim(),
+      claimMethod,
+      claimWaUrl,
+      message: 'Pengajuan klaim garansi resmi Anda berhasil dicatat dalam sistem lab workshop.'
+    });
+  } catch (err) {
+    console.error('[Claim Warranty Error]', err);
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 
