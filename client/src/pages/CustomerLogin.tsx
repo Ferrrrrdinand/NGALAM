@@ -235,7 +235,7 @@ export default function CustomerLogin() {
           <p className="text-xs text-slate-500">
             {needsPhone
               ? 'Nomor WhatsApp wajib diisi agar kami dapat menghubungi Anda terkait tiket servis.'
-              : 'Pantau garansi unit 90 hari & riwayat servis HP di lab workshop kami'}
+              : 'Pantau garansi resmi unit & riwayat servis HP di lab workshop kami'}
           </p>
         </div>
 

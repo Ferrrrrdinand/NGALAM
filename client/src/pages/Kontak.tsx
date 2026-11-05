@@ -45,7 +45,7 @@ export default function Kontak() {
             </div>
             <div className="kontak-status-pill flex items-center gap-1">
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Garansi Servis s/d 90 Hari</span>
+              <span>Garansi Baterai 90 Hari / Servis 7–30 Hari</span>
             </div>
           </div>
         </div>
@@ -124,14 +124,14 @@ export default function Kontak() {
               </div>
               <h2 className="kontak-card-title">Klaim Garansi Servis</h2>
               <p className="kontak-card-desc">
-                Seluruh pengerjaan perbaikan hardware dilindungi jaminan garansi resmi lab hingga 90 hari. Klaim mudah dengan nomor tiket servis Anda.
+                Seluruh pengerjaan perbaikan hardware dilindungi jaminan garansi resmi lab (khusus pergantian baterai 90 hari, perbaikan lainnya 1 minggu hingga 1 bulan). Klaim mudah dengan nomor tiket servis Anda.
               </p>
               <div className="kontak-info-box">
                 <div style={{ fontWeight: 700, color: '#059669', fontSize: '0.98rem', marginBottom: '4px' }}>
-                  Garansi s/d 90 Hari Tanpa Ribet
+                  Garansi Resmi Tertulis Tanpa Ribet
                 </div>
                 <div style={{ fontSize: '0.83rem', color: '#000000' }}>
-                  Penggantian part ulang gratis jika kendala yang sama kambuh dalam masa garansi.
+                  Khusus baterai 90 hari, layar & mesin 30 hari, software/port 7-14 hari. Penggantian part ulang gratis jika kendala kambuh.
                 </div>
               </div>
             </div>

@@ -81,7 +81,7 @@ async function processChatMessage(rawMessage = '') {
       reply: `🔄 <b>Pergantian Fleksibel Layar Lipat Samsung Galaxy Z Flip & Z Fold:</b><br/>` +
         `• <b>Gejala Umum:</b> Layar mati saat ditekuk/dibuka, engsel longgar, touch screen bagian tengah tidak merespon, atau suara speaker mati saat posisi lipat.<br/>` +
         `• <b>Solusi Hemat:</b> Cukup ganti kabel fleksibel hinge (engsel) original tanpa harus ganti layar lipat dalam seharga jutaan!<br/>` +
-        `• <b>Estimasi Biaya:</b> Mulai <b>Rp 650.000 - Rp 1.650.000</b> (Garansi 90 hari).<br/>` +
+        `• <b>Estimasi Biaya:</b> Mulai <b>Rp 650.000 - Rp 1.650.000</b> (Garansi 30 hari / 1 bulan).<br/>` +
         `• <b>Waktu Pengerjaan:</b> 2 - 4 Jam ditangani teknisi spesialis foldable.`,
       chips: ['Booking Servis Z Flip/Fold', 'Konsultasi WA', 'Lokasi Workshop'],
     };
@@ -104,7 +104,7 @@ async function processChatMessage(rawMessage = '') {
     return {
       reply: `📱 <b>Estimasi Servis Layar & Kaca Smartphone:</b><br/>` +
         `• <b>Ganti Kaca Saja (Glass OCA Laminating):</b> Mulai <b>Rp 180.000</b> (Layar panel asli tetap dipertahankan, hemat hingga 50%).<br/>` +
-        `• <b>Ganti Layar OLED / AMOLED Fullset:</b> Mulai <b>Rp 350.000</b> (Grade original, 120Hz smooth, TrueTone aktif & garansi 90 hari).<br/><br/>` +
+        `• <b>Ganti Layar OLED / AMOLED Fullset:</b> Mulai <b>Rp 350.000</b> (Grade original, 120Hz smooth, TrueTone aktif & garansi 30 hari / 1 bulan).<br/><br/>` +
         `⚡ <i>Pengerjaan express di meja terbuka transparan, bisa ditunggu 30–60 menit!</i>`,
       chips: ['Ganti Baterai', 'Lokasi Workshop', 'Booking Servis Layar', 'WhatsApp PIC'],
     };
@@ -116,7 +116,7 @@ async function processChatMessage(rawMessage = '') {
       reply: `🔋 <b>Pergantian Baterai Original Bergaransi:</b><br/>` +
         `• <b>Apple iPhone:</b> Mulai <b>Rp 250.000</b> (Health 100%, bebas pop-up unknown part, kalibrasi BMS IC).<br/>` +
         `• <b>Android (Samsung, Xiaomi, OPPO, Vivo dll):</b> Mulai <b>Rp 180.000</b> (Sel baterai grade original, support fast charge).<br/><br/>` +
-        `⚡ <i>Proses pengerjaan kilat hanya 30–45 menit bergaransi resmi tertulis s/d 90 hari!</i>`,
+        `⚡ <i>Proses pengerjaan kilat hanya 30–45 menit bergaransi resmi tertulis 90 hari (3 bulan)!</i>`,
       chips: ['Booking Ganti Baterai', 'Hilangkan Garis Layar', 'Lokasi Workshop', 'Konsultasi WA'],
     };
   }
@@ -174,7 +174,10 @@ async function processChatMessage(rawMessage = '') {
   if (q.includes('garansi') || q.includes('klaim') || q.includes('syarat') || q.includes('rusak lagi')) {
     return {
       reply: `🛡️ <b>Kebijakan Garansi Resmi Ngalam Fix Pro:</b><br/>` +
-        `• Setiap penggantian suku cadang mendapatkan <b>garansi tertulis resmi 30 s/d 90 hari</b>.<br/>` +
+        `• <b>Pergantian Baterai Original:</b> Garansi resmi <b>90 Hari (3 Bulan Penuh)</b>.<br/>` +
+        `• <b>Layar, Fleksibel Z Flip/Fold, Mesin/IC, Kamera & Kaca OCA:</b> Garansi resmi <b>30 Hari (1 Bulan)</b>.<br/>` +
+        `• <b>Port Cas & Konektor:</b> Garansi resmi <b>14 Hari (2 Minggu)</b>.<br/>` +
+        `• <b>Software & Sistem:</b> Garansi resmi <b>7 Hari (1 Minggu)</b>.<br/>` +
         `• Klaim sangat mudah: Cukup tunjukkan nomor tiket (NGF-...) atau nomor WhatsApp Anda.<br/>` +
         `• Jika terjadi kendala pada part yang sama, diperbaiki ulang <b>100% Bebas Biaya</b>.`,
       chips: ['Lacak Tiket', 'Lokasi Workshop', 'Tanya Mas Hingky'],

@@ -142,7 +142,7 @@
         </h2>
 
         <p class="welcome-promo-desc">
-          Nikmati potongan biaya servis hingga <b>30%</b>, perlindungan garansi resmi <b>90 hari</b>, serta pantau antrean perbaikan unit HP Anda secara real-time langsung dari dashboard pribadi!
+          Nikmati potongan biaya servis hingga <b>30%</b>, perlindungan garansi resmi (khusus baterai <b>90 hari</b>, perbaikan lain <b>1 minggu s/d 1 bulan</b>), serta pantau antrean perbaikan unit HP Anda secara real-time langsung dari dashboard pribadi!
         </p>
 
         <!-- Voucher Code Box -->
@@ -169,8 +169,8 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </span>
             <div class="welcome-perk-text">
-              <strong>Garansi s/d 90 Hari</strong>
-              <small>Tercatat resmi di akun Anda</small>
+              <strong>Garansi Resmi Servis</strong>
+              <small>Baterai 90 hari, lainnya 7–30 hari</small>
             </div>
           </div>
           <div class="welcome-perk-item">
@@ -338,7 +338,7 @@
 
           <!-- Feature Micro Badges -->
           <div class="preloader-perks">
-            <div class="preloader-perk-item">Garansi 90 Hari</div>
+            <div class="preloader-perk-item">Garansi Resmi Lab</div>
             <div class="preloader-perk-item">Bisa Ditunggu 30 Menit</div>
             <div class="preloader-perk-item">Suku Cadang Original</div>
           </div>

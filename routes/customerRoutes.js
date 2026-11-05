@@ -189,7 +189,7 @@ async function buildMitraCustomerLogin(req, mitra, rememberMe) {
 /**
  * Hitung Status Garansi Resmi 90 Hari Workshop Lab
  */
-function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = '', customerName = '') {
+function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = '', customerName = '', damageTypeOrDesc = '') {
   let orderDate = new Date();
   if (orderDateStr) {
     const parsed = new Date(orderDateStr);
@@ -212,7 +212,24 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
     }
   }
 
-  const warrantyDurationDays = 90; // Garansi Resmi 90 Hari Ngalam Fix Pro
+  // Tentukan durasi garansi: Baterai = 90 Hari, lainnya 7 s/d 30 Hari
+  const damageStr = String(damageTypeOrDesc || '').toLowerCase();
+  let warrantyDurationDays = 30; // default 1 bulan
+  let warrantyTypeLabel = 'Garansi Servis (30 Hari / 1 Bulan)';
+
+  if (/baterai|battery|batre/i.test(damageStr)) {
+    warrantyDurationDays = 90; // Khusus Baterai: 90 Hari (3 Bulan)
+    warrantyTypeLabel = 'Garansi Baterai Original (90 Hari / 3 Bulan)';
+  } else if (/software|virus|malware|flash|bootloop|sandi|pola/i.test(damageStr)) {
+    warrantyDurationDays = 7; // Software: 1 Minggu
+    warrantyTypeLabel = 'Garansi Software & Sistem (7 Hari / 1 Minggu)';
+  } else if (/cas|charge|charger|port|konektor/i.test(damageStr)) {
+    warrantyDurationDays = 14; // Port Cas: 2 Minggu
+    warrantyTypeLabel = 'Garansi Port Charger (14 Hari / 2 Minggu)';
+  } else {
+    warrantyDurationDays = 30; // LCD, OLED, Kaca OCA, Fleksibel, IC Motherboard, Kamera OIS: 1 Bulan
+    warrantyTypeLabel = 'Garansi Servis Hardware (30 Hari / 1 Bulan)';
+  }
   const startDate = new Date(orderDate);
   const endDate = new Date(startDate.getTime() + (warrantyDurationDays * 24 * 60 * 60 * 1000));
   const today = new Date();
@@ -231,25 +248,25 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
   const startDateFormatted = formatDate(startDate);
   const endDateFormatted = formatDate(endDate);
 
-  const cleanNum = String(ticketId).replace(/[^0-9]/g, '').slice(-8) || '90D';
-  const warrantyCode = `GAR-90D-${cleanNum}`;
+  const cleanNum = String(ticketId).replace(/[^0-9]/g, '').slice(-8) || `${warrantyDurationDays}D`;
+  const warrantyCode = `GAR-${warrantyDurationDays}D-${cleanNum}`;
 
   let statusLabel = '';
   let statusBadgeClass = '';
   if (!isDone) {
-    statusLabel = '⏳ Garansi Siaga (Aktif Penuh 90 Hari Setelah Unit Selesai Diambil)';
+    statusLabel = `⏳ Garansi Siaga (Aktif Penuh ${warrantyDurationDays} Hari Setelah Unit Selesai Diambil)`;
     statusBadgeClass = 'pending';
   } else if (!isExpired) {
-    statusLabel = `🛡️ Garansi Resmi Aktif (Sisa ${daysRemaining} Hari)`;
+    statusLabel = `🛡️ ${warrantyTypeLabel} Aktif (Sisa ${daysRemaining} Hari)`;
     statusBadgeClass = 'active';
   } else {
-    statusLabel = `⚠️ Masa Garansi 90 Hari Telah Berakhir (${endDateFormatted})`;
+    statusLabel = `⚠️ Masa Garansi ${warrantyDurationDays} Hari Telah Berakhir (${endDateFormatted})`;
     statusBadgeClass = 'expired';
   }
 
   // Pre-filled WhatsApp claim message
   const waText = encodeURIComponent(
-    `Halo Admin & CS Ngalam Fix Pro,\n\nSaya ingin klaim garansi resmi 90 hari untuk unit servis saya:\n` +
+    `Halo Admin & CS Ngalam Fix Pro,\n\nSaya ingin klaim ${warrantyTypeLabel} untuk unit servis saya:\n` +
     `• Nomor Tiket: ${ticketId || '-'}\n` +
     `• Tipe Smartphone: ${phoneType || '-'}\n` +
     `• Nama Pemilik: ${customerName || '-'}\n` +
@@ -261,6 +278,7 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
 
   return {
     warrantyCode,
+    warrantyTypeLabel,
     durationDays: warrantyDurationDays,
     startDate: startDateFormatted,
     endDate: endDateFormatted,
@@ -286,7 +304,8 @@ function formatCustomerOrder(o) {
   const ticketId = o.id || 'NGF-TICKET';
   const phoneType = o.phoneType || o.brandModel || 'Smartphone';
   const customerName = o.customerName || o.name || 'Pelanggan Ngalam Fix Pro';
-  const warranty = calculateWarranty(o.createdAt || o.paidAt, step, ticketId, phoneType, customerName);
+  const damageText = o.damageDescription || o.damage || o.damageType || (Array.isArray(o.problemTags) ? o.problemTags.join(' ') : 'Servis Komponen');
+  const warranty = calculateWarranty(o.createdAt || o.paidAt, step, ticketId, phoneType, customerName, damageText);
 
   return {
     id: ticketId,
@@ -395,7 +414,7 @@ async function getCombinedCustomerOrders(cleanId, additionalWa = '', additionalE
         duration: 'Selesai',
         status: 'Selesai & Lunas Kasir',
         step: 5,
-        diagnoseNote: `Faktur kasir resmi: ${tx.invoiceNumber} via ${tx.paymentMethod}. Pengerjaan selesai dan terproteksi garansi 90 hari.`,
+        diagnoseNote: `Faktur kasir resmi: ${tx.invoiceNumber} via ${tx.paymentMethod}. Pengerjaan selesai dan terproteksi garansi resmi lab (${/baterai|battery/i.test(tx.serviceItem || '') ? '90 Hari Baterai' : '7 s/d 30 Hari'}).`,
         createdAt: tx.displayTime || tx.paidAt
       });
     }

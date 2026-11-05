@@ -44,7 +44,7 @@ export default function Lacak() {
     { num: 2, title: 'Diagnosa Lab', desc: 'Analisa kerusakan & part' },
     { num: 3, title: 'Pengerjaan Lab', desc: 'Proses perbaikan unit' },
     { num: 4, title: 'Quality Control', desc: 'Pengujian ketahanan fungsi' },
-    { num: 5, title: 'Selesai & Siap Ambil', desc: 'Garansi resmi 90 hari aktif' }
+    { num: 5, title: 'Selesai & Siap Ambil', desc: 'Garansi resmi workshop aktif' }
   ];
 
   return (
@@ -148,7 +148,13 @@ export default function Lacak() {
             </div>
             <div>
               <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700, display: 'block' }}>GARANSI WORKSHOP:</span>
-              <strong style={{ fontSize: '0.9rem', color: '#059669' }}>Garansi Resmi Lab 90 Hari</strong>
+              <strong style={{ fontSize: '0.9rem', color: '#059669' }}>
+                {order.warranty?.warrantyTypeLabel || (
+                  /baterai|battery/i.test(order.damageDescription || order.damage || '')
+                    ? 'Garansi Baterai 90 Hari (3 Bulan)'
+                    : 'Garansi Servis (1 Minggu s/d 1 Bulan)'
+                )}
+              </strong>
             </div>
             {order.affiliateRef && (
               <div>

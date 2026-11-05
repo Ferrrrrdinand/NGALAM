@@ -71,7 +71,11 @@ export default function ReceiptModal({
           <div className="border-t border-dashed border-slate-300 pt-2 text-center text-[9px] text-slate-600 space-y-1">
             <p className="font-bold text-emerald-700 flex items-center justify-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline" />
-              <span>GARANSI RESMI LAB 90 HARI</span>
+              <span>
+                {/baterai|battery/i.test(receiptTx.serviceItem || receiptTx.orderId || '')
+                  ? 'GARANSI RESMI LAB 90 HARI (BATERAI)'
+                  : 'GARANSI RESMI LAB (1 MINGGU - 1 BULAN)'}
+              </span>
             </p>
             <p>Simpan struk ini sebagai bukti klaim garansi servis smartphone Anda.</p>
             <p>Terima kasih atas kepercayaan Anda!</p>

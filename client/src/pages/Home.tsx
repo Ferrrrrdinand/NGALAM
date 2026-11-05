@@ -135,6 +135,74 @@ export default function Home() {
 
   const currentModels = modelsByBrand[selectedBrand] || modelsByBrand.apple;
 
+  const repairMatrix: Record<string, { title: string; price: string; time: string; warranty: string; warrantyNote: string }> = {
+    garis_lightsaber: {
+      title: 'Menghilangkan Garis Layar (Light Saber OLED)',
+      price: 'Rp 250.000 - Rp 650.000',
+      time: '1 - 2 Jam',
+      warranty: 'Garansi 30 Hari',
+      warrantyNote: 'Garansi Resmi Panel Layar (1 Bulan)'
+    },
+    flex_fold: {
+      title: 'Pergantian Fleksibel Z Flip & Z Fold',
+      price: 'Rp 650.000 - Rp 1.650.000',
+      time: '2 - 4 Jam',
+      warranty: 'Garansi 30 Hari',
+      warrantyNote: 'Garansi Resmi Fleksibel Engsel (1 Bulan)'
+    },
+    baterai: {
+      title: 'Pergantian Baterai Original',
+      price: 'Rp 180.000 - Rp 550.000',
+      time: '30 - 45 Menit',
+      warranty: 'Garansi 90 Hari',
+      warrantyNote: 'Garansi Spesial Baterai Original (3 Bulan Penuh)'
+    },
+    software_virus: {
+      title: 'Software & Menghilangkan Virus HP',
+      price: 'Rp 75.000 - Rp 250.000',
+      time: '30 - 60 Menit',
+      warranty: 'Garansi 7 Hari',
+      warrantyNote: 'Garansi Sistem & Software (1 Minggu)'
+    },
+    lcd: {
+      title: 'Ganti Layar / LCD / OLED Pecah',
+      price: 'Rp 350.000 - Rp 1.850.000',
+      time: '30 - 60 Menit',
+      warranty: 'Garansi 30 Hari',
+      warrantyNote: 'Garansi Layar & Sentuhan (1 Bulan)'
+    },
+    kaca: {
+      title: 'Ganti Kaca Saja (Glass OCA Laminating)',
+      price: 'Rp 180.000 - Rp 750.000',
+      time: '2 - 3 Jam',
+      warranty: 'Garansi 30 Hari',
+      warrantyNote: 'Garansi Laminating OCA (1 Bulan)'
+    },
+    charging: {
+      title: 'Port Cas / Konektor Charger Rusak',
+      price: 'Rp 120.000 - Rp 350.000',
+      time: '30 - 45 Menit',
+      warranty: 'Garansi 14 Hari',
+      warrantyNote: 'Garansi Port Konektor Cas (2 Minggu)'
+    },
+    kamera: {
+      title: 'Kamera Getar (OIS) / Kaca Kamera Pecah',
+      price: 'Rp 200.000 - Rp 850.000',
+      time: '45 - 60 Menit',
+      warranty: 'Garansi 30 Hari',
+      warrantyNote: 'Garansi Modul Lensa Kamera (1 Bulan)'
+    },
+    mati_total: {
+      title: 'Mesin Mati Total / Kena Air',
+      price: 'Rp 250.000 - Rp 950.000',
+      time: '1 - 2 Hari',
+      warranty: 'Garansi 30 Hari',
+      warrantyNote: 'Garansi IC & Jalur Motherboard (1 Bulan)'
+    }
+  };
+
+  const currentDamageInfo = repairMatrix[selectedDamage] || repairMatrix.lcd;
+
   const defaultSlides = [
     {
       img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
@@ -145,7 +213,7 @@ export default function Home() {
       hint: 'Klik Banner untuk Info Promo & Klaim',
       cta: 'Klaim Promo ↗',
       title: 'Diskon Servis Hingga 30% Ganti Layar OLED & Baterai Original',
-      desc: 'Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi hingga 90 hari.',
+      desc: 'Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi (khusus baterai 90 hari, servis lain 7–30 hari).',
       code: 'NGALAMPROMO30',
       link: '/pesan-servis?promo=NGALAMPROMO30'
     },
@@ -379,7 +447,7 @@ export default function Home() {
             </h1>
 
             <p className="lead">
-              Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya. Pengerjaan transparan bisa ditunggu, suku cadang grade original, teknisi bersertifikasi, dan jaminan garansi hingga 90 hari.
+              Pusat reparasi spesialis smartphone Android dan Apple iPhone terpercaya. Pengerjaan transparan bisa ditunggu, suku cadang grade original, teknisi bersertifikasi, dan jaminan garansi resmi tertulis (khusus baterai 90 hari, servis lain 7–30 hari).
             </p>
 
             <div className="actions">
@@ -401,7 +469,7 @@ export default function Home() {
               </div>
               <div className="trust-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>Garansi s/d 90 Hari</span>
+                <span>Garansi Baterai 90 Hari / Servis 7–30 Hari</span>
               </div>
               <div className="trust-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -438,7 +506,7 @@ export default function Home() {
             <span className="step-num">04</span>
             <div className="step-info">
               <b>Quality Control & Garansi</b>
-              <span>Pemeriksaan 24 titik fungsi & garansi s/d 90 hari</span>
+              <span>Pemeriksaan 24 titik fungsi & garansi resmi tertulis</span>
             </div>
           </div>
         </div>
@@ -509,7 +577,7 @@ export default function Home() {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span className="speed flex items-center justify-end gap-1"><Zap className="w-3.5 h-3.5 text-amber-500 inline" /> 30–60 Menit</span>
-                <span className="warranty flex items-center justify-end gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500 inline" /> Garansi s/d 90 Hari</span>
+                <span className="warranty flex items-center justify-end gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500 inline" /> Garansi Baterai 90 Hari / Servis 7–30 Hari</span>
               </div>
             </div>
 
@@ -567,7 +635,7 @@ export default function Home() {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span className="speed flex items-center justify-end gap-1"><Zap className="w-3.5 h-3.5 text-amber-500 inline" /> 30–60 Menit</span>
-                <span className="warranty flex items-center justify-end gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500 inline" /> Garansi s/d 90 Hari</span>
+                <span className="warranty flex items-center justify-end gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500 inline" /> Garansi Baterai 90 Hari / Servis 7–30 Hari</span>
               </div>
             </div>
 
@@ -727,7 +795,7 @@ export default function Home() {
 
                     <div className="est-price-container">
                       <span className="est-price-label">Estimasi Biaya Part + Pasang:</span>
-                      <div className="est-price-val" id="estPriceDisplay">Rp 350.000 - Rp 1.850.000</div>
+                      <div className="est-price-val" id="estPriceDisplay">{currentDamageInfo.price}</div>
                       <div className="est-price-sub">*Suku cadang Grade Original + Teknisi Berpengalaman</div>
                     </div>
 
@@ -735,15 +803,17 @@ export default function Home() {
                       <div className="est-perk-item">
                         <span className="est-perk-icon"><Zap className="w-4 h-4 text-amber-500" /></span>
                         <div>
-                          <strong id="estTimeDisplay">30 - 60 Menit</strong>
+                          <strong id="estTimeDisplay">{currentDamageInfo.time}</strong>
                           <small>Bisa Ditunggu di Depan Meja Transparan</small>
                         </div>
                       </div>
                       <div className="est-perk-item">
                         <span className="est-perk-icon"><ShieldCheck className="w-4 h-4 text-emerald-500" /></span>
                         <div>
-                          <strong id="estWarrantyDisplay">Garansi 90 Hari</strong>
-                          <small>Garansi Resmi Tertulis Tanpa Ribet</small>
+                          <strong id="estWarrantyDisplay" style={{ color: selectedDamage === 'baterai' ? '#059669' : '#0f172a' }}>
+                            {currentDamageInfo.warranty}
+                          </strong>
+                          <small>{currentDamageInfo.warrantyNote}</small>
                         </div>
                       </div>
                       <div className="est-perk-item">
@@ -757,11 +827,23 @@ export default function Home() {
                   </div>
 
                   <div className="est-actions-box">
-                    <a href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20HP" target="_blank" rel="noopener noreferrer" className="btn-est-whatsapp" id="estCtaButton">
+                    <a
+                      href={`https://wa.me/6281330304321?text=${encodeURIComponent(
+                        `Halo Ngalam Fix Pro (Liem Hingky Liman),\nSaya ingin konsultasi servis HP:\n• Merek/Model: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi: ${currentDamageInfo.price} (${currentDamageInfo.time})\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-est-whatsapp"
+                      id="estCtaButton"
+                    >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                       <span>Chat WhatsApp Cek Stok Part ↗</span>
                     </a>
-                    <Link to="/pesan-servis" className="btn-est-booking" id="estBookingBtn">
+                    <Link
+                      to={`/pesan-servis?type=${selectedBrand === 'apple' ? 'iphone' : 'android'}&model=${encodeURIComponent(selectedModel)}&problem=${encodeURIComponent(selectedDamage)}`}
+                      className="btn-est-booking"
+                      id="estBookingBtn"
+                    >
                       <span>Booking Jadwal ke Workshop ↗</span>
                     </Link>
                   </div>
@@ -799,8 +881,8 @@ export default function Home() {
             <article>
               <i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></i>
               <div>
-                <b>Garansi Tertulis Hingga 90 Hari</b>
-                <p>Klaim garansi mudah tanpa dipersulit. Jika kendala yang sama kambuh, perbaikan ulang 100% gratis.</p>
+                <b>Garansi Tertulis Resmi (Baterai 90 Hari, Servis Lain 7–30 Hari)</b>
+                <p>Klaim garansi mudah tanpa dipersulit. Garansi spesial 90 hari untuk pergantian baterai original, serta 1 minggu s/d 1 bulan untuk servis hardware lainnya.</p>
               </div>
             </article>
 
@@ -900,7 +982,7 @@ export default function Home() {
             <div className="testimonial-stars flex gap-1 items-center">
               {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
             </div>
-            <p className="testimonial-text">"Servis ganti layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi 90 hari. Suku cadang original dan teknisi transparan. Mantap!"</p>
+            <p className="testimonial-text">"Ganti baterai dan servis layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi. Suku cadang original dan teknisi transparan. Mantap!"</p>
             <div className="testimonial-user">
               <div className="testimonial-avatar">R</div>
               <div className="testimonial-info">
@@ -948,7 +1030,7 @@ export default function Home() {
                 <div className="perk-item">
                   <span className="perk-icon"><ShieldCheck className="w-4 h-4 text-emerald-500" /></span>
                   <div>
-                    <strong>Garansi s/d 90 Hari</strong>
+                    <strong>Garansi Baterai 90 Hari & Servis 7-30 Hari</strong>
                     <small>Perlindungan purna jual resmi</small>
                   </div>
                 </div>

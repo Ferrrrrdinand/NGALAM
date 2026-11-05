@@ -416,7 +416,7 @@ export default function PesanServis() {
                 <ShieldCheck className="w-4 h-4 text-amber-500" />
               </div>
               <div className="booking-benefit-text">
-                <strong>Garansi Tertulis s/d 90 Hari</strong>
+                <strong>Garansi Tertulis (Baterai 90 Hari, Lainnya 7–30 Hari)</strong>
                 <small>Jaminan klaim suku cadang mudah dan transparan dengan nota resmi.</small>
               </div>
             </li>

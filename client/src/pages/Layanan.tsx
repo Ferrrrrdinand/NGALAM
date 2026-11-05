@@ -19,7 +19,7 @@ export default function Layanan() {
       title: 'Ganti Layar OLED Super Retina iPhone',
       desc: 'Solusi layar retak, garis hijau/putih (green screen), atau blank sentuh. Pemindahan modul IC TrueTone agar warna layar akurat dan ProMotion 120Hz aktif normal.',
       price: 'Rp 450.000',
-      checks: ['Fitur TrueTone Tetap Aktif', 'Panel OLED Presisi High-Grade', 'Garansi Resmi 90 Hari'],
+      checks: ['Fitur TrueTone Tetap Aktif', 'Panel OLED Presisi High-Grade', 'Garansi Resmi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?type=iphone&problem=lcd'
     },
     {
@@ -31,7 +31,7 @@ export default function Layanan() {
       title: 'Ganti Baterai Original iPhone (High Capacity)',
       desc: 'Mengatasi baterai boros, indikator Service Recommended, atau mati saat persentase 20%. Sel baterai bersertifikasi dengan Battery Health 100% terbaca di pengaturan iOS.',
       price: 'Rp 280.000',
-      checks: ['Battery Health 100% Aktif', 'Bebas Notifikasi Unknown Part', 'Garansi Resmi 90 Hari'],
+      checks: ['Battery Health 100% Aktif', 'Bebas Notifikasi Unknown Part', 'Garansi Resmi 90 Hari (3 Bulan)'],
       bookingUrl: '/pesan-servis?type=iphone&problem=baterai'
     },
     {
@@ -43,7 +43,7 @@ export default function Layanan() {
       title: 'Ganti Kaca Belakang (Backglass) Laser Machine',
       desc: 'Pembersihan kaca belakang pecah menggunakan mesin laser presisi dingin tanpa risiko merusak kumparan wireless charging MagSafe atau rangka internal.',
       price: 'Rp 250.000',
-      checks: ['Teknologi Laser Dingin Presisi', 'MagSafe Tetap Berfungsi 100%', 'Garansi 60 Hari'],
+      checks: ['Teknologi Laser Dingin Presisi', 'MagSafe Tetap Berfungsi 100%', 'Garansi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?type=iphone&problem=backglass'
     },
     {
@@ -55,7 +55,7 @@ export default function Layanan() {
       title: 'Perbaikan Face ID & TrueDepth Sensor',
       desc: 'Face ID tidak berfungsi, tidak bisa mendeteksi wajah, atau dinonaktifkan setelah kena air. Perbaikan sensor dot projector dan flood illuminator secara presisi mikro.',
       price: 'Rp 350.000',
-      checks: ['Peralatan Kalibrasi FaceID', 'Data Wajah Kembali Normal', 'Garansi 60 Hari'],
+      checks: ['Peralatan Kalibrasi FaceID', 'Data Wajah Kembali Normal', 'Garansi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?type=iphone&problem=faceid'
     },
     {
@@ -67,7 +67,7 @@ export default function Layanan() {
       title: 'Ganti Layar AMOLED & Super AMOLED Samsung / Xiaomi',
       desc: 'Penggantian layar panel Dynamic AMOLED & Super AMOLED berkecepatan 120Hz smooth. Mendukung pemindai sidik jari dalam layar (In-Display Fingerprint Scanner).',
       price: 'Rp 380.000',
-      checks: ['Support Fingerprint Under-Display', 'Panel 120Hz Smooth Display', 'Garansi Resmi 90 Hari'],
+      checks: ['Support Fingerprint Under-Display', 'Panel 120Hz Smooth Display', 'Garansi Resmi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?type=android&problem=lcd'
     },
     {
@@ -79,7 +79,7 @@ export default function Layanan() {
       title: 'Ganti Kaca Layar Saja (Glass OCA Laminating)',
       desc: 'Layar luar retak seribu tapi sentuhan dan tampilan gambar masih normal? Ganti kaca luar saja menggunakan mesin vacuum OCA. Hemat biaya hingga 50%.',
       price: 'Rp 200.000',
-      checks: ['Panel LCD / OLED Asli Tetap Dipakai', 'Hemat Biaya Hingga 50%', 'Garansi 60 Hari'],
+      checks: ['Panel LCD / OLED Asli Tetap Dipakai', 'Hemat Biaya Hingga 50%', 'Garansi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?type=android&problem=glass_oca'
     },
     {
@@ -91,7 +91,7 @@ export default function Layanan() {
       title: 'Ganti Baterai Original Fast-Charging Android',
       desc: 'Baterai kembung membahayakan casing melengkung? Ganti baterai original bersertifikasi anti-drop yang mendukung Fast / Turbo / Dart / Flash Charging.',
       price: 'Rp 175.000',
-      checks: ['Support Turbo & SuperVOOC Flash Charge', 'Sel Baru 100% Anti Kembung', 'Garansi Resmi 90 Hari'],
+      checks: ['Support Turbo & SuperVOOC Flash Charge', 'Sel Baru 100% Anti Kembung', 'Garansi Resmi 90 Hari (3 Bulan)'],
       bookingUrl: '/pesan-servis?type=android&problem=baterai'
     },
     {
@@ -103,7 +103,7 @@ export default function Layanan() {
       title: 'Perbaikan Port Charger Type-C & Lightning',
       desc: 'HP tidak mau mengisi daya, kabel harus digoyang-goyang, konektor kemasukan kotoran atau korsleting air. Pergantian modul sub-board konektor original.',
       price: 'Rp 120.000',
-      checks: ['Pengisian Arus Stabil & Aman', 'Jalur Data USB Terhubung PC', 'Garansi 60 Hari'],
+      checks: ['Pengisian Arus Stabil & Aman', 'Jalur Data USB Terhubung PC', 'Garansi 14 Hari (2 Minggu)'],
       bookingUrl: '/pesan-servis?problem=charging'
     },
     {
@@ -115,7 +115,7 @@ export default function Layanan() {
       title: 'Perbaikan Modul Kamera & Kaca Lensa Kamera',
       desc: 'Kamera bergetar saat buka aplikasi, gambar buram/blur tidak bisa fokus, hasil foto bintik hitam, atau kaca pelindung luar lensa pecah retak.',
       price: 'Rp 150.000',
-      checks: ['Stabilizer OIS Kembali Mulus', 'Kaca Sapphire Anti Gores', 'Garansi 60 Hari'],
+      checks: ['Stabilizer OIS Kembali Mulus', 'Kaca Sapphire Anti Gores', 'Garansi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?problem=camera'
     },
     {
@@ -127,7 +127,7 @@ export default function Layanan() {
       title: 'Perbaikan Speaker Suara & Mikrofon Telepon',
       desc: 'Suara telepon kecil, speaker musik kresek-kresek, suara lawan bicara tidak terdengar saat nelpon WhatsApp, atau mic rekaman audio mati total.',
       price: 'Rp 110.000',
-      checks: ['Pembersihan Sonic & Grill Mesh', 'Suara Jernih & Bass Bulat', 'Garansi 60 Hari'],
+      checks: ['Pembersihan Sonic & Grill Mesh', 'Suara Jernih & Bass Bulat', 'Garansi 14 Hari (2 Minggu)'],
       bookingUrl: '/pesan-servis?problem=audio'
     },
     {
@@ -139,7 +139,7 @@ export default function Layanan() {
       title: 'Software, Flash Ulang, Unbrick & Bootloop',
       desc: 'HP mentok di logo merek, gagal update sistem, penyimpanan penuh crash restart berulang, lupa pola/PIN sandi, dan pembersihan malware/iklan pop-up.',
       price: 'Rp 100.000',
-      checks: ['Sistem Firmware Resmi Pabrikan', 'Solusi Bootloop Tanpa Ganti Mesin', 'Garansi 30 Hari'],
+      checks: ['Sistem Firmware Resmi Pabrikan', 'Solusi Bootloop Tanpa Ganti Mesin', 'Garansi 7 Hari (1 Minggu)'],
       bookingUrl: '/pesan-servis?problem=software'
     },
     {
@@ -151,7 +151,7 @@ export default function Layanan() {
       title: 'Reparasi Mesin Mati Total (Matot), IC & CPU Reball',
       desc: 'HP mati total korsleting tegangan tinggi, korsleting air (water damage), IC Power panas berlebih, RAM CPU retak solder, sinyal hilang baseband.',
       price: 'Rp 350.000',
-      checks: ['Mikroskop Stereoskopis & Thermal Cam', 'Analisa Skematik Jalur PCB Motherboard', 'Garansi Resmi 90 Hari'],
+      checks: ['Mikroskop Stereoskopis & Thermal Cam', 'Analisa Skematik Jalur PCB Motherboard', 'Garansi Resmi 30 Hari (1 Bulan)'],
       bookingUrl: '/pesan-servis?problem=matot'
     }
   ];
@@ -173,7 +173,7 @@ export default function Layanan() {
           </div>
           <h1>Katalog Lengkap Layanan Perbaikan</h1>
           <p>
-            Semua perbaikan smartphone Android dan Apple iPhone dikerjakan oleh teknisi spesialis bersertifikasi di meja kerja transparan. Pengecekan awal 100% gratis, suku cadang original, dan garansi tertulis hingga 90 hari.
+            Semua perbaikan smartphone Android dan Apple iPhone dikerjakan oleh teknisi spesialis bersertifikasi di meja kerja transparan. Pengecekan awal 100% gratis, suku cadang original, dan garansi tertulis (khusus baterai 90 hari, servis lain 7–30 hari).
           </p>
 
           <div className="services-hero-highlights">
@@ -187,7 +187,7 @@ export default function Layanan() {
             </div>
             <div className="highlight-item">
               <span className="h-icon"><Sparkles className="w-4 h-4 text-emerald-500" /></span>
-              <span>Garansi Resmi Tertulis 90 Hari</span>
+              <span>Garansi Baterai 90 Hari / Servis 7–30 Hari</span>
             </div>
           </div>
         </div>

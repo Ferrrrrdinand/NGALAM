@@ -17,7 +17,7 @@ const DEFAULT_PROMOS = [
   {
     id: 'PROMO-001',
     title: 'Diskon Servis Hingga 30% Ganti Layar OLED & Baterai Original',
-    description: 'Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi hingga 90 hari.',
+    description: 'Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi (khusus baterai 90 hari, servis lain 7–30 hari).',
     badgeTag: '🔥 PROMO SPESIAL BULAN INI',
     badgePill: '🏷️ DISKON S/D 30%',
     theme: 'red',
@@ -35,7 +35,7 @@ const DEFAULT_PROMOS = [
     badgeTag: '🟢 WORKSHOP MEJA TERBUKA & TRANSPARAN',
     badgePill: '⚡ BISA DITUNGGU (30–60 MENIT)',
     theme: 'green',
-    promoCode: '🛡️ GARANSI S/D 90 HARI',
+    promoCode: '🛡️ GARANSI RESMI TERJAMIN',
     buttonText: 'Konsultasi Teknisi Langsung ↗',
     buttonLink: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
     image: 'images/spesialis-hp-banner.jpg',

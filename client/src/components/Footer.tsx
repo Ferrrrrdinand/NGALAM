@@ -67,7 +67,7 @@ export default function Footer() {
             <ShieldCheck style={{ width: '14px', height: '14px', color: '#f59e0b' }} />
             <span>Portal Admin Workshop</span>
           </Link>
-          <Link to="/kontak">Kebijakan Garansi 90 Hari</Link>
+          <Link to="/kontak">Kebijakan Garansi Resmi Servis</Link>
         </div>
 
         <div className="foot-col">

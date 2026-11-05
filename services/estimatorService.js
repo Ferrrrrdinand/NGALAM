@@ -163,63 +163,63 @@ const REPAIR_PRICE_MATRIX = {
     title: 'Menghilangkan Garis Layar (Light Saber OLED)',
     price: 'Rp 250.000 - Rp 650.000',
     time: '1 - 2 Jam',
-    warranty: '60 Hari',
+    warranty: '30 Hari (1 Bulan)',
     detail: 'Laser bonding & perbaikan jalur display OLED green/pink/white line tanpa harus ganti LCD fullset.',
   },
   flex_fold: {
     title: 'Pergantian Fleksibel Z Flip & Z Fold',
     price: 'Rp 650.000 - Rp 1.650.000',
     time: '2 - 4 Jam',
-    warranty: '90 Hari',
+    warranty: '30 Hari (1 Bulan)',
     detail: 'Penggantian kabel fleksibel hinge (engsel) original khusus Samsung Galaxy Z Flip / Fold series.',
   },
   baterai: {
     title: 'Pergantian Baterai Original',
     price: 'Rp 180.000 - Rp 550.000',
     time: '30 - 45 Menit',
-    warranty: '60 Hari',
-    detail: 'Kapasitas 100%, sel baterai stabil, bebas peringatan unknown part, support fast charging.',
+    warranty: '90 Hari (3 Bulan)',
+    detail: 'Kapasitas 100%, sel baterai stabil, bebas peringatan unknown part, support fast charging, garansi resmi 90 hari.',
   },
   software_virus: {
     title: 'Software & Menghilangkan Virus HP',
     price: 'Rp 75.000 - Rp 250.000',
     time: '30 - 60 Menit',
-    warranty: '30 Hari',
+    warranty: '7 Hari (1 Minggu)',
     detail: 'Pembersihan malware, virus iklan pop-up, flash ulang OS resmi, perbaikan bootloop & lupa sandi.',
   },
   lcd: {
     title: 'Ganti Layar / LCD / OLED Pecah',
     price: 'Rp 350.000 - Rp 1.850.000',
     time: '30 - 60 Menit',
-    warranty: '90 Hari',
+    warranty: '30 Hari (1 Bulan)',
     detail: 'Panel Super Retina XDR / Dynamic AMOLED Grade Ori, 120Hz smooth, TrueTone aktif.',
   },
   kaca: {
     title: 'Ganti Kaca Saja (Glass OCA Laminating)',
     price: 'Rp 180.000 - Rp 750.000',
     time: '2 - 3 Jam',
-    warranty: '30 Hari',
+    warranty: '30 Hari (1 Bulan)',
     detail: 'Panel LCD/OLED asli bawaan pabrik tetap dipertahankan dengan mesin vacuum autoclave OCA.',
   },
   charging: {
     title: 'Port Cas / Konektor Charger Rusak',
     price: 'Rp 120.000 - Rp 350.000',
     time: '30 - 45 Menit',
-    warranty: '60 Hari',
+    warranty: '14 Hari (2 Minggu)',
     detail: 'Pembersihan jalur pin, penggantian flexible port type-C / lightning, IC Power Cas.',
   },
   kamera: {
     title: 'Kamera Getar (OIS) / Kaca Kamera Pecah',
     price: 'Rp 200.000 - Rp 850.000',
     time: '45 - 60 Menit',
-    warranty: '60 Hari',
+    warranty: '30 Hari (1 Bulan)',
     detail: 'Kalibrasi stabilizer OIS, penggantian modul sensor asli, kaca lensa anti buram.',
   },
   mati_total: {
     title: 'Mesin Mati Total / Kena Air',
     price: 'Rp 250.000 - Rp 950.000',
     time: '1 - 2 Hari',
-    warranty: '60 Hari',
+    warranty: '30 Hari (1 Bulan)',
     detail: 'Deteksi jalur konslet dengan thermal camera & chemical ultrasonic cleaning.',
   },
 };
@@ -250,7 +250,8 @@ function calculateEstimate({ brand = 'apple', model = '', damage = 'lcd' }) {
     `• Merek: ${selectedBrand.name}\n` +
     `• Tipe/Model: ${model || 'Umum'}\n` +
     `• Kendala: ${matrix.title}\n` +
-    `• Estimasi Web: ${matrix.price} (${matrix.time})\n\n` +
+    `• Estimasi Web: ${matrix.price} (${matrix.time})\n` +
+    `• Garansi Resmi: ${matrix.warranty}\n\n` +
     `Apakah stok sparepart ready hari ini untuk dikerjakan langsung? Terima kasih.`
   );
 

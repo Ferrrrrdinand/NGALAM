@@ -1008,7 +1008,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
                   </label>
                   <textarea
                     rows={2}
-                    placeholder="Contoh: Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi 90 hari."
+                    placeholder="Contoh: Dapatkan gratis pembersihan mesin sinar UV, cek diagnosa awal di meja transparan, dan jaminan garansi resmi (khusus baterai 90 hari, servis lain 7–30 hari)."
                     value={bannerForm.description}
                     onChange={(e) => setBannerForm({ ...bannerForm, description: e.target.value })}
                     className="w-full px-3.5 py-2 text-xs bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-400 focus:bg-white text-slate-900"

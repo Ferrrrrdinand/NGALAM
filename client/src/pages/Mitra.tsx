@@ -728,7 +728,7 @@ export default function Mitra() {
                       2. Teknisi Tangani Unit
                     </strong>
                     <p style={{ margin: 0, fontSize: '0.78rem', color: '#000000', lineHeight: 1.35 }}>
-                      Teknisi kami memperbaiki perangkat dengan garansi 90 hari. Jasa servis tetap berjalan profesional.
+                      Teknisi kami memperbaiki perangkat dengan garansi resmi (baterai 90 hari, servis lain 7–30 hari). Jasa servis tetap berjalan profesional.
                     </p>
                   </div>
                   <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
