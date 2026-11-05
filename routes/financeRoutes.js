@@ -191,6 +191,36 @@ router.post('/transactions', async (req, res) => {
     }
     const newTx = await recordNewTransaction(txData);
     newTx.invoiceNo = newTx.invoiceNumber;
+
+    // Otomatis cairkan komisi mitra jika transaksi kasir ini merujuk ke tiket order yang menggunakan kode mitra
+    if (txData.ticketId) {
+      try {
+        const { getOrderById, updateOrder } = require('../services/orderService');
+        const { recordMitraCommission } = require('../services/financeService');
+        const targetOrder = await getOrderById(txData.ticketId);
+        if (targetOrder) {
+          const refCode = targetOrder.affiliateRef || targetOrder.referralCode;
+          if (refCode && targetOrder.affiliateCommissionStatus !== 'paid') {
+            const finalCost = Number(txData.totalPaid) || Number(targetOrder.cost) || 0;
+            const rate = Number(targetOrder.affiliateCommissionRate || 10);
+            const commAmt = Math.round(finalCost * (rate / 100));
+            if (commAmt > 0) {
+              await recordMitraCommission(refCode, commAmt, targetOrder.id);
+              await updateOrder(targetOrder.id, {
+                paid: true,
+                affiliateCommission: commAmt,
+                affiliateCommissionStatus: 'paid',
+                affiliateCommissionPaidAt: new Date().toISOString()
+              });
+              console.log(`[FinanceRoutes] Komisi mitra ${refCode} sebesar Rp ${commAmt} berhasil dialokasikan dari faktur ${newTx.invoiceNumber}`);
+            }
+          }
+        }
+      } catch (affErr) {
+        console.warn('[FinanceRoutes] Affiliate auto-commission recording warning:', affErr.message);
+      }
+    }
+
     res.status(201).json({
       success: true,
       message: `Faktur transaksi ${newTx.invoiceNumber} berhasil dicatat & disimpan!`,

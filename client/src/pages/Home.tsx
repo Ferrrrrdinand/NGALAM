@@ -9,6 +9,7 @@ import {
   X, Copy, CheckCircle2, Sparkles, Star, Gift, Flame, Rocket, Search, Check
 } from 'lucide-react';
 import { fetchApi } from '../utils/api';
+import HomeAdBanner from '../components/HomeAdBanner';
 
 export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -512,8 +513,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* DYNAMIC ADVERTISEMENT BANNER (TERKONEKSI DATABASE IKLAN POSTGRESQL) */}
+      <HomeAdBanner />
+
       {/* SERVICES SHOWCASE */}
-      <section className="section wrap" style={{ paddingTop: '75px' }}>
+      <section className="section wrap" style={{ paddingTop: '45px' }}>
         <div className="sectionhead">
           <div>
             <div className="eyebrow blue">LAYANAN UNGGULAN HP</div>

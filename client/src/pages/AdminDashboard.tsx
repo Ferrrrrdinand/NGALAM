@@ -65,7 +65,8 @@ export default function AdminDashboard() {
     phoneType: 'iPhone 11',
     damage: '',
     estimatedCost: 200000,
-    technician: 'Admin Workshop'
+    technician: 'Admin Workshop',
+    referralCode: ''
   });
   const [walkinSuccess, setWalkinSuccess] = useState('');
 
@@ -143,6 +144,7 @@ export default function AdminDashboard() {
           damage: walkin.damage || 'Pemeriksaan Meja 1',
           cost: Number(walkin.estimatedCost) || 0,
           technician: walkin.technician,
+          referralCode: walkin.referralCode || '',
           serviceMethod: 'walk_in_meja1',
           currentStep: 1,
           statusText: 'Unit diterima di counter Meja 1'
@@ -157,7 +159,8 @@ export default function AdminDashboard() {
           phoneType: 'iPhone 11',
           damage: '',
           estimatedCost: 200000,
-          technician: 'Admin Workshop'
+          technician: 'Admin Workshop',
+          referralCode: ''
         });
         loadData();
         setTimeout(() => setWalkinSuccess(''), 5000);

@@ -21,6 +21,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { fetchApi, formatRp, formatDateId } from '../../utils/api';
+import AdsSubTab from './AdsSubTab';
 
 export interface PromoBanner {
   id: string;
@@ -79,7 +80,7 @@ const THEME_OPTIONS = [
 ];
 
 export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosTabProps) {
-  const [activeSubTab, setActiveSubTab] = useState<'banners' | 'vouchers'>('banners');
+  const [activeSubTab, setActiveSubTab] = useState<'banners' | 'ads' | 'vouchers'>('banners');
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // --- BANNER MANAGEMENT STATE ---
@@ -530,6 +531,22 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
 
           <button
             type="button"
+            onClick={() => setActiveSubTab('ads')}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeSubTab === 'ads'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span>Iklan Beranda Bawah</span>
+            <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+              Live DB
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveSubTab('vouchers')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeSubTab === 'vouchers'
@@ -731,7 +748,12 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
       )}
 
       {/* ======================================================== */}
-      {/* TAB 2: VOUCHER & KODE PROMO */}
+      {/* TAB 2: IKLAN & SPONSOR BERANDA BAWAH (DATABASE IKLAN) */}
+      {/* ======================================================== */}
+      {activeSubTab === 'ads' && <AdsSubTab onToast={showToast} />}
+
+      {/* ======================================================== */}
+      {/* TAB 3: VOUCHER & KODE PROMO */}
       {/* ======================================================== */}
       {activeSubTab === 'vouchers' && (
         <div className="space-y-4">

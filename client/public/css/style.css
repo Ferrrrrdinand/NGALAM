@@ -6658,8 +6658,8 @@ footer.footer {
 .chatbot-container {
   position: fixed;
   bottom: 24px;
-  left: 24px !important;
-  right: auto !important;
+  right: 24px !important;
+  left: auto !important;
   z-index: 9999;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }

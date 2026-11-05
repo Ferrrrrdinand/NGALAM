@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Banknote, X, Users, Wallet, ArrowDownRight, Edit3, Key, Phone, Eye, EyeOff, Search, ShieldCheck } from 'lucide-react';
+import { 
+  Banknote, X, Users, Wallet, ArrowDownRight, 
+  Edit3, Key, Phone, Eye, EyeOff, Search
+} from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditMitraModal from './EditMitraModal';
 
@@ -170,7 +173,7 @@ export default function MitraTab({
                   const isHashed = Boolean(m.password && String(m.password).startsWith('$2'));
 
                   return (
-                    <tr key={idx} className="hover:bg-amber-50/20 transition-colors">
+                    <tr key={m.id || idx} className="hover:bg-amber-50/20 transition-colors">
                       {/* Profil & Username */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2.5">
@@ -345,32 +348,28 @@ export default function MitraTab({
               </button>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl space-y-1 text-xs">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Nama Penerima:</span>
-                <strong className="text-slate-800">{payoutModalMitra.name}</strong>
+            <div className="p-3.5 bg-slate-50 rounded-xl space-y-1.5 border border-slate-100">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Nama Mitra:</span>
+                <strong className="text-slate-800">{payoutModalMitra.name} ({payoutModalMitra.category || 'Driver'})</strong>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Kode Referral:</span>
-                <span className="font-mono font-bold text-amber-600">{payoutModalMitra.referralCode}</span>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Rekening Tujuan:</span>
+                <span className="font-mono font-medium text-slate-800">{payoutModalMitra.bankAccount || '-'}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Kontak:</span>
-                <span className="font-mono text-slate-700">{payoutModalMitra.phone}</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-slate-200">
+              <div className="flex justify-between text-xs">
                 <span className="text-slate-500">Saldo Tersedia:</span>
-                <strong className="text-emerald-700">{formatRp(payoutModalMitra.balance || 0)}</strong>
+                <strong className="text-emerald-700 font-bold">{formatRp(payoutModalMitra.balance || 0)}</strong>
               </div>
             </div>
 
             <form onSubmit={handlePayoutSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Nominal Pencairan Saldo (Rp)
+                <label className="block text-xs font-medium text-slate-700 mb-1">
+                  Nominal Dicairkan (Rp)
                 </label>
                 <div className="relative">
-                  <span className="text-xs font-bold text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2">Rp</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold font-mono">Rp</span>
                   <input
                     type="number"
                     required

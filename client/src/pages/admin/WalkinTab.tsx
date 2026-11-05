@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, CheckCircle2, User, Phone, Smartphone, ShieldCheck } from 'lucide-react';
+import { Plus, CheckCircle2, User, Phone, Smartphone, ShieldCheck, Tag } from 'lucide-react';
 
 export default function WalkinTab({
   walkin,
@@ -72,6 +72,23 @@ export default function WalkinTab({
                     className="w-full text-xs pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent font-mono transition-all placeholder:text-slate-400"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
+                <span>Kode Referral Mitra (Opsional)</span>
+                <span className="text-[10px] text-amber-600 font-bold">Bagi Hasil Komisi Otomatis ke Driver / Rekanan</span>
+              </label>
+              <div className="relative">
+                <Tag className="w-3.5 h-3.5 text-amber-600 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Contoh: MTR-ROHMAN-5678 (Kosongkan jika walk-in mandiri)"
+                  value={walkin.referralCode || ''}
+                  onChange={(e) => setWalkin({ ...walkin, referralCode: e.target.value.toUpperCase() })}
+                  className="w-full text-xs pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent font-mono font-bold uppercase text-amber-700 transition-all placeholder:text-slate-400 placeholder:normal-case placeholder:font-normal"
+                />
               </div>
             </div>
           </div>

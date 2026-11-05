@@ -477,6 +477,7 @@ async function updateCustomerById(id, updates = {}) {
     console.warn('[CustomerService] PostgreSQL update customer warning:', pgErr.message);
   }
 
+  return updated;
   return merged;
 }
 

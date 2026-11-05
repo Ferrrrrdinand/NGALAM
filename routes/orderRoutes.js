@@ -72,37 +72,43 @@ router.post('/', async (req, res) => {
       incrementUsage(orderData.promoCode);
     }
 
-    // Pemrosesan Afiliasi Mitra (QR Code Scan & Referral Link)
-    const affiliateCode = (orderData.affiliateRef || orderData.referralCode || req.query.ref || '').trim().toUpperCase();
+    // Pemrosesan Afiliasi Mitra (QR Code Scan, Referral Link, atau Profil Pelanggan)
+    let affiliateCode = (orderData.affiliateRef || orderData.referralCode || req.query.ref || '').trim().toUpperCase();
+
+    // Jika tidak menyertakan kode secara manual, cek apakah nomor WA / email pelanggan terhubung dengan mitra rujukan
+    if (!affiliateCode) {
+      try {
+        const { findCustomerByIdentifier } = require('../services/customerService');
+        const custPhone = orderData.whatsapp || orderData.phone || orderData.customerPhone || '';
+        const foundCust = findCustomerByIdentifier(custPhone) || (orderData.email ? findCustomerByIdentifier(orderData.email) : null);
+        if (foundCust && foundCust.referredByMitra) {
+          affiliateCode = String(foundCust.referredByMitra).trim().toUpperCase();
+        }
+      } catch (_) {}
+    }
+
     if (affiliateCode) {
       try {
         const userService = require('../services/userService');
         await userService.refreshUsersFromDb();
         const users = userService.getAllUsers();
-        const mitra = users.find(u => (u.referralCode || u.referral_code || '').toUpperCase() === affiliateCode);
+        const mitra = users.find(u => 
+          (u.referralCode && String(u.referralCode).toUpperCase() === affiliateCode) ||
+          (u.referral_code && String(u.referral_code).toUpperCase() === affiliateCode) ||
+          (u.username && String(u.username).toUpperCase() === affiliateCode)
+        );
 
-        // Validasi: Pelanggan hanya bisa menggunakan kode referral mitra 1 kali
-        const allExistingOrders = await getAllOrders();
-        const cleanCustPhone = String(orderData.whatsapp || orderData.phone || orderData.customerPhone || '').replace(/\D/g, '');
-        const hasUsedReferral = cleanCustPhone && cleanCustPhone.length >= 8 && allExistingOrders.some(o => {
-          const oPhone = String(o.whatsapp || o.customerPhone || o.phone || '').replace(/\D/g, '');
-          if (!oPhone || oPhone.length < 8) return false;
-          const matches = oPhone === cleanCustPhone || oPhone.endsWith(cleanCustPhone.slice(-8)) || cleanCustPhone.endsWith(oPhone.slice(-8));
-          return matches && (o.affiliateRef || o.referralCode);
-        });
-
-        if (mitra && !hasUsedReferral) {
+        if (mitra) {
           const rate = mitra.commissionRate !== undefined ? Number(mitra.commissionRate) : 10;
 
           orderData.isPartner = true;
           orderData.partnerName = mitra.name;
-          orderData.affiliateRef = mitra.referralCode || mitra.referral_code;
+          orderData.affiliateRef = mitra.referralCode || mitra.referral_code || affiliateCode;
           orderData.affiliateMitraName = mitra.name;
           orderData.affiliateCommissionRate = rate;
-          orderData.affiliateCommission = 0; // Belum dibayar, menunggu konfirmasi kasir/admin
-          orderData.affiliateCommissionStatus = 'pending'; // Status awal: pending
-        } else if (hasUsedReferral) {
-          console.log(`[OrderRoutes] Nomor WA ${cleanCustPhone} sudah pernah menggunakan referral mitra. Kode diabaikan.`);
+          orderData.affiliateCommission = 0; // Menunggu pelunasan kasir/admin
+          orderData.affiliateCommissionStatus = 'pending';
+          console.log(`[OrderRoutes] Order berhasil dikoneksikan ke mitra ${mitra.name} (${orderData.affiliateRef}) dengan komisi ${rate}%`);
         }
       } catch (affErr) {
         console.warn('[OrderRoutes] Affiliate processing warning:', affErr.message);
@@ -110,6 +116,24 @@ router.post('/', async (req, res) => {
     }
 
     const newOrder = await appendOrder(orderData);
+
+    // Jika order langsung berstatus lunas saat dibuat, proses komisi langsung
+    if (orderData.paid === true && orderData.affiliateRef) {
+      try {
+        const { recordMitraCommission } = require('../services/financeService');
+        const costNum = Number(orderData.cost || orderData.totalPaid || orderData.estimatedCost || 0);
+        const rate = Number(orderData.affiliateCommissionRate || 10);
+        const commAmt = Math.round(costNum * (rate / 100));
+        if (commAmt > 0) {
+          await recordMitraCommission(orderData.affiliateRef, commAmt, newOrder.id);
+          await updateOrder(newOrder.id, {
+            affiliateCommission: commAmt,
+            affiliateCommissionStatus: 'paid',
+            affiliateCommissionPaidAt: new Date().toISOString()
+          });
+        }
+      } catch (_) {}
+    }
     res.status(201).json({
       success: true,
       message: 'Tiket servis berhasil didaftarkan dan disimpan ke database!',
@@ -133,27 +157,35 @@ async function handleUpdateOrder(req, res) {
     }
 
     // Jika pembayaran lunas dikonfirmasi kasir/admin:
-    // Cek apakah order memiliki mitra referral berstatus pending untuk dicairkan komisinya
-    const isPayingNow = updates.paid === true;
-    const affiliateRef = existing.affiliateRef || updates.affiliateRef;
-    const isAffiliatePending = (existing.affiliateCommissionStatus === 'pending' || !existing.affiliateCommissionStatus) && affiliateRef;
+    // Cek apakah order memiliki mitra referral untuk dicairkan komisinya
+    const isPayingNow = updates.paid === true || updates.currentStep === 5 || updates.step === 5 || (typeof updates.statusText === 'string' && updates.statusText.toLowerCase().includes('lunas'));
+    const affiliateRef = existing.affiliateRef || updates.affiliateRef || existing.referralCode || updates.referralCode;
+    const isAffiliatePending = existing.affiliateCommissionStatus !== 'paid' && Boolean(affiliateRef);
 
     if (isPayingNow && isAffiliatePending) {
       try {
         const { recordMitraCommission } = require('../services/financeService');
         let finalCost = 0;
-        if (typeof updates.cost === 'number') {
-          finalCost = updates.cost;
-        } else if (typeof updates.cost === 'string' && updates.cost.trim()) {
-          const match = updates.cost.match(/(\d[\d\.,]*)/);
-          if (match) finalCost = Number(match[1].replace(/\./g, '').replace(/,/g, '')) || 0;
-        } else if (typeof existing.cost === 'number') {
-          finalCost = existing.cost;
-        } else if (typeof existing.cost === 'string' && existing.cost.trim()) {
-          const match = existing.cost.match(/(\d[\d\.,]*)/);
-          if (match) finalCost = Number(match[1].replace(/\./g, '').replace(/,/g, '')) || 0;
+        const candidates = [
+          updates.cost, updates.totalPaid, updates.price, updates.finalAmount, updates.total,
+          existing.cost, existing.totalPaid, existing.price, existing.finalAmount, existing.estimatedCost
+        ];
+        for (const c of candidates) {
+          if (typeof c === 'number' && c > 0) {
+            finalCost = c;
+            break;
+          } else if (typeof c === 'string' && c.trim()) {
+            const match = c.match(/(\d[\d\.,]*)/);
+            if (match) {
+              const num = Number(match[1].replace(/\./g, '').replace(/,/g, '')) || 0;
+              if (num > 0) {
+                finalCost = num;
+                break;
+              }
+            }
+          }
         }
-        const rate = existing.affiliateCommissionRate || updates.affiliateCommissionRate || 10;
+        const rate = Number(existing.affiliateCommissionRate || updates.affiliateCommissionRate || 10);
         const commissionAmt = Math.round(finalCost * (rate / 100));
 
         if (commissionAmt > 0) {

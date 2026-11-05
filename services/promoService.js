@@ -184,20 +184,22 @@ function getAllPromos(onlyActive = false) {
 function savePromos(promos) {
   bannerCache = [...promos];
 
-  try {
-    const dir = path.dirname(PROMOS_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(PROMOS_FILE, JSON.stringify(promos, null, 2), 'utf-8');
-    return true;
-  } catch (err) {
-    // Read-only filesystem on Vercel: fallback to /tmp
+  if (!process.env.VERCEL) {
     try {
-      const tmpFile = path.join('/tmp', 'promos.json');
-      fs.writeFileSync(tmpFile, JSON.stringify(promos, null, 2), 'utf-8');
-    } catch (_) {}
-    console.warn('[Promos] Disk write skipped for read-only filesystem, cached in memory & /tmp');
-    return true;
+      const dir = path.dirname(PROMOS_FILE);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(PROMOS_FILE, JSON.stringify(promos, null, 2), 'utf-8');
+    } catch (err) {
+      console.warn('[Promos] Local disk write skipped:', err.message);
+    }
   }
+
+  try {
+    const tmpFile = path.join('/tmp', 'promos.json');
+    fs.writeFileSync(tmpFile, JSON.stringify(promos, null, 2), 'utf-8');
+  } catch (_) {}
+
+  return true;
 }
 
 /**

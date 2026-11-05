@@ -107,8 +107,8 @@ async function runTests() {
     assert.strictEqual(checkBeforePay.body.data.balance, 0, 'Mitra balance must still be 0 before admin confirmation');
     console.log('✅ Saldo mitra terverifikasi tetap Rp 0 sebelum konfirmasi kasir.');
 
-    // 4. Uji Proteksi 1x Pakai untuk Nomor WhatsApp yang Sama
-    console.log('\n[TEST 4] Pelanggan yang sama mencoba booking kedua kali dengan referral yang sama...');
+    // 4. Uji Booking Pelanggan Menggunakan Kode Referral Mitra
+    console.log('\n[TEST 4] Pelanggan booking kembali menggunakan kode referral mitra...');
     const repeatOrderRes = await request('POST', '/api/orders', {
       customerName: 'Siti Pelanggan Repeat',
       whatsapp: testCustPhone,
@@ -119,8 +119,8 @@ async function runTests() {
     });
     assert.strictEqual(repeatOrderRes.status, 201);
     const repeatOrder = repeatOrderRes.body.data;
-    assert.ok(!repeatOrder.affiliateRef, 'Repeat booking from same phone must NOT have affiliateRef attached (1x use only rule)');
-    console.log('✅ Proteksi 1x pakai terverifikasi: Booking kedua dari nomor yang sama tidak mendapatkan referral!');
+    assert.strictEqual(repeatOrder.affiliateRef, referralCode, 'Booking dengan kode referral mitra harus selalu terhubung ke mitra');
+    console.log('✅ Referral mitra terverifikasi: Booking dengan kode mitra berhasil terhubung!');
 
     // 5. Admin Konfirmasi Pembayaran Kasir Manual via Booking Code (Ticket ID)
     console.log('\n[TEST 5] Admin Manual Confirmation & Settlement Pembayaran Kasir...');

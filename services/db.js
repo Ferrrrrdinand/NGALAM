@@ -248,6 +248,43 @@ async function runInitDb() {
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
           );
 
+          -- Tabel Riwayat Komisi Mitra Driver & Afiliasi
+          CREATE TABLE IF NOT EXISTS commissions (
+            id SERIAL PRIMARY KEY,
+            referral_code VARCHAR(100),
+            order_id VARCHAR(100),
+            commission_amount NUMERIC DEFAULT 0,
+            status VARCHAR(50) DEFAULT 'Tercatat',
+            raw_data JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          CREATE INDEX IF NOT EXISTS idx_commissions_ref_code ON commissions(referral_code);
+          CREATE INDEX IF NOT EXISTS idx_commissions_order_id ON commissions(order_id);
+
+          -- Tabel Iklan Interaktif (Database Iklan Dinamis)
+          CREATE TABLE IF NOT EXISTS ads (
+            id VARCHAR(100) PRIMARY KEY,
+            title VARCHAR(255),
+            headline VARCHAR(255),
+            description TEXT,
+            badge VARCHAR(100),
+            image_url TEXT,
+            target_url VARCHAR(255),
+            cta_text VARCHAR(100),
+            location VARCHAR(100) DEFAULT 'home_under_steps',
+            theme VARCHAR(50) DEFAULT 'gold',
+            active BOOLEAN DEFAULT TRUE,
+            views_count INTEGER DEFAULT 0,
+            clicks_count INTEGER DEFAULT 0,
+            raw_data JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          CREATE INDEX IF NOT EXISTS idx_ads_location ON ads(location);
+          CREATE INDEX IF NOT EXISTS idx_ads_active ON ads(active);
+
           -- Pastikan kolom tabel promo_codes dan banners selalu lengkap (idempotent migration)
           ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS name VARCHAR(255);
           ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS max_discount NUMERIC DEFAULT 0;
@@ -266,7 +303,7 @@ async function runInitDb() {
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS image_url TEXT;
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS raw_data JSONB;
         `);
-        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners) siap.');
+        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners, commissions, ads) siap.');
     } finally {
       client.release();
     }

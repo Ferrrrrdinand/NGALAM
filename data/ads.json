@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ad-baterai-90hari",
+    "title": "Garansi Baterai 90 Hari",
+    "headline": "Ganti Baterai Original iPhone & Android — Garansi Resmi 90 Hari Penuh!",
+    "description": "Baterai cepat drop atau kembung? Ganti di tempat dengan sel baterai Grade Original 100% Health, pengerjaan express 30–45 menit di meja transparan, dan jaminan perlindungan 90 hari tertulis resmi.",
+    "badge": "⚡ GARANSI SPESIAL 90 HARI",
+    "ctaText": "Klaim Servis Baterai ↗",
+    "targetUrl": "/pesan-servis?problem=baterai",
+    "imageUrl": "images/promo-banner-1.jpg",
+    "theme": "gold",
+    "active": true,
+    "location": "home_under_steps",
+    "viewsCount": 1420,
+    "clicksCount": 285,
+    "createdAt": "2026-11-05T08:00:00.000Z"
+  },
+  {
+    "id": "ad-lcd-tempered",
+    "title": "Paket Komplit Layar OLED + Bonus 9H",
+    "headline": "Ganti Layar Super Retina / OLED — Gratis Pasang Tempered Glass 9H Presisi!",
+    "description": "Layar retak, blank hitam, atau touch error? Dapatkan diskon suku cadang hingga 30%, warna tajam 120Hz smooth, sensor responsif, plus bonus tempered glass 9H gratis langsung terpasang rapi.",
+    "badge": "🔥 DISKON S/D 30% + BONUS 9H",
+    "ctaText": "Lihat Estimasi LCD ↗",
+    "targetUrl": "/pesan-servis?problem=lcd&promo=FREEGLASS9H",
+    "imageUrl": "images/promo-banner-tempered-glass.jpg",
+    "theme": "emerald",
+    "active": true,
+    "location": "home_under_steps",
+    "viewsCount": 1190,
+    "clicksCount": 312,
+    "createdAt": "2026-11-05T08:15:00.000Z"
+  },
+  {
+    "id": "ad-antar-jemput",
+    "title": "Layanan Antar-Jemput Malang",
+    "headline": "Sibuk Kerja? Manfaatkan Pickup & Delivery Servis HP Seluruh Area Malang Raya",
+    "description": "Unit HP Anda dijemput kurir profesional langsung ke kantor atau rumah. Pengecekan transparan di Meja 1 dan update pengerjaan dilaporkan langsung ke WhatsApp Anda.",
+    "badge": "🛵 PICKUP & DELIVERY MALANG",
+    "ctaText": "Pesan Antar Jemput WA ↗",
+    "targetUrl": "https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20mau%20layanan%20antar%20jemput%20servis%20HP",
+    "imageUrl": "images/spesialis-hp-banner.jpg",
+    "theme": "dark",
+    "active": true,
+    "location": "home_under_steps",
+    "viewsCount": 890,
+    "clicksCount": 164,
+    "createdAt": "2026-11-05T08:30:00.000Z"
+  }
+]

@@ -536,6 +536,7 @@ router.get('/list', (req, res) => {
         bankAccount: d.bankAccount || '',
         avatar: d.avatar || (d.role === 'ojol' ? '🛵' : '🏪'),
         phone: d.phone,
+        email: d.email,
         email: d.email || '',
         password: d.password || '',
         plainPassword: d.plainPassword || (d.password && !String(d.password).startsWith('$2') ? d.password : ''),

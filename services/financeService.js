@@ -377,29 +377,36 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
     await userService.refreshUsersFromDb();
   } catch (_) {}
 
-  const mitras = userService.getMitraUsers();
-  const mitraIdx = mitras.findIndex(u => (u.referralCode || u.referral_code || '').toUpperCase() === cleanRef);
+  const allUsers = userService.getAllUsers();
+  const targetMitra = allUsers.find(u => 
+    (u.referralCode && String(u.referralCode).toUpperCase() === cleanRef) ||
+    (u.referral_code && String(u.referral_code).toUpperCase() === cleanRef) ||
+    (u.username && String(u.username).toUpperCase() === cleanRef) ||
+    (u.id && String(u.id).toUpperCase() === cleanRef)
+  );
 
   let updatedMitra = null;
-  if (mitraIdx !== -1) {
-    mitras[mitraIdx].totalCommission = (Number(mitras[mitraIdx].totalCommission) || 0) + commNum;
-    mitras[mitraIdx].balance = (Number(mitras[mitraIdx].balance) || 0) + commNum;
-    mitras[mitraIdx].lastActive = new Date().toLocaleString('id-ID');
-    
-    if (!Array.isArray(mitras[mitraIdx].commissionHistory)) {
-      mitras[mitraIdx].commissionHistory = [];
-    }
+  if (targetMitra) {
+    const newTotal = (Number(targetMitra.totalCommission) || 0) + commNum;
+    const newBalance = (Number(targetMitra.balance) || 0) + commNum;
+    const lastActive = new Date().toLocaleString('id-ID');
+
+    const history = Array.isArray(targetMitra.commissionHistory) ? [...targetMitra.commissionHistory] : [];
     const historyItem = {
       orderId,
       amount: commNum,
       type: 'credit',
       date: new Date().toISOString(),
-      note: `Komisi 10% nota order ${orderId}`
+      note: `Komisi bagi hasil nota order ${orderId}`
     };
-    mitras[mitraIdx].commissionHistory.push(historyItem);
+    history.push(historyItem);
 
-    updatedMitra = mitras[mitraIdx];
-    await userService.saveMitraUsers(mitras);
+    updatedMitra = await userService.updateUserById(targetMitra.id, {
+      totalCommission: newTotal,
+      balance: newBalance,
+      lastActive,
+      commissionHistory: history
+    });
 
     // Sync langsung ke tabel commissions di basis data PostgreSQL
     try {
@@ -414,13 +421,13 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
           commNum,
           'Tercatat',
           JSON.stringify({
-            mitraId: mitras[mitraIdx].id,
-            mitraName: mitras[mitraIdx].name,
-            phone: mitras[mitraIdx].phone,
+            mitraId: targetMitra.id,
+            mitraName: targetMitra.name,
+            phone: targetMitra.phone,
             orderId,
             amount: commNum,
             type: 'credit',
-            note: `Komisi 10% nota order ${orderId}`,
+            note: `Komisi bagi hasil nota order ${orderId}`,
             createdAt: new Date().toISOString()
           })
         ]);
@@ -429,7 +436,7 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
           referralCode: cleanRef,
           orderId,
           amount: commNum,
-          mitraName: mitras[mitraIdx].name
+          mitraName: targetMitra.name
         });
       }
     } catch (pgCommErr) {
@@ -438,10 +445,11 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
   }
 
   return {
-    success: true,
+    success: Boolean(updatedMitra),
     referralCode: cleanRef,
-    commissionAmount: commNum,
-    updatedMitra
+    amount: commNum,
+    orderId,
+    mitra: updatedMitra
   };
 }
 

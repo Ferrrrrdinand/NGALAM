@@ -157,18 +157,22 @@ function getAllPromoCodes(onlyUsable = false) {
 function savePromoCodes(promos) {
   promoCache = [...promos];
 
-  // 1. Coba tulis ke PROMO_CODES_FILE jika writable
-  try {
-    ensureFile();
-    fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(promos, null, 2), 'utf8');
-  } catch (err) {
-    // 2. Jika EROFS (Vercel read-only), cadangkan ke /tmp yang selalu writable
+  if (!process.env.VERCEL) {
+    // 1. Coba tulis ke PROMO_CODES_FILE jika local environment (non-serverless)
     try {
-      const tmpFile = path.join('/tmp', 'promo_codes.json');
-      fs.writeFileSync(tmpFile, JSON.stringify(promos, null, 2), 'utf8');
-    } catch (_) {}
-    console.warn('[PromoCodeService] Disk write skipped for read-only filesystem, cached in memory & /tmp');
+      ensureFile();
+      fs.writeFileSync(PROMO_CODES_FILE, JSON.stringify(promos, null, 2), 'utf8');
+    } catch (err) {
+      console.warn('[PromoCodeService] Local disk write skipped:', err.message);
+    }
   }
+
+  // 2. Cadangkan ke /tmp jika di environment unix/serverless
+  try {
+    const tmpFile = path.join('/tmp', 'promo_codes.json');
+    fs.writeFileSync(tmpFile, JSON.stringify(promos, null, 2), 'utf8');
+  } catch (_) {}
+
   return true;
 }
 

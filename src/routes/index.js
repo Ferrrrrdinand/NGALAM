@@ -20,6 +20,7 @@ const promoRoutes = require('../../routes/promoRoutes');
 const chatbotRoutes = require('../../routes/chatbotRoutes');
 const mitraRoutes = require('../../routes/mitraRoutes');
 const exportRoutes = require('../../routes/exportRoutes');
+const adRoutes = require('../../routes/adRoutes');
 
 // Mount Domain Routers
 router.use('/auth', authRoutes);
@@ -31,6 +32,7 @@ router.use('/export', exportRoutes);
 router.use('/mitra', mitraRoutes);
 router.use('/', promoRoutes);
 router.use('/', chatbotRoutes);
+router.use('/', adRoutes);
 
 // ============================================================
 // ADMIN DASHBOARD AGGREGATE ENDPOINT
@@ -54,7 +56,7 @@ router.get('/admin/dashboard', async (req, res) => {
     }
   };
 
-  const [orders, transactions, promos, activityLogs, mitraUsers, customerList] = await Promise.all([
+  const [orders, transactions, promos, activityLogs, mitraUsers, customerList, adsList] = await Promise.all([
     safe(() => getAllOrders(), []),
     safe(async () => readTransactions(), []),
     safe(async () => getAllPromos(true), []),
@@ -69,6 +71,10 @@ router.get('/admin/dashboard', async (req, res) => {
     safe(async () => {
       await customerService.refreshCustomersFromDb();
       return customerService.getAllCustomers();
+    }, []),
+    safe(async () => {
+      const { getAllAds } = require('../../services/adService');
+      return getAllAds({ onlyActive: false, location: 'all' });
     }, [])
   ]);
 
@@ -142,6 +148,7 @@ router.get('/admin/dashboard', async (req, res) => {
     activityLogs,
     mitras,
     customers,
+    ads: adsList || [],
     dbStatus: {
       connected: pgDb.isDbConnected(),
       mode: pgDb.isDbConnected() ? 'postgresql' : 'fallback'

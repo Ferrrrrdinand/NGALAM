@@ -270,3 +270,4 @@ export default function EditCustomerModal({ customer, onClose, onSuccess }: Edit
     </div>
   );
 }
+

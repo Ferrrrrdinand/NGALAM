@@ -1,5 +1,44 @@
 [
   {
+    "id": "LOG-1793868360659-678",
+    "action": "COMMISSION_PAYOUT",
+    "table_name": "commissions",
+    "record_id": "MTR-BUDID-7372",
+    "payload": {
+      "referralCode": "MTR-BUDID-7372",
+      "payoutAmount": 50000,
+      "mitraName": "Budi Driver Test",
+      "note": "Pencairan tunai di kasir"
+    },
+    "performed_at": "2026-11-05T08:46:00.659Z"
+  },
+  {
+    "id": "LOG-1793868359389-278",
+    "action": "COMMISSION_RECORDED",
+    "table_name": "commissions",
+    "record_id": "NGF-20261105-2369",
+    "payload": {
+      "referralCode": "MTR-BUDID-7372",
+      "orderId": "NGF-20261105-2369",
+      "amount": 50000,
+      "mitraName": "Budi Driver Test"
+    },
+    "performed_at": "2026-11-05T08:45:59.389Z"
+  },
+  {
+    "id": "LOG-1793868358195-37",
+    "action": "CUSTOMER_REGISTER",
+    "table_name": "customers",
+    "record_id": "CUST-20261105-7088",
+    "payload": {
+      "name": "Siti Pelanggan",
+      "whatsapp": "087776661343",
+      "district": "Malang",
+      "registeredVia": "Pemesanan Servis Smartphone"
+    },
+    "performed_at": "2026-11-05T08:45:58.195Z"
+  },
+  {
     "id": "LOG-1793790307572-93",
     "action": "STAFF_LOGOUT",
     "table_name": "users",

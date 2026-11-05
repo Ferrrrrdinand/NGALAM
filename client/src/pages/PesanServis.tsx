@@ -367,7 +367,7 @@ export default function PesanServis() {
       ? selectedModelName
       : `${brandNameUpper} ${selectedModelName}`;
 
-    const activeRefCode = (referralInput || localStorage.getItem('ngalam_affiliate_ref') || '').trim().toUpperCase();
+    const activeRefCode = (referralInput || localStorage.getItem('ngalam_affiliate_ref') || sessionStorage.getItem('ngalam_affiliate_ref') || (customer as any)?.referredByMitra || '').trim().toUpperCase();
     const payload = {
       customerName: formData.customerName.trim(),
       whatsapp: formData.whatsapp.trim(),
@@ -378,7 +378,8 @@ export default function PesanServis() {
       damage: fullDamage,
       promoCode: appliedPromo ? formData.promoCode.trim().toUpperCase() : '',
       discountAmount: appliedPromo ? appliedPromo.discountAmount || 0 : 0,
-      referralCode: activeRefCode
+      referralCode: activeRefCode,
+      affiliateRef: activeRefCode
     };
 
     try {
