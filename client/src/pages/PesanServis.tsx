@@ -666,43 +666,43 @@ export default function PesanServis() {
                 <button
                   type="button"
                   onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all cursor-pointer text-left bg-white shadow-xs ${
+                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all cursor-pointer text-left bg-white dark:bg-[#172138] shadow-xs ${
                     modelDropdownOpen 
                       ? 'border-amber-500 ring-3 ring-amber-400/20 shadow-md' 
-                      : 'border-amber-300/80 hover:border-amber-500 hover:shadow-xs'
+                      : 'border-amber-300/80 dark:border-amber-500/30 hover:border-amber-500 hover:shadow-xs'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                      <Smartphone className="w-4 h-4 text-amber-600" />
+                    <span className="w-8 h-8 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/20 flex items-center justify-center shrink-0">
+                      <Smartphone className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     </span>
                     <div className="truncate">
-                      <span className="block text-[10px] sm:text-[11px] font-bold text-amber-600/90 uppercase tracking-wider leading-none mb-0.5">
+                      <span className="block text-[10px] sm:text-[11px] font-bold text-amber-600/90 dark:text-amber-400 uppercase tracking-wider leading-none mb-0.5">
                         Tipe Seri Terpilih
                       </span>
-                      <span className="block text-xs sm:text-sm md:text-base font-extrabold text-slate-900 truncate">
+                      <span className="block text-xs sm:text-sm md:text-base font-extrabold text-slate-900 dark:text-white truncate">
                         {formData.phoneType || currentModels[0] || 'Pilih Tipe Smartphone'}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0 pl-2">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 hidden sm:inline-block">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 hidden sm:inline-block">
                       {currentModels.length} Tipe
                     </span>
-                    <ChevronDown className={`w-4 h-4 sm:w-5 sm:h-5 text-amber-600 transition-transform duration-200 ${modelDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 sm:w-5 sm:h-5 text-amber-600 dark:text-amber-400 transition-transform duration-200 ${modelDropdownOpen ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
 
                 {modelDropdownOpen && (
                   <div 
-                    className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl bg-white border-2 border-amber-400/80 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                    className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl bg-white dark:bg-[#131b2e] border-2 border-amber-400/80 dark:border-amber-500/40 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
                     style={{
                       boxShadow: '0 20px 40px -10px rgba(212, 175, 55, 0.25), 0 0 0 1px rgba(212, 175, 55, 0.2)'
                     }}
                   >
                     {currentModels.length > 5 && (
-                      <div className="p-2 sm:p-2.5 bg-slate-50 border-b border-amber-200/50">
+                      <div className="p-2 sm:p-2.5 bg-slate-50 dark:bg-[#0f172a] border-b border-amber-200/50 dark:border-slate-800">
                         <div className="relative">
                           <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 absolute left-3 top-1/2 -translate-y-1/2" />
                           <input
@@ -710,14 +710,14 @@ export default function PesanServis() {
                             placeholder="Cari tipe seri smartphone..."
                             value={modelSearchQuery}
                             onChange={(e) => setModelSearchQuery(e.target.value)}
-                            className="w-full pl-8 sm:pl-9 pr-3 py-1.5 text-xs sm:text-sm bg-white rounded-lg border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 outline-none text-slate-800 placeholder:text-slate-400"
+                            className="w-full pl-8 sm:pl-9 pr-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-[#172138] rounded-lg border border-amber-200 dark:border-slate-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-400/20 outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             autoFocus
                           />
                         </div>
                       </div>
                     )}
 
-                    <div className="max-h-56 sm:max-h-72 overflow-y-auto divide-y divide-slate-100">
+                    <div className="max-h-56 sm:max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
                       {filteredModels.length > 0 ? (
                         filteredModels.map((m: string) => {
                           const isSelected = (formData.phoneType || currentModels[0]) === m;
@@ -732,12 +732,12 @@ export default function PesanServis() {
                               }}
                               className={`w-full flex items-center justify-between gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 text-left transition-colors cursor-pointer text-xs sm:text-sm ${
                                 isSelected 
-                                  ? 'bg-amber-50 text-amber-950 font-black border-l-4 border-amber-500' 
-                                  : 'text-slate-700 hover:bg-amber-50/50 hover:text-amber-900 font-medium'
+                                  ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-950 dark:text-amber-200 font-black border-l-4 border-amber-500' 
+                                  : 'text-slate-700 dark:text-slate-200 hover:bg-amber-50/50 dark:hover:bg-slate-800/60 hover:text-amber-900 dark:hover:text-amber-300 font-medium'
                               }`}
                             >
                               <div className="flex items-center gap-2.5 truncate">
-                                <Smartphone className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-amber-600' : 'text-slate-400'}`} />
+                                <Smartphone className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-500'}`} />
                                 <span className="truncate">{m}</span>
                               </div>
                               {isSelected && (

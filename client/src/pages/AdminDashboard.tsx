@@ -4,9 +4,10 @@ import {
   ShieldCheck, Wrench, RefreshCw, 
   LogOut, Plus, 
   Database, Users, Banknote, Menu,
-  ClipboardList, History, Gift, UserCheck
+  ClipboardList, History, Gift, UserCheck, Sun, Moon
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import logoImg from "../assets/images/logo-ngalam-fix-pro.jpg";
 import { fetchApi } from "../utils/api";
 import "./AdminDashboard.css";
@@ -24,6 +25,7 @@ import LogsTab from "./admin/LogsTab";
 import ReceiptModal from "./admin/ReceiptModal";
 export default function AdminDashboard() {
   const { user, loading: authLoading, logoutStaff } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'technician' | 'walkin' | 'cashier' | 'transactions' | 'promos' | 'logs' | 'mitra' | 'customers'
@@ -505,6 +507,27 @@ export default function AdminDashboard() {
                 <span className="hidden md:inline">{dbStatus.connected ? "PostgreSQL Neon Online" : "Local Storage Mode"}</span>
               </div>
             )}
+
+            {/* Dark Mode Toggle Admin */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-all text-xs flex items-center gap-1.5 font-bold cursor-pointer"
+              title={isDark ? "Beralih ke Mode Terang (Light Mode)" : "Beralih ke Mode Gelap (Dark Mode)"}
+              aria-label="Toggle Dark Mode"
+            >
+              {isDark ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="hidden sm:inline">Terang</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-slate-700" />
+                  <span className="hidden sm:inline">Gelap</span>
+                </>
+              )}
+            </button>
 
             <button
               onClick={loadData}

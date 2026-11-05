@@ -1,1 +1,457 @@
 @import "tailwindcss" important;
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   LUXURY DARK MODE SPECIFICATION (NGALAM FIX PRO GOLD-OBSIDIAN THEME)
+   ========================================================================== */
+
+:root {
+  --color-transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* Base Dark Tokens */
+html.dark,
+body.dark,
+.dark {
+  --bg-dark: #0b0f19;
+  --bg-dark-card: #131b2e;
+  --bg-dark-card-hover: #1c2742;
+  --bg-dark-alt: #0f172a;
+  --border-dark: #26334d;
+  --border-dark-highlight: rgba(212, 175, 55, 0.45);
+
+  --ink: #f8fafc;
+  --ink-secondary: #cbd5e1;
+  --muted: #94a3b8;
+  --muted-light: #64748b;
+  --line: #26334d;
+  --surface: #111827;
+  --surface-alt: #0b0f19;
+  --surface-card: #172138;
+}
+
+/* 1. Global Document Dark Mode */
+html.dark {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+body.dark,
+.dark body {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+/* 2. Public Layout & Structural Elements */
+.dark .min-h-screen.bg-slate-50,
+.dark main,
+.dark .bg-slate-50,
+.dark .bg-slate-50\/60,
+.dark .bg-slate-50\/50 {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+/* 3. Header & Navigation */
+.dark .header,
+html.dark .header,
+body.dark .header {
+  background: rgba(11, 15, 25, 0.94) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+.dark .logo,
+html.dark .logo {
+  color: #ffffff !important;
+}
+
+.dark .logo span,
+html.dark .logo span {
+  color: #ffffff !important;
+}
+
+.dark .navend-login,
+.dark .navend-lacak,
+html.dark .navend-login,
+html.dark .navend-lacak,
+body.dark .navend-login,
+body.dark .navend-lacak {
+  background: #172138 !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  color: #f8fafc !important;
+}
+
+.dark .navend-login span,
+.dark .navend-lacak span,
+html.dark .navend-login span,
+html.dark .navend-lacak span {
+  color: #f8fafc !important;
+}
+
+.dark .navend-login:hover,
+.dark .navend-lacak:hover {
+  background: #1e293b !important;
+  border-color: #d4af37 !important;
+}
+
+/* Mobile Nav Drawer */
+.dark .nav-dropdown-menu,
+html.dark .nav-dropdown-menu {
+  background: #111827 !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.35) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75) !important;
+}
+
+.dark .nav-dropdown-header {
+  border-bottom-color: #1e293b !important;
+}
+
+.dark .nav-dropdown-title {
+  color: #94a3b8 !important;
+}
+
+.dark .nav-dropdown-close {
+  color: #94a3b8 !important;
+  background: #1f293d !important;
+}
+
+.dark .nav-dropdown-item {
+  background: #172138 !important;
+  border-color: #26334d !important;
+}
+
+.dark .nav-dropdown-item-text strong {
+  color: #f8fafc !important;
+}
+
+.dark .nav-dropdown-item-text small {
+  color: #94a3b8 !important;
+}
+
+.dark .nav-dropdown-divider {
+  background: #1e293b !important;
+}
+
+/* 4. Cards, Panels & Modals */
+.dark .bg-white {
+  background-color: #131b2e !important;
+  color: #f8fafc !important;
+}
+
+.dark .card,
+html.dark .card {
+  background: #131b2e !important;
+  border-color: #26334d !important;
+  color: #f8fafc !important;
+}
+
+.dark .card:hover {
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+.dark .booking-form-card,
+.dark .booking-summary-card,
+.dark .service-card,
+.dark .price-card,
+.dark .b-card {
+  background: #131b2e !important;
+  border-color: #26334d !important;
+  color: #f8fafc !important;
+}
+
+/* 5. Typography & Text Contrast Overrides */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-900,
+html.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-800,
+html.dark .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-slate-700,
+html.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-600,
+html.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-500,
+html.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-400,
+html.dark .text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Gold / Amber in Dark Mode */
+.dark .text-amber-800,
+.dark .text-amber-900,
+.dark .text-amber-950 {
+  color: #fbbf24 !important;
+}
+
+.dark .text-amber-700 {
+  color: #f59e0b !important;
+}
+
+.dark .bg-amber-50,
+.dark .bg-amber-50\/70,
+.dark .bg-amber-50\/80 {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+}
+
+.dark .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.22) !important;
+}
+
+.dark .border-amber-200,
+.dark .border-amber-200\/80,
+.dark .border-amber-300,
+.dark .border-amber-400 {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+/* Emerald in Dark Mode */
+.dark .text-emerald-800,
+.dark .text-emerald-900 {
+  color: #34d399 !important;
+}
+
+.dark .bg-emerald-50,
+.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+}
+
+.dark .border-emerald-200,
+.dark .border-emerald-300 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Blue in Dark Mode */
+.dark .text-blue-800,
+.dark .text-blue-900 {
+  color: #60a5fa !important;
+}
+
+.dark .bg-blue-50,
+.dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.14) !important;
+}
+
+.dark .border-blue-200 {
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+
+/* Rose in Dark Mode */
+.dark .text-rose-700,
+.dark .text-rose-800 {
+  color: #fb7185 !important;
+}
+
+.dark .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.14) !important;
+}
+
+.dark .border-rose-200 {
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+/* 6. Borders & Dividers */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-200\/80,
+.dark .border-slate-200\/90,
+.dark .border-slate-300 {
+  border-color: #26334d !important;
+}
+
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #26334d !important;
+}
+
+/* 7. Inputs, Selects, and Textareas */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select,
+.dark .form-control,
+.dark .b-input,
+.dark .b-textarea {
+  background-color: #172138 !important;
+  border-color: #2c3a58 !important;
+  color: #f8fafc !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25) !important;
+}
+
+/* 8. Secondary Neutral Backgrounds */
+.dark .bg-slate-100 {
+  background-color: #1c2742 !important;
+  color: #f8fafc !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #26334d !important;
+}
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover {
+  background-color: #1e293b !important;
+}
+
+/* 9. Chatbot Dark Mode */
+.dark .chatbot-card,
+.dark .chatbot-dialog {
+  background-color: #131b2e !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+/* 10. Footer Dark Mode */
+.dark .footer,
+html.dark .footer {
+  background-color: #080c14 !important;
+  border-top: 1px solid #1e293b !important;
+}
+
+.dark .footer p,
+.dark .footer a,
+.dark .footer span {
+  color: #94a3b8;
+}
+
+.dark .footer a:hover {
+  color: #d4af37 !important;
+}
+
+/* 11. Admin Dashboard Dark Mode Support */
+.dark .admin-layout-root {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+.dark .admin-layout-root > div {
+  background-color: #0b0f19 !important;
+}
+
+.dark .admin-layout-root header {
+  background-color: #111827 !important;
+  border-bottom-color: #1e293b !important;
+}
+
+.dark .admin-layout-root aside {
+  background-color: #080c14 !important;
+  border-right-color: #1e293b !important;
+}
+
+/* Brand Chips, Buttons & Tables in Dark Mode */
+.dark .brand-chip-btn:not(.active) {
+  background: #172138 !important;
+  border-color: #26334d !important;
+  color: #f8fafc !important;
+}
+
+.dark .brand-chip-btn:not(.active):hover {
+  background: #1e293b !important;
+  border-color: #d4af37 !important;
+}
+
+.dark table,
+.dark tr,
+.dark td,
+.dark th {
+  border-color: #26334d !important;
+}
+
+.dark thead tr {
+  background-color: #172138 !important;
+  color: #f8fafc !important;
+}
+
+.dark tbody tr:hover {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+/* 12. Legacy Inline Style & Page-specific Overrides */
+.dark .bg-\[\#fcfbf7\],
+.dark [class*="bg-[#fcfbf7]"],
+.dark [style*="background: #ffffff"],
+.dark [style*="background:#ffffff"],
+.dark [style*="background-color: #ffffff"],
+.dark [style*="background-color:#ffffff"],
+.dark [style*="background: rgb(255, 255, 255)"],
+.dark [style*="background-color: rgb(255, 255, 255)"],
+.dark [style*="background: #fffdf5"] {
+  background-color: #131b2e !important;
+}
+
+.dark [style*="color: #000000"],
+.dark [style*="color:#000000"],
+.dark [style*="color: rgb(0, 0, 0)"],
+.dark [style*="color:#0f172a"],
+.dark [style*="color: #0f172a"] {
+  color: #f8fafc !important;
+}
+
+.dark [style*="border: 1px solid #cbd5e1"],
+.dark [style*="border: 1px solid #e2e8f0"],
+.dark [style*="border-color: #e2e8f0"],
+.dark [style*="border: 1.5px solid #d4af37"],
+.dark [style*="border: 1px solid #fef08a"] {
+  border-color: rgba(212, 175, 55, 0.35) !important;
+}
+
+.dark .text-amber-950,
+.dark .text-amber-900 {
+  color: #fbbf24 !important;
+}
+
+/* Dark Mode Scrollbars */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #26334d;
+  border-radius: 9999px;
+  border: 2px solid #0b0f19;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
