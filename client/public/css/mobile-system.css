@@ -162,22 +162,22 @@
      3. PROMO HERO BANNER SLIDER (PERBAIKAN KHUSUS SCREENSHOT 1)
      ========================================================================== */
   .hero-banner-wrap {
-    margin: 8px auto 14px !important;
+    margin: 6px auto 14px !important;
     padding: 0 !important;
     width: 100% !important;
   }
 
   .hero-banner-card {
-    aspect-ratio: 16 / 8.5 !important;
-    min-height: 145px !important;
-    max-height: 195px !important;
+    aspect-ratio: 16 / 7.2 !important;
+    min-height: 125px !important;
+    max-height: 175px !important;
     border-radius: 14px !important;
     border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1) !important;
   }
 
   .promo-slide-overlay {
-    padding: 12px 14px !important;
+    padding: 10px 12px !important;
     justify-content: space-between !important;
   }
 
@@ -1974,15 +1974,15 @@
 
   /* 2. Hero Banner Slider Images (Clean Proportional Ratio) */
   .hero-banner-wrap {
-    margin: 8px auto 14px !important;
+    margin: 6px auto 14px !important;
     width: 100% !important;
     max-width: 100% !important;
   }
 
   .hero-banner-card {
-    aspect-ratio: 16 / 8.5 !important;
-    min-height: 145px !important;
-    max-height: 195px !important;
+    aspect-ratio: 16 / 7.2 !important;
+    min-height: 125px !important;
+    max-height: 175px !important;
     width: 100% !important;
     border-radius: 14px !important;
     border: 1.5px solid rgba(212, 175, 55, 0.45) !important;

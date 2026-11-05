@@ -155,11 +155,15 @@
     const bannerCards = document.querySelectorAll('.hero-banner-card');
     bannerCards.forEach(card => {
       if (info.isPhone) {
-        card.style.aspectRatio = info.tier === 'phone-xs' ? '16 / 9.5' : '16 / 9.2';
+        card.style.aspectRatio = '16 / 7.2';
+        card.style.minHeight = '125px';
+        card.style.maxHeight = '175px';
         card.style.overflow = 'hidden';
-        card.style.borderRadius = '18px';
+        card.style.borderRadius = '14px';
       } else {
         card.style.aspectRatio = '16 / 8.2';
+        card.style.minHeight = '320px';
+        card.style.maxHeight = '480px';
         card.style.borderRadius = '24px';
       }
     });

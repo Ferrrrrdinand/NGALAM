@@ -2045,16 +2045,19 @@ tr:hover td {
 
 @media (max-width: 860px) {
   .hero-banner-wrap {
-    margin-bottom: 28px;
+    margin-top: 10px;
+    margin-bottom: 18px;
   }
 
   .hero-banner-card {
-    aspect-ratio: 16 / 11;
-    min-height: 320px;
+    aspect-ratio: 16 / 7.5;
+    min-height: 140px;
+    max-height: 220px;
+    border-radius: 16px;
   }
 
   .promo-slide-overlay {
-    padding: 16px;
+    padding: 10px 12px;
   }
 
   .promo-badge-tag {
