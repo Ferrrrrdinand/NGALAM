@@ -557,6 +557,8 @@ export default function AdminDashboard() {
               setWalkin={setWalkin}
               walkinSuccess={walkinSuccess}
               handleWalkinSubmit={handleWalkinSubmit}
+              loadData={loadData}
+              currentUser={user}
             />
           )}
 
