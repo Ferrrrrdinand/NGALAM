@@ -1,10 +1,28 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { fetchApi } from '../utils/api';
 
-const AuthContext = createContext();
+export interface AuthContextType {
+  user: any;
+  customer: any;
+  loading: boolean;
+  loginCustomer: (custData: any, rememberMe?: boolean) => void;
+  logoutCustomer: () => Promise<void>;
+  loginStaff: (identifier: string, password?: string, role?: string, referralCode?: string, rememberMe?: boolean) => Promise<any>;
+  logoutStaff: () => Promise<void>;
+}
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  customer: null,
+  loading: true,
+  loginCustomer: () => {},
+  logoutCustomer: async () => {},
+  loginStaff: async () => ({ success: false }),
+  logoutStaff: async () => {}
+});
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<any>(() => {
     try {
       const storedStaff = sessionStorage.getItem('ngalam_auth_user') || localStorage.getItem('ngalam_auth_user');
       return storedStaff ? JSON.parse(storedStaff) : null;
@@ -13,7 +31,7 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const [customer, setCustomer] = useState(() => {
+  const [customer, setCustomer] = useState<any>(() => {
     try {
       const storedCust = sessionStorage.getItem('ngalam_customer_session') || localStorage.getItem('ngalam_customer_session');
       return storedCust ? JSON.parse(storedCust) : null;
@@ -25,8 +43,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Hanya verifikasi ke server jika memang ada token staff tersimpan.
-    // Menghindari request /api/auth/me yang tidak perlu pada pengunjung biasa.
     const hasStaffToken = sessionStorage.getItem('ngalam_jwt_token') || localStorage.getItem('ngalam_jwt_token');
     if (!hasStaffToken) {
       setLoading(false);
@@ -44,7 +60,6 @@ export function AuthProvider({ children }) {
             targetStorage.setItem('ngalam_jwt_token', data.user.token);
           }
         } else {
-          // Hanya bersihkan jika server eksplisit menyatakan 401 dan bukan network glitch
           const hasLocalToken = sessionStorage.getItem('ngalam_jwt_token') || localStorage.getItem('ngalam_jwt_token');
           if (!hasLocalToken) {
             setUser(null);
@@ -59,7 +74,7 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const loginCustomer = useCallback((custData, rememberMe = true) => {
+  const loginCustomer = useCallback((custData: any, rememberMe = true) => {
     setCustomer(custData);
     const targetStorage = rememberMe ? localStorage : sessionStorage;
     const otherStorage = rememberMe ? sessionStorage : localStorage;
@@ -82,7 +97,7 @@ export function AuthProvider({ children }) {
     document.cookie = 'ngalam_customer_token=; path=/; max-age=0; SameSite=Lax';
   }, []);
 
-  const loginStaff = useCallback(async (identifier, password, role, referralCode, rememberMe = true) => {
+  const loginStaff = useCallback(async (identifier: string, password?: string, role?: string, referralCode?: string, rememberMe = true) => {
     const res = await fetchApi('/api/auth/login', {
       method: 'POST',
       body: { identifier, password, role, referralCode, rememberMe }
@@ -134,6 +149,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   return useContext(AuthContext);
 }

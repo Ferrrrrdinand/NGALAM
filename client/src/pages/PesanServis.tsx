@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { fetchApi, formatRp } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import logoImg from '../assets/images/logo-ngalam-fix-pro.jpg';
 
 export default function PesanServis() {
   const [searchParams] = useSearchParams();
@@ -249,7 +250,7 @@ export default function PesanServis() {
     });
   };
 
-  const handleApplyPromo = async (codeToUse) => {
+  const handleApplyPromo = async (codeToUse?: string) => {
     const code = (codeToUse || formData.promoCode).trim().toUpperCase();
     if (!code) return;
     setPromoError('');
@@ -337,11 +338,16 @@ export default function PesanServis() {
       <div className="booking-sidebar-info">
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: '#ffffff', padding: '4px', border: '2.5px solid #d4af37', boxShadow: '0 6px 20px rgba(212, 175, 55, 0.35)', flexShrink: 0 }}>
-            <img src="/images/logo-ngalam-fix-pro.jpg" alt="Logo Resmi Ngalam Fix Pro" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', display: 'block' }} />
+            <img 
+              src={logoImg} 
+              alt="Logo Resmi Ngalam Fix Pro" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', display: 'block' }} 
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/logo-ngalam-fix-pro.jpg"; }}
+            />
           </div>
           <div>
             <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b45309', letterSpacing: '0.5px', display: 'block' }}>WORKSHOP RESMI MALANG</span>
-            <strong style={{ fontSize: '1.05rem', color: '#000000', display: 'block' }}>Ngalam Fix Pro</strong>
+            <strong style={{ fontSize: '1.05rem', color: '#0f172a', display: 'block' }}>Ngalam Fix Pro</strong>
           </div>
         </div>
 

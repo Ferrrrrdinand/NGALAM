@@ -1,8 +1,18 @@
 const API_BASE = '';
 
-export async function fetchApi(endpoint, options = {}) {
+export interface ApiResponse<T = any> {
+  ok: boolean;
+  status: number;
+  data: T;
+}
+
+export interface FetchApiOptions extends Omit<RequestInit, 'body'> {
+  body?: any;
+}
+
+export async function fetchApi<T = any>(endpoint: string, options: FetchApiOptions = {}): Promise<ApiResponse<T>> {
   const url = endpoint.startsWith('/') ? `${API_BASE}${endpoint}` : `${API_BASE}/${endpoint}`;
-  const defaultHeaders = {
+  const defaultHeaders: Record<string, string> = {
     'Accept': 'application/json',
   };
 
@@ -13,18 +23,22 @@ export async function fetchApi(endpoint, options = {}) {
     }
   }
   
+  const reqInit: RequestInit = { ...options };
+
   if (options.body && !(options.body instanceof FormData) && typeof options.body === 'object') {
     defaultHeaders['Content-Type'] = 'application/json';
-    options.body = JSON.stringify(options.body);
+    reqInit.body = JSON.stringify(options.body);
+  } else if (options.body) {
+    reqInit.body = options.body;
   }
 
   // Include credentials for session cookies
-  options.credentials = 'same-origin';
-  options.headers = { ...defaultHeaders, ...(options.headers || {}) };
+  reqInit.credentials = 'same-origin';
+  reqInit.headers = { ...defaultHeaders, ...(options.headers as any || {}) };
 
-  let res;
+  let res: Response;
   try {
-    res = await fetch(url, options);
+    res = await fetch(url, reqInit);
   } catch {
     return {
       ok: false,
@@ -33,7 +47,7 @@ export async function fetchApi(endpoint, options = {}) {
         success: false,
         code: 'NETWORK_ERROR',
         message: 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda lalu coba lagi.'
-      }
+      } as any
     };
   }
 
@@ -52,16 +66,16 @@ export async function fetchApi(endpoint, options = {}) {
   return { ok: res.ok, status: res.status, data };
 }
 
-export function formatRp(num) {
+export function formatRp(num: number | string | null | undefined): string {
   if (num === null || num === undefined || isNaN(Number(num))) return 'Rp 0';
   return 'Rp ' + Number(num).toLocaleString('id-ID');
 }
 
-export function formatDateId(dateStr) {
+export function formatDateId(dateStr?: string | Date | null): string {
   if (!dateStr) return '-';
   try {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
+    if (isNaN(d.getTime())) return String(dateStr);
     return d.toLocaleDateString('id-ID', {
       day: 'numeric',
       month: 'short',
@@ -70,6 +84,6 @@ export function formatDateId(dateStr) {
       minute: '2-digit'
     });
   } catch {
-    return dateStr;
+    return String(dateStr);
   }
 }

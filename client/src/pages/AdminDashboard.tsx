@@ -7,6 +7,7 @@ import {
   ClipboardList, History, Gift
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import logoImg from "../assets/images/logo-ngalam-fix-pro.jpg";
 import { fetchApi } from "../utils/api";
 import "./AdminDashboard.css";
 
@@ -355,7 +356,12 @@ export default function AdminDashboard() {
         <div className="p-5 border-b border-slate-800/80 bg-slate-900/60">
           <Link to="/" className="flex items-center gap-3 no-underline text-white">
             <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-amber-500 shadow-lg shadow-amber-500/20 shrink-0">
-              <img src="/images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" className="w-full h-full object-cover" />
+              <img 
+                src={logoImg} 
+                alt="Logo Ngalam Fix Pro" 
+                className="w-full h-full object-cover" 
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/logo-ngalam-fix-pro.jpg"; }}
+              />
             </div>
             <div>
               <div className="text-base font-black tracking-tight text-white leading-tight">Ngalam Fix Pro</div>
@@ -514,7 +520,6 @@ export default function AdminDashboard() {
               techFilter={techFilter}
               setTechFilter={setTechFilter}
               loading={loading}
-              user={user}
               handleUpdateStep={handleUpdateStep}
             />
           )}

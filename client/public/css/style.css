@@ -4,7 +4,7 @@
   --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Color Palette - Clean Modern White Theme */
+  /* Color Palette - Clean Modern Tech Blue & White Theme */
   --bg-dark: #ffffff;
   --bg-dark-card: #ffffff;
   --bg-dark-card-hover: #f8fafc;
@@ -13,28 +13,30 @@
   --border-dark-highlight: rgba(212, 175, 55, 0.45);
 
   --primary: #d4af37;
+  --primary-hover: #b45309;
+  --primary-light: #fef08a;
+  --primary-tint: #fffdf5;
+  --primary-glow: rgba(212, 175, 55, 0.3);
+
   --gold: #d4af37;
   --gold-dark: #b45309;
-  --gold-light: #fef08a;
+  --gold-light: #fef3c7;
   --gold-tint: #fffdf5;
-  --primary-hover: #b45309;
-  --primary-light: #fbbf24;
-  --primary-glow: rgba(212, 175, 55, 0.35);
 
-  --cyan: #d4af37;
-  --cyan-light: #f59e0b;
-  --cyan-glow: rgba(212, 175, 55, 0.25);
+  --cyan: #0284c7;
+  --cyan-light: #38bdf8;
+  --cyan-glow: rgba(2, 132, 199, 0.25);
 
   --emerald: #10b981;
   --emerald-light: #34d399;
   --amber: #f59e0b;
   --amber-light: #fbbf24;
 
-  --ink: #000000;
-  --ink-secondary: #000000;
-  --muted: #000000;
-  --muted-light: #000000;
-  --line: #cbd5e1;
+  --ink: #0f172a;
+  --ink-secondary: #334155;
+  --muted: #64748b;
+  --muted-light: #94a3b8;
+  --line: #e2e8f0;
   --surface: #ffffff;
   --surface-alt: #f8fafc;
   --surface-card: #f1f5f9;
@@ -983,13 +985,14 @@ tr:hover td {
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: #fffdf5;
+  border: 1.5px solid #fde68a;
   border-radius: 999px;
   font-size: 0.78rem;
-  font-weight: 700;
-  color: #d4af37;
+  font-weight: 800;
+  color: #b45309;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
 }
 
 /* ==========================================================================
@@ -1172,9 +1175,9 @@ tr:hover td {
    ========================================================================== */
 .hero {
   background:
-    radial-gradient(circle at 82% 14%, rgba(212, 175, 55, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 16% 82%, rgba(6, 182, 212, 0.06) 0%, transparent 42%),
-    linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    radial-gradient(circle at 82% 14%, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 16% 82%, rgba(245, 158, 11, 0.08) 0%, transparent 42%),
+    linear-gradient(180deg, #ffffff 0%, #fffdfa 100%);
   color: var(--ink);
   padding: 48px 0 70px;
   position: relative;
@@ -1223,7 +1226,7 @@ tr:hover td {
 }
 
 .hero-centered h1 span {
-  background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #f59e0b 100%);
+  background: linear-gradient(135deg, #b45309 0%, #d4af37 45%, #92400e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 900;
@@ -1321,20 +1324,20 @@ tr:hover td {
   position: relative;
   z-index: 5;
   max-width: 1140px;
-  margin: 14px auto 36px auto;
+  margin: 24px auto 36px auto;
 }
 
 .hero-banner-card {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 8.2;
-  min-height: 380px;
-  max-height: 500px;
-  border-radius: 28px;
+  aspect-ratio: 16 / 8.5;
+  min-height: 340px;
+  max-height: 480px;
+  border-radius: 24px;
   overflow: hidden;
-  border: 1.5px solid rgba(212, 175, 55, 0.45);
-  box-shadow: 0 25px 65px -12px rgba(15, 23, 42, 0.25), 0 0 35px rgba(212, 175, 55, 0.15);
-  background: #0f172a;
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.18), 0 0 30px rgba(37, 99, 235, 0.12);
+  background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #1e1b4b 100%);
 }
 
 .promo-slide {
@@ -1364,6 +1367,10 @@ tr:hover td {
   object-position: center;
   display: block;
   transition: transform 0.65s ease;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.95;
 }
 
 .promo-slide:hover .promo-slide-image {
@@ -1373,12 +1380,37 @@ tr:hover td {
 .promo-slide-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.04) 40%, rgba(15, 23, 42, 0.72) 100%);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.08) 50%, rgba(15, 23, 42, 0.82) 100%);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 24px 28px;
-  pointer-events: none;
+  padding: 20px 24px;
+  z-index: 1;
+}
+
+.promo-content-box {
+  display: flex !important;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 680px;
+  margin-top: auto;
+  margin-bottom: auto;
+  pointer-events: auto;
+}
+
+.promo-slide-title {
+  font-size: clamp(1.2rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: #ffffff !important;
+  line-height: 1.3;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.promo-slide-desc {
+  font-size: clamp(0.85rem, 1.4vw, 0.98rem);
+  color: #e2e8f0 !important;
+  line-height: 1.6;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
 }
 
 .promo-top-row,
@@ -1461,11 +1493,6 @@ tr:hover td {
   color: #ffffff !important;
   font-weight: 800 !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
-}
-
-/* Sembunyikan tulisan kotak besar yang menutupi gambar banner */
-.promo-content-box {
-  display: none !important;
 }
 
 /* Tombol / Hint Klik untuk Pop Up */
@@ -9777,103 +9804,76 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25) !important;
 }
 
-/* Gold Gradient Text on Hero Titles */
+/* ==========================================================================
+   DOMINAN PUTIH DENGAN AKSEN EMAS (PURE WHITE & LUXURY GOLD ACCENTS)
+   Dominan putih untuk background & kartu, teks berbobot gelap kontras tinggi,
+   dan aksen emas berkilau (gold/amber) untuk tombol, border, dan elemen premium.
+   ========================================================================== */
+
+/* Modern Gradient Text on Hero Titles & Brand (Rich High-Contrast Gold) */
 .hero-gradient-text,
 .hero-centered h1 span,
 .logo b,
 .gold-text-shimmer {
-  background: linear-gradient(135deg, #b45309 0%, #d4af37 50%, #f59e0b 100%) !important;
+  background: linear-gradient(135deg, #b45309 0%, #d4af37 45%, #92400e 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   font-weight: 900 !important;
 }
 
-/* Gold Badges and Highlights */
+/* Badges and Highlights: Warm Soft White & Crisp Gold */
 .gold-badge,
 .logo-pill {
-  background: #fffbeb !important;
+  background: #fffdf5 !important;
   border: 1.5px solid #fde68a !important;
   color: #b45309 !important;
   font-weight: 800 !important;
 }
 
-/* Buttons: Primary Gold Accent */
+/* Buttons: Primary Luxury Gold Gradient */
 .btn:not(.outline):not(.whatsapp):not(.btn-danger) {
   background: linear-gradient(135deg, #d4af37 0%, #b45309 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.32) !important;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.38) !important;
   border: none !important;
 }
 
 .btn:not(.outline):not(.whatsapp):not(.btn-danger):hover {
-  background: linear-gradient(135deg, #f59e0b 0%, #d4af37 50%, #b45309 100%) !important;
-  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.45) !important;
+  background: linear-gradient(135deg, #f59e0b 0%, #d4af37 50%, #92400e 100%) !important;
+  box-shadow: 0 12px 28px rgba(212, 175, 55, 0.48) !important;
   transform: translateY(-2px);
 }
 
 .btn.outline {
   background: #ffffff !important;
   border: 1.5px solid #d4af37 !important;
-  color: #000000 !important;
-  font-weight: 800 !important;
+  color: #b45309 !important;
+  font-weight: 700 !important;
 }
 
 .btn.outline:hover {
   background: #fffdf5 !important;
   border-color: #b45309 !important;
-  color: #000000 !important;
+  color: #92400e !important;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.18) !important;
 }
 
-/* ==========================================================================
-   UNIVERSAL SOLID PURE BLACK TYPOGRAPHY OVERRIDE (#000000)
-   Guarantees 100% maximum contrast on white pages while protecting dark footers & gold buttons
-   ========================================================================== */
-html,
-body,
-p:not(.footer *):not(.footgrid *):not(footer *),
-span:not(.btn *):not(.gold-badge):not(.logo-pill):not([class*="badge"]):not(.footer *):not(.footgrid *):not(footer *):not(.ai-status-dot):not(.pulse-green-dot),
-h1, h2, h3, h4, h5, h6,
-label,
-input:not([type="checkbox"]):not([type="radio"]),
-select,
-textarea,
-th,
-td,
-li:not(.footer *):not(.footgrid *):not(footer *),
-small:not(.gold-badge):not(.logo-pill):not([class*="badge"]):not(.footer *):not(.footgrid *):not(footer *),
-strong:not(.footer *):not(.footgrid *):not(footer *),
-b:not(.btn *):not(.footer *):not(.footgrid *):not(footer *),
-div.subtitle,
-div.desc,
-div.text-secondary,
-.text-muted,
-.showcase-desc,
-.showcase-card-title,
-.showcase-card-text,
-.showcase-status-bar,
-.auth-input-wrapper label,
-.auth-bottom-links,
-.auth-role-btn,
-.auth-role-btn * {
-  color: #000000 !important;
+/* Modern Accessible Typography */
+body {
+  color: #334155;
 }
 
-/* Ensure placeholder is clearly visible dark slate so forms remain legible */
+h1, h2, h3, h4, h5, h6 {
+  color: #0f172a;
+}
+
+/* Ensure placeholder is visible */
 ::placeholder {
-  color: #52525b !important;
-  opacity: 0.85 !important;
+  color: #94a3b8 !important;
+  opacity: 1 !important;
 }
 
-/* Regular links on white pages */
-a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *):not(.footgrid *):not(footer *) {
-  color: #000000 !important;
-}
-
-a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *):not(.footgrid *):not(footer *):hover {
-  color: #b45309 !important;
-}
-
-/* Preserve crisp white text on primary gold gradient buttons */
+/* Preserve crisp white text on primary buttons */
 .btn:not(.outline):not(.whatsapp):not(.btn-danger),
 .btn:not(.outline):not(.whatsapp):not(.btn-danger) * {
   color: #ffffff !important;
@@ -9881,7 +9881,7 @@ a:not(.btn):not([class*="badge"]):not(.whatsapp):not(.btn-danger):not(.footer *)
 
 .btn.outline,
 .btn.outline * {
-  color: #000000 !important;
+  color: #0f172a !important;
 }
 
 /* ==========================================================================

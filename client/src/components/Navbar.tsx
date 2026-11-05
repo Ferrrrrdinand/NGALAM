@@ -5,6 +5,7 @@ import {
   Smartphone, ClipboardList, MapPin, Bike, ShieldCheck 
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logoImg from '../assets/images/logo-ngalam-fix-pro.jpg';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,7 +20,15 @@ export default function Navbar() {
         <div className="wrap nav">
           <Link className="logo" to="/">
             <div className="logo-badge">
-              <img src="/images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" className="brand-logo-img" />
+              <img 
+                src={logoImg} 
+                alt="Logo Ngalam Fix Pro" 
+                className="brand-logo-img" 
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/images/logo-ngalam-fix-pro.jpg";
+                }}
+              />
             </div>
             <span>Ngalam <b>Fix Pro</b></span>
             {location.pathname === '/mitra' && (
@@ -84,7 +93,7 @@ export default function Navbar() {
                     <Home className="w-4 h-4 text-amber-600" />
                   </span>
                   <div className="nav-dropdown-item-text">
-                    <strong style={{ color: '#000000' }}>Beranda</strong>
+                    <strong style={{ color: '#0f172a' }}>Beranda</strong>
                     <small style={{ color: '#b45309' }}>Halaman utama & ringkasan</small>
                   </div>
                   {isActive('/') && <span className="nav-dropdown-active-dot"></span>}
@@ -100,8 +109,8 @@ export default function Navbar() {
                     <Smartphone className="w-4 h-4 text-sky-600" />
                   </span>
                   <div className="nav-dropdown-item-text">
-                    <strong style={{ color: '#b45309' }}>Layanan Servis</strong>
-                    <small style={{ color: '#000000' }}>Servis HP Android & iPhone</small>
+                    <strong style={{ color: '#0369a1' }}>Layanan Servis</strong>
+                    <small style={{ color: '#475569' }}>Servis HP Android & iPhone</small>
                   </div>
                 </Link>
 
@@ -116,7 +125,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#16a34a' }}>Pesan Servis</strong>
-                    <small style={{ color: '#000000' }}>Booking perbaikan online</small>
+                    <small style={{ color: '#475569' }}>Booking perbaikan online</small>
                   </div>
                 </Link>
 
@@ -131,7 +140,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#e11d48' }}>Kontak & Lokasi</strong>
-                    <small style={{ color: '#000000' }}>Workshop & nomor telepon</small>
+                    <small style={{ color: '#475569' }}>Workshop & nomor telepon</small>
                   </div>
                 </Link>
 
@@ -146,7 +155,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#4f46e5' }}>Lacak Status Perangkat</strong>
-                    <small style={{ color: '#000000' }}>Cek tiket progres servis real-time</small>
+                    <small style={{ color: '#475569' }}>Cek tiket progres servis real-time</small>
                   </div>
                 </Link>
 
@@ -161,7 +170,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#9333ea' }}>Masuk Akun Pelanggan</strong>
-                    <small style={{ color: '#000000' }}>Member portal & riwayat HP</small>
+                    <small style={{ color: '#475569' }}>Member portal & riwayat HP</small>
                   </div>
                 </Link>
               </div>
@@ -169,7 +178,7 @@ export default function Navbar() {
               <div className="nav-dropdown-divider"></div>
 
               <div className="nav-dropdown-section">
-                <span className="nav-dropdown-subtitle" style={{ color: '#000000', fontWeight: 800 }}>PORTAL MITRA & ADMIN</span>
+                <span className="nav-dropdown-subtitle" style={{ color: '#0f172a', fontWeight: 800 }}>PORTAL MITRA & ADMIN</span>
                 <Link 
                   to="/mitra" 
                   onClick={() => setMobileMenuOpen(false)}
@@ -181,7 +190,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#059669' }}>Portal Mitra & QR Afiliasi</strong>
-                    <small style={{ color: '#000000' }}>Komisi 10% & referral QR Code</small>
+                    <small style={{ color: '#475569' }}>Komisi 10% & referral QR Code</small>
                   </div>
                 </Link>
 
@@ -196,7 +205,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#e11d48' }}>Portal Admin</strong>
-                    <small style={{ color: '#000000' }}>Kelola operasional workshop</small>
+                    <small style={{ color: '#475569' }}>Kelola operasional workshop</small>
                   </div>
                 </Link>
               </div>

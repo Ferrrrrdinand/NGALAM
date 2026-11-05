@@ -6,6 +6,7 @@ import {
   Shield, Zap, Building2, LogIn
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logoImg from '../assets/images/logo-ngalam-fix-pro.jpg';
 import './AdminLogin.css';
 
 export default function AdminLogin() {
@@ -28,7 +29,7 @@ export default function AdminLogin() {
     const updateClock = () => {
       try {
         const now = new Date();
-        const options = { timeZone: 'Asia/Jakarta', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const options: Intl.DateTimeFormatOptions = { timeZone: 'Asia/Jakarta', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
         const timeStr = now.toLocaleTimeString('id-ID', options).replace(/\./g, ':');
         setClockStr(`${timeStr} WIB`);
       } catch (_) {
@@ -88,10 +89,15 @@ export default function AdminLogin() {
           {/* Brand Logo & Pill */}
           <div className="showcase-header">
             <Link className="showcase-brand" to="/">
-              <img src="/images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" className="showcase-logo-img" />
+              <img 
+                src={logoImg} 
+                alt="Logo Ngalam Fix Pro" 
+                className="showcase-logo-img" 
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/images/logo-ngalam-fix-pro.jpg"; }}
+              />
               <div>
                 <div className="showcase-brand-name">Ngalam Fix Pro</div>
-                <small style={{ color: '#000000', fontWeight: 800, fontSize: '0.76rem', letterSpacing: '0.04em' }}>
+                <small style={{ color: '#0f172a', fontWeight: 800, fontSize: '0.76rem', letterSpacing: '0.04em' }}>
                   PROFESSIONAL WORKSHOP SYSTEM
                 </small>
               </div>

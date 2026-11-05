@@ -10,7 +10,7 @@ export default function Lacak() {
   const [order, setOrder] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const performLookup = async (idToSearch) => {
+  const performLookup = async (idToSearch?: string) => {
     const q = (idToSearch || ticketInput).trim();
     if (!q) return;
     setLoading(true);

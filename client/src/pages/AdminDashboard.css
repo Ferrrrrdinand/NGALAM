@@ -19,8 +19,9 @@
 }
 
 .admin-sidebar-btn.active {
-  background-color: #2563eb !important;
+  background: linear-gradient(135deg, #d4af37, #b45309) !important;
   color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35) !important;
 }
 
 .admin-sidebar-btn.active span {

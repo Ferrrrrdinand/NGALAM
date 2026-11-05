@@ -1,3 +1,6 @@
+import banner1 from '../assets/images/spesialis-hp-banner.jpg';
+import banner2 from '../assets/images/promo-banner-1.jpg';
+import banner3 from '../assets/images/promo-banner-tempered-glass.jpg';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -134,7 +137,7 @@ export default function Home() {
 
   const slides = [
     {
-      img: '/images/promo-banner-1.jpg',
+      img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
       alt: 'Promo Spesial Servis HP Android & iPhone - Ngalam Fix Pro',
       badge: 'PROMO SPESIAL BULAN INI',
       pill: 'DISKON S/D 30%',
@@ -147,7 +150,7 @@ export default function Home() {
       link: '/pesan-servis?promo=NGALAMPROMO30'
     },
     {
-      img: '/images/spesialis-hp-banner.jpg',
+      img: banner1, fallbackImg: '/images/spesialis-hp-banner.jpg',
       alt: 'Workshop Spesialis Servis HP - Ngalam Fix Pro',
       badge: 'WORKSHOP MEJA TERBUKA',
       pill: 'BISA DITUNGGU (30–60 MENIT)',
@@ -160,7 +163,7 @@ export default function Home() {
       link: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu'
     },
     {
-      img: '/images/promo-banner-tempered-glass.jpg',
+      img: banner3, fallbackImg: '/images/promo-banner-tempered-glass.jpg',
       alt: 'Paket Bundling Ganti Layar & Tempered Glass',
       badge: 'BONUS TEMPERED GLASS 9H',
       pill: 'FLASH DEAL BULAN INI',
@@ -242,7 +245,15 @@ export default function Home() {
                 style={{ display: activeSlide === idx ? 'block' : 'none', cursor: 'pointer' }}
                 onClick={() => openPromoModal(s)}
               >
-                <img src={s.img} alt={s.alt} className="promo-slide-image" />
+                <img 
+    src={s.img} 
+    alt={s.alt} 
+    className="promo-slide-image" 
+    onError={(e) => {
+      e.currentTarget.onerror = null;
+      e.currentTarget.src = s.fallbackImg;
+    }} 
+  />
                 <div className="promo-slide-overlay">
                   <div className="promo-top-row">
                     <div className="promo-badge-tag" style={{ color: '#ffffff !important' }}>
@@ -258,12 +269,12 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="promo-bottom-hint-row">
-                    <div className="promo-click-hint" style={{ color: '#ffffff' }}>
+                    <div className="promo-click-hint" style={{ background: 'rgba(15, 23, 42, 0.88)', border: '1.5px solid rgba(255, 255, 255, 0.3)', color: '#ffffff' }}>
                       <span className="hint-pulse" style={{ background: '#ef4444', boxShadow: '0 0 10px #ef4444' }}></span>
                       <span className="hint-text" style={{ color: '#ffffff', fontWeight: 700, textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)' }}>
                         {s.hint}
                       </span>
-                      <span className="hint-cta-badge" style={{ color: '#ffffff', fontWeight: 800 }}>
+                      <span className="hint-cta-badge" style={{ background: '#f59e0b', color: '#0f172a', fontWeight: 800 }}>
                         {s.cta}
                       </span>
                     </div>

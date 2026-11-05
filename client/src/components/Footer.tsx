@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, MapPin, ShieldCheck, Bike } from 'lucide-react';
+import logoImg from '../assets/images/logo-ngalam-fix-pro.jpg';
 
 export default function Footer() {
   return (
@@ -9,7 +10,15 @@ export default function Footer() {
         <div className="foot-col">
           <Link className="logo" to="/">
             <div className="logo-badge">
-              <img src="/images/logo-ngalam-fix-pro.jpg" alt="Logo Ngalam Fix Pro" className="brand-logo-img" />
+              <img 
+                src={logoImg} 
+                alt="Logo Ngalam Fix Pro" 
+                className="brand-logo-img" 
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/images/logo-ngalam-fix-pro.jpg";
+                }}
+              />
             </div>
             <span>Ngalam <b>Fix Pro</b></span>
           </Link>

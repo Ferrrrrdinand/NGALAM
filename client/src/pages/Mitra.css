@@ -86,7 +86,7 @@
 }
 .auth-tab-btn:not(.active) {
   background: #f1f5f9;
-  color: #000000;
+  color: #475569;
 }
 .form-control-input {
   width: 100%;
@@ -95,7 +95,7 @@
   border: 1.5px solid #cbd5e1;
   font-size: 0.95rem;
   background: #ffffff;
-  color: #000000;
+  color: #0f172a;
   transition: all 0.2s;
   box-sizing: border-box;
 }
@@ -168,12 +168,12 @@
 .stat-metric-val {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #000000;
+  color: #0f172a;
   margin: 4px 0;
 }
 .stat-metric-label {
   font-size: 0.8rem;
-  color: #000000;
+  color: #64748b;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;

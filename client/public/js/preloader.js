@@ -19,8 +19,8 @@
   const STORAGE_KEY = 'ngalam_site_entered';
   const PROMO_DISMISSED_KEY = 'ngalam_welcome_promo_dismissed';
 
-  // Config: REPEAT_PRELOADER = true ensures loading screen runs on every visit and page reload
-  const REPEAT_PRELOADER = true;
+  // Config: Set to false so preloader does not annoyingly block on every navigation/refresh
+  const REPEAT_PRELOADER = false;
 
   const urlParams = new URLSearchParams(window.location.search);
   const isPreviewPreloader = urlParams.has('preview_loader') || urlParams.has('test_loader');
