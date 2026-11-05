@@ -1,5 +1,29 @@
 [
   {
+    "id": "LOG-1793889322450-174",
+    "action": "AD_TOGGLED",
+    "table_name": "ads",
+    "record_id": "ad-20261105-218",
+    "payload": {
+      "id": "ad-20261105-218",
+      "title": "Iklan Uji Coba Diskon",
+      "active": false
+    },
+    "performed_at": "2026-11-05T14:35:22.450Z"
+  },
+  {
+    "id": "LOG-1793889322448-760",
+    "action": "AD_CLICKED",
+    "table_name": "ads",
+    "record_id": "ad-20261105-218",
+    "payload": {
+      "id": "ad-20261105-218",
+      "title": "Iklan Uji Coba Diskon",
+      "clicksCount": 1
+    },
+    "performed_at": "2026-11-05T14:35:22.448Z"
+  },
+  {
     "id": "LOG-1793870130103-601",
     "action": "COMMISSION_RECORDED",
     "table_name": "commissions",

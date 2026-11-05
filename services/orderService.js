@@ -204,7 +204,40 @@ async function appendOrder(order) {
     console.warn('[OrderService] Local backup write error:', fsErr.message);
   }
 
-  // 3. Auto-register customer account jika nomor WA disediakan
+  // 3. Rekam jejak audit log aktivitas servis
+  try {
+    const isWalkIn = (order.method || '').toLowerCase().includes('walk-in') || (order.method || '').toLowerCase().includes('meja');
+    await db.logActivity(
+      isWalkIn ? 'WALKIN_INTAKE' : 'ORDER_CREATED',
+      'orders',
+      order.id,
+      {
+        id: order.id,
+        customerName: order.customerName || order.buyerName || 'Pelanggan',
+        customerPhone: customerPhone,
+        whatsapp: customerPhone,
+        phoneType: order.phoneType || `${deviceType} - ${brandModel}`,
+        deviceType: deviceType,
+        brandModel: brandModel,
+        problem: problemText,
+        method: method,
+        status: statusVal,
+        technician: techName,
+        cost: costVal,
+        duration: durationVal,
+        step: stepVal,
+        screenCondition: screenCondition,
+        bodyCondition: bodyCondition,
+        accessories: accessories,
+        promoCode: order.promoCode || null,
+        affiliateRef: order.affiliateRef || null
+      }
+    );
+  } catch (logErr) {
+    console.warn('[OrderService] Audit log activity write warning:', logErr.message);
+  }
+
+  // 4. Auto-register customer account jika nomor WA disediakan
   try {
     const { ensureCustomerAccount } = require('./customerService');
     if (customerPhone && customerPhone !== '-') {
@@ -276,6 +309,43 @@ async function updateOrder(ticketId, updates) {
     console.warn('[OrderService] Local update order error:', fsErr.message);
   }
 
+  // 3. Catat jejak audit aktivitas update tiket servis
+  try {
+    let action = 'ORDER_UPDATED';
+    const statusText = String(updates.status || updatedOrder.status || '').toLowerCase();
+    const isPaid = updates.paid === true || statusText.includes('lunas');
+
+    if (isPaid) {
+      action = 'PAYMENT_COMPLETED';
+    } else if (statusText.includes('selesai') || updates.step === 5 || updates.currentStep === 5) {
+      action = 'ORDER_COMPLETED';
+    } else if (statusText.includes('batal')) {
+      action = 'ORDER_CANCELLED';
+    } else if (updates.status) {
+      action = 'ORDER_STATUS_UPDATED';
+    } else if (updates.step !== undefined || updates.currentStep !== undefined) {
+      action = 'ORDER_STEP_UPDATED';
+    } else if (updates.technician || updates.assignedTechnician) {
+      action = 'TECHNICIAN_ASSIGNED';
+    } else if (updates.technicianNotes || updates.diagnoseNote) {
+      action = 'TECHNICIAN_WORKLOG_UPDATED';
+    }
+
+    await db.logActivity(action, 'orders', cleanId, {
+      id: cleanId,
+      customerName: updatedOrder.customerName || updatedOrder.buyerName || 'Pelanggan',
+      whatsapp: updatedOrder.whatsapp || updatedOrder.customerPhone || '-',
+      phoneType: updatedOrder.phoneType || updatedOrder.brandModel || '-',
+      status: updatedOrder.status,
+      step: updatedOrder.currentStep || updatedOrder.step,
+      technician: updatedOrder.technician || (updatedOrder.assignedTechnician ? updatedOrder.assignedTechnician.name : '-'),
+      cost: updatedOrder.cost || updatedOrder.estimatedCost || 0,
+      updates: updates
+    });
+  } catch (logErr) {
+    console.warn('[OrderService] Update audit log write warning:', logErr.message);
+  }
+
   return updatedOrder;
 }
 
@@ -296,6 +366,10 @@ async function clearAllOrders() {
   } catch (fsErr) {
     console.warn('[OrderService] Clear local orders error:', fsErr.message);
   }
+
+  try {
+    await db.logActivity('ORDERS_CLEARED', 'orders', 'ALL', { count: 0, clearedAt: new Date().toISOString() });
+  } catch (_) {}
 
   return [];
 }

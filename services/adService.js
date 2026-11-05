@@ -366,6 +366,15 @@ async function toggleAd(id) {
   saveAdsToDisk(list);
   await syncAdToPostgres(target);
 
+  try {
+    const db = require('./db');
+    await db.logActivity('AD_TOGGLED', 'ads', id, {
+      id,
+      title: target.title,
+      active: target.active
+    });
+  } catch (_) {}
+
   return target;
 }
 
@@ -381,6 +390,11 @@ async function recordAdClick(id) {
       if (db && db.isDbConnected()) {
         await db.query('UPDATE ads SET clicks_count = clicks_count + 1 WHERE id = $1', [id]);
       }
+      await db.logActivity('AD_CLICKED', 'ads', id, {
+        id,
+        title: target.title,
+        clicksCount: target.clicksCount
+      });
     } catch (_) {}
   }
   return target;

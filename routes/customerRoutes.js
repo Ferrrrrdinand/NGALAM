@@ -950,6 +950,15 @@ router.patch('/:id', async (req, res) => {
     if (!updated) {
       return res.status(404).json({ success: false, message: `Pelanggan dengan ID "${id}" tidak ditemukan.` });
     }
+    try {
+      db.logActivity('CUSTOMER_UPDATED_BY_ADMIN', 'customers', id, {
+        id: updated.id,
+        name: updated.name,
+        whatsapp: updated.whatsapp,
+        district: updated.district,
+        updates
+      });
+    } catch (_) {}
     res.json({
       success: true,
       message: `Data pelanggan "${updated.name}" berhasil diperbarui.`,
@@ -962,6 +971,17 @@ router.patch('/:id', async (req, res) => {
 
 // POST /api/customer/logout
 router.post('/logout', (req, res) => {
+  try {
+    const token = getCustomerToken(req);
+    const session = verifyToken(token);
+    if (session) {
+      db.logActivity('CUSTOMER_LOGOUT', 'customers', session.customerId || session.id || session.name, {
+        name: session.name,
+        whatsapp: session.whatsapp || '',
+        accountType: session.accountType || 'customer'
+      });
+    }
+  } catch (_) {}
   res.setHeader('Set-Cookie', 'ngalam_customer_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax');
   res.json({
     success: true,
@@ -1082,6 +1102,14 @@ router.get('/auth/google/callback', async (req, res) => {
     }, true);
 
     setCustomerTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
+    try {
+      db.logActivity('CUSTOMER_LOGIN_GOOGLE', 'customers', cust.id || cust.email, {
+        name: cust.name,
+        email: cust.email,
+        whatsapp: cust.whatsapp || '',
+        provider: 'Google OAuth 2.0'
+      });
+    } catch (_) {}
     res.redirect(`${frontendBase}/login?auth=google${cust.whatsapp ? '' : '&needsPhone=1'}`);
   } catch (err) {
     console.error('[Google OAuth] Callback error:', err.message);
@@ -1258,6 +1286,15 @@ router.post('/complete-profile', async (req, res) => {
       whatsapp: digits,
       district: (req.body.district || cust.district || 'Malang').trim()
     });
+
+    try {
+      db.logActivity('PROFILE_COMPLETED', 'customers', updated.id || updated.whatsapp, {
+        id: updated.id,
+        name: updated.name,
+        whatsapp: updated.whatsapp,
+        district: updated.district
+      });
+    } catch (_) {}
 
     const jwtInfo = generateToken({
       customerId: updated.id || updated.whatsapp,

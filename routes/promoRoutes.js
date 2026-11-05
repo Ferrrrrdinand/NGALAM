@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const db = require('../services/db');
 const {
   getAllPromos,
   addPromo,
@@ -173,6 +174,15 @@ router.post('/promo-codes/validate', (req, res) => {
       return res.status(400).json({ valid: false, message: 'Masukkan kode promo terlebih dahulu.' });
     }
     const result = validateAndCalculate(code, price);
+    if (result && result.valid) {
+      try {
+        db.logActivity('PROMO_CODE_VALIDATED', 'promo_codes', (result.promo && result.promo.id) || code, {
+          code: code.toUpperCase(),
+          discountAmount: result.discountAmount || 0,
+          discountType: result.promo ? result.promo.discountType : 'percentage'
+        });
+      } catch (_) {}
+    }
     res.json(result);
   } catch (err) {
     res.status(500).json({ valid: false, message: err.message });

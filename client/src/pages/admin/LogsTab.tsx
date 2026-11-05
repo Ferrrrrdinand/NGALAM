@@ -17,7 +17,10 @@ import {
   Check,
   RotateCcw,
   FileJson,
-  Filter,
+  Tag,
+  Megaphone,
+  Star,
+  CheckCircle2,
   Sparkles
 } from 'lucide-react';
 import { formatDateId } from '../../utils/api';
@@ -78,6 +81,8 @@ function parseLogData(log: ActivityLogItem) {
 
   const actorName =
     payload.name ||
+    payload.customerName ||
+    payload.buyerName ||
     log.technicianName ||
     log.name ||
     payload.username ||
@@ -86,16 +91,17 @@ function parseLogData(log: ActivityLogItem) {
 
   const role = payload.role || log.role || '';
   const username = payload.username || log.username || '';
-  const phone = payload.whatsapp || payload.phone || '';
+  const phone = payload.whatsapp || payload.phone || payload.customerPhone || '';
   const district = payload.district || '';
   const registeredVia = payload.registeredVia || '';
 
-  let category: 'all' | 'staff' | 'customer' | 'order' | 'finance' | 'system' = 'system';
+  let category: 'all' | 'staff' | 'customer' | 'order' | 'finance' | 'marketing' | 'system' = 'system';
   let title = 'Aktivitas Log';
   let badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
   let icon = <Cpu className="w-3.5 h-3.5" />;
   let naturalSentence = '';
 
+  // 1. Staff & Authentication
   if (action.includes('STAFF_LOGIN')) {
     category = 'staff';
     title = 'Login Staff / Teknisi';
@@ -108,39 +114,286 @@ function parseLogData(log: ActivityLogItem) {
     badgeTheme = 'bg-slate-100 text-slate-700 border-slate-300';
     icon = <LogOut className="w-3.5 h-3.5" />;
     naturalSentence = `Petugas ${actorName} telah logout dari Workshop Console.`;
+  } else if (action.includes('USER_CREATE')) {
+    category = 'staff';
+    title = 'Tambah Akun Petugas/Mitra';
+    badgeTheme = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+    icon = <UserPlus className="w-3.5 h-3.5" />;
+    naturalSentence = `Akun baru dibuat untuk ${actorName}${role ? ` (${role})` : ''} oleh administrator.`;
+  } else if (action.includes('USER_UPDATE')) {
+    category = 'staff';
+    title = 'Update Akun Petugas';
+    badgeTheme = 'bg-blue-50 text-blue-700 border-blue-200';
+    icon = <User className="w-3.5 h-3.5" />;
+    naturalSentence = `Data profil atau hak akses akun ${actorName} (#${log.record_id || '-'}) diperbarui.`;
+  } else if (action.includes('USER_DELETE')) {
+    category = 'staff';
+    title = 'Hapus Akun Pengguna';
+    badgeTheme = 'bg-red-50 text-red-700 border-red-200';
+    icon = <LogOut className="w-3.5 h-3.5" />;
+    naturalSentence = `Akun pengguna ${actorName} (#${log.record_id || '-'}) telah dihapus dari sistem.`;
+
+  // 2. Customer & Member Portal
+  } else if (action === 'CUSTOMER_LOGIN_GOOGLE') {
+    category = 'customer';
+    title = 'Login Google Member';
+    badgeTheme = 'bg-sky-50 text-sky-700 border-sky-200';
+    icon = <UserCheck className="w-3.5 h-3.5" />;
+    naturalSentence = `Pelanggan ${actorName}${payload.email ? ` (${payload.email})` : ''} login menggunakan Akun Google.`;
   } else if (action.includes('CUSTOMER_LOGIN')) {
     category = 'customer';
     title = 'Login Pelanggan';
     badgeTheme = 'bg-emerald-50 text-emerald-700 border-emerald-200';
     icon = <UserCheck className="w-3.5 h-3.5" />;
-    naturalSentence = `Pelanggan ${actorName}${phone ? ` (${phone})` : ''} masuk ke portal web.`;
+    naturalSentence = `Pelanggan ${actorName}${phone ? ` (${phone})` : ''} masuk ke portal akun member.`;
   } else if (action.includes('CUSTOMER_REGISTER')) {
     category = 'customer';
-    title = 'Registrasi Pelanggan Baru';
+    title = 'Registrasi Member Baru';
     badgeTheme = 'bg-teal-50 text-teal-700 border-teal-200';
     icon = <UserPlus className="w-3.5 h-3.5" />;
     naturalSentence = `Pendaftaran pelanggan baru: ${actorName}${phone ? ` (${phone})` : ''}${registeredVia ? ` melalui ${registeredVia}` : ''}.`;
+  } else if (action.includes('CUSTOMER_LOGOUT')) {
+    category = 'customer';
+    title = 'Logout Pelanggan';
+    badgeTheme = 'bg-slate-100 text-slate-700 border-slate-300';
+    icon = <LogOut className="w-3.5 h-3.5" />;
+    naturalSentence = `Pelanggan ${actorName} telah logout dari portal website.`;
+  } else if (action.includes('PROFILE_COMPLETED')) {
+    category = 'customer';
+    title = 'Kelengkapan Profil Member';
+    badgeTheme = 'bg-teal-50 text-teal-700 border-teal-200';
+    icon = <UserCheck className="w-3.5 h-3.5" />;
+    naturalSentence = `Pelanggan ${actorName} melengkapi nomor WhatsApp aktif (${payload.whatsapp || '-'}) dan wilayah.`;
+  } else if (action.includes('CUSTOMER_UPDATED_BY_ADMIN')) {
+    category = 'customer';
+    title = 'Edit Member Pelanggan';
+    badgeTheme = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    icon = <User className="w-3.5 h-3.5" />;
+    naturalSentence = `Data member pelanggan ${actorName} (#${log.record_id || '-'}) diperbarui oleh administrator.`;
+  } else if (action.includes('WARRANTY_CLAIM')) {
+    category = 'customer';
+    title = 'Pengajuan Klaim Garansi';
+    badgeTheme = 'bg-rose-50 text-rose-700 border-rose-200';
+    icon = <ShieldCheck className="w-3.5 h-3.5" />;
+    naturalSentence = `Klaim garansi resmi diajukan untuk tiket #${log.record_id || '-'} oleh ${actorName}${payload.reason ? ` — "${payload.reason}"` : ''}.`;
+
+  // 3. Orders & Workshop Lab Operations
+  } else if (action === 'WALKIN_INTAKE') {
+    category = 'order';
+    title = 'Intake Walk-in Meja Kasir';
+    badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Intake walk-in #${log.record_id || '-'}: Unit ${payload.phoneType || 'HP'} milik ${payload.customerName || actorName} diterima langsung di workshop.`;
+  } else if (action === 'ORDER_CREATED') {
+    category = 'order';
+    title = 'Pendaftaran Servis Baru';
+    badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Tiket servis baru #${log.record_id || '-'} didaftarkan oleh ${payload.customerName || actorName} (${payload.phoneType || 'Smartphone'} - ${payload.problem || 'Perbaikan'}).`;
+  } else if (action === 'ORDER_STATUS_UPDATED') {
+    category = 'order';
+    title = 'Update Status Servis';
+    badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Status tiket #${log.record_id || '-'} (${payload.customerName || 'Unit'}) diubah menjadi "${payload.status}". Teknisi: ${payload.technician || '-'}.`;
+  } else if (action === 'ORDER_STEP_UPDATED') {
+    category = 'order';
+    title = 'Update Tahap Pengerjaan';
+    badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Progres pengerjaan tiket #${log.record_id || '-'} diperbarui ke Step ${payload.step || '-'}: "${payload.status || '-'}".`;
+  } else if (action === 'TECHNICIAN_ASSIGNED') {
+    category = 'order';
+    title = 'Penugasan Teknisi Lab';
+    badgeTheme = 'bg-blue-50 text-blue-800 border-blue-200';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Tiket #${log.record_id || '-'} ditugaskan kepada teknisi: ${payload.technician || '-'}.`;
+  } else if (action === 'TECHNICIAN_WORKLOG_UPDATED') {
+    category = 'order';
+    title = 'Catatan Kerja Teknisi';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Teknisi memperbarui catatan hasil diagnosa atau pengerjaan pada tiket #${log.record_id || '-'}.`;
+  } else if (action === 'ORDER_COMPLETED') {
+    category = 'order';
+    title = 'Servis Selesai & Lolos QC';
+    badgeTheme = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+    icon = <CheckCircle2 className="w-3.5 h-3.5" />;
+    naturalSentence = `Pengerjaan tiket #${log.record_id || '-'} telah selesai dan dinyatakan lolos uji Quality Control (QC).`;
+  } else if (action === 'ORDER_CANCELLED') {
+    category = 'order';
+    title = 'Tiket Servis Dibatalkan';
+    badgeTheme = 'bg-red-50 text-red-800 border-red-200';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Tiket servis #${log.record_id || '-'} telah dibatalkan.`;
+  } else if (action === 'ORDER_TRACKED') {
+    category = 'order';
+    title = 'Pengecekan Status Servis';
+    badgeTheme = 'bg-slate-100 text-slate-700 border-slate-200';
+    icon = <Search className="w-3.5 h-3.5" />;
+    naturalSentence = `Pelanggan melakukan pelacakan status progres untuk tiket #${log.record_id || '-'}.`;
+  } else if (action === 'ORDERS_CLEARED') {
+    category = 'order';
+    title = 'Pengosongan Antrean Servis';
+    badgeTheme = 'bg-red-50 text-red-700 border-red-200';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Seluruh riwayat antrean tiket servis dikosongkan oleh Super Admin.`;
   } else if (action.includes('ORDER') || action.includes('INTAKE') || action.includes('WALKIN') || action.includes('STEP')) {
     category = 'order';
     title = 'Operasional Servis & Meja';
     badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
     icon = <Wrench className="w-3.5 h-3.5" />;
-    naturalSentence = `Pembaruan status operasional servis unit #${log.record_id || ''}.`;
-  } else if (action.includes('COMMISSION') || action.includes('PAYMENT') || action.includes('FINANCE') || action.includes('TRANSACTION')) {
+    naturalSentence = `Aktivitas pengerjaan tiket lab servis #${log.record_id || '-'}.`;
+
+  // 4. Finance, Cashier & Mitra Commissions
+  } else if (action === 'PAYMENT_COMPLETED' || action === 'ORDER_PAID') {
     category = 'finance';
-    title = 'Keuangan & Komisi';
+    title = 'Pelunasan Kasir';
+    badgeTheme = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+    icon = <CreditCard className="w-3.5 h-3.5" />;
+    naturalSentence = `Pembayaran lunas tiket #${log.record_id || '-'} sebesar Rp ${Number(payload.cost || 0).toLocaleString('id-ID')} berhasil dikonfirmasi kasir.`;
+  } else if (action.includes('COMMISSION_RECORDED')) {
+    category = 'finance';
+    title = 'Komisi Mitra Dicatat';
     badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
     icon = <CreditCard className="w-3.5 h-3.5" />;
-    naturalSentence = `Aktivitas transaksi keuangan atau komisi mitra #${log.record_id || ''}.`;
+    naturalSentence = `Komisi mitra sebesar Rp ${Number(payload.amount || payload.commission || 0).toLocaleString('id-ID')} dicatat dari order #${payload.orderId || log.record_id || '-'}.`;
+  } else if (action.includes('COMMISSION_PAYOUT')) {
+    category = 'finance';
+    title = 'Pencairan Komisi Mitra';
+    badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
+    icon = <CreditCard className="w-3.5 h-3.5" />;
+    naturalSentence = `Pencairan komisi mitra afiliasi (${payload.referralCode || log.record_id || '-'}) sebesar Rp ${Number(payload.amount || 0).toLocaleString('id-ID')} diproses.`;
+  } else if (action.includes('COMMISSION') || action.includes('PAYMENT') || action.includes('FINANCE') || action.includes('TRANSACTION')) {
+    category = 'finance';
+    title = 'Keuangan & Kasir';
+    badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
+    icon = <CreditCard className="w-3.5 h-3.5" />;
+    naturalSentence = `Transaksi keuangan atau komisi mitra #${log.record_id || '-'}.`;
+
+  // 5. Marketing, Promos, Vouchers & Ads
+  } else if (action.includes('PROMO_CODE_CREATE')) {
+    category = 'marketing';
+    title = 'Pembuatan Voucher Promo';
+    badgeTheme = 'bg-orange-50 text-orange-700 border-orange-200';
+    icon = <Tag className="w-3.5 h-3.5" />;
+    const discLabel = payload.discountType === 'percentage' ? `${payload.discountValue}%` : `Rp ${Number(payload.discountValue || 0).toLocaleString('id-ID')}`;
+    naturalSentence = `Voucher diskon baru "${payload.code || log.record_id || '-'}" dibuat: potongan ${discLabel}.`;
+  } else if (action.includes('PROMO_CODE_UPDATE')) {
+    category = 'marketing';
+    title = 'Pembaruan Voucher Promo';
+    badgeTheme = 'bg-orange-50 text-orange-700 border-orange-200';
+    icon = <Tag className="w-3.5 h-3.5" />;
+    naturalSentence = `Pengaturan kode voucher "${payload.code || log.record_id || '-'}" diperbarui di database.`;
+  } else if (action.includes('PROMO_CODE_DELETE')) {
+    category = 'marketing';
+    title = 'Hapus Voucher Promo';
+    badgeTheme = 'bg-red-50 text-red-700 border-red-200';
+    icon = <Tag className="w-3.5 h-3.5" />;
+    naturalSentence = `Kode voucher diskon "${payload.code || log.record_id || '-'}" telah dihapus.`;
+  } else if (action.includes('PROMO_CODE_VALIDATED')) {
+    category = 'marketing';
+    title = 'Klaim Kupon Diskon';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Tag className="w-3.5 h-3.5" />;
+    naturalSentence = `Kupon diskon "${payload.code || log.record_id || '-'}" berhasil divalidasi dan digunakan oleh pelanggan.`;
+  } else if (action.includes('BANNER_CREATED')) {
+    category = 'marketing';
+    title = 'Tambah Banner Slider';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Sparkles className="w-3.5 h-3.5" />;
+    naturalSentence = `Banner promo beranda baru "${payload.title || log.record_id || '-'}" berhasil diterbitkan.`;
+  } else if (action.includes('BANNER_UPDATED')) {
+    category = 'marketing';
+    title = 'Update Banner Slider';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Sparkles className="w-3.5 h-3.5" />;
+    naturalSentence = `Banner slider "${payload.title || log.record_id || '-'}" berhasil diperbarui.`;
+  } else if (action.includes('BANNER_TOGGLED')) {
+    category = 'marketing';
+    title = 'Toggle Banner Slider';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Sparkles className="w-3.5 h-3.5" />;
+    naturalSentence = `Status tayang banner "${payload.title || log.record_id || '-'}" diubah menjadi: ${payload.active ? 'Aktif' : 'Nonaktif'}.`;
+  } else if (action.includes('BANNER_DELETED')) {
+    category = 'marketing';
+    title = 'Hapus Banner Slider';
+    badgeTheme = 'bg-red-50 text-red-700 border-red-200';
+    icon = <Sparkles className="w-3.5 h-3.5" />;
+    naturalSentence = `Banner promo "${payload.title || log.record_id || '-'}" telah dihapus.`;
+  } else if (action === 'AD_CREATE') {
+    category = 'marketing';
+    title = 'Pembuatan Iklan Beranda';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Megaphone className="w-3.5 h-3.5" />;
+    naturalSentence = `Iklan sponsor beranda "${payload.title || log.record_id || '-'}" diterbitkan ke database.`;
+  } else if (action === 'AD_UPDATE') {
+    category = 'marketing';
+    title = 'Pembaruan Materi Iklan';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Megaphone className="w-3.5 h-3.5" />;
+    naturalSentence = `Materi iklan "${payload.title || log.record_id || '-'}" diperbarui di database.`;
+  } else if (action === 'AD_TOGGLED') {
+    category = 'marketing';
+    title = 'Toggle Status Iklan';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Megaphone className="w-3.5 h-3.5" />;
+    naturalSentence = `Status tayang iklan "${payload.title || log.record_id || '-'}" diubah menjadi: ${payload.active ? 'Aktif' : 'Nonaktif'}.`;
+  } else if (action === 'AD_DELETE') {
+    category = 'marketing';
+    title = 'Hapus Iklan Beranda';
+    badgeTheme = 'bg-red-50 text-red-700 border-red-200';
+    icon = <Megaphone className="w-3.5 h-3.5" />;
+    naturalSentence = `Iklan sponsor "${payload.title || log.record_id || '-'}" dihapus dari sistem.`;
+  } else if (action === 'AD_CLICKED') {
+    category = 'marketing';
+    title = 'Interaksi Klik Iklan';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Megaphone className="w-3.5 h-3.5" />;
+    naturalSentence = `Iklan sponsor "${payload.title || log.record_id || '-'}" diklik oleh pengunjung beranda (${payload.clicksCount || 1} total klik).`;
+
+  // 6. Testimonials & Reviews
+  } else if (action.includes('TESTIMONIAL')) {
+    category = 'customer';
+    title = 'Ulasan / Testimoni Baru';
+    badgeTheme = 'bg-yellow-50 text-yellow-800 border-yellow-200';
+    icon = <Star className="w-3.5 h-3.5" />;
+    naturalSentence = `Ulasan pelanggan bintang ${payload.rating || 5} dikirim oleh ${payload.name || actorName} (${payload.phoneModel || 'Smartphone'}).`;
+
+  // 7. Fallback Table-Aware System Logs
+  } else if (log.table_name === 'promo_codes') {
+    category = 'marketing';
+    title = 'Voucher Promo';
+    badgeTheme = 'bg-orange-50 text-orange-700 border-orange-200';
+    icon = <Tag className="w-3.5 h-3.5" />;
+    naturalSentence = `Perubahan data voucher promo "${payload.code || log.record_id || '-'}" (${action}).`;
+  } else if (log.table_name === 'ads') {
+    category = 'marketing';
+    title = 'Iklan Beranda';
+    badgeTheme = 'bg-amber-50 text-amber-800 border-amber-200';
+    icon = <Megaphone className="w-3.5 h-3.5" />;
+    naturalSentence = `Perubahan materi iklan "${payload.title || log.record_id || '-'}" (${action}).`;
+  } else if (log.table_name === 'orders') {
+    category = 'order';
+    title = 'Servis Lab';
+    badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
+    icon = <Wrench className="w-3.5 h-3.5" />;
+    naturalSentence = `Aktivitas pengerjaan tiket lab servis #${log.record_id || '-'} (${action}).`;
+  } else if (log.table_name === 'commissions') {
+    category = 'finance';
+    title = 'Komisi Mitra';
+    badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
+    icon = <CreditCard className="w-3.5 h-3.5" />;
+    naturalSentence = `Aktivitas komisi mitra #${log.record_id || '-'} (${action}).`;
   } else {
     category = 'system';
     title = action.replace(/_/g, ' ');
-    badgeTheme = 'bg-amber-50/80 text-amber-900 border-amber-200';
+    badgeTheme = 'bg-slate-100 text-slate-800 border-slate-300';
     icon = <ShieldCheck className="w-3.5 h-3.5" />;
-    naturalSentence = log.details || log.description || log.message || `Aktivitas pada entitas ${log.table_name || 'sistem'} (${log.record_id || '-'}).`;
+    naturalSentence = log.details || log.description || log.message || `Aktivitas pada modul ${log.table_name || 'sistem'} (${log.record_id || '-'}).`;
   }
 
-  // Override natural sentence if explicit details/description exist
+  // Override natural sentence if explicit details exist
   if (log.details || log.description || log.message) {
     naturalSentence = log.details || log.description || log.message;
   }
@@ -163,7 +416,7 @@ function parseLogData(log: ActivityLogItem) {
 
 export default function LogsTab({ activityLogs }: LogsTabProps) {
   const [search, setSearch] = useState('');
-  const [filterCategory, setFilterCategory] = useState<'all' | 'staff' | 'customer' | 'order' | 'finance' | 'system'>('all');
+  const [filterCategory, setFilterCategory] = useState<'all' | 'staff' | 'customer' | 'order' | 'finance' | 'marketing' | 'system'>('all');
   const [expandedLogId, setExpandedLogId] = useState<string | number | null>(null);
   const [copiedId, setCopiedId] = useState<string | number | null>(null);
 
@@ -291,7 +544,7 @@ export default function LogsTab({ activityLogs }: LogsTabProps) {
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-1">
-                Rekam jejak setiap aksi autentikasi kasir, status pengerjaan lab teknisi, dan aktivitas sistem.
+                Rekam jejak seluruh aksi di website: autentikasi kasir, status pengerjaan lab teknisi, klaim promo, ulasan, dan transaksi.
               </p>
             </div>
 
@@ -308,7 +561,7 @@ export default function LogsTab({ activityLogs }: LogsTabProps) {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Cari berdasarkan nama petugas, username, WhatsApp, aksi, atau ID entri..."
+                placeholder="Cari berdasarkan nama, WhatsApp, aksi, tiket servis, atau ID entri..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50/70 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-400 focus:bg-white text-slate-800 placeholder-slate-400 transition-all"
@@ -331,6 +584,8 @@ export default function LogsTab({ activityLogs }: LogsTabProps) {
                 { id: 'staff', label: 'Staff / Admin' },
                 { id: 'customer', label: 'Pelanggan' },
                 { id: 'order', label: 'Servis Lab' },
+                { id: 'finance', label: 'Keuangan & Komisi' },
+                { id: 'marketing', label: 'Promo & Iklan' },
                 { id: 'system', label: 'Sistem' }
               ].map((tab) => (
                 <button

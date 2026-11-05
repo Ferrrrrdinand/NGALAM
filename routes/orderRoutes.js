@@ -41,6 +41,15 @@ router.get('/:id', async (req, res) => {
     if (!found) {
       return res.status(404).json({ success: false, message: 'Nomor tiket, WhatsApp, atau Email tidak ditemukan.' });
     }
+    try {
+      const db = require('../services/db');
+      db.logActivity('ORDER_TRACKED', 'orders', found.id, {
+        id: found.id,
+        customerName: found.customerName || 'Pelanggan',
+        phoneType: found.phoneType || found.brandModel || 'HP',
+        query: id
+      });
+    } catch (_) {}
     res.json({ success: true, data: formatCustomerOrder(found) });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

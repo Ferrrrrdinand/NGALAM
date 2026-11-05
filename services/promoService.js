@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const db = require('./db');
 
 const PROMOS_FILE = path.join(__dirname, '..', 'data', 'promos.json');
 const UPLOADS_DIR = path.join(__dirname, '..', 'public', 'images', 'uploads');
@@ -282,6 +283,16 @@ function addPromo({
     syncBannerToPostgres(newPromo.id, newPromo).catch(() => {});
   } catch (_) {}
 
+  try {
+    db.logActivity('BANNER_CREATED', 'banners', newPromo.id, {
+      id: newPromo.id,
+      title: newPromo.title,
+      promoCode: newPromo.promoCode,
+      theme: newPromo.theme,
+      active: newPromo.active
+    });
+  } catch (_) {}
+
   return newPromo;
 }
 
@@ -316,6 +327,15 @@ async function updatePromo(id, updates = {}) {
     console.warn('[PromoService] PostgreSQL update error:', err.message);
   }
 
+  try {
+    db.logActivity('BANNER_UPDATED', 'banners', id, {
+      id,
+      title: promos[idx].title,
+      active: promos[idx].active,
+      updates
+    });
+  } catch (_) {}
+
   return promos[idx];
 }
 
@@ -335,6 +355,14 @@ async function togglePromoStatus(id) {
   try {
     const { syncBannerToPostgres } = require('./bannerPgSync');
     await syncBannerToPostgres(id, { active: promo.active });
+  } catch (_) {}
+
+  try {
+    db.logActivity('BANNER_TOGGLED', 'banners', id, {
+      id,
+      title: promo.title,
+      active: promo.active
+    });
   } catch (_) {}
 
   return promo;
@@ -368,6 +396,13 @@ async function deletePromo(id) {
   try {
     const { deleteBannerFromPostgres } = require('./bannerPgSync');
     await deleteBannerFromPostgres(id);
+  } catch (_) {}
+
+  try {
+    db.logActivity('BANNER_DELETED', 'banners', id, {
+      id,
+      title: target.title
+    });
   } catch (_) {}
 
   return { success: true, deletedId: id };

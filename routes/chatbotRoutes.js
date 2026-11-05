@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const db = require('../services/db');
 const { processChatMessage } = require('../services/chatbotService');
 const { getEstimatorData, calculateEstimate } = require('../services/estimatorService');
 const { getAllTestimonials, addTestimonial } = require('../services/testimonialService');
@@ -58,6 +59,16 @@ router.get('/testimonials', (req, res) => {
 router.post('/testimonials', (req, res) => {
   try {
     const newTestimonial = addTestimonial(req.body);
+    try {
+      db.logActivity('TESTIMONIAL_SUBMITTED', 'testimonials', newTestimonial.id, {
+        id: newTestimonial.id,
+        name: newTestimonial.name,
+        rating: newTestimonial.rating,
+        phoneModel: newTestimonial.phoneModel,
+        serviceType: newTestimonial.serviceType,
+        review: newTestimonial.review
+      });
+    } catch (_) {}
     res.status(201).json({
       success: true,
       message: 'Testimoni Anda berhasil dikirim dan diverifikasi.',
