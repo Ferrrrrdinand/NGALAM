@@ -85,7 +85,7 @@ export default function Footer() {
             <i><Clock style={{ width: '16px', height: '16px', color: '#f59e0b' }} /></i>
             <div>
               <span style={{ color: '#ffffff', fontWeight: 700 }}>Jam Operasional:</span>
-              <p>Senin – Sabtu, 09.00 – 18.00 WIB (Minggu Janji Temu)</p>
+              <p>Senin – Minggu, 10.00 – 20.00 WIB</p>
             </div>
           </div>
           <div className="foot-contact-item">

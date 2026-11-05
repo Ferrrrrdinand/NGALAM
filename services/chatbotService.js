@@ -13,7 +13,7 @@ const PIC_CONTACT = {
 
 const WORKSHOP_INFO = {
   address: 'Jl. Galunggung, Gadingkasri, Kec. Klojen, Kota Malang, Jawa Timur 65115 (Ngalam FixPro)',
-  hours: 'Senin – Sabtu: 09.00 – 18.00 WIB (Minggu Janji Temu)',
+  hours: 'Senin – Minggu: 10.00 – 20.00 WIB',
   pickup: 'Tersedia layanan antar-jemput (Pickup) bergaransi & berasuransi di area Malang Raya',
   mapsUrl: 'https://maps.app.goo.gl/q7oQM5TJbKacRHKj7',
 };

@@ -37,7 +37,7 @@ export default function Kontak() {
             </div>
             <div className="kontak-status-pill">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span>Senin – Sabtu: 09.00 – 18.00 WIB</span>
+              <span>Senin – Minggu: 10.00 – 20.00 WIB</span>
             </div>
             <div className="kontak-status-pill flex items-center gap-1">
               <Zap className="w-4 h-4 text-amber-500" />
