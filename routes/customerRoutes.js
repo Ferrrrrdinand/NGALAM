@@ -189,7 +189,7 @@ async function buildMitraCustomerLogin(req, mitra, rememberMe) {
 /**
  * Hitung Status Garansi Resmi 90 Hari Workshop Lab
  */
-function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = '', customerName = '', damageTypeOrDesc = '') {
+function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = '', customerName = '', damageTypeOrDesc = '', statusStr = '') {
   let orderDate = new Date();
   if (orderDateStr) {
     const parsed = new Date(orderDateStr);
@@ -242,7 +242,14 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
   const diffTime = endDay.getTime() - todayDay.getTime();
   const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   const isExpired = diffTime < 0;
-  const isDone = parseInt(step, 10) >= 5;
+
+  // Siap Diambil (Step 4) atau Sudah Diambil / Selesai (Step 5) otomatis masuk Garansi Aktif & Selesai Diambil
+  const sText = String(statusStr || '').toLowerCase();
+  const isReadyOrDone = parseInt(step, 10) >= 4 ||
+    sText.includes('siap') ||
+    sText.includes('ambil') ||
+    sText.includes('selesai') ||
+    sText.includes('lunas');
 
   const formatDate = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
   const startDateFormatted = formatDate(startDate);
@@ -253,8 +260,8 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
 
   let statusLabel = '';
   let statusBadgeClass = '';
-  if (!isDone) {
-    statusLabel = `⏳ Garansi Siaga (Aktif Penuh ${warrantyDurationDays} Hari Setelah Unit Selesai Diambil)`;
+  if (!isReadyOrDone) {
+    statusLabel = `⏳ Garansi Siaga (Aktif Penuh ${warrantyDurationDays} Hari Setelah Unit Siap / Selesai Diambil)`;
     statusBadgeClass = 'pending';
   } else if (!isExpired) {
     statusLabel = `🛡️ ${warrantyTypeLabel} Aktif (Sisa ${daysRemaining} Hari)`;
@@ -284,8 +291,8 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
     endDate: endDateFormatted,
     daysRemaining: daysRemaining,
     isExpired: isExpired,
-    isActive: isDone && !isExpired,
-    isPendingCompletion: !isDone,
+    isActive: isReadyOrDone && !isExpired,
+    isPendingCompletion: !isReadyOrDone,
     statusLabel,
     statusBadgeClass,
     coverage: 'Garansi Komponen/Sparepart Asli, Kalibrasi Hardware & Bebas Biaya Jasa Pemasangan Ulang',
@@ -297,6 +304,7 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
 function formatCustomerOrder(o) {
   if (!o) return null;
   const step = parseInt(o.step || o.currentStep || 1, 10);
+  const statusStr = o.status || o.statusText || '';
   const costStr = typeof o.cost === 'string' && o.cost
     ? o.cost
     : o.estimatedCost ? `Rp ${Number(o.estimatedCost).toLocaleString('id-ID')}` : 'Rp 250.000';
@@ -305,7 +313,7 @@ function formatCustomerOrder(o) {
   const phoneType = o.phoneType || o.brandModel || 'Smartphone';
   const customerName = o.customerName || o.name || 'Pelanggan Ngalam Fix Pro';
   const damageText = o.damageDescription || o.damage || o.damageType || (Array.isArray(o.problemTags) ? o.problemTags.join(' ') : 'Servis Komponen');
-  const warranty = calculateWarranty(o.createdAt || o.paidAt, step, ticketId, phoneType, customerName, damageText);
+  const warranty = calculateWarranty(o.createdAt || o.paidAt, step, ticketId, phoneType, customerName, damageText, statusStr);
 
   return {
     id: ticketId,
@@ -319,7 +327,7 @@ function formatCustomerOrder(o) {
     technician: typeof o.technician === 'string' ? o.technician : (o.assignedTechnician ? o.assignedTechnician.name : 'Workshop Meja 1'),
     cost: costStr,
     duration: o.duration || o.estimatedDuration || o.estimatedTime || '30 - 60 Menit',
-    status: o.status || 'Registrasi & Masuk',
+    status: statusStr || 'Registrasi & Masuk',
     step: step,
     diagnoseNote: o.diagnoseNote || o.technicianNotes || 'Unit sedang dalam penanganan teknisi meja lab workshop.',
     createdAt: o.createdAt || 'Baru Masuk',
@@ -724,6 +732,15 @@ router.get('/orders', async (req, res) => {
 
     const formattedList = matched.map(formatCustomerOrder);
     const primary = formattedList[0];
+
+    const isReadyOrDoneOrder = (o) => {
+      const step = parseInt(o.step || o.currentStep || 1, 10);
+      const st = String(o.status || o.statusText || '').toLowerCase();
+      return step >= 4 || st.includes('siap') || st.includes('ambil') || st.includes('selesai') || st.includes('lunas');
+    };
+
+    const activeOrdersCount = formattedList.filter(o => !isReadyOrDoneOrder(o)).length;
+    const completedOrdersCount = formattedList.filter(o => isReadyOrDoneOrder(o)).length;
     const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
 
     res.json({
@@ -735,8 +752,8 @@ router.get('/orders', async (req, res) => {
         email: primary.email,
         district: primary.district,
         totalOrders: formattedList.length,
-        activeOrders: formattedList.filter(o => o.step < 5).length,
-        completedOrders: formattedList.filter(o => o.step >= 5).length,
+        activeOrders: activeOrdersCount,
+        completedOrders: completedOrdersCount,
         activeWarranties: activeWarrantiesCount
       },
       orders: formattedList

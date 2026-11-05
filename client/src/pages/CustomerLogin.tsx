@@ -473,26 +473,36 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
     setTimeout(() => setCopiedId(null), 2500);
   };
 
+  // Helper cek apakah unit sudah masuk tahap Siap Diambil di Workshop (Step 4) atau Sudah Diambil / Selesai (Step 5)
+  const isReadyOrPickedUp = (order: any) => {
+    const step = Number(order.step || order.currentStep || 1);
+    const st = String(order.status || '').toLowerCase();
+    return step >= 4 || st.includes('siap') || st.includes('ambil') || st.includes('selesai') || st.includes('lunas');
+  };
+
   // Ringkasan Statistik
   const stats = useMemo(() => {
     const total = orders.length;
-    const activeWarranties = orders.filter(o => o.warranty && o.warranty.isActive).length;
-    const inProgress = orders.filter(o => Number(o.step || 1) < 5).length;
-    const completed = orders.filter(o => Number(o.step || 1) >= 5).length;
+    const activeWarranties = orders.filter(o => (o.warranty?.isActive) || (isReadyOrPickedUp(o) && !o.warranty?.isExpired)).length;
+    const inProgress = orders.filter(o => !isReadyOrPickedUp(o)).length;
+    const completed = orders.filter(o => isReadyOrPickedUp(o)).length;
     return { total, activeWarranties, inProgress, completed };
   }, [orders]);
 
   // Filter & Search
   const filteredOrders = useMemo(() => {
     return orders.filter(o => {
+      const readyOrDone = isReadyOrPickedUp(o);
+      const hasActive = (o.warranty && o.warranty.isActive) || (readyOrDone && !o.warranty?.isExpired);
+
       // Filter status tab
-      if (statusFilter === 'active_warranty' && (!o.warranty || !o.warranty.isActive)) {
+      if (statusFilter === 'active_warranty' && !hasActive) {
         return false;
       }
-      if (statusFilter === 'in_progress' && Number(o.step || 1) >= 5) {
+      if (statusFilter === 'in_progress' && readyOrDone) {
         return false;
       }
-      if (statusFilter === 'completed' && Number(o.step || 1) < 5) {
+      if (statusFilter === 'completed' && !readyOrDone) {
         return false;
       }
 
@@ -791,8 +801,10 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
           <div className="space-y-4">
             {filteredOrders.map((order, idx) => {
               const warranty = order.warranty || {};
-              const isCompleted = Number(order.step || 1) >= 5;
-              const hasActiveWarranty = warranty.isActive;
+              const isReadyOrDone = isReadyOrPickedUp(order);
+              const isStep4Ready = Number(order.step || 1) === 4 || String(order.status || '').toLowerCase().includes('siap');
+              const isCompleted = isReadyOrDone;
+              const hasActiveWarranty = (warranty.isActive) || (isReadyOrDone && !warranty.isExpired);
               const isBattery = /baterai|battery/i.test(order.damageDescription || '');
 
               return (
@@ -831,11 +843,17 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
 
                     <div className="flex items-center gap-2">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                        isCompleted 
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                        isStep4Ready
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-300 ring-1 ring-emerald-400/30'
+                          : isCompleted 
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                            : 'bg-amber-50 text-amber-700 border border-amber-200'
                       }`}>
-                        {order.status || (isCompleted ? 'Selesai & Lunas' : `Tahap ${order.step || 1} dari 5`)}
+                        {isStep4Ready
+                          ? '🟢 SIAP DIAMBIL DI WORKSHOP'
+                          : isCompleted
+                            ? '✅ SELESAI & SUDAH DIAMBIL'
+                            : (order.status || `Tahap ${order.step || 1} dari 5`)}
                       </span>
                     </div>
                   </div>
@@ -878,7 +896,7 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
                   <div className={`p-4 rounded-2xl border transition-all ${
                     hasActiveWarranty 
                       ? 'bg-gradient-to-r from-amber-50/80 via-white to-amber-50/60 border-amber-300/90 shadow-2xs' 
-                      : !isCompleted
+                      : !isReadyOrDone
                         ? 'bg-blue-50/50 border-blue-200'
                         : 'bg-slate-50 border-slate-200'
                   }`}>
@@ -898,9 +916,9 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
 
                           {hasActiveWarranty ? (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
-                              🛡️ GARANSI AKTIF ({warranty.daysRemaining} Hari Lagi)
+                              🛡️ GARANSI AKTIF ({warranty.daysRemaining || 30} Hari Lagi)
                             </span>
-                          ) : !isCompleted ? (
+                          ) : !isReadyOrDone ? (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 border border-blue-200">
                               ⏳ GARANSI SIAGA
                             </span>
@@ -922,9 +940,11 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
 
                         <p className="text-[10.5px] text-slate-500 pl-8">
                           {hasActiveWarranty 
-                            ? 'Bebas biaya sparepart pengganti original & bebas biaya jasa bongkar pasang ulang selama masa garansi.' 
-                            : !isCompleted
-                              ? 'Garansi resmi akan otomatis aktif secara penuh setelah unit Anda selesai diperbaiki dan diambil di workshop.'
+                            ? (isStep4Ready
+                                ? 'Unit telah selesai diperbaiki dan siap diambil di counter workshop! Masa garansi resmi aktif penuh, bebas biaya perbaikan ulang & suku cadang.'
+                                : 'Unit telah diserahkan & diambil. Bebas biaya sparepart pengganti original & jasa teknisi selama masa garansi aktif.')
+                            : !isReadyOrDone
+                              ? 'Garansi resmi akan otomatis aktif secara penuh setelah status pengerjaan siap diambil atau sudah diambil di workshop.'
                               : `Masa garansi resmi unit ini telah berakhir pada ${warranty.endDate || 'periode lalu'}. Anda tetap dapat berkonsultasi untuk pengecekan berkala.`}
                         </p>
                       </div>
@@ -940,7 +960,7 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
                             <ShieldCheck className="w-4 h-4" />
                             <span>Klaim Garansi Unit Ini</span>
                           </button>
-                        ) : !isCompleted ? (
+                        ) : !isReadyOrDone ? (
                           <Link
                             to={`/lacak?id=${order.id}`}
                             className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs"

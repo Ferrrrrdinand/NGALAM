@@ -267,6 +267,35 @@ async function updateOrder(ticketId, updates) {
   const current = await getOrderById(cleanId);
   if (!current) return null;
 
+  const stepStatusMap = {
+    1: 'Registrasi & Masuk',
+    2: 'Diagnosa Meja Lab',
+    3: 'Pengerjaan & Sparepart',
+    4: 'Siap Diambil di Workshop',
+    5: 'Selesai & Sudah Diambil'
+  };
+
+  // Sinkronisasi status dan step jika salah satu diubah
+  if (updates.status && !updates.step && !updates.currentStep) {
+    const sLow = String(updates.status).toLowerCase();
+    if (sLow.includes('selesai') || sLow.includes('sudah')) {
+      updates.step = 5;
+      updates.currentStep = 5;
+    } else if (sLow.includes('siap') || sLow.includes('qc')) {
+      updates.step = 4;
+      updates.currentStep = 4;
+    }
+  }
+
+  const stepNum = parseInt(updates.step || updates.currentStep || current.step || current.currentStep || 1, 10);
+  const finalStatus = updates.status || updates.statusText || (updates.step !== undefined || updates.currentStep !== undefined ? stepStatusMap[stepNum] : current.status);
+  updates.status = finalStatus;
+  updates.statusText = finalStatus;
+  if (updates.step !== undefined || updates.currentStep !== undefined) {
+    updates.step = stepNum;
+    updates.currentStep = stepNum;
+  }
+
   const updatedOrder = { ...current, ...updates };
 
   // 1. Update di PostgreSQL jika terhubung

@@ -172,16 +172,26 @@ export default function AdminDashboard() {
 
   const handleUpdateStep = async (orderId, newStep, statusText) => {
     try {
+      const stepNames = {
+        1: 'Registrasi & Masuk',
+        2: 'Diagnosa Meja Lab',
+        3: 'Pengerjaan & Sparepart',
+        4: 'Siap Diambil di Workshop',
+        5: 'Selesai & Sudah Diambil'
+      };
+      const finalStatus = statusText || stepNames[newStep] || `Step ${newStep}`;
       const res = await fetchApi(`/api/orders/${orderId}`, {
         method: 'PUT',
         body: {
           currentStep: newStep,
-          statusText: statusText,
+          step: newStep,
+          status: finalStatus,
+          statusText: finalStatus,
           technician: user?.name || user?.username || 'Admin Workshop'
         }
       });
       if (res.ok && res.data.success) {
-        setTechSuccess(`Tiket ${orderId} diupdate ke Step ${newStep}!`);
+        setTechSuccess(`Tiket ${orderId} diupdate ke Step ${newStep} (${finalStatus})!`);
         setTimeout(() => setTechSuccess(''), 3000);
         loadData();
       }

@@ -139,7 +139,7 @@ export default function TechnicianTab({
                         return (
                           <button
                             key={s.num}
-                            onClick={() => handleUpdateStep(o.id, s.num)}
+                            onClick={() => handleUpdateStep(o.id, s.num, s.num === 4 ? 'Siap Diambil di Workshop' : s.num === 5 ? 'Selesai & Sudah Diambil' : s.name)}
                             title={s.name}
                             className={`py-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer text-center ${
                               isCurrent
