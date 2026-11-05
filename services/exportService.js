@@ -5,7 +5,7 @@
  */
 
 const ExcelJS = require('exceljs');
-const { readTransactions } = require('./financeService');
+const { readTransactions, getAllTransactionsWithWarranty } = require('./financeService');
 
 /**
  * Normalisasi dan parse tanggal secara aman ke objek Date
@@ -30,7 +30,9 @@ function parseDateSafe(dateInput, isEndOfDay = false) {
  * @returns {Array} Daftar transaksi yang cocok dengan filter
  */
 function filterTransactions(startDate, endDate) {
-  const allTransactions = readTransactions() || [];
+  const allTransactions = typeof getAllTransactionsWithWarranty === 'function' 
+    ? getAllTransactionsWithWarranty() 
+    : (readTransactions() || []);
 
   const start = startDate ? parseDateSafe(startDate, false) : null;
   const end = endDate ? parseDateSafe(endDate, true) : null;
@@ -93,7 +95,7 @@ async function generateTransactionsExcel({ startDate, endDate, adminName = 'Admi
   });
 
   // 1. HEADER SECTION (Branding & Metadata Laporan)
-  worksheet.mergeCells('A1:R1');
+  worksheet.mergeCells('A1:U1');
   const titleCell = worksheet.getCell('A1');
   titleCell.value = 'NGALAM FIX PRO - SISTEM OPERASIONAL WORKSHOP SERVIS SMARTPHONE';
   titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
@@ -101,9 +103,9 @@ async function generateTransactionsExcel({ startDate, endDate, adminName = 'Admi
   titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
   worksheet.getRow(1).height = 30;
 
-  worksheet.mergeCells('A2:R2');
+  worksheet.mergeCells('A2:U2');
   const subTitleCell = worksheet.getCell('A2');
-  subTitleCell.value = 'LAPORAN REKAP RIWAYAT TRANSAKSI KASIR & FAKTUR NOTA';
+  subTitleCell.value = 'LAPORAN REKAP RIWAYAT TRANSAKSI KASIR, FAKTUR NOTA & DATA GARANSI';
   subTitleCell.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FFB45309' } }; // Amber/Gold #b45309
   subTitleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFBEB' } }; // Soft Gold #fffbeb
   subTitleCell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -113,7 +115,7 @@ async function generateTransactionsExcel({ startDate, endDate, adminName = 'Admi
     ? `${formatIndoDate(startDate)} s/d ${formatIndoDate(endDate)}`
     : 'Semua Periode (Keseluruhan Transaksi)';
 
-  worksheet.mergeCells('A3:R3');
+  worksheet.mergeCells('A3:U3');
   const metaCell1 = worksheet.getCell('A3');
   metaCell1.value = `Periode Transaksi: ${periodeStr}   |   Diekspor oleh: ${adminName}   |   Waktu Cetak: ${new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })}`;
   metaCell1.font = { name: 'Arial', size: 9.5, italic: true, color: { argb: 'FF334155' } };
@@ -133,6 +135,9 @@ async function generateTransactionsExcel({ startDate, endDate, adminName = 'Admi
     { header: 'Nama Pelanggan', key: 'customerName', width: 24 },
     { header: 'No. WhatsApp / HP', key: 'customerPhone', width: 18 },
     { header: 'Perangkat Smartphone', key: 'phoneType', width: 24 },
+    { header: 'Layanan Diservis', key: 'serviceItem', width: 28 },
+    { header: 'Masa Garansi', key: 'warrantyTypeLabel', width: 24 },
+    { header: 'Status Klaim Garansi', key: 'warrantyClaimStatus', width: 22 },
     { header: 'Teknisi Penanggung Jawab', key: 'technicianName', width: 26 },
     { header: 'Biaya Dasar (Rp)', key: 'baseCost', width: 17 },
     { header: 'Diskon (Rp)', key: 'discount', width: 15 },
@@ -179,6 +184,12 @@ async function generateTransactionsExcel({ startDate, endDate, adminName = 'Admi
     totalDelivery += delivery;
     totalNettOmset += totalPaid;
 
+    const claimLabel = tx.warrantyClaimStatus === 'claimed'
+      ? 'SUDAH KLAIM GARANSI'
+      : tx.warrantyClaimStatus === 'resolved'
+      ? 'KLAIM SELESAI DIGANTI'
+      : 'BELUM KLAIM (GARANSI AKTIF)';
+
     const rowData = [
       idx + 1,
       tx.invoiceNumber || tx.id || '-',
@@ -187,6 +198,9 @@ async function generateTransactionsExcel({ startDate, endDate, adminName = 'Admi
       tx.customerName || 'Pelanggan Walk-in',
       tx.customerPhone || tx.whatsapp || '-',
       tx.phoneType || tx.deviceType || 'Smartphone',
+      tx.serviceItem || '-',
+      tx.warrantyTypeLabel || 'Garansi 30 Hari',
+      claimLabel,
       tx.technicianName || 'Teknisi Lab Meja 1',
       baseCost,
       discount,

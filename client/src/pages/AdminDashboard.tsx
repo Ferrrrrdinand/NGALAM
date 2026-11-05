@@ -568,6 +568,7 @@ export default function AdminDashboard() {
           {activeTab === "transactions" && (
             <TransactionsTab
               transactions={transactions}
+              setTransactions={setTransactions}
               loading={loading}
               handleExportExcel={handleExportExcel}
               setReceiptTx={setReceiptTx}

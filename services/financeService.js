@@ -122,6 +122,216 @@ function readTransactions() {
 }
 
 /**
+ * Helper: Memperkaya transaksi kasir dengan data garansi servis dan status klaim
+ */
+function enrichTransactionWarranty(tx, orderMap = null) {
+  if (!tx) return tx;
+
+  let serviceItem = tx.serviceItem || tx.serviceName || tx.damageDescription || '';
+  let warrantyClaimStatus = tx.warrantyClaimStatus || 'unclaimed'; // 'unclaimed' (Belum Klaim) | 'claimed' (Sudah Klaim) | 'resolved' (Klaim Selesai)
+  let warrantyClaimDate = tx.warrantyClaimDate || null;
+  let warrantyClaimNotes = tx.warrantyClaimNotes || '';
+
+  // 1. Cari data tiket servis terkait jika ada
+  let matchedOrder = null;
+  const cleanTicket = String(tx.ticketId || '').trim().toUpperCase();
+  if (orderMap && cleanTicket) {
+    matchedOrder = orderMap.get(cleanTicket);
+  } else if (cleanTicket) {
+    try {
+      const orders = readOrders();
+      matchedOrder = orders.find(o => o.id && String(o.id).trim().toUpperCase() === cleanTicket);
+    } catch (_) {}
+  }
+
+  if (matchedOrder) {
+    if (!serviceItem || serviceItem === 'ILMORA' || serviceItem === '-') {
+      serviceItem = matchedOrder.damageDescription || matchedOrder.damage || (Array.isArray(matchedOrder.problemTags) ? matchedOrder.problemTags.join(', ') : '');
+    }
+    if (matchedOrder.warrantyClaimStatus && !tx.warrantyClaimStatus) {
+      warrantyClaimStatus = matchedOrder.warrantyClaimStatus;
+    }
+    if (matchedOrder.warrantyClaimDate && !tx.warrantyClaimDate) {
+      warrantyClaimDate = matchedOrder.warrantyClaimDate;
+    }
+    if (matchedOrder.warrantyClaimNotes && !tx.warrantyClaimNotes) {
+      warrantyClaimNotes = matchedOrder.warrantyClaimNotes;
+    }
+  }
+
+  // 2. Deduksi nama layanan cerdas jika masih kosong
+  if (!serviceItem || serviceItem === 'ILMORA' || serviceItem === '-') {
+    const cost = Number(tx.totalPaid || tx.amount || 0);
+    const phone = String(tx.phoneType || '').toLowerCase();
+    if (cost === 450000 || /iphone 15|iphone 14|iphone 13|iphone 12|iphone 11/i.test(phone) && cost <= 500000 && cost >= 400000) {
+      serviceItem = 'Ganti Baterai Original 100% Health';
+    } else if (cost >= 1000000) {
+      serviceItem = 'Ganti Layar OLED / Super Retina Display';
+    } else if (cost <= 250000) {
+      serviceItem = 'Servis Port Cas & Konektor Charger';
+    } else if (cost >= 700000) {
+      serviceItem = 'Perbaikan Kamera OIS & Modul Sensor';
+    } else {
+      serviceItem = 'Perbaikan Hardware & Komponen Mesin';
+    }
+  }
+
+  // 3. Tentukan durasi garansi berdasarkan komponen servis
+  const sLower = serviceItem.toLowerCase();
+  let warrantyDurationDays = 30;
+  let warrantyTypeLabel = 'Garansi Hardware (30 Hari / 1 Bulan)';
+
+  if (/baterai|battery|batre/i.test(sLower)) {
+    warrantyDurationDays = 90;
+    warrantyTypeLabel = 'Garansi Baterai Original (90 Hari / 3 Bulan)';
+  } else if (/software|flash|bootloop|virus|sandi|pola/i.test(sLower)) {
+    warrantyDurationDays = 7;
+    warrantyTypeLabel = 'Garansi Software & OS (7 Hari / 1 Minggu)';
+  } else if (/cas|charge|charger|port|konektor/i.test(sLower)) {
+    warrantyDurationDays = 14;
+    warrantyTypeLabel = 'Garansi Port Charger (14 Hari / 2 Minggu)';
+  } else if (/layar|lcd|oled|retina|amoled|kaca/i.test(sLower)) {
+    warrantyDurationDays = 30;
+    warrantyTypeLabel = 'Garansi Layar & Kaca (30 Hari / 1 Bulan)';
+  } else {
+    warrantyDurationDays = 30;
+    warrantyTypeLabel = 'Garansi Servis Resmi (30 Hari / 1 Bulan)';
+  }
+
+  // 4. Hitung tanggal mulai, tanggal kedaluwarsa, dan sisa hari garansi
+  let startDate = new Date();
+  if (tx.date) {
+    const parsed = new Date(tx.date);
+    if (!isNaN(parsed.getTime())) startDate = parsed;
+  }
+  const endDate = new Date(startDate.getTime() + (warrantyDurationDays * 24 * 60 * 60 * 1000));
+  const today = new Date();
+
+  const diffTime = endDate.getTime() - today.getTime();
+  const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  const isExpired = diffTime < 0;
+
+  const formatDate = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  const warrantyValidUntil = formatDate(endDate);
+  const warrantyStartDate = formatDate(startDate);
+
+  const cleanNum = String(tx.ticketId || tx.invoiceNumber || '').replace(/[^0-9]/g, '').slice(-6) || '90D';
+  const warrantyCode = tx.warrantyCode || `GAR-${warrantyDurationDays}D-${cleanNum}`;
+
+  return {
+    ...tx,
+    serviceItem,
+    warrantyDurationDays,
+    warrantyTypeLabel,
+    warrantyStartDate,
+    warrantyValidUntil,
+    daysRemaining,
+    isExpired,
+    warrantyCode,
+    warrantyClaimStatus, // 'unclaimed' | 'claimed' | 'resolved'
+    warrantyClaimDate,
+    warrantyClaimNotes
+  };
+}
+
+/**
+ * Ambil seluruh transaksi kasir lengkap dengan kalkulasi garansi & status klaim
+ */
+function getAllTransactionsWithWarranty() {
+  const transactions = readTransactions();
+  let orderMap = new Map();
+  try {
+    const orders = readOrders();
+    orders.forEach(o => {
+      if (o.id) orderMap.set(String(o.id).trim().toUpperCase(), o);
+    });
+  } catch (_) {}
+
+  return transactions.map(tx => enrichTransactionWarranty(tx, orderMap));
+}
+
+/**
+ * Update Status Klaim Garansi pada Transaksi Faktur Kasir
+ */
+async function updateTransactionWarranty(invoiceOrId, updates = {}) {
+  const transactions = readTransactions();
+  const cleanKey = String(invoiceOrId).trim().toUpperCase();
+  const idx = transactions.findIndex(t => 
+    (t.invoiceNumber && t.invoiceNumber.toUpperCase() === cleanKey) ||
+    (t.id && t.id.toUpperCase() === cleanKey) ||
+    (t.ticketId && t.ticketId.toUpperCase() === cleanKey)
+  );
+
+  if (idx === -1) {
+    throw new Error(`Transaksi dengan faktur "${invoiceOrId}" tidak ditemukan.`);
+  }
+
+  const target = transactions[idx];
+  if (updates.warrantyClaimStatus) {
+    target.warrantyClaimStatus = updates.warrantyClaimStatus;
+  }
+  if (updates.warrantyClaimNotes !== undefined) {
+    target.warrantyClaimNotes = updates.warrantyClaimNotes;
+  }
+  if (updates.warrantyClaimDate !== undefined) {
+    target.warrantyClaimDate = updates.warrantyClaimDate;
+  } else if (updates.warrantyClaimStatus === 'claimed' && !target.warrantyClaimDate) {
+    target.warrantyClaimDate = new Date().toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+  if (updates.serviceItem) {
+    target.serviceItem = updates.serviceItem;
+  }
+  target.updatedAt = new Date().toISOString();
+
+  transactions[idx] = target;
+  writeTransactions(transactions);
+
+  // Sinkronkan ke tiket order terkait jika ada
+  if (target.ticketId) {
+    try {
+      const { updateOrder } = require('./orderService');
+      await updateOrder(target.ticketId, {
+        warrantyClaimStatus: target.warrantyClaimStatus,
+        warrantyClaimDate: target.warrantyClaimDate,
+        warrantyClaimNotes: target.warrantyClaimNotes
+      });
+    } catch (_) {}
+  }
+
+  // Sinkronkan ke PostgreSQL jika terhubung
+  if (db.isDbConnected()) {
+    try {
+      await db.query(`
+        UPDATE transactions
+        SET raw_data = $2
+        WHERE UPPER(invoice_number) = $1 OR UPPER(id) = $1 OR UPPER(order_id) = $1
+      `, [cleanKey, JSON.stringify(target)]);
+    } catch (pgErr) {
+      console.warn('[FinanceService] PostgreSQL update transaction warranty warning:', pgErr.message);
+    }
+  }
+
+  // Rekam ke Log Audit Keamanan
+  try {
+    await db.logActivity('WARRANTY_CLAIM_STATUS_UPDATED', 'transactions', target.invoiceNumber, {
+      invoiceNumber: target.invoiceNumber,
+      ticketId: target.ticketId,
+      customerName: target.customerName,
+      serviceItem: target.serviceItem,
+      warrantyClaimStatus: target.warrantyClaimStatus,
+      warrantyClaimDate: target.warrantyClaimDate,
+      warrantyClaimNotes: target.warrantyClaimNotes
+    });
+  } catch (_) {}
+
+  return enrichTransactionWarranty(target);
+}
+
+/**
  * Tulis Riwayat Transaksi ke JSON
  */
 function writeTransactions(list) {
@@ -264,8 +474,14 @@ async function recordNewTransaction(txData) {
     amountReceived: amountReceived,
     change: change,
     status: txData.status || 'Lunas',
-    cashierName: txData.cashierName || 'Ibu Sarah (Meja 1)'
+    cashierName: txData.cashierName || 'Ibu Sarah (Meja 1)',
+    serviceItem: txData.serviceItem || txData.serviceName || txData.damageDescription || '',
+    warrantyClaimStatus: txData.warrantyClaimStatus || 'unclaimed',
+    warrantyClaimDate: txData.warrantyClaimDate || null,
+    warrantyClaimNotes: txData.warrantyClaimNotes || ''
   };
+
+  const enrichedTx = enrichTransactionWarranty(newTx);
 
   // Simpan ke PostgreSQL jika terhubung
   if (db.isDbConnected()) {
@@ -274,20 +490,20 @@ async function recordNewTransaction(txData) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       ON CONFLICT (id) DO NOTHING
     `, [
-      newTx.id,
-      newTx.ticketId,
-      newTx.invoiceNumber,
-      newTx.customerName,
-      newTx.totalPaid,
-      newTx.paymentMethod,
-      newTx.cashierName,
-      JSON.stringify(newTx)
+      enrichedTx.id,
+      enrichedTx.ticketId,
+      enrichedTx.invoiceNumber,
+      enrichedTx.customerName,
+      enrichedTx.totalPaid,
+      enrichedTx.paymentMethod,
+      enrichedTx.cashierName,
+      JSON.stringify(enrichedTx)
     ]).catch(err => {
       console.warn('[FinanceService] PostgreSQL insert transactions error:', err.message);
     });
   }
 
-  transactions.unshift(newTx);
+  transactions.unshift(enrichedTx);
   writeTransactions(transactions);
 
   // Otomatis catat ke buku kas keuangan
@@ -295,13 +511,13 @@ async function recordNewTransaction(txData) {
     ref: invoiceNumber,
     type: 'pemasukan',
     category: 'Jasa Servis Smartphone',
-    description: `Pembayaran tiket ${newTx.ticketId} - ${newTx.phoneType} (${newTx.customerName}) via ${newTx.paymentMethod}`,
+    description: `Pembayaran tiket ${enrichedTx.ticketId} - ${enrichedTx.phoneType} (${enrichedTx.customerName}) via ${enrichedTx.paymentMethod} [${enrichedTx.serviceItem || 'Servis'}]`,
     debit: totalPaid,
     credit: 0,
-    cashier: newTx.cashierName
+    cashier: enrichedTx.cashierName
   });
 
-  return newTx;
+  return enrichedTx;
 }
 
 /**
@@ -577,5 +793,8 @@ module.exports = {
   getWitDisplayTime,
   generateMitraCode,
   recordMitraCommission,
-  payoutMitraCommission
+  payoutMitraCommission,
+  enrichTransactionWarranty,
+  getAllTransactionsWithWarranty,
+  updateTransactionWarranty
 };

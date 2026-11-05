@@ -52,6 +52,20 @@ export default function ReceiptModal({
               <span>{receiptTx.phoneType}</span>
             </div>
             <div className="flex justify-between">
+              <span>Layanan:</span>
+              <strong className="text-right max-w-[160px] truncate text-slate-900">{receiptTx.serviceItem || 'Servis Komponen & Hardware'}</strong>
+            </div>
+            <div className="flex justify-between">
+              <span>Garansi:</span>
+              <span className="font-bold text-amber-800">{receiptTx.warrantyTypeLabel || 'Garansi Resmi 30 Hari'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Status Garansi:</span>
+              <span className={`font-semibold ${receiptTx.warrantyClaimStatus === 'claimed' ? 'text-amber-700' : 'text-emerald-700'}`}>
+                {receiptTx.warrantyClaimStatus === 'claimed' ? 'Sudah Pernah Klaim' : 'Belum Klaim (Aktif)'}
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span>Kasir:</span>
               <span>{receiptTx.cashier || 'Meja 1'}</span>
             </div>

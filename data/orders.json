@@ -46,7 +46,10 @@
     "affiliateCommissionRate": 10,
     "affiliateCommissionStatus": "paid",
     "paid": true,
-    "affiliateCommissionPaidAt": "2026-11-05T09:15:30.250Z"
+    "affiliateCommissionPaidAt": "2026-11-05T09:15:30.250Z",
+    "warrantyClaimStatus": "unclaimed",
+    "warrantyClaimDate": null,
+    "warrantyClaimNotes": ""
   },
   {
     "id": "NGF-20261105-1687",

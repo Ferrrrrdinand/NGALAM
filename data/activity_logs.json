@@ -1,5 +1,79 @@
 [
   {
+    "id": "LOG-1793890196309-224",
+    "action": "WARRANTY_CLAIM_STATUS_UPDATED",
+    "table_name": "transactions",
+    "record_id": "INV-20261105-2552",
+    "payload": {
+      "invoiceNumber": "INV-20261105-2552",
+      "ticketId": "NGF-20261105-5755",
+      "customerName": "Pak Hendra Walk-in",
+      "warrantyClaimStatus": "unclaimed",
+      "warrantyClaimDate": null,
+      "warrantyClaimNotes": ""
+    },
+    "performed_at": "2026-11-05T14:49:56.309Z"
+  },
+  {
+    "id": "LOG-1793890196307-694",
+    "action": "ORDER_UPDATED",
+    "table_name": "orders",
+    "record_id": "NGF-20261105-5755",
+    "payload": {
+      "id": "NGF-20261105-5755",
+      "customerName": "Pak Hendra Walk-in",
+      "whatsapp": "081377889900",
+      "phoneType": "Samsung S24 Ultra",
+      "status": "Registrasi & Masuk",
+      "step": 1,
+      "technician": "Teknisi Lab Meja 1",
+      "cost": 200000,
+      "updates": {
+        "warrantyClaimStatus": "unclaimed",
+        "warrantyClaimDate": null,
+        "warrantyClaimNotes": ""
+      }
+    },
+    "performed_at": "2026-11-05T14:49:56.307Z"
+  },
+  {
+    "id": "LOG-1793890196303-306",
+    "action": "WARRANTY_CLAIM_STATUS_UPDATED",
+    "table_name": "transactions",
+    "record_id": "INV-20261105-2552",
+    "payload": {
+      "invoiceNumber": "INV-20261105-2552",
+      "ticketId": "NGF-20261105-5755",
+      "customerName": "Pak Hendra Walk-in",
+      "warrantyClaimStatus": "claimed",
+      "warrantyClaimDate": "5 November 2026",
+      "warrantyClaimNotes": "Pengecekan unit konsumen karena keluhan kendala teknis."
+    },
+    "performed_at": "2026-11-05T14:49:56.303Z"
+  },
+  {
+    "id": "LOG-1793890196302-393",
+    "action": "ORDER_UPDATED",
+    "table_name": "orders",
+    "record_id": "NGF-20261105-5755",
+    "payload": {
+      "id": "NGF-20261105-5755",
+      "customerName": "Pak Hendra Walk-in",
+      "whatsapp": "081377889900",
+      "phoneType": "Samsung S24 Ultra",
+      "status": "Registrasi & Masuk",
+      "step": 1,
+      "technician": "Teknisi Lab Meja 1",
+      "cost": 200000,
+      "updates": {
+        "warrantyClaimStatus": "claimed",
+        "warrantyClaimDate": "5 November 2026",
+        "warrantyClaimNotes": "Pengecekan unit konsumen karena keluhan kendala teknis."
+      }
+    },
+    "performed_at": "2026-11-05T14:49:56.302Z"
+  },
+  {
     "id": "LOG-1793889322450-174",
     "action": "AD_TOGGLED",
     "table_name": "ads",

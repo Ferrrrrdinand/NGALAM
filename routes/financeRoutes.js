@@ -15,6 +15,8 @@ const {
   recordNewTransaction,
   getFinancialSummary,
   getWitMonthYearPeriod,
+  getAllTransactionsWithWarranty,
+  updateTransactionWarranty,
 } = require('../services/financeService');
 const userService = require('../services/userService');
 
@@ -170,7 +172,7 @@ router.post('/records', async (req, res) => {
 // GET /api/finance/transactions
 router.get('/transactions', (req, res) => {
   try {
-    const list = readTransactions();
+    const list = getAllTransactionsWithWarranty();
     res.json({
       success: true,
       count: list.length,
@@ -178,6 +180,34 @@ router.get('/transactions', (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PATCH /api/finance/transactions/:id/warranty - Catat status klaim garansi transaksi kasir
+router.patch('/transactions/:id/warranty', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      warrantyClaimStatus,
+      warrantyClaimNotes,
+      warrantyClaimDate,
+      serviceItem
+    } = req.body;
+
+    const updated = await updateTransactionWarranty(id, {
+      warrantyClaimStatus,
+      warrantyClaimNotes,
+      warrantyClaimDate,
+      serviceItem
+    });
+
+    res.json({
+      success: true,
+      message: `Status garansi transaksi #${id} berhasil diperbarui menjadi: ${warrantyClaimStatus === 'claimed' ? 'Sudah Klaim Garansi' : warrantyClaimStatus === 'resolved' ? 'Klaim Selesai Diganti' : 'Belum Klaim'}.`,
+      data: updated
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
   }
 });
 

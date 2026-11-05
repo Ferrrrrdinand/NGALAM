@@ -19,7 +19,11 @@
     "amountReceived": 200000,
     "change": 0,
     "status": "Lunas",
-    "cashierName": "Ibu Sarah (Meja 1)"
+    "cashierName": "Ibu Sarah (Meja 1)",
+    "warrantyClaimStatus": "unclaimed",
+    "warrantyClaimNotes": "",
+    "warrantyClaimDate": null,
+    "updatedAt": "2026-11-05T14:49:56.305Z"
   },
   {
     "id": "TRX-20261105-4774",
