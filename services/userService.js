@@ -46,7 +46,28 @@ function bucketForRole(role) {
 }
 
 function normalizeDbUser(row) {
-  const raw = row && row.raw_data && typeof row.raw_data === 'object' ? row.raw_data : {};
+  let raw = {};
+  if (row && row.raw_data) {
+    if (typeof row.raw_data === 'object') {
+      raw = row.raw_data;
+    } else if (typeof row.raw_data === 'string') {
+      try {
+        raw = JSON.parse(row.raw_data);
+      } catch (_) {
+        raw = {};
+      }
+    }
+  }
+
+  const totalCommission = raw.totalCommission !== undefined 
+    ? Number(raw.totalCommission) 
+    : Number(row.total_commission || 0);
+  const withdrawnCommission = raw.withdrawnCommission !== undefined 
+    ? Number(raw.withdrawnCommission) 
+    : 0;
+  const balance = raw.balance !== undefined 
+    ? Number(raw.balance) 
+    : Math.max(0, totalCommission - withdrawnCommission);
   return {
     ...raw,
     id: raw.id || row.id,
@@ -59,8 +80,11 @@ function normalizeDbUser(row) {
     phone: raw.phone || row.phone || '',
     email: raw.email || row.email || '',
     referralCode: raw.referralCode || raw.referral_code || row.referral_code || '',
-    commissionRate: raw.commissionRate !== undefined ? raw.commissionRate : Number(row.commission_rate || 10),
-    totalCommission: raw.totalCommission !== undefined ? raw.totalCommission : Number(row.total_commission || 0),
+    commissionRate: raw.commissionRate !== undefined ? Number(raw.commissionRate) : Number(row.commission_rate || 10),
+    totalCommission,
+    withdrawnCommission,
+    balance,
+    commissionHistory: Array.isArray(raw.commissionHistory) ? raw.commissionHistory : [],
     status: raw.status || row.status || 'Active',
     lastActive: raw.lastActive || row.last_active || 'Baru Saja',
     desk: raw.desk || row.desk || '',

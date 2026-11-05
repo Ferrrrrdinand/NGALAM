@@ -244,6 +244,7 @@ async function updateOrder(ticketId, updates) {
         SET status = COALESCE($2, status),
             technician = COALESCE($3, technician),
             step = COALESCE($4, step),
+            cost = COALESCE($6, cost),
             raw_data = $5,
             updated_at = CURRENT_TIMESTAMP
         WHERE UPPER(id) = $1
@@ -252,7 +253,8 @@ async function updateOrder(ticketId, updates) {
         updates.status || null,
         updates.technician || (updates.assignedTechnician ? updates.assignedTechnician.name : null),
         updates.step || updates.currentStep || null,
-        JSON.stringify(updatedOrder)
+        JSON.stringify(updatedOrder),
+        updates.cost !== undefined ? Number(String(updates.cost).replace(/\D/g, '')) || 0 : null
       ]);
     } catch (pgErr) {
       console.warn('[OrderService] PostgreSQL updateOrder error:', pgErr.message);

@@ -76,9 +76,10 @@ router.post('/', async (req, res) => {
     const affiliateCode = (orderData.affiliateRef || orderData.referralCode || req.query.ref || '').trim().toUpperCase();
     if (affiliateCode) {
       try {
-        const { readUsers } = require('../services/financeService');
-        const users = readUsers();
-        const mitra = users.find(u => (u.referralCode || '').toUpperCase() === affiliateCode);
+        const userService = require('../services/userService');
+        await userService.refreshUsersFromDb();
+        const users = userService.getAllUsers();
+        const mitra = users.find(u => (u.referralCode || u.referral_code || '').toUpperCase() === affiliateCode);
 
         // Validasi: Pelanggan hanya bisa menggunakan kode referral mitra 1 kali
         const allExistingOrders = await getAllOrders();
@@ -91,11 +92,11 @@ router.post('/', async (req, res) => {
         });
 
         if (mitra && !hasUsedReferral) {
-          const rate = mitra.commissionRate !== undefined ? mitra.commissionRate : 10;
+          const rate = mitra.commissionRate !== undefined ? Number(mitra.commissionRate) : 10;
 
           orderData.isPartner = true;
           orderData.partnerName = mitra.name;
-          orderData.affiliateRef = mitra.referralCode;
+          orderData.affiliateRef = mitra.referralCode || mitra.referral_code;
           orderData.affiliateMitraName = mitra.name;
           orderData.affiliateCommissionRate = rate;
           orderData.affiliateCommission = 0; // Belum dibayar, menunggu konfirmasi kasir/admin
@@ -140,7 +141,18 @@ async function handleUpdateOrder(req, res) {
     if (isPayingNow && isAffiliatePending) {
       try {
         const { recordMitraCommission } = require('../services/financeService');
-        const finalCost = Number(String(updates.cost !== undefined ? updates.cost : existing.cost || 0).replace(/\D/g, '')) || 0;
+        let finalCost = 0;
+        if (typeof updates.cost === 'number') {
+          finalCost = updates.cost;
+        } else if (typeof updates.cost === 'string' && updates.cost.trim()) {
+          const match = updates.cost.match(/(\d[\d\.,]*)/);
+          if (match) finalCost = Number(match[1].replace(/\./g, '').replace(/,/g, '')) || 0;
+        } else if (typeof existing.cost === 'number') {
+          finalCost = existing.cost;
+        } else if (typeof existing.cost === 'string' && existing.cost.trim()) {
+          const match = existing.cost.match(/(\d[\d\.,]*)/);
+          if (match) finalCost = Number(match[1].replace(/\./g, '').replace(/,/g, '')) || 0;
+        }
         const rate = existing.affiliateCommissionRate || updates.affiliateCommissionRate || 10;
         const commissionAmt = Math.round(finalCost * (rate / 100));
 

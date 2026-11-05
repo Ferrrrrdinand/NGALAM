@@ -373,28 +373,68 @@ async function recordMitraCommission(refCode, commissionAmount, orderId = '') {
   const commNum = Math.max(0, parseInt(commissionAmount, 10) || 0);
   if (!cleanRef || commNum <= 0) return null;
 
+  try {
+    await userService.refreshUsersFromDb();
+  } catch (_) {}
+
   const mitras = userService.getMitraUsers();
-  const mitraIdx = mitras.findIndex(u => (u.referralCode || '').toUpperCase() === cleanRef);
+  const mitraIdx = mitras.findIndex(u => (u.referralCode || u.referral_code || '').toUpperCase() === cleanRef);
 
   let updatedMitra = null;
   if (mitraIdx !== -1) {
-    mitras[mitraIdx].totalCommission = (mitras[mitraIdx].totalCommission || 0) + commNum;
-    mitras[mitraIdx].balance = (mitras[mitraIdx].balance || 0) + commNum;
+    mitras[mitraIdx].totalCommission = (Number(mitras[mitraIdx].totalCommission) || 0) + commNum;
+    mitras[mitraIdx].balance = (Number(mitras[mitraIdx].balance) || 0) + commNum;
     mitras[mitraIdx].lastActive = new Date().toLocaleString('id-ID');
     
     if (!Array.isArray(mitras[mitraIdx].commissionHistory)) {
       mitras[mitraIdx].commissionHistory = [];
     }
-    mitras[mitraIdx].commissionHistory.push({
+    const historyItem = {
       orderId,
       amount: commNum,
       type: 'credit',
       date: new Date().toISOString(),
       note: `Komisi 10% nota order ${orderId}`
-    });
+    };
+    mitras[mitraIdx].commissionHistory.push(historyItem);
 
     updatedMitra = mitras[mitraIdx];
     await userService.saveMitraUsers(mitras);
+
+    // Sync langsung ke tabel commissions di basis data PostgreSQL
+    try {
+      const db = require('./db');
+      if (db.isDbConnected()) {
+        await db.query(`
+          INSERT INTO commissions (referral_code, order_id, commission_amount, status, raw_data, created_at)
+          VALUES ($1, $2, $3, $4, $5, NOW())
+        `, [
+          cleanRef,
+          orderId,
+          commNum,
+          'Tercatat',
+          JSON.stringify({
+            mitraId: mitras[mitraIdx].id,
+            mitraName: mitras[mitraIdx].name,
+            phone: mitras[mitraIdx].phone,
+            orderId,
+            amount: commNum,
+            type: 'credit',
+            note: `Komisi 10% nota order ${orderId}`,
+            createdAt: new Date().toISOString()
+          })
+        ]);
+
+        await db.logActivity('COMMISSION_RECORDED', 'commissions', orderId, {
+          referralCode: cleanRef,
+          orderId,
+          amount: commNum,
+          mitraName: mitras[mitraIdx].name
+        });
+      }
+    } catch (pgCommErr) {
+      console.warn('[FinanceService] Error inserting into commissions table:', pgCommErr.message);
+    }
   }
 
   return {
@@ -412,11 +452,15 @@ async function payoutMitraCommission(refCode, amount = null, note = 'Pencairan k
   const cleanRef = String(refCode || '').trim().toUpperCase();
   if (!cleanRef) return null;
 
+  try {
+    await userService.refreshUsersFromDb();
+  } catch (_) {}
+
   const mitras = userService.getMitraUsers();
-  const mitraIdx = mitras.findIndex(u => (u.referralCode || '').toUpperCase() === cleanRef);
+  const mitraIdx = mitras.findIndex(u => (u.referralCode || u.referral_code || '').toUpperCase() === cleanRef);
   if (mitraIdx === -1) return null;
 
-  const currentBalance = mitras[mitraIdx].balance || 0;
+  const currentBalance = mitras[mitraIdx].balance !== undefined ? Number(mitras[mitraIdx].balance) : Math.max(0, (Number(mitras[mitraIdx].totalCommission) || 0) - (Number(mitras[mitraIdx].withdrawnCommission) || 0));
   const payoutAmount = amount !== null ? Math.min(currentBalance, Math.max(0, parseInt(amount, 10) || 0)) : currentBalance;
 
   if (payoutAmount <= 0) {
@@ -428,20 +472,76 @@ async function payoutMitraCommission(refCode, amount = null, note = 'Pencairan k
   }
 
   mitras[mitraIdx].balance = Math.max(0, currentBalance - payoutAmount);
-  mitras[mitraIdx].withdrawnCommission = (mitras[mitraIdx].withdrawnCommission || 0) + payoutAmount;
+  mitras[mitraIdx].withdrawnCommission = (Number(mitras[mitraIdx].withdrawnCommission) || 0) + payoutAmount;
   mitras[mitraIdx].lastPayoutAt = new Date().toLocaleString('id-ID');
 
   if (!Array.isArray(mitras[mitraIdx].commissionHistory)) {
     mitras[mitraIdx].commissionHistory = [];
   }
-  mitras[mitraIdx].commissionHistory.push({
+  const historyItem = {
     amount: payoutAmount,
     type: 'debit',
     date: new Date().toISOString(),
     note
-  });
+  };
+  mitras[mitraIdx].commissionHistory.push(historyItem);
 
   await userService.saveMitraUsers(mitras);
+
+  // Catat pencairan komisi ke PostgreSQL (tabel commissions & finances)
+  try {
+    const db = require('./db');
+    if (db.isDbConnected()) {
+      const payoutId = `PAYOUT-${Date.now()}`;
+      await db.query(`
+        INSERT INTO commissions (referral_code, order_id, commission_amount, status, raw_data, created_at)
+        VALUES ($1, $2, $3, $4, $5, NOW())
+      `, [
+        cleanRef,
+        payoutId,
+        payoutAmount,
+        'Dicairkan',
+        JSON.stringify({
+          mitraId: mitras[mitraIdx].id,
+          mitraName: mitras[mitraIdx].name,
+          payoutAmount,
+          note,
+          type: 'debit',
+          createdAt: new Date().toISOString()
+        })
+      ]);
+
+      // Catat ke buku kas pengeluaran
+      await db.query(`
+        INSERT INTO finances (id, type, category, amount, description, date, source, recorded_by, raw_data, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+      `, [
+        payoutId,
+        'expense',
+        'Komisi Afiliasi Mitra',
+        payoutAmount,
+        `Pencairan komisi mitra ${mitras[mitraIdx].name} (${cleanRef}): ${note}`,
+        new Date().toISOString().split('T')[0],
+        'Kasir Workshop',
+        'Admin Workshop',
+        JSON.stringify({
+          mitraId: mitras[mitraIdx].id,
+          mitraName: mitras[mitraIdx].name,
+          referralCode: cleanRef,
+          amount: payoutAmount
+        })
+      ]);
+
+      await db.logActivity('COMMISSION_PAYOUT', 'commissions', cleanRef, {
+        referralCode: cleanRef,
+        payoutAmount,
+        mitraName: mitras[mitraIdx].name,
+        note
+      });
+    }
+  } catch (pgErr) {
+    console.warn('[FinanceService] Error recording payout to database:', pgErr.message);
+  }
 
   return {
     success: true,

@@ -393,12 +393,16 @@ router.post('/auth/complete-profile', async (req, res) => {
 });
 
 // GET /api/mitra/check - Cek profil & saldo komisi mitra berdasarkan No WhatsApp / Kode Afiliasi
-router.get('/check', (req, res) => {
+router.get('/check', async (req, res) => {
   try {
     const query = (req.query.phone || req.query.query || req.query.q || '').trim();
     if (!query) {
       return res.status(400).json({ success: false, message: 'Nomor WhatsApp atau kode mitra wajib disertakan.' });
     }
+
+    try {
+      await userService.refreshUsersFromDb();
+    } catch (_) {}
 
     const cleanQuery = query.toUpperCase();
     const users = readUsers();
@@ -416,13 +420,14 @@ router.get('/check', (req, res) => {
     }
 
     const details = buildMitraAffiliateDetails(req, mitra.referralCode);
-    const allOrders = readOrders();
+    const { getAllOrders } = require('../services/orderService');
+    const allOrders = await getAllOrders();
     const myReferredOrders = allOrders.filter(o =>
       (o.affiliateRef && o.affiliateRef.toUpperCase() === (mitra.referralCode || '').toUpperCase()) ||
       (o.partnerName && o.partnerName.toLowerCase().includes(mitra.name.toLowerCase()))
     );
 
-    const balance = mitra.balance !== undefined ? mitra.balance : (mitra.totalCommission || 0);
+    const balance = mitra.balance !== undefined ? mitra.balance : Math.max(0, (Number(mitra.totalCommission) || 0) - (Number(mitra.withdrawnCommission) || 0));
 
     res.json({
       success: true,
@@ -870,21 +875,26 @@ router.post('/login', async (req, res) => {
 });
 
 // GET /api/mitra/dashboard - Data Dashboard & Performa Afiliasi Mitra
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', async (req, res) => {
   try {
     const refCode = (req.query.ref || '').trim().toUpperCase();
     if (!refCode) {
       return res.status(400).json({ success: false, message: 'Kode referral mitra wajib disertakan.' });
     }
 
+    try {
+      await userService.refreshUsersFromDb();
+    } catch (_) {}
+
     const users = readUsers();
-    const mitra = users.find(u => (u.referralCode || '').toUpperCase() === refCode);
+    const mitra = users.find(u => (u.referralCode || u.referral_code || '').toUpperCase() === refCode);
 
     if (!mitra) {
       return res.status(404).json({ success: false, message: 'Akun mitra tidak ditemukan.' });
     }
 
-    const allOrders = readOrders();
+    const { getAllOrders } = require('../services/orderService');
+    const allOrders = await getAllOrders();
     const myReferredOrders = allOrders.filter(o =>
       (o.affiliateRef && o.affiliateRef.toUpperCase() === refCode) ||
       (o.partnerName && o.partnerName.toLowerCase().includes(mitra.name.toLowerCase()))
