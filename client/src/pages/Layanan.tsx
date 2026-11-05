@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { 
   Smartphone, Battery, Sparkles, UserCheck, Gem, 
   Zap, Cable, Camera, Volume2, Cpu, Microscope, X,
-  Search, CheckCircle2
+  Search, CheckCircle2, ShieldCheck, ArrowRight, MessageCircle,
+  Check, PhoneCall
 } from 'lucide-react';
 
 export default function Layanan() {
@@ -157,6 +158,20 @@ export default function Layanan() {
     }
   ];
 
+  const categories = [
+    { id: 'all', label: 'Semua Layanan', icon: null },
+    { id: 'iphone', label: 'Apple iPhone', icon: <Smartphone className="w-3.5 h-3.5" /> },
+    { id: 'android', label: 'Android Phone', icon: <Cpu className="w-3.5 h-3.5" /> },
+    { id: 'layar', label: 'Layar & Kaca', icon: <Gem className="w-3.5 h-3.5" /> },
+    { id: 'baterai', label: 'Baterai & Daya', icon: <Battery className="w-3.5 h-3.5" /> },
+    { id: 'mesin', label: 'Mesin & IC', icon: <Microscope className="w-3.5 h-3.5" /> },
+  ];
+
+  const getCategoryCount = (catId: string) => {
+    if (catId === 'all') return services.length;
+    return services.filter(s => s.cat.includes(catId)).length;
+  };
+
   const filtered = services.filter((s) => {
     const matchFilter = filter === 'all' || s.cat.includes(filter);
     const matchSearch = !search || s.title.toLowerCase().includes(search.toLowerCase()) || s.desc.toLowerCase().includes(search.toLowerCase());
@@ -164,70 +179,72 @@ export default function Layanan() {
   });
 
   return (
-    <div className="bg-[#fcfbf7] min-h-screen text-slate-900 pb-16">
+    <div className="bg-[#fcfbf7] min-h-screen text-slate-900 pb-20">
       {/* ======================================================== */}
-      {/* HEADER SECTION: LUXURY HERO CARD */}
+      {/* 1. HERO HEADER SECTION (LUXURY BRANDING) */}
       {/* ======================================================== */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-amber-500/10 via-amber-400/5 to-transparent pt-8 pb-8 sm:pt-12 sm:pb-12 border-b border-amber-200/40">
-        <div className="wrap max-w-5xl mx-auto px-4 text-center">
+      <section className="relative overflow-hidden bg-gradient-to-b from-amber-500/12 via-amber-400/5 to-transparent pt-8 pb-8 sm:pt-14 sm:pb-12 border-b border-amber-200/40">
+        {/* Glow ambient background elements */}
+        <div className="absolute top-0 right-1/4 -mt-20 w-80 h-80 rounded-full bg-amber-400/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/4 -ml-20 w-80 h-80 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none"></div>
+
+        <div className="wrap max-w-5xl mx-auto px-4 text-center relative z-10">
           
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500/15 via-amber-400/25 to-amber-600/15 border border-amber-400/60 text-amber-900 shadow-2xs mb-3.5">
+          {/* Official Workshop Pill */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-500/20 via-amber-400/25 to-amber-600/20 border border-amber-400/60 text-amber-950 shadow-2xs mb-3.5">
             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-            <span>Spesialis Smartphone Android &amp; Apple iPhone</span>
+            <span>Spesialis Servis iPhone &amp; Android Resmi di Malang</span>
           </div>
 
-          {/* Heading */}
+          {/* Headline */}
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-tight leading-tight mb-3">
             Katalog Lengkap Layanan Perbaikan
           </h1>
 
           {/* Subtitle */}
           <p className="text-xs sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 font-normal">
-            Semua perbaikan smartphone Android dan Apple iPhone dikerjakan oleh teknisi spesialis bersertifikasi di meja transparan. Pengecekan gratis &amp; bergaransi tertulis.
+            Semua perbaikan smartphone Android &amp; iPhone dikerjakan presisi oleh teknisi bersertifikasi di meja kerja transparan. Pengecekan awal 100% gratis dengan jaminan garansi tertulis.
           </p>
 
-          {/* Highlights Row (Inline Luxury Chips) */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto text-xs sm:text-sm font-bold text-slate-800">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+          {/* 4 Feature Highlights Chips */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto text-xs sm:text-sm font-bold text-slate-800">
+            <div className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
               <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
               <span>Bisa Ditunggu (30–60 Mnt)</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+            <div className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
               <Gem className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-500 shrink-0" />
               <span>Suku Cadang Grade Original</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-amber-200/80 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
-              <span>Garansi s/d 90 Hari</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
+              <span>Garansi Baterai 90 Hari</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-amber-200/80 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500 shrink-0" />
+              <span>Diagnosa Awal 100% Gratis</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* STICKY TOOLBAR: SWIPEABLE CATEGORY PILLS + SEARCH */}
+      {/* 2. STICKY TOOLBAR: SWIPEABLE CATEGORIES & LIVE SEARCH */}
       {/* ======================================================== */}
-      <section className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/50 shadow-xs py-3">
+      <section className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/60 shadow-xs py-3">
         <div className="wrap max-w-6xl mx-auto px-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
           
-          {/* HORIZONTAL SWIPEABLE CATEGORY PILLS (TIDAK MENUMPUK DI MOBILE) */}
+          {/* Horizontal Swipeable Category Pills */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
-            {[
-              { id: 'all', label: 'Semua Layanan (12)', icon: null },
-              { id: 'iphone', label: 'Apple iPhone', icon: <Smartphone className="w-3.5 h-3.5" /> },
-              { id: 'android', label: 'Android Phone', icon: <Cpu className="w-3.5 h-3.5" /> },
-              { id: 'layar', label: 'Layar & Kaca', icon: <Gem className="w-3.5 h-3.5" /> },
-              { id: 'baterai', label: 'Baterai & Daya', icon: <Battery className="w-3.5 h-3.5" /> },
-              { id: 'mesin', label: 'Mesin & IC', icon: <Microscope className="w-3.5 h-3.5" /> },
-            ].map((t) => {
+            {categories.map((t) => {
               const isActive = filter === t.id;
+              const count = getCategoryCount(t.id);
               return (
                 <button
                   key={t.id}
                   type="button"
                   onClick={() => setFilter(t.id)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                     isActive
                       ? 'bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-white shadow-md shadow-amber-500/25'
                       : 'bg-white hover:bg-amber-50/60 text-slate-700 border border-slate-200 hover:border-amber-300 shadow-2xs'
@@ -235,12 +252,17 @@ export default function Layanan() {
                 >
                   {t.icon}
                   <span>{t.label}</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                    isActive ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {count}
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          {/* SEARCH BOX */}
+          {/* Search Box */}
           <div className="relative w-full md:w-72 shrink-0">
             <Search className="w-4 h-4 text-amber-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -266,7 +288,7 @@ export default function Layanan() {
       </section>
 
       {/* ======================================================== */}
-      {/* MAIN CATALOG: GRID KARTU LAYANAN MEWAH & RAPI */}
+      {/* 3. MAIN CATALOG GRID: MODERN LUXURY SERVICE CARDS */}
       {/* ======================================================== */}
       <main className="wrap max-w-6xl mx-auto px-4 py-6 sm:py-10">
         {/* Status Count Bar */}
@@ -286,13 +308,13 @@ export default function Layanan() {
             {filtered.map((s) => (
               <div 
                 key={s.id} 
-                className="group flex flex-col justify-between rounded-2xl bg-white border border-slate-200/90 hover:border-amber-400/70 p-5 sm:p-6 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="group flex flex-col justify-between rounded-2xl bg-white border border-slate-200/90 hover:border-amber-400/80 p-5 sm:p-6 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 style={{
                   boxShadow: '0 4px 20px -5px rgba(15, 23, 42, 0.05)'
                 }}
               >
                 <div>
-                  {/* Top Row: Category Pill & Est Time */}
+                  {/* Top Row: Category Tag & Estimated Time */}
                   <div className="flex items-center justify-between gap-2 mb-3.5">
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-800 border border-amber-500/20">
                       {s.pill}
@@ -305,7 +327,7 @@ export default function Layanan() {
 
                   {/* Icon & Title */}
                   <div className="flex items-start gap-3.5 mb-2.5">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/15 via-amber-400/20 to-amber-600/10 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/15 via-amber-400/20 to-amber-600/10 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
                       {s.icon}
                     </div>
                     <h3 className="text-base font-black text-slate-900 leading-snug group-hover:text-amber-700 transition-colors">
@@ -329,7 +351,7 @@ export default function Layanan() {
                   </ul>
                 </div>
 
-                {/* Bottom Meta & Booking Button */}
+                {/* Bottom Row: Price & Action Button */}
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                   <div>
                     <span className="block text-[10px] uppercase font-bold text-slate-400 leading-tight">
@@ -359,17 +381,115 @@ export default function Layanan() {
               Layanan Tidak Ditemukan
             </h4>
             <p className="text-xs text-slate-500 mb-4">
-              Tidak ada hasil untuk pencarian "{search}". Coba kata kunci lain atau hubungi admin WhatsApp kami.
+              Tidak ada hasil untuk kata kunci "{search}". Coba kata kunci lain atau konsultasikan langsung via WhatsApp.
             </p>
             <button
               type="button"
               onClick={() => { setSearch(''); setFilter('all'); }}
-              className="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs shadow-xs cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs cursor-pointer transition-colors"
             >
               Reset Filter &amp; Pencarian
             </button>
           </div>
         )}
+
+        {/* ======================================================== */}
+        {/* 4. WORKFLOW PROCESS STEPS: TRANSPARAN & CEPAT */}
+        {/* ======================================================== */}
+        <section className="mt-14 sm:mt-20 pt-10 border-t border-slate-200/80">
+          <div className="text-center max-w-xl mx-auto mb-8 sm:mb-10">
+            <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+              Prosedur Servis Resmi
+            </span>
+            <h2 className="text-xl sm:text-3xl font-black text-slate-950 mt-2">
+              4 Langkah Mudah Servis di Ngalam Fix Pro
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Pengerjaan transparan di depan Anda tanpa risiko komponen tertukar.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                num: '01',
+                title: 'Konsultasi & Cek Awal',
+                desc: 'Diagnosa kerusakan gratis langsung di depan meja teknisi tanpa biaya bongkar.'
+              },
+              {
+                num: '02',
+                title: 'Transparansi Estimasi',
+                desc: 'Konfirmasi total biaya dan ketersediaan suku cadang resmi sebelum pengerjaan dimulai.'
+              },
+              {
+                num: '03',
+                title: 'Pengerjaan Cepat',
+                desc: 'Bisa ditonton langsung di meja transparan, durasi rata-rata hanya 30–60 menit.'
+              },
+              {
+                num: '04',
+                title: 'QC 24 Titik & Garansi',
+                desc: 'Pengecekan fungsi menyeluruh dan penerbitan nota garansi resmi tertulis.'
+              }
+            ].map((step, idx) => (
+              <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs relative">
+                <span className="text-2xl font-black text-amber-500/30 block mb-1">
+                  {step.num}
+                </span>
+                <b className="text-sm font-bold text-slate-900 block mb-1">
+                  {step.title}
+                </b>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  {step.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ======================================================== */}
+        {/* 5. CONSULTATION CALLOUT BANNER (KENDALA KHUSUS) */}
+        {/* ======================================================== */}
+        <section 
+          className="mt-10 sm:mt-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white border border-amber-500/30 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6"
+          style={{
+            boxShadow: '0 20px 50px -15px rgba(212, 175, 55, 0.2)'
+          }}
+        >
+          <div className="space-y-2 text-center md:text-left">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Punya Kerusakan Khusus Lainnya?</span>
+            </span>
+            <h3 className="text-lg sm:text-2xl font-black text-white">
+              Tidak Menemukan Kendala HP Anda di Daftar?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+              Kami juga menangani reparasi casing bengkok, pemulihan data memori, ganti housing &amp; frame, bypass kendala software, serta konsultasi suku cadang langka.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+            <a
+              href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kerusakan%20smartphone%20saya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
+            >
+              <PhoneCall className="w-4 h-4" />
+              <span>Konsultasi WA Teknisi ↗</span>
+            </a>
+
+            <Link
+              to="/pesan-servis"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer"
+            >
+              <span>Booking Antrean Online</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
+
       </main>
     </div>
   );
