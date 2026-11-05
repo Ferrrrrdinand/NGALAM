@@ -19,7 +19,7 @@ const DEFAULT_ADS = [
     badge: '👑 MEMBER BARU DISKON 10%',
     ctaText: 'Daftar & Klaim 10% ↗',
     targetUrl: '/akun-pelanggan?tab=register&promo=MEMBER10',
-    imageUrl: 'images/spesialis-hp-banner.jpg',
+    imageUrl: '',
     theme: 'gold',
     active: true,
     location: 'home_under_steps',
@@ -35,7 +35,7 @@ const DEFAULT_ADS = [
     badge: '⚡ GARANSI 90 HARI',
     ctaText: 'Klaim Servis Baterai ↗',
     targetUrl: '/pesan-servis?problem=baterai',
-    imageUrl: 'images/promo-banner-1.jpg',
+    imageUrl: '',
     theme: 'gold',
     active: true,
     location: 'home_under_steps',
@@ -51,7 +51,7 @@ const DEFAULT_ADS = [
     badge: '🔥 DISKON S/D 30% + BONUS 9H',
     ctaText: 'Lihat Estimasi LCD ↗',
     targetUrl: '/pesan-servis?problem=lcd&promo=FREEGLASS9H',
-    imageUrl: 'images/promo-banner-tempered-glass.jpg',
+    imageUrl: '',
     theme: 'emerald',
     active: true,
     location: 'home_under_steps',
@@ -67,7 +67,7 @@ const DEFAULT_ADS = [
     badge: '🛵 PICKUP & DELIVERY MALANG',
     ctaText: 'Pesan Antar Jemput WA ↗',
     targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20mau%20layanan%20antar%20jemput%20servis%20HP',
-    imageUrl: 'images/spesialis-hp-banner.jpg',
+    imageUrl: '',
     theme: 'dark',
     active: true,
     location: 'home_under_steps',
@@ -83,7 +83,7 @@ const DEFAULT_ADS = [
     badge: '⏱️ BISA DITUNGGU (30–60 MENIT)',
     ctaText: 'Konsultasi Teknisi ↗',
     targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
-    imageUrl: 'images/spesialis-hp-banner.jpg',
+    imageUrl: '',
     theme: 'gold',
     active: true,
     location: 'home_under_steps',
@@ -310,7 +310,7 @@ async function createAd(data) {
     headline: (data.headline || data.title || '').trim(),
     description: (data.description || '').trim(),
     badge: (data.badge || '🔥 PROMO SPESIAL').trim(),
-    imageUrl: (data.imageUrl || data.image || 'images/promo-banner-1.jpg').trim(),
+    imageUrl: '', // Pure text-only ads to preserve database memory
     targetUrl: (data.targetUrl || data.url || '/pesan-servis').trim(),
     ctaText: (data.ctaText || 'Lihat Promo ↗').trim(),
     location: data.location || 'home_under_steps',
@@ -336,9 +336,13 @@ async function updateAd(id, updates) {
     throw new Error(`Iklan dengan ID "${id}" tidak ditemukan.`);
   }
 
+  const sanitizedUpdates = { ...updates };
+  // Ensure no heavy image bloats database memory
+  sanitizedUpdates.imageUrl = '';
+
   list[idx] = {
     ...list[idx],
-    ...updates,
+    ...sanitizedUpdates,
     updatedAt: new Date().toISOString()
   };
 

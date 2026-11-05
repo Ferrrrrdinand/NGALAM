@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, Plus, Edit3, Trash2, CheckCircle2, XCircle, 
-  ExternalLink, Eye, MousePointerClick, RefreshCw, Upload, Image as ImageIcon,
+  ExternalLink, Eye, MousePointerClick, RefreshCw,
   Check, X, Link as LinkIcon, ShieldCheck
 } from 'lucide-react';
 import { fetchApi } from '../../utils/api';
@@ -10,12 +10,6 @@ import { AdItem } from '../../components/HomeAdBanner';
 interface AdsSubTabProps {
   onToast: (type: 'success' | 'error', message: string) => void;
 }
-
-const PRESET_AD_IMAGES = [
-  { label: 'Promo Spesial Diskon 30%', path: 'images/promo-banner-1.jpg' },
-  { label: 'Paket Bonus Tempered Glass 9H', path: 'images/promo-banner-tempered-glass.jpg' },
-  { label: 'Workshop Spesialis HP Meja', path: 'images/spesialis-hp-banner.jpg' }
-];
 
 export default function AdsSubTab({ onToast }: AdsSubTabProps) {
   const [ads, setAds] = useState<AdItem[]>([]);
@@ -28,7 +22,7 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
     headline: '',
     description: '',
     badge: '⚡ GARANSI SPESIAL 90 HARI',
-    imageUrl: 'images/promo-banner-1.jpg',
+    imageUrl: '',
     targetUrl: '/pesan-servis?problem=baterai',
     ctaText: 'Klaim Servis Baterai ↗',
     theme: 'gold' as 'gold' | 'emerald' | 'dark' | 'blue',
@@ -36,7 +30,6 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
     active: true
   });
 
-  const [imagePreview, setImagePreview] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<AdItem | null>(null);
 
   const loadAds = async () => {
@@ -64,14 +57,13 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
       headline: '',
       description: '',
       badge: '⚡ GARANSI SPESIAL 90 HARI',
-      imageUrl: 'images/promo-banner-1.jpg',
+      imageUrl: '',
       targetUrl: '/pesan-servis?problem=baterai',
       ctaText: 'Klaim Servis Baterai ↗',
       theme: 'gold',
       location: 'home_under_steps',
       active: true
     });
-    setImagePreview('/images/promo-banner-1.jpg');
     setModalOpen(true);
   };
 
@@ -82,37 +74,14 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
       headline: ad.headline || ad.title || '',
       description: ad.description || '',
       badge: ad.badge || '🔥 PROMO SPESIAL',
-      imageUrl: ad.imageUrl || 'images/promo-banner-1.jpg',
+      imageUrl: '',
       targetUrl: ad.targetUrl || '/pesan-servis',
       ctaText: ad.ctaText || 'Lihat Promo ↗',
       theme: (ad.theme as any) || 'gold',
       location: ad.location || 'home_under_steps',
       active: ad.active !== false
     });
-    setImagePreview(
-      ad.imageUrl?.startsWith('http') || ad.imageUrl?.startsWith('data:image')
-        ? ad.imageUrl
-        : `/${(ad.imageUrl || 'images/promo-banner-1.jpg').replace(/^\//, '')}`
-    );
     setModalOpen(true);
-  };
-
-  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 8 * 1024 * 1024) {
-      onToast('error', 'Ukuran foto maksimal 8MB.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      setImagePreview(base64);
-      setForm((prev) => ({ ...prev, imageUrl: base64 }));
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -231,33 +200,25 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
 
       {/* Ads Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {ads.map((ad) => {
-          const imgSrc = ad.imageUrl?.startsWith('http') || ad.imageUrl?.startsWith('data:image')
-            ? ad.imageUrl
-            : `/${(ad.imageUrl || 'images/promo-banner-1.jpg').replace(/^\//, '')}`;
-
-          return (
-            <div
-              key={ad.id}
+        {ads.map((ad) => (
+          <div
+            key={ad.id}
               className={`bg-white rounded-2xl border overflow-hidden shadow-xs flex flex-col justify-between transition-all ${
                 ad.active ? 'border-amber-200/90 hover:border-amber-400' : 'border-slate-200 opacity-60'
               }`}
             >
-              {/* Image & Badge Header */}
-              <div className="relative aspect-16/9 bg-slate-900 overflow-hidden">
-                <img
-                  src={imgSrc}
-                  alt={ad.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/images/promo-banner-1.jpg';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-
-                <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs">
+              {/* Luxury Text-Only Card Header (Tanpa Gambar - Hemat Memori Database) */}
+              <div className={`p-4 bg-gradient-to-br ${
+                ad.theme === 'emerald'
+                  ? 'from-emerald-950 via-slate-900 to-black text-emerald-300 border-b border-emerald-500/30'
+                  : ad.theme === 'dark'
+                  ? 'from-slate-950 via-neutral-900 to-black text-slate-200 border-b border-white/10'
+                  : ad.theme === 'blue'
+                  ? 'from-blue-950 via-slate-900 to-black text-blue-300 border-b border-blue-500/30'
+                  : 'from-amber-950 via-slate-900 to-black text-amber-300 border-b border-amber-500/30'
+              }`}>
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs">
                     {ad.badge || 'IKLAN SPESIAL'}
                   </span>
                   <span
@@ -271,19 +232,26 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
                   </span>
                 </div>
 
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                  <h4 className="text-xs font-bold truncate drop-shadow-sm">{ad.title}</h4>
-                  <span className="text-[10px] text-amber-300 font-mono block">Tema: {ad.theme || 'gold'}</span>
+                <h4 className="text-sm font-black text-white leading-snug line-clamp-2">
+                  {ad.headline || ad.title}
+                </h4>
+
+                <div className="flex items-center justify-between text-[10px] text-slate-400 mt-2 font-mono">
+                  <span>Tema: {ad.theme || 'gold'}</span>
+                  <span className="text-emerald-400 font-sans font-bold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    Teks Saja (Ringan)
+                  </span>
                 </div>
               </div>
 
               {/* Body Info */}
               <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
-                <div className="space-y-1.5">
-                  <strong className="text-xs font-bold text-slate-900 block leading-snug line-clamp-2">
-                    {ad.headline}
-                  </strong>
-                  <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-2">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    {ad.title}
+                  </span>
+                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
                     {ad.description}
                   </p>
                 </div>
@@ -333,9 +301,8 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
       {/* Modal Edit / Tambah Iklan */}
       {modalOpen && (
@@ -456,46 +423,14 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
                 </div>
               </div>
 
-              {/* Gambar Iklan */}
-              <div className="space-y-1.5 pt-1">
-                <label className="block text-xs font-bold text-slate-700">
-                  Foto / Banner Iklan
-                </label>
-
-                {imagePreview && (
-                  <div className="relative aspect-16/9 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 mb-2">
-                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <label className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-dashed border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs cursor-pointer transition-colors">
-                    <Upload className="w-3.5 h-3.5 text-amber-700" />
-                    <span>Unggah File Foto Iklan</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageFileChange}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                {/* Preset image buttons */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {PRESET_AD_IMAGES.map((p, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => {
-                        setForm((prev) => ({ ...prev, imageUrl: p.path }));
-                        setImagePreview(`/${p.path}`);
-                      }}
-                      className="text-[10px] font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md transition-colors cursor-pointer"
-                    >
-                      {p.label}
-                    </button>
-                  ))}
+              {/* Mode Teks Saja (Tanpa Gambar - Hemat Memori Database) */}
+              <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-950 text-xs flex items-start gap-2.5">
+                <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <b className="block font-bold">Mode Teks-Saja Aktif (Hemat Memori Database)</b>
+                  <p className="text-[11px] text-amber-900/90 mt-0.5 leading-relaxed">
+                    Sistem iklan kini murni berbasis teks dengan kartu gradasi mewah. Tidak menyimpan foto gambar di database sehingga kapasitas database PostgreSQL tetap ringan, cepat, dan hemat.
+                  </p>
                 </div>
               </div>
 
