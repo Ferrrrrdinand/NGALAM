@@ -305,13 +305,19 @@ export default function PesanServis() {
     }
     if (!fullDamage) fullDamage = 'Pemeriksaan Kerusakan Menyeluruh';
 
+    const selectedModelName = (formData.phoneType || currentModels[0] || '').trim();
+    const brandNameUpper = formData.brand.toUpperCase();
+    const fullPhoneType = selectedModelName.toUpperCase().startsWith(brandNameUpper)
+      ? selectedModelName
+      : `${brandNameUpper} ${selectedModelName}`;
+
     const activeRefCode = localStorage.getItem('ngalam_affiliate_ref') || '';
     const payload = {
       customerName: formData.customerName.trim(),
       whatsapp: formData.whatsapp.trim(),
       email: formData.email.trim(),
       district: formData.district.trim(),
-      phoneType: `${formData.brand.toUpperCase()} ${formData.phoneType || currentModels[0]}`,
+      phoneType: fullPhoneType,
       serviceMethod: formData.serviceMethod,
       damage: fullDamage,
       promoCode: appliedPromo ? formData.promoCode.trim().toUpperCase() : '',
