@@ -289,13 +289,7 @@ export default function Home() {
     }} 
   />
                 <div className="promo-slide-overlay">
-                  <div className="promo-top-row">
-                    <div className="promo-badge-tag" style={{ color: '#ffffff !important' }}>
-                      <span className="pulse-indicator"></span>
-                      <span style={{ color: '#ffffff', fontWeight: 800, textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)' }}>
-                        {s.badge}
-                      </span>
-                    </div>
+                  <div className="promo-top-row" style={{ justifyContent: 'flex-end' }}>
                     <div className="promo-discount-pill" style={{ background: s.pillBg, color: '#ffffff' }}>
                       <span style={{ color: '#ffffff', fontWeight: 800, textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)' }}>
                         {s.pill}
