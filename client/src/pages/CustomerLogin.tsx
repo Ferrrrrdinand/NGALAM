@@ -573,6 +573,35 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
           </div>
         </div>
 
+        {/* Benefit Voucher Member Diskon 10% */}
+        <div 
+          className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-400/20 to-amber-600/15 border border-amber-400/60 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3"
+          style={{ boxShadow: '0 4px 18px -4px rgba(212, 175, 55, 0.18)' }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white font-black text-lg flex items-center justify-center shrink-0 shadow-sm border border-amber-300">
+              👑
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <b className="text-slate-900 text-sm font-black">Voucher Diskon 10% Member Aktif</b>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-white shadow-2xs">
+                  Siap Digunakan
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Gunakan kode voucher <b className="font-mono text-amber-900 bg-amber-200/90 px-1.5 py-0.5 rounded border border-amber-300">MEMBER10</b> saat booking untuk potongan 10% langsung di nota kasir.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/pesan-servis?promo=MEMBER10"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-xs shadow-md shadow-amber-500/20 whitespace-nowrap active:scale-95 transition-all shrink-0"
+          >
+            Gunakan Voucher (Pesan Servis) ↗
+          </Link>
+        </div>
+
         {/* 2. Banner Informasi Kebijakan Garansi Resmi */}
         <div className="mt-6 p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 text-xs text-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-start gap-2.5">
@@ -1206,9 +1235,24 @@ export default function CustomerLogin() {
                   tab === 'register' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                Daftar Baru
+                Daftar Baru (Diskon 10%)
               </button>
             </div>
+
+            {/* Benefit Tawaran Member Baru */}
+            {tab === 'register' && (
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-400/25 to-amber-600/15 border border-amber-400/60 shadow-xs flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-amber-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">
+                  👑
+                </span>
+                <div className="text-xs">
+                  <b className="text-slate-900 block font-black">Keuntungan Mendaftar Member:</b>
+                  <span className="text-slate-700 leading-relaxed">
+                    Dapatkan <b className="text-amber-900 font-extrabold bg-amber-100 px-1 py-0.5 rounded border border-amber-300">Potongan Diskon 10%</b> otomatis (Kode: <code className="font-mono font-bold text-amber-800">MEMBER10</code>) langsung untuk servis HP Anda!
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

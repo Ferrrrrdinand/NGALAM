@@ -11,6 +11,22 @@ const PROMO_CODES_FILE = path.join(__dirname, '..', 'data', 'promo_codes.json');
 // Initial default promo codes
 const DEFAULT_PROMO_CODES = [
   {
+    id: 'PC-MEMBER10-VIP',
+    code: 'MEMBER10',
+    name: 'Diskon 10% Spesial Member Baru',
+    description: 'Potongan harga langsung 10% untuk seluruh perbaikan smartphone khusus pelanggan terdaftar member Ngalam Fix Pro.',
+    discountType: 'percentage', // 'percentage' | 'fixed'
+    discountValue: 10, // 10%
+    minSpend: 0,
+    maxDiscount: 150000,
+    validFrom: '2026-10-01',
+    validUntil: '2026-12-31',
+    usageLimit: 500,
+    usedCount: 12,
+    active: true,
+    createdAt: '2026-11-05T08:00:00.000Z'
+  },
+  {
     id: 'PC-20261023-01',
     code: 'NGALAMPROMO30',
     name: 'Diskon Spesial 30% Servis HP Malang',
@@ -145,6 +161,13 @@ function getAllPromoCodes(onlyUsable = false) {
 
     if (!Array.isArray(list) || list.length === 0) {
       list = [...DEFAULT_PROMO_CODES];
+    } else {
+      // Ensure missing default promo codes (like MEMBER10) are always present
+      for (const def of DEFAULT_PROMO_CODES) {
+        if (!list.some(p => p.code && p.code.toUpperCase() === def.code.toUpperCase())) {
+          list.unshift(def);
+        }
+      }
     }
     promoCache = list;
   }
@@ -221,6 +244,22 @@ async function hydrateFromPostgres() {
           active: row.active !== false
         };
       });
+
+      // Ensure MEMBER10 is always available in PostgreSQL
+      const hasMemberCode = promoCache.some(p => p.code.toUpperCase() === 'MEMBER10');
+      if (!hasMemberCode) {
+        const memberPromo = DEFAULT_PROMO_CODES.find(p => p.code === 'MEMBER10');
+        if (memberPromo) {
+          await syncPromoCodeToPostgres(memberPromo);
+          promoCache.unshift(memberPromo);
+        }
+      }
+    } else {
+      // If table is completely empty, seed default promo codes including MEMBER10
+      for (const p of DEFAULT_PROMO_CODES) {
+        await syncPromoCodeToPostgres(p);
+      }
+      promoCache = [...DEFAULT_PROMO_CODES];
     }
   } catch (err) {
     // Table may not yet be initialized or query error

@@ -25,6 +25,18 @@ export interface AdItem {
 
 const DEFAULT_FALLBACK_ADS: AdItem[] = [
   {
+    id: 'ad-member-vip-10',
+    title: 'Tawaran Member VIP Diskon 10%',
+    headline: 'Gabung Member VIP Ngalam Fix Pro — Dapatkan Potongan Diskon 10% Servis HP!',
+    description: 'Daftar akun gratis sekarang & nikmati potongan otomatis 10% seluruh perbaikan smartphone (ganti LCD, baterai original, kamera & IC), pantau riwayat servis, klaim garansi online, dan nikmati prioritas pengerjaan di Meja 1.',
+    badge: '👑 TAWARAN MEMBER: DISKON 10%',
+    ctaText: 'Daftar Member & Klaim 10% ↗',
+    targetUrl: '/akun-pelanggan?tab=register&promo=MEMBER10',
+    imageUrl: '/images/spesialis-hp-banner.jpg',
+    theme: 'gold',
+    active: true
+  },
+  {
     id: 'ad-workshop-presisi',
     title: 'Workshop Meja Terbuka',
     headline: 'Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA Terbuka',
@@ -358,6 +370,40 @@ export default function HomeAdBanner() {
             <span>Konsultasi WA</span>
           </a>
         </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 3. EXCLUSIVE MEMBER OFFER STRIP (DISKON 10% MEMBER BARU) */}
+      {/* ======================================================== */}
+      <div 
+        className="mt-3.5 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-400/25 to-amber-600/15 border border-amber-400/50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md"
+        style={{
+          boxShadow: '0 6px 20px -5px rgba(212, 175, 55, 0.2)'
+        }}
+      >
+        <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-800">
+          <span className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center font-black text-base shrink-0 shadow-sm border border-amber-300">
+            👑
+          </span>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <b className="text-slate-950 font-black tracking-tight">Tawaran Eksklusif Menjadi Member:</b>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-2xs">
+                Diskon 10% Langsung
+              </span>
+            </div>
+            <p className="text-slate-700 text-xs mt-0.5 leading-relaxed">
+              Daftar akun gratis hari ini &amp; gunakan kode <b className="font-mono text-amber-900 bg-amber-200/80 px-1.5 py-0.2 rounded border border-amber-300">MEMBER10</b> untuk potongan 10% servis smartphone Anda!
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/akun-pelanggan?tab=register&promo=MEMBER10"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-black text-xs shadow-md shadow-amber-500/25 active:scale-95 transition-all whitespace-nowrap shrink-0"
+        >
+          <span>Daftar Member (Diskon 10%) ↗</span>
+        </Link>
       </div>
     </section>
   );

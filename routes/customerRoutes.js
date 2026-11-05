@@ -541,9 +541,14 @@ router.post('/register', async (req, res) => {
     res.setHeader('Set-Cookie', `ngalam_customer_token=${regJwtInfo.token}; Path=/; Max-Age=${regJwtInfo.maxAge}; SameSite=Lax`);
     res.status(201).json({
       success: true,
-      message: `Registrasi berhasil! Selamat bergabung, ${newCust.name}!`,
+      message: `Registrasi berhasil! Selamat bergabung, ${newCust.name}! Anda mendapatkan voucher diskon 10% (Kode: MEMBER10).`,
       customer: customerSession,
-      orders: formattedList
+      orders: formattedList,
+      memberVoucher: {
+        code: 'MEMBER10',
+        discount: '10%',
+        description: 'Potongan harga 10% langsung untuk servis smartphone Anda di Ngalam Fix Pro.'
+      }
     });
   } catch (err) {
     return sendAuthError(res, err, 'Pendaftaran pelanggan gagal.');

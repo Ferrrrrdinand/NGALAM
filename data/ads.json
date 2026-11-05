@@ -1,5 +1,37 @@
 [
   {
+    "id": "ad-workshop-presisi",
+    "title": "Workshop Meja Terbuka",
+    "headline": "Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA Terbuka",
+    "description": "Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal. Transparan, aman, suku cadang original, dan bisa ditunggu 30–60 menit.",
+    "badge": "⚡ BISA DITUNGGU (30–60 MENIT)",
+    "ctaText": "Konsultasi Teknisi Langsung ↗",
+    "targetUrl": "https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu",
+    "imageUrl": "images/spesialis-hp-banner.jpg",
+    "theme": "gold",
+    "active": true,
+    "location": "home_under_steps",
+    "viewsCount": 2450,
+    "clicksCount": 520,
+    "createdAt": "2026-11-05T07:45:00.000Z"
+  },
+  {
+    "id": "ad-member-vip-10",
+    "title": "Tawaran Member VIP Diskon 10%",
+    "headline": "Gabung Member VIP Ngalam Fix Pro — Dapatkan Potongan Diskon 10% Servis HP!",
+    "description": "Daftar akun gratis sekarang & nikmati potongan otomatis 10% seluruh servis smartphone (ganti LCD, baterai original, kamera & IC), pantau riwayat servis, klaim garansi online, dan nikmati prioritas pengerjaan di Meja 1.",
+    "badge": "👑 TAWARAN MEMBER: DISKON 10%",
+    "ctaText": "Daftar Member & Klaim 10% ↗",
+    "targetUrl": "/akun-pelanggan?tab=register&promo=MEMBER10",
+    "imageUrl": "images/spesialis-hp-banner.jpg",
+    "theme": "gold",
+    "active": true,
+    "location": "home_under_steps",
+    "viewsCount": 3240,
+    "clicksCount": 890,
+    "createdAt": "2026-11-05T09:00:00.000Z"
+  },
+  {
     "id": "ad-baterai-90hari",
     "title": "Garansi Baterai 90 Hari",
     "headline": "Ganti Baterai Original iPhone & Android — Garansi Resmi 90 Hari Penuh!",

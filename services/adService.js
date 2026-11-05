@@ -12,6 +12,22 @@ const ADS_FILE = path.join(__dirname, '..', 'data', 'ads.json');
 // Default initial high-converting advertisements (Unified Banners & Ads)
 const DEFAULT_ADS = [
   {
+    id: 'ad-member-vip-10',
+    title: 'Tawaran Member VIP Diskon 10%',
+    headline: 'Gabung Member VIP Ngalam Fix Pro — Dapatkan Potongan Diskon 10% Servis HP!',
+    description: 'Daftar akun gratis sekarang & nikmati potongan otomatis 10% seluruh servis smartphone (ganti LCD, baterai original, kamera & IC), pantau riwayat servis, klaim garansi online, dan nikmati prioritas pengerjaan di Meja 1.',
+    badge: '👑 TAWARAN MEMBER: DISKON 10%',
+    ctaText: 'Daftar Member & Klaim 10% ↗',
+    targetUrl: '/akun-pelanggan?tab=register&promo=MEMBER10',
+    imageUrl: 'images/spesialis-hp-banner.jpg',
+    theme: 'gold',
+    active: true,
+    location: 'home_under_steps',
+    viewsCount: 3240,
+    clicksCount: 890,
+    createdAt: '2026-11-05T09:00:00.000Z'
+  },
+  {
     id: 'ad-workshop-presisi',
     title: 'Workshop Meja Terbuka',
     headline: 'Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA Terbuka',
@@ -152,6 +168,16 @@ async function hydrateAdsFromPostgres() {
           createdAt: row.created_at || raw.createdAt
         };
       });
+
+      // Ensure ad-member-vip-10 is seeded to database if not present
+      const hasMemberAd = adsCache.some(a => a.id === 'ad-member-vip-10');
+      if (!hasMemberAd) {
+        const memberAd = DEFAULT_ADS.find(a => a.id === 'ad-member-vip-10');
+        if (memberAd) {
+          await syncAdToPostgres(memberAd);
+          adsCache.unshift(memberAd);
+        }
+      }
     } else {
       // Seed default ads to database if table is currently empty
       for (const ad of DEFAULT_ADS) {
@@ -240,6 +266,13 @@ function getAllAds(options = {}) {
 
     if (!Array.isArray(list) || list.length === 0) {
       list = [...DEFAULT_ADS];
+    } else {
+      // Ensure missing default ads (like ad-member-vip-10) are included
+      for (const def of DEFAULT_ADS) {
+        if (!list.some((a) => a.id === def.id)) {
+          list.unshift(def);
+        }
+      }
     }
     adsCache = list;
   }

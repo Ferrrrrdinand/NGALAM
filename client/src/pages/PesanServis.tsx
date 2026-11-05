@@ -256,6 +256,13 @@ export default function PesanServis() {
       setSelectedProblems(new Set([paramDamage]));
     }
 
+    const paramPromo = (searchParams.get('promo') || '').trim().toUpperCase();
+    if (paramPromo) {
+      handleApplyPromo(paramPromo);
+    } else if (customer && !formData.promoCode) {
+      handleApplyPromo('MEMBER10');
+    }
+
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('focus', loadPromos);
@@ -782,6 +789,27 @@ export default function PesanServis() {
                   <span>Voucher {formData.promoCode} aktif! Hemat {formatRp(appliedPromo.discountAmount || 20000)}</span>
                 </div>
               )}
+
+              {/* Quick Member 10% Voucher Chip */}
+              <div style={{ marginTop: '10px' }} className="flex flex-wrap items-center gap-2">
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Voucher Member:</span>
+                <button
+                  type="button"
+                  onClick={() => handleApplyPromo('MEMBER10')}
+                  className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+                  title="Klik untuk pasang diskon 10% member baru"
+                >
+                  <span>👑 MEMBER10 (Diskon 10% Member Baru)</span>
+                </button>
+                {!customer && (
+                  <Link
+                    to="/akun-pelanggan?tab=register&promo=MEMBER10"
+                    style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 700, textDecoration: 'underline' }}
+                  >
+                    Daftar Akun Member ↗
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Step 5: Kode Referral Mitra Afiliasi */}
