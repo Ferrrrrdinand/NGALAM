@@ -125,6 +125,8 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
   // Periodic background sync for banners and vouchers
   useEffect(() => {
     const pollTimer = setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+
       fetchApi('/api/promos?all=true').then((res) => {
         if (res.ok && res.data && res.data.success && Array.isArray(res.data.data)) {
           setBanners(res.data.data);
@@ -139,7 +141,7 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
           }
         }).catch(() => {});
       }
-    }, 6000);
+    }, 30000);
 
     return () => clearInterval(pollTimer);
   }, [activeSubTab]);

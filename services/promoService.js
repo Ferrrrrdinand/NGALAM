@@ -61,6 +61,7 @@ const DEFAULT_PROMOS = [
 
 // In-memory cache for fast read/writes & serverless resilience
 let bannerCache = null;
+let bannerHydratedAt = 0;
 
 /**
  * Get theme color styles based on selected preset theme
@@ -118,6 +119,10 @@ function getThemeStyles(theme = 'blue') {
  * Hydrate banner list from PostgreSQL database
  */
 async function hydrateBannersFromPostgres() {
+  // Hindari SELECT ulang banner (termasuk gambar base64) di setiap request.
+  if (bannerCache && Array.isArray(bannerCache) && bannerCache.length > 0 && Date.now() - bannerHydratedAt < 15000) {
+    return;
+  }
   try {
     const db = require('./db');
     if (!db || typeof db.isDbConnected !== 'function' || !db.isDbConnected()) return;
@@ -138,6 +143,7 @@ async function hydrateBannersFromPostgres() {
         createdAt: row.created_at || new Date().toISOString(),
         updatedAt: row.updated_at || new Date().toISOString()
       }));
+      bannerHydratedAt = Date.now();
     }
   } catch (err) {
     console.warn('[Promos] hydrateBannersFromPostgres warning:', err.message);
@@ -184,6 +190,7 @@ function getAllPromos(onlyActive = false) {
  */
 function savePromos(promos) {
   bannerCache = [...promos];
+  bannerHydratedAt = Date.now();
 
   if (!process.env.VERCEL) {
     try {
@@ -328,12 +335,21 @@ async function updatePromo(id, updates = {}) {
   }
 
   try {
-    db.logActivity('BANNER_UPDATED', 'banners', id, {
+    const logPayload = {
       id,
       title: promos[idx].title,
-      active: promos[idx].active,
-      updates
-    });
+      active: promos[idx].active
+    };
+    
+    if (updates.title) logPayload.updatedTitle = updates.title;
+    if (updates.buttonText) logPayload.buttonText = updates.buttonText;
+    if (updates.buttonLink) logPayload.buttonLink = updates.buttonLink;
+    if (updates.active !== undefined) logPayload.activeChanged = updates.active;
+    if (updates.image) {
+      logPayload.imageChanged = updates.image.startsWith('data:image/') ? 'base64_image_updated' : 'image_path_updated';
+    }
+    
+    db.logActivity('BANNER_UPDATED', 'banners', id, logPayload);
   } catch (_) {}
 
   return promos[idx];

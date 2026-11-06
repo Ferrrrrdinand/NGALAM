@@ -322,8 +322,10 @@ export default function Home() {
   useEffect(() => {
     loadLivePromos();
 
-    // 1. Polling interval every 5 seconds for background changes
-    const pollTimer = setInterval(loadLivePromos, 5000);
+    // 1. Polling interval (jangan polling saat tab tidak aktif)
+    const pollTimer = setInterval(() => {
+      if (document.visibilityState === 'visible') loadLivePromos();
+    }, 30000);
 
     // 2. Storage event listener for instant cross-tab sync when admin updates banners
     const handleStorageChange = (e: StorageEvent) => {
@@ -333,14 +335,16 @@ export default function Home() {
     };
     window.addEventListener('storage', handleStorageChange);
 
-    // 3. Focus listener when returning to tab
-    const handleFocus = () => loadLivePromos();
-    window.addEventListener('focus', handleFocus);
+    // 3. Reload saat tab kembali aktif
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') loadLivePromos();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       clearInterval(pollTimer);
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 

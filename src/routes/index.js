@@ -2,6 +2,66 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models');
 const userService = require('../../services/userService');
+const { loadTable } = require('../../services/localStore');
+
+const MAX_LOG_STRING_LENGTH = 2000;
+
+function sanitizeLogValue(value, depth = 0) {
+  if (value === null || value === undefined) return value;
+  if (depth > 4) return '[nested object omitted]';
+  if (typeof value === 'string') {
+    if (/^data:image\//i.test(value) || value.length > MAX_LOG_STRING_LENGTH) {
+      return `[omitted ${value.length} chars]`;
+    }
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.slice(0, 20).map((item) => sanitizeLogValue(item, depth + 1));
+  }
+  if (typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .slice(0, 40)
+        .map(([key, val]) => [key, sanitizeLogValue(val, depth + 1)])
+    );
+  }
+  return value;
+}
+
+async function getSanitizedActivityLogs(limit = 100) {
+  const safeLimit = Math.max(1, Math.min(Number(limit) || 100, 500));
+  let rows = [];
+  try {
+    // Potong payload besar (mis. base64 gambar banner) langsung di PostgreSQL
+    // agar data 20MB tidak perlu ditransfer dari database ke server.
+    rows = await db.sequelize.query(
+      `SELECT id, action, table_name, record_id, performed_at,
+              CASE
+                WHEN action = 'BANNER_UPDATED'
+                  THEN jsonb_build_object(
+                    'id', payload->'id',
+                    'title', payload->'title',
+                    'active', payload->'active',
+                    'truncated', true
+                  )
+                WHEN length(payload::text) > 4000
+                  THEN jsonb_build_object('truncated', true, 'originalLength', length(payload::text))
+                ELSE payload
+              END AS payload
+       FROM activity_logs
+       ORDER BY performed_at DESC
+       LIMIT ${safeLimit}`,
+      { type: db.Sequelize.QueryTypes.SELECT }
+    );
+  } catch (_) {}
+
+  if (!rows || rows.length === 0) rows = loadTable('activity_logs');
+
+  return (rows || []).map((log) => {
+    const item = typeof log?.toJSON === 'function' ? log.toJSON() : log;
+    return { ...item, payload: sanitizeLogValue(item?.payload) };
+  });
+}
 
 router.use(async (req, res, next) => {
   try {
@@ -60,13 +120,7 @@ router.get('/admin/dashboard', async (req, res) => {
     safe(() => getAllOrders(), []),
     safe(async () => readTransactions(), []),
     safe(async () => getAllPromos(true), []),
-    safe(async () => {
-      const dbLogs = await db.ActivityLog.findAll({
-        order: [['performed_at', 'DESC']],
-        limit: 100
-      });
-      return dbLogs && dbLogs.length > 0 ? dbLogs : loadTable('activity_logs');
-    }, loadTable('activity_logs')),
+    safe(async () => getSanitizedActivityLogs(100), []),
     safe(async () => userService.getMitraUsers(), []),
     safe(async () => {
       await customerService.refreshCustomersFromDb();
@@ -203,19 +257,13 @@ router.all(['/database/sync', '/sync-database'], async (req, res) => {
 });
 
 // Activity logs endpoint
-const { loadTable } = require('../../services/localStore');
 router.get('/activity-logs', async (req, res) => {
   try {
-    const dbLogs = await db.ActivityLog.findAll({
-      order: [['performed_at', 'DESC']],
-      limit: 100
-    });
-    if (dbLogs && dbLogs.length > 0) {
-      return res.json({ success: true, source: 'sequelize_postgresql', logs: dbLogs });
-    }
-  } catch (_) {}
-  const localLogs = loadTable('activity_logs');
-  return res.json({ success: true, source: 'local_storage', logs: localLogs });
+    const logs = await getSanitizedActivityLogs(100);
+    return res.json({ success: true, source: 'postgresql', logs });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 module.exports = router;
