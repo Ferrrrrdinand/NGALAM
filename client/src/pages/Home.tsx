@@ -234,12 +234,12 @@ export default function Home() {
       badge: 'WORKSHOP MEJA TERBUKA',
       pill: 'BISA DITUNGGU (30–60 MENIT)',
       pillBg: 'linear-gradient(135deg, #10b981, #059669)',
-      hint: 'Klik Banner untuk Fasilitas & Garansi',
-      cta: 'Konsultasi ↗',
+      hint: 'Klik Banner untuk Menonton Video Workshop',
+      cta: 'Tonton Video ↗',
       title: 'Peralatan Presisi Micro-Soldering, Thermal Camera & Mesin OCA',
       desc: 'Pengerjaan profesional smartphone Android & iPhone bisa ditonton langsung di depan meja teknisi tanpa ditinggal.',
       code: 'MEJA-TERBUKA',
-      link: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu'
+      link: 'https://youtu.be/M8S2tZtneF0?si=iAEvkmVSLLc7XWu4'
     },
     {
       img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
@@ -284,6 +284,8 @@ export default function Home() {
 
   const [slides, setSlides] = useState(defaultSlides);
 
+  const isExternalLink = (href) => /^https?:\/\//i.test(href || '');
+
   const loadLivePromos = () => {
     fetchApi('/api/promos')
       .then((res) => {
@@ -301,7 +303,7 @@ export default function Home() {
               badge: p.badgeTag || 'PROMO SPESIAL',
               pill: p.badgePill || 'DISKON',
               pillBg: th.pillGradient || 'linear-gradient(135deg, #f59e0b, #d97706)',
-              hint: 'Klik Banner untuk Info Promo & Klaim',
+              hint: isExternalLink(p.buttonLink) ? 'Klik Banner untuk Menonton Video' : 'Klik Banner untuk Info Promo & Klaim',
               cta: p.buttonText || 'Klaim Promo ↗',
               title: p.title,
               desc: p.description || '',
@@ -359,6 +361,10 @@ export default function Home() {
   };
 
   const openPromoModal = (slide) => {
+    if (isExternalLink(slide?.link)) {
+      window.open(slide.link, '_blank', 'noopener,noreferrer');
+      return;
+    }
     setSelectedPromo(slide);
     setPromoModalOpen(true);
   };
