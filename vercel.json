@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["sin1"],
   "services": {
     "app": {
       "root": ".",
@@ -10,7 +11,8 @@
         "server.js": {
           "includeFiles": "{public,data,scripts}/**",
           "maxDuration": 60,
-          "memory": 1024
+          "memory": 1024,
+          "regions": ["sin1"]
         }
       }
     },
