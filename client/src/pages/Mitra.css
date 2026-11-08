@@ -178,8 +178,171 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.mitra-dashboard-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.mitra-hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 10px;
+  color: #000000;
+  line-height: 1.25;
+}
+.mitra-hero-desc {
+  color: #000000;
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+.mitra-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.mitra-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.mitra-register-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.mitra-banner-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.mitra-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.mitra-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+}
+.mitra-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+.mitra-table-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.mitra-table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.mitra-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 640px) {
+  .mitra-container {
+    padding: 0 16px;
+    margin: 24px auto 60px;
+  }
+  .mitra-hero-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  .mitra-hero-title br {
+    display: none;
+  }
+  .mitra-hero-desc {
+    font-size: 0.88rem;
+  }
+  .mitra-hero-badge {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+  .mitra-hero-badge span span {
+    display: none;
+  }
+  .mitra-hero-badge span::after {
+    content: 'KEMITRAAN QR CODE';
+  }
+  .mitra-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .mitra-banner-card {
+    padding: 20px;
+  }
+  .mitra-banner-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .mitra-banner-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mitra-logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .mitra-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .mitra-steps-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .mitra-register-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .qr-card {
+    padding: 20px;
+  }
+  .qr-image-wrapper {
+    padding: 12px;
+  }
+  .qr-image-wrapper img {
+    width: 180px !important;
+    height: 180px !important;
+  }
+  .code-pill {
+    font-size: 1.1rem;
+    padding: 5px 14px;
+  }
+  .stat-metric-val {
+    font-size: 1.35rem;
+  }
+  .stat-metric-label {
+    font-size: 0.75rem;
+  }
+  .mitra-verified-badge {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mitra-hero-title {
+    font-size: 1.75rem;
+  }
+  .mitra-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 900px) {
   .mitra-dashboard-grid {
     grid-template-columns: 1fr !important;
+  }
+  .mitra-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

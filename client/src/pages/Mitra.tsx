@@ -325,11 +325,11 @@ export default function Mitra() {
                 <span>PROGRAM RESMI KEMITRAAN & AFILIASI QR CODE</span>
               </span>
             </div>
-            <h1 style={{ fontSize: '2.2rem', fontWeight: 800, margin: '0 0 10px', color: '#000000', lineHeight: 1.25 }}>
+            <h1 className="mitra-hero-title">
               Rekomendasikan Servis HP,<br />
               <span style={{ color: '#059669' }}>Dapatkan Komisi 10% Per Transaksi!</span>
             </h1>
-            <p style={{ color: '#000000', maxWidth: '650px', margin: '0 auto', lineHeight: 1.5, fontSize: '0.95rem' }}>
+            <p className="mitra-hero-desc">
               Khusus Mitra Driver Ojol (Gojek, Grab, Maxim, Shopee) dan Toko/Bengkel Rekanan Malang. Setiap mitra memiliki <strong>Kode Unik Otomatis</strong> & <strong>QR Code Pribadi</strong>. Pelanggan cukup scan QR Code Anda saat memesan servis, dan komisi otomatis masuk ke akun Anda!
             </p>
           </div>
@@ -521,7 +521,7 @@ export default function Mitra() {
                     </small>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                   <div className="mitra-register-form-grid">
                     <div>
                       <label style={{ display: 'block', fontWeight: 700, fontSize: '0.85rem', marginBottom: '6px' }}>
                         Username Akun <span style={{ color: '#ef4444' }}>*</span>
@@ -582,13 +582,13 @@ export default function Mitra() {
         <div id="mitraDashboardSection">
           {/* TOP BANNER */}
           <div className="mitra-card mitra-banner-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+            <div className="mitra-banner-flex">
+              <div className="mitra-banner-info">
                 <div style={{ width: '68px', height: '68px', borderRadius: '20px', background: 'rgba(255,255,255,0.22)', border: '2px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Bike className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
                     <span style={{ background: '#10b981', color: '#ffffff', fontSize: '0.75rem', fontWeight: 800, padding: '4px 12px', borderRadius: '9999px', letterSpacing: '0.5px' }}>
                       MITRA RESMI TERDAFTAR
                     </span>
@@ -615,7 +615,7 @@ export default function Mitra() {
           </div>
 
           {/* GRID: QR CODE CARD & STATS */}
-          <div className="mitra-dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '420px 1fr', gap: '24px', alignItems: 'start' }}>
+          <div className="mitra-dashboard-grid">
             {/* LEFT: QR CODE & AFFILIATE LINK */}
             <div className="qr-card">
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', background: '#ecfdf5', borderRadius: '9999px', color: '#059669', fontWeight: 800, fontSize: '0.75rem', marginBottom: '12px' }}>
@@ -678,7 +678,7 @@ export default function Mitra() {
             {/* RIGHT: COMMISSION STATS & HOW IT WORKS */}
             <div>
               {/* METRIC STATS */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '24px' }}>
+              <div className="mitra-stats-grid">
                 <div className="stat-metric-card" style={{ borderLeft: '4px solid #10b981' }}>
                   <div className="stat-metric-label">Total Komisi Didapat</div>
                   <div className="stat-metric-val" style={{ color: '#059669' }}>
@@ -708,7 +708,7 @@ export default function Mitra() {
                   <Lightbulb className="w-4 h-4 text-amber-500" />
                   <span>Cara Kerja Komisi Afiliasi Ngalam Fix Pro</span>
                 </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+                <div className="mitra-steps-grid">
                   <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div style={{ marginBottom: '8px' }}>
                       <Smartphone className="w-6 h-6 text-emerald-600" />
@@ -756,8 +756,8 @@ export default function Mitra() {
                   </span>
                 </div>
 
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left' }}>
+                <div className="mitra-table-wrapper">
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left', minWidth: '640px' }}>
                     <thead>
                       <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#000000', fontSize: '0.78rem', textTransform: 'uppercase' }}>
                         <th style={{ padding: '10px 12px' }}>No. Tiket</th>

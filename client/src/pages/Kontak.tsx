@@ -26,7 +26,7 @@ export default function Kontak() {
       `• Keterangan Tambahan: ${form.message || '-'}\n\n` +
       `Apakah suku cadangnya tersedia dan bisa ditunggu hari ini?`;
     
-    window.open(`https://wa.me/6281330304321?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/6281131858858?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const copyAddress = () => {
@@ -127,13 +127,13 @@ export default function Kontak() {
             </div>
 
             <a
-              href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kerusakan%20smartphone%20saya"
+              href="https://wa.me/6281131858858?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kerusakan%20smartphone%20saya"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Chat WhatsApp Resmi ↗</span>
+              <span>Chat WhatsApp CS ↗</span>
             </a>
           </div>
 
@@ -225,7 +225,7 @@ export default function Kontak() {
             </div>
 
             <a
-              href="https://wa.me/6281330304321?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20ingin%20klaim%20garansi%20servis"
+              href="https://wa.me/6281131858858?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20ingin%20klaim%20garansi%20servis"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
