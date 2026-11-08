@@ -584,11 +584,11 @@ export default function Mitra() {
           <div className="mitra-card mitra-banner-card">
             <div className="mitra-banner-flex">
               <div className="mitra-banner-info">
-                <div style={{ width: '68px', height: '68px', borderRadius: '20px', background: 'rgba(255,255,255,0.22)', border: '2px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="mitra-banner-icon">
                   <Bike className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                  <div className="mitra-banner-badge-row">
                     <span style={{ background: '#10b981', color: '#ffffff', fontSize: '0.75rem', fontWeight: 800, padding: '4px 12px', borderRadius: '9999px', letterSpacing: '0.5px' }}>
                       MITRA RESMI TERDAFTAR
                     </span>
@@ -596,10 +596,10 @@ export default function Mitra() {
                       <CheckCircle2 className="w-4 h-4 text-emerald-300" /> Terverifikasi di Database Mitra
                     </span>
                   </div>
-                  <h2 style={{ fontSize: '1.65rem', fontWeight: 800, margin: '0 0 4px', color: '#ffffff' }}>
+                  <h2 className="mitra-banner-title">
                     {mitraSession.name || mitraSession.username}
                   </h2>
-                  <p style={{ margin: 0, fontSize: '0.92rem', color: '#ecfdf5', fontWeight: 600 }}>
+                  <p className="mitra-banner-sub">
                     {mitraSession.category || 'Mitra Afiliasi Workshop'} • WA: {mitraSession.phone || '-'}
                   </p>
                 </div>
@@ -618,13 +618,13 @@ export default function Mitra() {
           <div className="mitra-dashboard-grid">
             {/* LEFT: QR CODE & AFFILIATE LINK */}
             <div className="qr-card">
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', background: '#ecfdf5', borderRadius: '9999px', color: '#059669', fontWeight: 800, fontSize: '0.75rem', marginBottom: '12px' }}>
+              <div className="mitra-qr-tag">
                 <span>SCAN LANGSUNG KE PESAN SERVIS</span>
               </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 8px', color: '#064e3b' }}>
+              <h3 className="mitra-qr-title">
                 QR Code Afiliasi Anda
               </h3>
-              <p style={{ fontSize: '0.84rem', color: '#047857', margin: '0 0 18px', lineHeight: 1.4 }}>
+              <p className="mitra-qr-desc">
                 Tunjukkan QR Code ini kepada pelanggan Anda atau tempel di motor/helm/toko Anda. Pelanggan cukup scan untuk masuk ke web Ngalam Fix Pro, dan saat memesan servis kode referral Anda otomatis terpasang!
               </p>
 
@@ -702,7 +702,7 @@ export default function Mitra() {
               </div>
 
               {/* HOW IT WORKS STEP */}
-              <div className="mitra-card" style={{ padding: '22px 24px', marginBottom: '24px', background: '#ffffff' }}>
+              <div className="mitra-card mitra-section-card">
                 <h4 style={{ fontSize: '0.98rem', fontWeight: 800, margin: '0 0 14px', color: '#000000', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Lightbulb className="w-4 h-4 text-amber-500" />
                   <span>Cara Kerja Komisi Afiliasi Ngalam Fix Pro</span>
@@ -745,7 +745,7 @@ export default function Mitra() {
               </div>
 
               {/* REFERRED ORDERS TABLE */}
-              <div className="mitra-card" style={{ padding: '24px' }}>
+              <div className="mitra-card mitra-table-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#000000' }}>
                     Daftar Servis Pelanggan Afiliasi Anda
