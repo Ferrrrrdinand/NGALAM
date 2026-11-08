@@ -476,6 +476,7 @@ router.get('/check', async (req, res) => {
         affiliateUrl: details.affiliateUrl,
         qrCodeUrl: details.qrCodeUrl,
         totalOrders: myReferredOrders.length,
+        referredOrders: myReferredOrders,
         commissionHistory: mitra.commissionHistory || []
       },
       mitra: {
@@ -496,6 +497,7 @@ router.get('/check', async (req, res) => {
         affiliateUrl: details.affiliateUrl,
         qrCodeUrl: details.qrCodeUrl,
         totalOrders: myReferredOrders.length,
+        referredOrders: myReferredOrders,
         commissionHistory: mitra.commissionHistory || []
       }
     });
