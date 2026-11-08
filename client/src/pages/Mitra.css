@@ -252,7 +252,7 @@
     box-sizing: border-box;
   }
   .mitra-container {
-    padding: 0 12px;
+    padding: 0 10px;
     margin: 20px auto 60px;
     max-width: 100%;
     overflow-x: hidden;
@@ -278,24 +278,24 @@
     content: 'KEMITRAAN QR';
   }
   .mitra-card {
-    padding: 16px;
+    padding: 14px;
     border-radius: 16px;
   }
   .mitra-banner-card {
-    padding: 16px;
+    padding: 14px;
   }
   .mitra-banner-card h2 {
-    font-size: 1.15rem !important;
+    font-size: 1.1rem !important;
     word-break: break-word;
   }
   .mitra-banner-card p {
-    font-size: 0.75rem !important;
+    font-size: 0.72rem !important;
     word-break: break-word;
   }
   .mitra-banner-flex {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
   }
   .mitra-banner-info {
     flex-direction: column;
@@ -304,14 +304,14 @@
     width: 100%;
   }
   .mitra-banner-info > div:first-child {
-    width: 56px !important;
-    height: 56px !important;
+    width: 52px !important;
+    height: 52px !important;
   }
   .mitra-logout-btn {
     width: 100%;
     justify-content: center;
-    font-size: 0.8rem !important;
-    padding: 9px 16px !important;
+    font-size: 0.78rem !important;
+    padding: 8px 14px !important;
   }
   .mitra-stats-grid {
     grid-template-columns: 1fr;
@@ -325,69 +325,98 @@
     grid-template-columns: 1fr;
   }
   .qr-card {
-    padding: 14px;
+    padding: 12px;
+    text-align: center;
+    overflow: hidden;
   }
   .qr-card h3 {
-    font-size: 1.05rem !important;
+    font-size: 1rem !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .qr-card p {
-    font-size: 0.78rem !important;
-    word-break: break-word;
+    font-size: 0.75rem !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  .qr-card > div:first-child {
+    max-width: 100%;
+    overflow: hidden;
   }
   .qr-card > div:first-child span {
-    font-size: 0.7rem !important;
+    font-size: 0.65rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .qr-image-wrapper {
-    padding: 10px;
-    min-height: 160px !important;
-    min-width: 160px !important;
+    padding: 8px;
+    min-height: 150px !important;
+    min-width: 150px !important;
     max-width: 100%;
   }
   .qr-image-wrapper img {
-    width: 160px !important;
-    height: 160px !important;
+    width: 150px !important;
+    height: 150px !important;
   }
   .code-pill {
-    font-size: 0.95rem;
-    padding: 6px 10px;
+    font-size: 0.9rem;
+    padding: 5px 8px;
     word-break: break-all;
     max-width: 100%;
+    display: inline-block;
+  }
+  .qr-card input[type="text"] {
+    font-size: 0.7rem !important;
+    padding: 8px 10px !important;
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .qr-card button[type="button"] {
+    font-size: 0.75rem !important;
+    padding: 8px 10px !important;
+    white-space: nowrap;
+  }
+  .qr-card a[download] {
+    font-size: 0.75rem !important;
+    padding: 9px !important;
   }
   .stat-metric-card {
-    padding: 16px;
+    padding: 14px;
   }
   .stat-metric-val {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
   .stat-metric-label {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
   }
   .mitra-verified-badge {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
   }
   .form-control-input {
     font-size: 16px !important;
-    padding: 10px 12px;
+    padding: 9px 12px;
     word-break: break-word;
   }
   .btn-mitra-primary {
     font-size: 0.85rem;
-    padding: 11px 16px;
+    padding: 10px 14px;
   }
   .mitra-table-wrapper {
     width: 100%;
     overflow-x: auto;
   }
   .mitra-table-wrapper table {
-    font-size: 0.75rem !important;
+    font-size: 0.7rem !important;
   }
   .mitra-table-wrapper th,
   .mitra-table-wrapper td {
-    padding: 8px 6px !important;
+    padding: 7px 5px !important;
     white-space: nowrap;
   }
   .mitra-card h4 {
-    font-size: 0.9rem !important;
+    font-size: 0.88rem !important;
   }
 }
 
