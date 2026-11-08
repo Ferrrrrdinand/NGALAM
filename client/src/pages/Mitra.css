@@ -184,6 +184,45 @@
   gap: 24px;
   align-items: start;
 }
+.mitra-qr-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mitra-qr-input-row {
+  display: flex;
+  gap: 8px;
+}
+.mitra-qr-input {
+  font-size: 0.8rem;
+  background: #f8fafc;
+  font-family: monospace;
+}
+.mitra-qr-copy-btn {
+  padding: 10px 14px;
+  background: #059669;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.mitra-qr-download-btn {
+  padding: 11px;
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 .mitra-hero-title {
   font-size: 2.2rem;
   font-weight: 800;
@@ -252,90 +291,117 @@
     box-sizing: border-box;
   }
   .mitra-container {
-    padding: 0 10px;
-    margin: 20px auto 60px;
-    max-width: 100%;
+    padding: 0 8px;
+    margin: 16px auto 60px;
+    max-width: 100vw;
     overflow-x: hidden;
   }
+  .mitra-qr-actions {
+    width: 100%;
+  }
+  .mitra-qr-input-row {
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+  .mitra-qr-input {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.65rem !important;
+    padding: 8px 6px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mitra-qr-copy-btn {
+    font-size: 0.7rem !important;
+    padding: 8px 10px !important;
+    flex-shrink: 0;
+  }
+  .mitra-qr-download-btn {
+    font-size: 0.7rem !important;
+    padding: 9px 8px !important;
+    width: 100%;
+  }
   .mitra-hero-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     line-height: 1.3;
   }
   .mitra-hero-title br {
     display: none;
   }
   .mitra-hero-desc {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
   }
   .mitra-hero-badge {
-    font-size: 0.65rem;
-    padding: 4px 10px;
+    font-size: 0.6rem;
+    padding: 4px 8px;
   }
   .mitra-hero-badge span span {
     display: none;
   }
   .mitra-hero-badge span::after {
-    content: 'KEMITRAAN QR';
+    content: 'MITRA QR';
   }
   .mitra-card {
-    padding: 14px;
-    border-radius: 16px;
+    padding: 12px;
+    border-radius: 14px;
   }
   .mitra-banner-card {
-    padding: 14px;
+    padding: 12px;
   }
   .mitra-banner-card h2 {
-    font-size: 1.1rem !important;
+    font-size: 1.05rem !important;
     word-break: break-word;
   }
   .mitra-banner-card p {
-    font-size: 0.72rem !important;
+    font-size: 0.7rem !important;
     word-break: break-word;
   }
   .mitra-banner-flex {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
   }
   .mitra-banner-info {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
   }
   .mitra-banner-info > div:first-child {
-    width: 52px !important;
-    height: 52px !important;
+    width: 48px !important;
+    height: 48px !important;
   }
   .mitra-logout-btn {
     width: 100%;
     justify-content: center;
-    font-size: 0.78rem !important;
-    padding: 8px 14px !important;
+    font-size: 0.75rem !important;
+    padding: 8px 12px !important;
   }
   .mitra-stats-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
   .mitra-steps-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
   .mitra-register-form-grid {
     grid-template-columns: 1fr;
   }
   .qr-card {
-    padding: 12px;
+    padding: 10px;
     text-align: center;
     overflow: hidden;
+    max-width: 100%;
   }
   .qr-card h3 {
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
   .qr-card p {
-    font-size: 0.75rem !important;
+    font-size: 0.72rem !important;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
@@ -344,79 +410,67 @@
     overflow: hidden;
   }
   .qr-card > div:first-child span {
-    font-size: 0.65rem !important;
-    white-space: nowrap;
+    font-size: 0.6rem !important;
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .qr-image-wrapper {
     padding: 8px;
-    min-height: 150px !important;
-    min-width: 150px !important;
+    min-height: 140px !important;
+    min-width: 140px !important;
     max-width: 100%;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 12px;
   }
   .qr-image-wrapper img {
-    width: 150px !important;
-    height: 150px !important;
+    width: 140px !important;
+    height: 140px !important;
+    max-width: 100%;
   }
   .code-pill {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 5px 8px;
     word-break: break-all;
     max-width: 100%;
-    display: inline-block;
-  }
-  .qr-card input[type="text"] {
-    font-size: 0.7rem !important;
-    padding: 8px 10px !important;
-    word-break: break-all;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .qr-card button[type="button"] {
-    font-size: 0.75rem !important;
-    padding: 8px 10px !important;
-    white-space: nowrap;
-  }
-  .qr-card a[download] {
-    font-size: 0.75rem !important;
-    padding: 9px !important;
+    display: block;
   }
   .stat-metric-card {
-    padding: 14px;
+    padding: 12px;
   }
   .stat-metric-val {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
   }
   .stat-metric-label {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
   }
   .mitra-verified-badge {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
   }
   .form-control-input {
     font-size: 16px !important;
-    padding: 9px 12px;
+    padding: 8px 10px;
     word-break: break-word;
   }
   .btn-mitra-primary {
-    font-size: 0.85rem;
-    padding: 10px 14px;
+    font-size: 0.82rem;
+    padding: 10px 12px;
   }
   .mitra-table-wrapper {
     width: 100%;
     overflow-x: auto;
   }
   .mitra-table-wrapper table {
-    font-size: 0.7rem !important;
+    font-size: 0.68rem !important;
   }
   .mitra-table-wrapper th,
   .mitra-table-wrapper td {
-    padding: 7px 5px !important;
+    padding: 6px 4px !important;
     white-space: nowrap;
   }
   .mitra-card h4 {
-    font-size: 0.88rem !important;
+    font-size: 0.85rem !important;
   }
 }
 

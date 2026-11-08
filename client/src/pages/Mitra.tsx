@@ -646,19 +646,18 @@ export default function Mitra() {
               </div>
 
               {/* ACTIONS */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="mitra-qr-actions">
+                <div className="mitra-qr-input-row">
                   <input
                     type="text"
                     readOnly
-                    className="form-control-input"
+                    className="form-control-input mitra-qr-input"
                     value={typeof window !== 'undefined' ? `${window.location.origin}/?ref=${mitraSession.referralCode}` : ''}
-                    style={{ fontSize: '0.8rem', background: '#f8fafc', fontFamily: 'monospace' }}
                   />
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    style={{ padding: '10px 14px', background: '#059669', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                    className="mitra-qr-copy-btn"
                   >
                     {copied ? 'Tersalin!' : 'Salin Link'}
                   </button>
@@ -667,7 +666,7 @@ export default function Mitra() {
                   <a
                     href={qrDataUrl}
                     download={`QR_Afiliasi_${mitraSession.referralCode}.png`}
-                    style={{ padding: '11px', background: '#0f172a', color: '#ffffff', borderRadius: '10px', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    className="mitra-qr-download-btn"
                   >
                     <Download className="w-4 h-4 text-white" /> Unduh Gambar QR Code (PNG)
                   </a>
