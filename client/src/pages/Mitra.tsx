@@ -615,9 +615,9 @@ export default function Mitra() {
           </div>
 
           {/* GRID: QR CODE CARD & STATS */}
-          <div className="mitra-dashboard-grid">
+          <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 items-start w-full">
             {/* LEFT: QR CODE & AFFILIATE LINK */}
-            <div className="qr-card">
+            <div className="qr-card w-full box-border">
               <div className="mitra-qr-tag">
                 <span>SCAN LANGSUNG KE PESAN SERVIS</span>
               </div>
@@ -646,18 +646,18 @@ export default function Mitra() {
               </div>
 
               {/* ACTIONS */}
-              <div className="mitra-qr-actions">
-                <div className="mitra-qr-input-row">
+              <div className="mitra-qr-actions w-full">
+                <div className="mitra-qr-input-row w-full">
                   <input
                     type="text"
                     readOnly
-                    className="form-control-input mitra-qr-input"
+                    className="form-control-input mitra-qr-input flex-1 min-w-0"
                     value={typeof window !== 'undefined' ? `${window.location.origin}/?ref=${mitraSession.referralCode}` : ''}
                   />
                   <button
                     type="button"
                     onClick={handleCopyLink}
-                    className="mitra-qr-copy-btn"
+                    className="mitra-qr-copy-btn shrink-0"
                   >
                     {copied ? 'Tersalin!' : 'Salin Link'}
                   </button>
@@ -666,7 +666,7 @@ export default function Mitra() {
                   <a
                     href={qrDataUrl}
                     download={`QR_Afiliasi_${mitraSession.referralCode}.png`}
-                    className="mitra-qr-download-btn"
+                    className="mitra-qr-download-btn w-full"
                   >
                     <Download className="w-4 h-4 text-white" /> Unduh Gambar QR Code (PNG)
                   </a>
@@ -675,24 +675,24 @@ export default function Mitra() {
             </div>
 
             {/* RIGHT: COMMISSION STATS & HOW IT WORKS */}
-            <div>
+            <div className="w-full flex flex-col gap-6">
               {/* METRIC STATS */}
-              <div className="mitra-stats-grid">
-                <div className="stat-metric-card" style={{ borderLeft: '4px solid #10b981' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full">
+                <div className="stat-metric-card w-full" style={{ borderLeft: '4px solid #10b981' }}>
                   <div className="stat-metric-label">Total Komisi Didapat</div>
                   <div className="stat-metric-val" style={{ color: '#059669' }}>
                     {formatRp(dashboardStats.totalCommission)}
                   </div>
                   <small style={{ color: '#000000', fontSize: '0.75rem' }}>Tercatat di Database</small>
                 </div>
-                <div className="stat-metric-card" style={{ borderLeft: '4px solid #d4af37' }}>
+                <div className="stat-metric-card w-full" style={{ borderLeft: '4px solid #d4af37' }}>
                   <div className="stat-metric-label">Servis Tereferensi</div>
                   <div className="stat-metric-val" style={{ color: '#b45309' }}>
                     {dashboardStats.totalOrders}
                   </div>
                   <small style={{ color: '#000000', fontSize: '0.75rem' }}>Total unit smartphone</small>
                 </div>
-                <div className="stat-metric-card" style={{ borderLeft: '4px solid #f59e0b' }}>
+                <div className="stat-metric-card w-full" style={{ borderLeft: '4px solid #f59e0b' }}>
                   <div className="stat-metric-label">Tingkat Komisi Anda</div>
                   <div className="stat-metric-val" style={{ color: '#d97706' }}>
                     {dashboardStats.commissionRate}%
@@ -702,12 +702,12 @@ export default function Mitra() {
               </div>
 
               {/* HOW IT WORKS STEP */}
-              <div className="mitra-card mitra-section-card">
+              <div className="mitra-card mitra-section-card w-full">
                 <h4 style={{ fontSize: '0.98rem', fontWeight: 800, margin: '0 0 14px', color: '#000000', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Lightbulb className="w-4 h-4 text-amber-500" />
                   <span>Cara Kerja Komisi Afiliasi Ngalam Fix Pro</span>
                 </h4>
-                <div className="mitra-steps-grid">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full">
                   <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div style={{ marginBottom: '8px' }}>
                       <Smartphone className="w-6 h-6 text-emerald-600" />
@@ -745,7 +745,7 @@ export default function Mitra() {
               </div>
 
               {/* REFERRED ORDERS TABLE */}
-              <div className="mitra-card mitra-table-card">
+              <div className="mitra-card mitra-table-card w-full">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#000000' }}>
                     Daftar Servis Pelanggan Afiliasi Anda
