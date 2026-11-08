@@ -628,9 +628,9 @@ export default function Mitra() {
                 Tunjukkan QR Code ini kepada pelanggan Anda atau tempel di motor/helm/toko Anda. Pelanggan cukup scan untuk masuk ke web Ngalam Fix Pro, dan saat memesan servis kode referral Anda otomatis terpasang!
               </p>
 
-              <div className="qr-image-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '220px', minWidth: '220px', background: '#ffffff', padding: '14px', borderRadius: '16px', margin: '0 auto 16px' }}>
+              <div className="qr-image-wrapper">
                 {qrDataUrl ? (
-                  <img src={qrDataUrl} alt="QR Code Afiliasi Mitra" style={{ width: '220px', height: '220px', borderRadius: '8px' }} />
+                  <img src={qrDataUrl} alt="QR Code Afiliasi Mitra" />
                 ) : (
                   <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Membuat QR Code...</div>
                 )}
@@ -756,7 +756,7 @@ export default function Mitra() {
                 </div>
 
                 <div className="mitra-table-wrapper">
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left', minWidth: '640px' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left' }}>
                     <thead>
                       <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#000000', fontSize: '0.78rem', textTransform: 'uppercase' }}>
                         <th style={{ padding: '10px 12px' }}>No. Tiket</th>
