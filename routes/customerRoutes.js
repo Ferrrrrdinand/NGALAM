@@ -25,6 +25,7 @@ const { generateToken, verifyToken } = require('../src/utils/jwt');
 const { verifyPassword } = require('../src/utils/security');
 const { sendAuthError } = require('../src/utils/authError');
 const { isValidEmail, normalizeEmail } = require('../src/utils/phone');
+const unregisteredUserService = require('../services/unregisteredUserService');
 
 router.use(async (req, res, next) => {
   try {
@@ -1079,6 +1080,8 @@ router.get('/auth/google/callback', async (req, res) => {
     if (!profileRes.ok || !profile.email) return failRedirect('profile_fetch_failed');
 
     const profileEmail = normalizeEmail(profile.email);
+    const profileGoogleId = String(profile.sub || '');
+    
     await userService.refreshUsersFromDb();
     const linkedUser = userService.findUser(profileEmail);
 
@@ -1102,12 +1105,39 @@ router.get('/auth/google/callback', async (req, res) => {
       return res.redirect(`${frontendBase}/login?auth=google${linkedUser.phone ? '' : '&needsPhone=1'}`);
     }
 
+    let unregUser = null;
+    const tempUserId = parseAuthCookies(req).ngalam_temp_user_id || '';
+    if (tempUserId) {
+      unregUser = await unregisteredUserService.findUnregisteredById(tempUserId);
+    }
+    
+    if (!unregUser) {
+      const allUnreg = await require('../src/models').UnregisteredUser.findAll({
+        where: { claimed: false },
+        order: [['created_at', 'DESC']],
+        limit: 10
+      });
+      unregUser = allUnreg.find(u => u.email === profileEmail) || null;
+    }
+
+    const nameToUse = unregUser ? unregUser.name : (profile.name || profileEmail.split('@')[0]);
+    const phoneToUse = unregUser ? unregUser.phone : '';
+    const refMitraToUse = unregUser ? unregUser.referredByMitra : (parseAuthCookies(req).ngalam_affiliate_ref || '');
+    const refCodeToUse = unregUser ? unregUser.referralCode : '';
+
     const cust = await upsertGoogleCustomer({
-      googleId: profile.sub || '',
+      googleId: profileGoogleId,
       email: profileEmail,
-      name: profile.name || '',
-      avatar: profile.picture || ''
+      name: nameToUse,
+      phone: phoneToUse,
+      avatar: profile.picture || '',
+      referredByMitra: refMitraToUse,
+      referralCode: refCodeToUse
     });
+    
+    if (unregUser) {
+      await unregisteredUserService.markAsClaimed(unregUser.id);
+    }
 
     const jwtInfo = generateToken({
       customerId: cust.id || cust.whatsapp || cust.email,

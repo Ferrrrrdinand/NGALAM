@@ -10,9 +10,11 @@ import {
 } from 'lucide-react';
 import { fetchApi } from '../utils/api';
 import HomeAdBanner from '../components/HomeAdBanner';
+import LandingModal from '../components/LandingModal';
 
 export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [showLandingModal, setShowLandingModal] = useState(false);
 
   // Estimator State
   const [selectedBrand, setSelectedBrand] = useState('apple');
@@ -52,6 +54,26 @@ export default function Home() {
   const [testiRating, setTestiRating] = useState(5);
   const [testiText, setTestiText] = useState('');
   const [testiSuccess, setTestiSuccess] = useState(false);
+
+  // Landing Modal trigger
+  useEffect(() => {
+    const hasSeenModal = localStorage.getItem('ngalam_modal_seen');
+    const hasCustomerSession = localStorage.getItem('ngalam_customer_token');
+    const hasMitraSession = localStorage.getItem('ngalam_mitra_token');
+    const hasAdminSession = localStorage.getItem('ngalam_token');
+    
+    if (!hasSeenModal && !hasCustomerSession && !hasMitraSession && !hasAdminSession) {
+      const timer = setTimeout(() => {
+        setShowLandingModal(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleLandingModalClose = () => {
+    setShowLandingModal(false);
+    localStorage.setItem('ngalam_modal_seen', 'true');
+  };
 
   // Welcome Promo trigger (coordinated with preloader.js)
   useEffect(() => {
@@ -409,6 +431,8 @@ export default function Home() {
 
   return (
     <>
+      {showLandingModal && <LandingModal onClose={handleLandingModalClose} referralCode={localStorage.getItem('ngalam_affiliate_ref') || ''} />}
+      
       {/* HERO SECTION */}
       <section className="hero">
         {/* TOP PROMOTIONAL BANNER SLIDER (BAGIAN ATAS HERO) */}

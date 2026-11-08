@@ -284,6 +284,33 @@ router.get('/auth/google/callback', async (req, res) => {
         users = readUsers();
         mitra = users.find((user) => String(user.id || '') === String(linkedUser.id || '')) || findMitraByGoogle(users, profile);
       }
+      
+      if (!mitra) {
+        const preCreatedSlot = users.find(u => 
+          u.isPreCreated === true && 
+          !u.googleId && 
+          u.status === 'Menunggu Aktivasi'
+        );
+        
+        if (preCreatedSlot) {
+          preCreatedSlot.googleId = String(profile.sub || '');
+          preCreatedSlot.authProvider = 'google';
+          preCreatedSlot.email = profileEmail;
+          preCreatedSlot.name = profile.name || preCreatedSlot.name;
+          preCreatedSlot.isPreCreated = false;
+          preCreatedSlot.claimedAt = new Date().toISOString();
+          preCreatedSlot.status = 'Siaga / Aktif';
+          preCreatedSlot.lastActive = new Date().toLocaleDateString('id-ID', { 
+            day: '2-digit', month: 'short', year: 'numeric' 
+          }) + ', Aktivasi via Google';
+          
+          await saveUsers(users);
+          mitra = preCreatedSlot;
+          
+          console.log(`✅ Pre-created mitra claimed: ${mitra.referralCode} by ${mitra.email}`);
+        }
+      }
+      
       if (!mitra) {
         mitra = await createMitraFromGoogle(users, profile);
       }

@@ -18,6 +18,7 @@ db.Testimonial = require('./Testimonial')(sequelize);
 db.Session = require('./Session')(sequelize);
 db.ActivityLog = require('./ActivityLog')(sequelize);
 db.TechnicianLog = require('./TechnicianLog')(sequelize);
+db.UnregisteredUser = require('./UnregisteredUser')(sequelize);
 
 // Associations
 // Order belongsTo Customer (whatsapp / customer_name)
