@@ -25,13 +25,24 @@ export interface AdItem {
 
 const DEFAULT_FALLBACK_ADS: AdItem[] = [
   {
+    id: 'ad-mitra-afiliasi-10',
+    title: 'Mitra Afiliasi Komisi 10%',
+    headline: 'Peluang Cuan Tanpa Modal: Jadi Mitra & Dapatkan Komisi 10% Tiap Rekomendasi Servis!',
+    description: 'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
+    badge: '💰 CUAN 10% TANPA MODAL • MITRA RESMI',
+    ctaText: 'Daftar Mitra Sekarang ↗',
+    targetUrl: '/mitra',
+    theme: 'emerald',
+    active: true
+  },
+  {
     id: 'ad-member-vip-10',
-    title: 'Member Diskon 10%',
-    headline: 'Daftar Member & Dapatkan Diskon 10% Servis HP',
-    description: 'Daftar gratis & klaim voucher kode MEMBER10 untuk potongan 10% perbaikan LCD, baterai, dan mesin.',
-    badge: '👑 MEMBER BARU DISKON 10%',
-    ctaText: 'Daftar & Klaim 10% ↗',
-    targetUrl: '/akun-pelanggan?tab=register&promo=MEMBER10',
+    title: 'Member VIP Diskon 10%',
+    headline: 'Gabung Member VIP Gratis: Nikmati Diskon 10% Semua Servis + Garansi Prioritas!',
+    description: 'Daftar gratis hanya 10 detik! Dapatkan voucher hemat 10% untuk pergantian LCD, baterai, kamera & IC mesin, plus gratis cek kerusakan dan pantau status servis online.',
+    badge: '👑 PRIVILEGE VIP MEMBER DISKON 10%',
+    ctaText: 'Daftar & Ambil Diskon 10% ↗',
+    targetUrl: '/login?tab=register&promo=MEMBER10',
     theme: 'gold',
     active: true
   },
