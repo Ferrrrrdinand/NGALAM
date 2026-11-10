@@ -116,7 +116,7 @@ router.get('/admin/dashboard', async (req, res) => {
     }
   };
 
-  const [orders, transactions, promos, activityLogs, mitraUsers, customerList, adsList] = await Promise.all([
+  const [orders, transactions, promos, activityLogs, mitraUsers, customerList, adsList, prospectsList] = await Promise.all([
     safe(() => getAllOrders(), []),
     safe(async () => readTransactions(), []),
     safe(async () => getAllPromos(true), []),
@@ -129,6 +129,10 @@ router.get('/admin/dashboard', async (req, res) => {
     safe(async () => {
       const { getAllAds } = require('../../services/adService');
       return getAllAds({ onlyActive: false, location: 'all' });
+    }, []),
+    safe(async () => {
+      const unregisteredUserService = require('../../services/unregisteredUserService');
+      return unregisteredUserService.getAllProspects();
     }, [])
   ]);
 
@@ -202,6 +206,7 @@ router.get('/admin/dashboard', async (req, res) => {
     activityLogs,
     mitras,
     customers,
+    prospects: prospectsList || [],
     ads: adsList || [],
     dbStatus: {
       connected: pgDb.isDbConnected(),
@@ -209,6 +214,54 @@ router.get('/admin/dashboard', async (req, res) => {
     },
     generatedAt: new Date().toISOString()
   });
+});
+
+// ============================================================
+// ADMIN LOG CALON PELANGGAN (LEADS DARI LANDING MODAL)
+// ============================================================
+router.get('/admin/prospects', async (req, res) => {
+  try {
+    const unregisteredUserService = require('../../services/unregisteredUserService');
+    const list = await unregisteredUserService.getAllProspects();
+    
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const todayCount = list.filter(p => {
+      const pDate = p.createdAt ? new Date(p.createdAt).toISOString().slice(0, 10) : '';
+      return pDate === todayStr;
+    }).length;
+
+    const withMitraCount = list.filter(p => Boolean(p.referredByMitra)).length;
+    const claimedCount = list.filter(p => Boolean(p.claimed)).length;
+
+    res.json({
+      success: true,
+      data: list,
+      stats: {
+        total: list.length,
+        today: todayCount,
+        withMitra: withMitraCount,
+        claimed: claimedCount,
+        unclaimed: list.length - claimedCount
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.delete('/admin/prospects/:id', async (req, res) => {
+  try {
+    const unregisteredUserService = require('../../services/unregisteredUserService');
+    const ok = await unregisteredUserService.deleteProspect(req.params.id);
+    if (ok) {
+      res.json({ success: true, message: `Calon pelanggan #${req.params.id} berhasil dihapus.` });
+    } else {
+      res.status(404).json({ success: false, message: 'Data calon pelanggan tidak ditemukan.' });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // Database live status endpoint

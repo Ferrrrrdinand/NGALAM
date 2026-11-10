@@ -285,6 +285,25 @@ async function runInitDb() {
           CREATE INDEX IF NOT EXISTS idx_ads_location ON ads(location);
           CREATE INDEX IF NOT EXISTS idx_ads_active ON ads(active);
 
+          -- Tabel Calon Pelanggan / Leads (Unregistered Users dari Landing Modal)
+          CREATE TABLE IF NOT EXISTS unregistered_users (
+            id VARCHAR(100) PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            phone VARCHAR(50),
+            email VARCHAR(255),
+            referral_code VARCHAR(100),
+            referred_by_mitra VARCHAR(100),
+            registered_via VARCHAR(100) DEFAULT 'Landing Modal',
+            claimed BOOLEAN DEFAULT FALSE,
+            claimed_at TIMESTAMP WITH TIME ZONE,
+            raw_data JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          CREATE INDEX IF NOT EXISTS idx_unreg_phone ON unregistered_users(phone);
+          CREATE INDEX IF NOT EXISTS idx_unreg_ref ON unregistered_users(referral_code);
+          CREATE INDEX IF NOT EXISTS idx_unreg_mitra ON unregistered_users(referred_by_mitra);
+
           -- Pastikan kolom tabel promo_codes dan banners selalu lengkap (idempotent migration)
           ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS name VARCHAR(255);
           ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS max_discount NUMERIC DEFAULT 0;

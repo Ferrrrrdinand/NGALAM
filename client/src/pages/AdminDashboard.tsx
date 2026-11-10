@@ -4,7 +4,7 @@ import {
   ShieldCheck, Wrench, RefreshCw, 
   LogOut, Plus, 
   Database, Users, Banknote, Menu,
-  ClipboardList, History, Gift, UserCheck
+  ClipboardList, History, Gift, UserCheck, UserPlus
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import logoImg from "../assets/images/logo-ngalam-fix-pro.jpg";
@@ -22,6 +22,7 @@ import CustomersTab from "./admin/CustomersTab";
 import PromosTab from "./admin/PromosTab";
 import LogsTab from "./admin/LogsTab";
 import ReceiptModal from "./admin/ReceiptModal";
+import ProspectsTab from "./admin/ProspectsTab";
 export default function AdminDashboard() {
   const { user, loading: authLoading, logoutStaff } = useAuth();
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export default function AdminDashboard() {
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
   const [mitras, setMitras] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
+  const [prospects, setProspects] = useState<any[]>([]);
   const [dbStatus, setDbStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -56,6 +58,16 @@ export default function AdminDashboard() {
 
   const handleCustomerUpdated = (updated: any) => {
     setCustomers((prev) => prev.map((c) => (c.id === updated.id ? { ...c, ...updated } : c)));
+  };
+
+  const handleConvertToWalkin = (prospect: { name: string; phone: string; referralCode?: string }) => {
+    setWalkin((prev) => ({
+      ...prev,
+      customerName: prospect.name || '',
+      whatsapp: prospect.phone || '',
+      referralCode: prospect.referralCode || ''
+    }));
+    setActiveTab('walkin');
   };
 
   // Walk-in form state
@@ -93,19 +105,21 @@ export default function AdminDashboard() {
         setActivityLogs(dashRes.data.activityLogs || []);
         setMitras(dashRes.data.mitras || []);
         setCustomers(dashRes.data.customers || []);
+        setProspects(dashRes.data.prospects || []);
         setDbStatus(dashRes.data.dbStatus || null);
         return;
       }
 
       // Fallback ke endpoint individual bila agregat tidak tersedia
-      const [ordRes, dbRes, promoRes, logRes, txRes, mitraRes, custRes] = await Promise.all([
+      const [ordRes, dbRes, promoRes, logRes, txRes, mitraRes, custRes, prospectRes] = await Promise.all([
         fetchApi('/api/orders'),
         fetchApi('/api/database/status'),
         fetchApi('/api/promos?all=true'),
         fetchApi('/api/activity-logs'),
         fetchApi('/api/finance/transactions'),
         fetchApi('/api/mitra/list'),
-        fetchApi('/api/customer/list')
+        fetchApi('/api/customer/list'),
+        fetchApi('/api/admin/prospects')
       ]);
 
       if (ordRes.ok && ordRes.data.success) setOrders(ordRes.data.data || []);
@@ -115,6 +129,7 @@ export default function AdminDashboard() {
       if (txRes.ok && txRes.data.success) setTransactions(txRes.data.data || []);
       if (mitraRes.ok && mitraRes.data.success) setMitras(mitraRes.data.data || []);
       if (custRes.ok && custRes.data.success) setCustomers(custRes.data.data || []);
+      if (prospectRes.ok && prospectRes.data.success) setProspects(prospectRes.data.data || []);
     } catch (err) {
       console.error('Error loading dashboard data', err);
     } finally {
@@ -339,6 +354,7 @@ export default function AdminDashboard() {
     { section: 'Operasional Utama' },
     { id: 'orders', label: 'Antrian Servis Unit', icon: <ClipboardList className="w-4 h-4 shrink-0" />, count: orders.length },
     { id: 'walkin', label: 'Intake Walk-in Meja 1', icon: <Plus className="w-4 h-4 shrink-0" /> },
+    { id: 'prospects', label: 'Log Calon Pelanggan', icon: <UserPlus className="w-4 h-4 shrink-0" />, count: prospects.length },
     { id: 'cashier', label: 'Kasir & Pembayaran', icon: <Banknote className="w-4 h-4 shrink-0" /> },
     { id: 'transactions', label: 'Faktur & Riwayat Kasir', icon: <History className="w-4 h-4 shrink-0" />, count: transactions.length },
     
@@ -559,6 +575,16 @@ export default function AdminDashboard() {
               handleWalkinSubmit={handleWalkinSubmit}
               loadData={loadData}
               currentUser={user}
+            />
+          )}
+
+          {activeTab === "prospects" && (
+            <ProspectsTab
+              prospects={prospects}
+              loading={loading}
+              onRefresh={loadData}
+              onConvertToWalkin={handleConvertToWalkin}
+              onToast={(type, msg) => alert(msg)}
             />
           )}
 

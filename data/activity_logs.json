@@ -1,5 +1,30 @@
 [
   {
+    "id": "LOG-1794289234400-396",
+    "action": "PROSPECT_DELETE",
+    "table_name": "unregistered_users",
+    "record_id": "UNREG-20261110-8205",
+    "payload": {
+      "id": "UNREG-20261110-8205"
+    },
+    "performed_at": "2026-11-10T05:40:34.400Z"
+  },
+  {
+    "id": "LOG-1794289233973-316",
+    "action": "PROSPECT_CAPTURED",
+    "table_name": "unregistered_users",
+    "record_id": "UNREG-20261110-8205",
+    "payload": {
+      "name": "Budi Hartono Test",
+      "phone": "081298765432",
+      "referralCode": "USR-BUDIH-9617",
+      "referredByMitra": "MTR-FERDI-4132",
+      "registeredVia": "Landing Modal",
+      "createdAt": "2026-11-10T05:40:30.795Z"
+    },
+    "performed_at": "2026-11-10T05:40:33.974Z"
+  },
+  {
     "id": "LOG-1793890196309-224",
     "action": "WARRANTY_CLAIM_STATUS_UPDATED",
     "table_name": "transactions",
