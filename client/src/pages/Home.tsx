@@ -2,7 +2,7 @@ import banner1 from '../assets/images/spesialis-hp-banner.jpg';
 import banner2 from '../assets/images/promo-banner-1.jpg';
 import banner3 from '../assets/images/promo-banner-tempered-glass.jpg';
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Zap, ShieldCheck, Smartphone, RefreshCw, Battery, 
   Gem, Cable, Camera, PowerOff, Microscope, PenTool, 
@@ -13,6 +13,7 @@ import HomeAdBanner from '../components/HomeAdBanner';
 import LandingModal from '../components/LandingModal';
 
 export default function Home() {
+  const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState(0);
   const [showLandingModal, setShowLandingModal] = useState(false);
 
@@ -269,12 +270,25 @@ export default function Home() {
       badge: 'TAWARAN MEMBER VIP',
       pill: 'DISKON 10% MEMBER BARU',
       pillBg: 'linear-gradient(135deg, #f59e0b, #d97706)',
-      hint: 'Klik Banner untuk Daftar Member & Klaim 10%',
+      hint: 'Klik Banner untuk Daftar Member & Klaim Diskon 10%',
       cta: 'Daftar Member ↗',
       title: 'Gabung Member VIP Ngalam Fix Pro: Potongan Diskon 10% Servis HP',
       desc: 'Daftar akun gratis sekarang & nikmati potongan otomatis 10% untuk seluruh perbaikan smartphone, cek riwayat servis, klaim garansi resmi online, dan antrean prioritas Meja 1.',
       code: 'MEMBER10',
-      link: '/akun-pelanggan?tab=register&promo=MEMBER10'
+      link: '/login?tab=register&promo=MEMBER10'
+    },
+    {
+      img: banner1, fallbackImg: '/images/spesialis-hp-banner.jpg',
+      alt: 'Peluang Mitra Afiliasi Komisi 10% - Ngalam Fix Pro',
+      badge: 'PELUANG CUAN TANPA MODAL',
+      pill: 'KOMISI 10% CASH TIAP SERVIS',
+      pillBg: 'linear-gradient(135deg, #10b981, #059669)',
+      hint: 'Klik Banner untuk Daftar Mitra & Dapatkan Komisi 10%',
+      cta: 'Daftar Mitra Sekarang ↗',
+      title: 'Peluang Cuan Tanpa Modal: Jadi Mitra & Dapatkan Komisi 10% Tiap Rekomendasi Servis!',
+      desc: 'Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
+      code: 'MITRA10',
+      link: '/mitra?tab=register'
     },
     {
       img: banner2, fallbackImg: '/images/promo-banner-1.jpg',
@@ -387,8 +401,13 @@ export default function Home() {
   };
 
   const openPromoModal = (slide) => {
-    if (isExternalLink(slide?.link)) {
-      window.open(slide.link, '_blank', 'noopener,noreferrer');
+    if (!slide) return;
+    if (slide.link) {
+      if (isExternalLink(slide.link)) {
+        window.open(slide.link, '_blank', 'noopener,noreferrer');
+      } else {
+        navigate(slide.link);
+      }
       return;
     }
     setSelectedPromo(slide);
@@ -1214,9 +1233,25 @@ export default function Home() {
             </div>
             <div className="promo-modal-footer">
               <button type="button" className="btn-modal-cancel" onClick={() => setPromoModalOpen(false)}>Tutup</button>
-              <Link to={`/pesan-servis?promo=${encodeURIComponent(selectedPromo.code)}`} className="btn-modal-claim" onClick={() => setPromoModalOpen(false)}>
-                <span>Klaim Promo Servis Sekarang ↗</span>
-              </Link>
+              {isExternalLink(selectedPromo.link) ? (
+                <a
+                  href={selectedPromo.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-modal-claim"
+                  onClick={() => setPromoModalOpen(false)}
+                >
+                  <span>{selectedPromo.cta || 'Klaim Sekarang ↗'}</span>
+                </a>
+              ) : (
+                <Link
+                  to={selectedPromo.link || `/pesan-servis?promo=${encodeURIComponent(selectedPromo.code)}`}
+                  className="btn-modal-claim"
+                  onClick={() => setPromoModalOpen(false)}
+                >
+                  <span>{selectedPromo.cta || 'Klaim Sekarang ↗'}</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

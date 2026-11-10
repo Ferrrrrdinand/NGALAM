@@ -914,7 +914,7 @@ export default function PesanServis() {
                 </button>
                 {!customer && (
                   <Link
-                    to="/akun-pelanggan?tab=register&promo=MEMBER10"
+                    to="/login?tab=register&promo=MEMBER10"
                     style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 700, textDecoration: 'underline' }}
                   >
                     Daftar Akun Member ↗

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Sparkles, ArrowRight, ChevronLeft, ChevronRight, 
   ExternalLink, MessageCircle
@@ -31,7 +31,7 @@ const DEFAULT_FALLBACK_ADS: AdItem[] = [
     description: 'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
     badge: '💰 CUAN 10% TANPA MODAL • MITRA RESMI',
     ctaText: 'Daftar Mitra Sekarang ↗',
-    targetUrl: '/mitra',
+    targetUrl: '/mitra?tab=register',
     theme: 'emerald',
     active: true
   },
@@ -95,6 +95,7 @@ const DEFAULT_FALLBACK_ADS: AdItem[] = [
 export default function HomeAdBanner() {
   const [ads, setAds] = useState<AdItem[]>(DEFAULT_FALLBACK_ADS);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
   // Fetch active ads from database API
   useEffect(() => {
@@ -140,6 +141,27 @@ export default function HomeAdBanner() {
     } catch (_) {}
   };
 
+  const isExternalLink = currentAd.targetUrl?.startsWith('http') || currentAd.targetUrl?.startsWith('https');
+
+  const handleBannerClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    // Jangan redirect jika yang diklik adalah tombol navigasi slider (prev/next/dot) atau WhatsApp
+    if (
+      target.closest('button') || 
+      target.closest('a[title="Konsultasi WhatsApp"]') || 
+      target.closest('[aria-label="Konsultasi WhatsApp"]')
+    ) {
+      return;
+    }
+
+    handleAdClick(currentAd);
+    if (isExternalLink) {
+      window.open(currentAd.targetUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(currentAd.targetUrl);
+    }
+  };
+
   const getThemeGradient = (theme?: string) => {
     switch (theme) {
       case 'emerald':
@@ -166,18 +188,18 @@ export default function HomeAdBanner() {
     }
   };
 
-  const isExternalLink = currentAd.targetUrl?.startsWith('http') || currentAd.targetUrl?.startsWith('https');
-
   return (
     <section className="wrap my-4 sm:my-6 transition-all duration-300" id="homeAdSection">
       {/* ======================================================== */}
-      {/* RINGKAS, PADAT & TO THE POINT (TIDAK BERTELE-TELE) */}
+      {/* RINGKAS, PADAT & TO THE POINT - SELURUH BANNER BISA DIKLIK */}
       {/* ======================================================== */}
       <div 
-        className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${getThemeGradient(currentAd.theme)} p-4 sm:p-5 border shadow-lg transition-all duration-300`}
+        onClick={handleBannerClick}
+        className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${getThemeGradient(currentAd.theme)} p-4 sm:p-5 border shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.006] active:scale-[0.996]`}
         style={{
           boxShadow: '0 10px 30px -10px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.15)'
         }}
+        title={`Klik untuk membuka: ${currentAd.headline}`}
       >
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           

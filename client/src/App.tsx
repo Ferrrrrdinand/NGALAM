@@ -57,6 +57,12 @@ export default function App() {
         <Route path="/kontak" element={<Kontak />} />
         <Route path="/mitra" element={<Mitra />} />
         <Route path="/login" element={<CustomerLogin />} />
+        <Route path="/akun-pelanggan" element={<Navigate to="/login?tab=register" replace />} />
+        <Route path="/akun" element={<Navigate to="/login" replace />} />
+        <Route path="/register" element={<Navigate to="/login?tab=register" replace />} />
+        <Route path="/daftar" element={<Navigate to="/login?tab=register" replace />} />
+        <Route path="/daftar-member" element={<Navigate to="/login?tab=register" replace />} />
+        <Route path="/daftar-mitra" element={<Navigate to="/mitra?tab=register" replace />} />
       </Route>
 
       {/* Single Admin Auth Portal */}

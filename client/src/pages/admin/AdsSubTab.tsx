@@ -415,11 +415,41 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
                   </label>
                   <input
                     type="text"
-                    placeholder="Contoh: /pesan-servis atau WA"
+                    placeholder="Contoh: /login?tab=register atau /mitra"
                     value={form.targetUrl}
                     onChange={(e) => setForm({ ...form, targetUrl: e.target.value })}
                     className="w-full text-xs px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-500 font-mono text-[11px]"
                   />
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, targetUrl: '/login?tab=register&promo=MEMBER10', ctaText: 'Daftar Member VIP ↗' })}
+                      className="px-2 py-0.5 rounded-md bg-amber-100 hover:bg-amber-200 text-amber-900 text-[10px] font-semibold cursor-pointer"
+                    >
+                      👑 Member VIP (/login?tab=register)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, targetUrl: '/mitra?tab=register', ctaText: 'Daftar Jadi Mitra ↗' })}
+                      className="px-2 py-0.5 rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-[10px] font-semibold cursor-pointer"
+                    >
+                      💰 Mitra 10% (/mitra?tab=register)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, targetUrl: '/pesan-servis?problem=baterai', ctaText: 'Klaim Baterai ↗' })}
+                      className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-semibold cursor-pointer"
+                    >
+                      ⚡ Servis Baterai
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, targetUrl: '/pesan-servis?problem=lcd', ctaText: 'Lihat Layar LCD ↗' })}
+                      className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-semibold cursor-pointer"
+                    >
+                      📱 Servis LCD
+                    </button>
+                  </div>
                 </div>
               </div>
 

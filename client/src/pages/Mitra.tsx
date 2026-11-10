@@ -57,6 +57,13 @@ export default function Mitra() {
           setMitraSession(parsed);
         }
       }
+
+      // Dukung parameter URL /mitra?tab=register agar langsung membuka tab formulir pendaftaran
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab') || params.get('mode');
+      if (tabParam === 'register' || tabParam === 'daftar') {
+        setAuthTab('register');
+      }
     } catch (_) {}
   }, []);
 

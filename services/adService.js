@@ -18,7 +18,7 @@ const DEFAULT_ADS = [
     description: 'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
     badge: '💰 CUAN 10% TANPA MODAL • MITRA RESMI',
     ctaText: 'Daftar Mitra Sekarang ↗',
-    targetUrl: '/mitra',
+    targetUrl: '/mitra?tab=register',
     imageUrl: '',
     theme: 'emerald',
     active: true,
@@ -185,7 +185,16 @@ async function hydrateAdsFromPostgres() {
         };
       });
 
-      // Ensure ad-member-vip-10 is seeded to database if not present
+      // Ensure ad-mitra-afiliasi-10 and ad-member-vip-10 are seeded to database if not present
+      const hasMitraAd = adsCache.some(a => a.id === 'ad-mitra-afiliasi-10');
+      if (!hasMitraAd) {
+        const mitraAd = DEFAULT_ADS.find(a => a.id === 'ad-mitra-afiliasi-10');
+        if (mitraAd) {
+          await syncAdToPostgres(mitraAd);
+          adsCache.unshift(mitraAd);
+        }
+      }
+
       const hasMemberAd = adsCache.some(a => a.id === 'ad-member-vip-10');
       if (!hasMemberAd) {
         const memberAd = DEFAULT_ADS.find(a => a.id === 'ad-member-vip-10');

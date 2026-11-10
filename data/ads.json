@@ -6,7 +6,7 @@
     "description": "Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!",
     "badge": "💰 CUAN 10% TANPA MODAL • MITRA RESMI",
     "ctaText": "Daftar Mitra Sekarang ↗",
-    "targetUrl": "/mitra",
+    "targetUrl": "/mitra?tab=register",
     "imageUrl": "",
     "theme": "emerald",
     "active": true,
