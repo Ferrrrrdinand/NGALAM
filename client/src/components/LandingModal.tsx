@@ -59,10 +59,10 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 relative animate-[fadeIn_0.3s_ease-out]">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative animate-[fadeIn_0.3s_ease-out]">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
           aria-label="Tutup"
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,23 +72,23 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
         
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">👋</div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">
             Selamat Datang!
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 text-sm">
+          <p className="text-slate-600 text-sm">
             Isi data Anda untuk melanjutkan ke dashboard
           </p>
         </div>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
             {error}
           </div>
         )}
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Nama Lengkap
             </label>
             <input
@@ -96,14 +96,14 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Masukkan nama lengkap"
-              className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white transition-all"
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               disabled={loading}
               autoFocus
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Nomor WhatsApp
             </label>
             <input
@@ -111,7 +111,7 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="08xxxxxxxxxx"
-              className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white transition-all"
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               disabled={loading}
             />
           </div>
@@ -125,7 +125,7 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
           </button>
         </form>
         
-        <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-4">
+        <p className="text-xs text-slate-500 text-center mt-4">
           Dengan melanjutkan, Anda akan diminta login dengan Google untuk verifikasi akun
         </p>
       </div>

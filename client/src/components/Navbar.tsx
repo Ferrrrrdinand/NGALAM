@@ -2,17 +2,15 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Search, User, X, Home, 
-  Smartphone, ClipboardList, MapPin, Bike, ShieldCheck, Sun, Moon 
+  Smartphone, ClipboardList, MapPin, Bike, ShieldCheck 
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import logoImg from '../assets/images/logo-ngalam-fix-pro.jpg';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { customer } = useAuth();
-  const { isDark, toggleTheme } = useTheme();
 
   const isActive = (path) => location.pathname === path;
 
@@ -41,21 +39,6 @@ export default function Navbar() {
           </Link>
 
           <div className="navend">
-            {/* Dark Mode Toggle Button (Desktop & Tablet) */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="p-2 rounded-xl border border-slate-200/90 hover:border-amber-400 bg-white hover:bg-amber-50 text-slate-700 hover:text-amber-800 transition-all cursor-pointer flex items-center justify-center shadow-2xs"
-              title={isDark ? "Beralih ke Mode Terang (Light Mode)" : "Beralih ke Mode Gelap (Dark Mode)"}
-              aria-label="Toggle Dark Mode"
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-slate-700" />
-              )}
-            </button>
-
             <Link className="navend-login navend-lacak" id="navLacakBtn" to="/lacak" title="Lacak Progres Unit Servis">
               <span className="flex items-center gap-1"><Search className="w-3.5 h-3.5" /> Lacak Unit</span>
             </Link>
@@ -96,22 +79,6 @@ export default function Navbar() {
                 <span className="nav-dropdown-title">MENU NAVIGASI</span>
                 <button type="button" className="nav-dropdown-close" id="navDropdownClose" onClick={() => setMobileMenuOpen(false)}>
                   <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Mobile Drawer Dark Mode Switcher Row */}
-              <div className="p-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-                <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                  {isDark ? <Moon className="w-4 h-4 text-amber-400" /> : <Sun className="w-4 h-4 text-amber-600" />}
-                  <span>{isDark ? "Mode Gelap (Aktif)" : "Mode Terang (Aktif)"}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
-                >
-                  {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-                  <span>{isDark ? "Beralih Terang" : "Beralih Gelap"}</span>
                 </button>
               </div>
 
