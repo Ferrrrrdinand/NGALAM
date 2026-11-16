@@ -7,6 +7,7 @@ import {
   FileText, Sparkles, Clock, AlertCircle, Eye, Droplet, Volume2, Cpu, Wrench as ToolIcon
 } from 'lucide-react';
 import { fetchApi, formatRp } from '../../utils/api';
+import { LCD_MODELS_BY_BRAND, getLcdEstimate } from '../../data/lcdPrices';
 
 export default function WalkinTab({
   walkin,
@@ -137,70 +138,8 @@ export default function WalkinTab({
     }
   ];
 
-  // Database model smartphone populer
-  const modelsByBrand: Record<string, string[]> = {
-    apple: [
-      'iPhone 16 Pro Max', 'iPhone 16 Pro', 'iPhone 16 Plus', 'iPhone 16',
-      'iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15 Plus', 'iPhone 15',
-      'iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14 Plus', 'iPhone 14',
-      'iPhone 13 Pro Max', 'iPhone 13 Pro', 'iPhone 13 / 13 Mini',
-      'iPhone 12 Pro Max', 'iPhone 12 Pro', 'iPhone 12 / 12 Mini',
-      'iPhone 11 Pro Max', 'iPhone 11 Pro', 'iPhone 11',
-      'iPhone XS Max', 'iPhone XS / XR', 'iPhone X', 'iPhone 8 / 8 Plus'
-    ],
-    samsung: [
-      'Samsung Galaxy S24 Ultra', 'Samsung Galaxy S24+ / S24',
-      'Samsung Galaxy S23 Ultra', 'Samsung Galaxy S23+ / S23',
-      'Samsung Galaxy S22 Ultra', 'Samsung Galaxy S21 / S20 FE',
-      'Samsung Galaxy Z Fold 5 / Z Fold 6', 'Samsung Galaxy Z Flip 5 / Z Flip 6',
-      'Samsung Galaxy A55 5G', 'Samsung Galaxy A54 5G', 'Samsung Galaxy A35 / A34',
-      'Samsung Galaxy A25 / A15', 'Samsung Galaxy Note 20 Ultra'
-    ],
-    xiaomi: [
-      'Xiaomi 14 / 14 Ultra', 'Xiaomi 13T / 13T Pro', 'Xiaomi 12 / 12 Pro',
-      'Redmi Note 13 Pro+ 5G', 'Redmi Note 13 Pro', 'Redmi Note 13 4G/5G',
-      'Redmi Note 12 Pro 5G', 'Redmi Note 12', 'Redmi 13C / 12',
-      'Redmi Note 11 / 10 Pro'
-    ],
-    poco: [
-      'POCO F6 / F6 Pro', 'POCO X6 Pro 5G', 'POCO X6 5G',
-      'POCO F5 / F5 Pro', 'POCO X5 Pro 5G', 'POCO F4 GT / F4',
-      'POCO M6 Pro', 'POCO C65'
-    ],
-    oppo: [
-      'OPPO Find X7 Ultra / Find X6 Pro', 'OPPO Reno 11 Pro 5G', 'OPPO Reno 11 5G',
-      'OPPO Reno 10 Pro+ 5G', 'OPPO Reno 10 5G', 'OPPO Reno 8 / 8T',
-      'OPPO A98 5G', 'OPPO A79 5G', 'OPPO A58 / A38'
-    ],
-    vivo: [
-      'Vivo X100 Pro / X100', 'Vivo X90 Pro', 'Vivo V30 Pro 5G', 'Vivo V30 5G',
-      'Vivo V29 5G', 'Vivo V27 5G', 'Vivo Y100 5G', 'Vivo Y36 / Y27'
-    ],
-    realme: [
-      'Realme 12 Pro+ 5G', 'Realme 12+ 5G', 'Realme 11 Pro+ 5G',
-      'Realme GT Neo 5', 'Realme GT 6', 'Realme C67', 'Realme C55 / C53'
-    ],
-    infinix: [
-      'Infinix GT 20 Pro', 'Infinix Note 40 Pro+ 5G', 'Infinix Note 40',
-      'Infinix GT 10 Pro', 'Infinix Zero 30 5G', 'Infinix Hot 40 Pro'
-    ],
-    iqoo: [
-      'iQOO 12 / 12 Pro', 'iQOO Neo 9 Pro', 'iQOO Z9 5G / Z9 Turbo',
-      'iQOO 11', 'iQOO Z7 5G'
-    ],
-    tecno_itel: [
-      'Tecno Camon 30 Pro 5G', 'Tecno Spark 20 Pro+', 'Tecno Pova 6 Pro 5G',
-      'itel S23+ (Curved AMOLED)', 'itel P55 5G', 'itel RS4'
-    ],
-    asus: [
-      'ROG Phone 8 / 8 Pro', 'ROG Phone 7 Ultimate', 'ROG Phone 6',
-      'Zenfone 10', 'Zenfone 9'
-    ],
-    others: [
-      'Google Pixel 8 Pro / Pixel 8', 'Google Pixel 7 Pro / Pixel 7',
-      'Huawei Mate 60 Pro / P60 Pro', 'Sony Xperia 1 V', 'iPad / Tablet'
-    ]
-  };
+  // Database model smartphone lengkap dari katalog LCD OG Super & Flagship
+  const modelsByBrand: Record<string, string[]> = LCD_MODELS_BY_BRAND;
 
   // Daftar kerusakan & layanan komponen lengkap
   const problemOptions = [
@@ -336,12 +275,30 @@ export default function WalkinTab({
     return () => document.removeEventListener('mousedown', handleOutside);
   }, []);
 
+  const calcEstimatedCost = (problems: Set<string>, brand: string, model: string) => {
+    let total = 0;
+    problems.forEach((pId) => {
+      if (pId === 'lcd') {
+        const lcdEst = getLcdEstimate(brand, model);
+        if (lcdEst.found) {
+          total += lcdEst.totalPrice;
+          return;
+        }
+      }
+      const match = problemOptions.find(p => p.id === pId);
+      if (match) total += match.defaultCost;
+    });
+    return total > 0 ? total : 200000;
+  };
+
   // Update default model when brand changes
   const handleSelectBrand = (brandId: string) => {
     setSelectedBrand(brandId);
     setIsCustomModel(false);
-    const list = modelsByBrand[brandId] || modelsByBrand.apple;
-    setSelectedModel(list[0] || 'Smartphone');
+    const list = modelsByBrand[brandId] || modelsByBrand.apple || [];
+    const defaultM = list[0] || 'Smartphone';
+    setSelectedModel(defaultM);
+    setEstimatedCost(calcEstimatedCost(selectedProblems, brandId, defaultM));
   };
 
   // Recalculate estimated cost when problem checkboxes change
@@ -353,14 +310,8 @@ export default function WalkinTab({
       next.add(id);
     }
     setSelectedProblems(next);
-
-    // Sum up default cost
-    let total = 0;
-    next.forEach((pId) => {
-      const match = problemOptions.find(p => p.id === pId);
-      if (match) total += match.defaultCost;
-    });
-    setEstimatedCost(total > 0 ? total : 200000);
+    const currentM = isCustomModel ? customModelInput : selectedModel;
+    setEstimatedCost(calcEstimatedCost(next, selectedBrand, currentM));
   };
 
   // Quick append condition tag to physical notes
@@ -850,6 +801,7 @@ export default function WalkinTab({
                                   setSelectedModel(m);
                                   setModelDropdownOpen(false);
                                   setModelSearchQuery('');
+                                  setEstimatedCost(calcEstimatedCost(selectedProblems, selectedBrand, m));
                                 }}
                                 className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-xs transition-colors cursor-pointer ${
                                   isCurrent ? 'bg-amber-50 text-amber-900 font-bold border-l-4 border-amber-500' : 'text-slate-700 hover:bg-slate-50'
@@ -884,6 +836,11 @@ export default function WalkinTab({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {problemOptions.map((item) => {
                   const isChecked = selectedProblems.has(item.id);
+                  const isLcd = item.id === 'lcd';
+                  const currentPhone = isCustomModel ? customModelInput : selectedModel;
+                  const lcdEst = isLcd ? getLcdEstimate(selectedBrand, currentPhone) : null;
+                  const displayCost = (isLcd && lcdEst && lcdEst.found) ? lcdEst.totalPrice : item.defaultCost;
+
                   return (
                     <button
                       key={item.id}
@@ -908,12 +865,18 @@ export default function WalkinTab({
                             <span>{item.label}</span>
                           </span>
                           <span className="text-[11px] font-mono font-bold text-amber-800">
-                            {formatRp(item.defaultCost)}
+                            {formatRp(displayCost)}
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-500 mt-0.5 truncate">
-                          {item.desc}
-                        </p>
+                        {isLcd && lcdEst && lcdEst.found ? (
+                          <p className="text-[10px] text-amber-700 font-semibold mt-0.5 truncate">
+                            Part: {lcdEst.formattedPartPrice} + Jasa Flat 100k (OG Super)
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                            {item.desc}
+                          </p>
+                        )}
                       </div>
                     </button>
                   );

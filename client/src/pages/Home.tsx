@@ -11,6 +11,7 @@ import {
 import { fetchApi } from '../utils/api';
 import HomeAdBanner from '../components/HomeAdBanner';
 import LandingModal from '../components/LandingModal';
+import { LCD_MODELS_BY_BRAND, getLcdEstimate } from '../data/lcdPrices';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -94,93 +95,14 @@ export default function Home() {
     } catch (_) {}
   }, []);
 
-  const modelsByBrand = {
-    apple: [
-      'iPhone 16 Pro / 16 Pro Max',
-      'iPhone 16 / 16 Plus',
-      'iPhone 15 Pro / 15 Pro Max',
-      'iPhone 15 / 15 Plus',
-      'iPhone 14 Pro / 14 Pro Max',
-      'iPhone 14 / 14 Plus',
-      'iPhone 13 Pro / 13 Pro Max',
-      'iPhone 13 / 13 Mini',
-      'iPhone 12 / 12 Pro / 12 Pro Max',
-      'iPhone 11 / 11 Pro / 11 Pro Max',
-      'iPhone X / XS / XR'
-    ],
-    samsung: [
-      'Samsung Galaxy S24 Ultra / S24+',
-      'Samsung Galaxy S23 Ultra / S23',
-      'Samsung Galaxy Z Fold 5 / Z Flip 5',
-      'Samsung Galaxy Z Fold 4 / Z Flip 4',
-      'Samsung Galaxy A55 / A54 5G',
-      'Samsung Galaxy Note 20 Ultra'
-    ],
-    xiaomi: [
-      'Xiaomi 14 / 14 Ultra',
-      'Xiaomi 13T / 13T Pro',
-      'Redmi Note 13 Pro+ / 13 Pro',
-      'Redmi Note 12 Pro / 12',
-      'Xiaomi 12 / 12 Pro'
-    ],
-    poco: [
-      'POCO F6 / F6 Pro',
-      'POCO X6 Pro 5G / X6',
-      'POCO F5 / F5 Pro',
-      'POCO X5 Pro / X5',
-      'POCO M6 Pro'
-    ],
-    oppo: [
-      'OPPO Find X7 Ultra / Find N3',
-      'OPPO Reno 11 Pro / 11 5G',
-      'OPPO Reno 10 Pro+ / 10',
-      'OPPO A79 / A78 5G'
-    ],
-    vivo: [
-      'Vivo X100 Pro / X100',
-      'Vivo V30 Pro / V30',
-      'Vivo V29 / V29e',
-      'Vivo Y100 5G / Y27'
-    ],
-    realme: [
-      'Realme 12 Pro+ 5G / 12+',
-      'Realme 11 Pro+ / 11',
-      'Realme GT Neo 5 / GT 3',
-      'Realme C67 / C55'
-    ],
-    infinix: [
-      'Infinix GT 20 Pro / GT 10 Pro',
-      'Infinix Note 40 Pro / 40',
-      'Infinix Zero 30 5G',
-      'Infinix Hot 40 Pro'
-    ],
-    iqoo: [
-      'iQOO 12 / 12 Pro',
-      'iQOO Neo 9 Pro',
-      'iQOO Z9 / Z9x',
-      'iQOO 11'
-    ],
-    tecno_itel: [
-      'Tecno Camon 30 Pro / 30',
-      'Tecno Pova 6 Pro 5G',
-      'itel S23+ / P55 5G'
-    ],
-    asus: [
-      'ROG Phone 8 / 8 Pro',
-      'ROG Phone 7 / 7 Ultimate',
-      'Zenfone 10 / 9'
-    ],
-    others: [
-      'Google Pixel 8 Pro / 8',
-      'Google Pixel 7 Pro / 7',
-      'Huawei P60 Pro / Mate 50'
-    ]
-  };
+  const modelsByBrand: Record<string, string[]> = LCD_MODELS_BY_BRAND;
 
-  const currentModels = modelsByBrand[selectedBrand] || modelsByBrand.apple;
+  const currentModels = modelsByBrand[selectedBrand] || modelsByBrand.apple || [];
   const filteredModels = currentModels.filter((m) =>
     m.toLowerCase().includes(modelSearchQuery.toLowerCase())
   );
+
+  const lcdEstimate = getLcdEstimate(selectedBrand, selectedModel);
 
   const repairMatrix: Record<string, { title: string; price: string; time: string; warranty: string; warrantyNote: string }> = {
     garis_lightsaber: {
@@ -213,10 +135,12 @@ export default function Home() {
     },
     lcd: {
       title: 'Ganti Layar / LCD / OLED Pecah',
-      price: 'Rp 350.000 - Rp 1.850.000',
+      price: lcdEstimate.found ? lcdEstimate.formattedTotalPrice : 'Rp 350.000 - Rp 1.850.000',
       time: '30 - 60 Menit',
       warranty: 'Garansi 30 Hari',
-      warrantyNote: 'Garansi Layar & Sentuhan (1 Bulan)'
+      warrantyNote: lcdEstimate.found 
+        ? 'Garansi Layar & Sentuhan (1 Bulan) • Jasa Pasang Flat Rp 100.000'
+        : 'Garansi Layar & Sentuhan (1 Bulan)'
     },
     kaca: {
       title: 'Ganti Kaca Saja (Glass OCA Laminating)',
@@ -975,9 +899,32 @@ export default function Home() {
                     </div>
 
                     <div className="est-price-container">
-                      <span className="est-price-label">Estimasi Biaya Part + Pasang:</span>
+                      <span className="est-price-label">
+                        {selectedDamage === 'lcd' && lcdEstimate.found ? 'Estimasi Presisi Servis LCD (Part + Jasa):' : 'Estimasi Biaya Part + Pasang:'}
+                      </span>
                       <div className="est-price-val" id="estPriceDisplay">{currentDamageInfo.price}</div>
-                      <div className="est-price-sub">*Suku cadang Grade Original + Teknisi Berpengalaman</div>
+                      
+                      {selectedDamage === 'lcd' && lcdEstimate.found ? (
+                        <div className="est-lcd-breakdown" style={{ marginTop: '10px', padding: '10px 12px', background: '#fffbeb', borderRadius: '10px', border: '1px solid #fde68a', textAlign: 'left' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
+                            <span>📦 Part Layar LCD OG Super:</span>
+                            <span style={{ color: '#b45309', fontFamily: 'monospace', fontWeight: 800 }}>{lcdEstimate.formattedPartPrice}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
+                            <span>🛠️ Jasa Pasang LCD Flat Meja Lab:</span>
+                            <span style={{ color: '#047857', fontFamily: 'monospace', fontWeight: 800 }}>{lcdEstimate.formattedServiceFee}</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', paddingTop: '4px', borderTop: '1px dashed #fcd34d' }}>
+                            <span>✨ Total Estimasi Konsumen:</span>
+                            <span style={{ color: '#92400e', fontFamily: 'monospace', fontSize: '0.9rem' }}>{lcdEstimate.formattedTotalPrice}</span>
+                          </div>
+                          <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '4px', fontStyle: 'italic' }}>
+                            *Harga part dihitung presisi (Harga Pokok x 1.15 + 5%). Jasa pasang Flat Rp 100.000.
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="est-price-sub">*Suku cadang Grade Original + Teknisi Berpengalaman</div>
+                      )}
                     </div>
 
                     <div className="est-perks-list">
@@ -1010,7 +957,9 @@ export default function Home() {
                   <div className="est-actions-box">
                     <a
                       href={`https://wa.me/6281330304321?text=${encodeURIComponent(
-                        `Halo Ngalam Fix Pro (Liem Hingky Liman),\nSaya ingin konsultasi servis HP:\n• Merek/Model: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi: ${currentDamageInfo.price} (${currentDamageInfo.time})\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
+                        selectedDamage === 'lcd' && lcdEstimate.found
+                          ? `Halo Ngalam Fix Pro (Liem Hingky Liman),\nSaya ingin konsultasi servis LCD HP:\n• Tipe HP: ${selectedModel}\n• Estimasi Part LCD OG Super: ${lcdEstimate.formattedPartPrice}\n• Jasa Pasang Flat Meja Lab: Rp 100.000\n• Total Estimasi: ${lcdEstimate.formattedTotalPrice}\n• Garansi: ${lcdEstimate.warranty}\nApakah suku cadang LCD ini tersedia hari ini?`
+                          : `Halo Ngalam Fix Pro (Liem Hingky Liman),\nSaya ingin konsultasi servis HP:\n• Merek/Model: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi: ${currentDamageInfo.price} (${currentDamageInfo.time})\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1021,7 +970,7 @@ export default function Home() {
                       <span>Chat WhatsApp Cek Stok Part ↗</span>
                     </a>
                     <Link
-                      to={`/pesan-servis?type=${selectedBrand === 'apple' ? 'iphone' : 'android'}&model=${encodeURIComponent(selectedModel)}&problem=${encodeURIComponent(selectedDamage)}`}
+                      to={`/pesan-servis?brand=${encodeURIComponent(selectedBrand)}&model=${encodeURIComponent(selectedModel)}&problem=${encodeURIComponent(selectedDamage)}`}
                       className="btn-est-booking"
                       id="estBookingBtn"
                     >

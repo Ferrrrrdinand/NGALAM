@@ -9,6 +9,7 @@ import {
 import { fetchApi, formatRp } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import logoImg from '../assets/images/logo-ngalam-fix-pro.jpg';
+import { LCD_MODELS_BY_BRAND, getLcdEstimate } from '../data/lcdPrices';
 
 export default function PesanServis() {
   const [searchParams] = useSearchParams();
@@ -188,25 +189,16 @@ export default function PesanServis() {
     }
   ];
 
-  const modelsByBrand = {
-    apple: ['iPhone 16 Pro / 16 Pro Max', 'iPhone 16 / 16 Plus', 'iPhone 15 Pro / 15 Pro Max', 'iPhone 15 / 15 Plus', 'iPhone 14 Pro / 14 Pro Max', 'iPhone 13 / 13 Pro', 'iPhone 12 / 12 Pro', 'iPhone 11 / 11 Pro', 'iPhone X / XS / XR'],
-    samsung: ['Samsung Galaxy S24 Ultra / S24', 'Samsung Galaxy S23 Ultra', 'Samsung Galaxy Z Fold 5 / Z Flip 5', 'Samsung Galaxy A55 / A54 5G'],
-    xiaomi: ['Xiaomi 14 / 14 Ultra', 'Xiaomi 13T / 13T Pro', 'Redmi Note 13 Pro+', 'Redmi Note 12 Pro'],
-    poco: ['POCO F6 / F6 Pro', 'POCO X6 Pro 5G', 'POCO F5', 'POCO X5 Pro'],
-    oppo: ['OPPO Find X7 Ultra', 'OPPO Reno 11 Pro', 'OPPO Reno 10', 'OPPO A79 5G'],
-    vivo: ['Vivo X100 Pro', 'Vivo V30 Pro', 'Vivo V29', 'Vivo Y100 5G'],
-    realme: ['Realme 12 Pro+ 5G', 'Realme 11 Pro+', 'Realme GT Neo 5'],
-    infinix: ['Infinix GT 20 Pro', 'Infinix Note 40 Pro', 'Infinix Zero 30'],
-    iqoo: ['iQOO 12 / 12 Pro', 'iQOO Neo 9 Pro', 'iQOO Z9'],
-    tecno_itel: ['Tecno Camon 30 Pro', 'itel S23+'],
-    asus: ['ROG Phone 8', 'ROG Phone 7', 'Zenfone 10'],
-    others: ['Google Pixel 8 Pro', 'Huawei P60 Pro']
-  };
+  const modelsByBrand: Record<string, string[]> = LCD_MODELS_BY_BRAND;
 
-  const currentModels = modelsByBrand[formData.brand] || modelsByBrand.apple;
+  const currentModels = modelsByBrand[formData.brand] || modelsByBrand.apple || [];
   const filteredModels = currentModels.filter((m: string) =>
     m.toLowerCase().includes(modelSearchQuery.toLowerCase())
   );
+
+  const selectedPhoneModel = formData.phoneType || currentModels[0] || '';
+  const isLcdSelected = selectedProblems.has('lcd');
+  const lcdEstimate = getLcdEstimate(formData.brand, selectedPhoneModel);
 
   useEffect(() => {
     const loadPromos = () => {
@@ -398,6 +390,11 @@ export default function PesanServis() {
       ? selectedModelName
       : `${brandNameUpper} ${selectedModelName}`;
 
+    const estimatedCostVal = (isLcdSelected && lcdEstimate.found) ? lcdEstimate.totalPrice : 0;
+    if (isLcdSelected && lcdEstimate.found) {
+      fullDamage += ` [Estimasi LCD Flat: ${lcdEstimate.formattedTotalPrice} (Part: ${lcdEstimate.formattedPartPrice} + Jasa Flat: Rp 100.000)]`;
+    }
+
     const activeRefCode = (referralInput || localStorage.getItem('ngalam_affiliate_ref') || sessionStorage.getItem('ngalam_affiliate_ref') || (customer as any)?.referredByMitra || '').trim().toUpperCase();
     const payload = {
       customerName: formData.customerName.trim(),
@@ -407,6 +404,8 @@ export default function PesanServis() {
       phoneType: fullPhoneType,
       serviceMethod: formData.serviceMethod,
       damage: fullDamage,
+      cost: estimatedCostVal || undefined,
+      estimatedCost: estimatedCostVal || undefined,
       promoCode: appliedPromo ? formData.promoCode.trim().toUpperCase() : '',
       discountAmount: appliedPromo ? appliedPromo.discountAmount || 0 : 0,
       referralCode: activeRefCode,
@@ -806,6 +805,67 @@ export default function PesanServis() {
                 value={formData.complaint}
                 onChange={(e) => setFormData({ ...formData, complaint: e.target.value })}
               />
+
+              {/* LIVE ESTIMASI BIAYA LCD PRESISI */}
+              {isLcdSelected && (
+                <div style={{
+                  marginTop: '12px',
+                  padding: '14px 16px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #fffdf5 0%, #fef3c7 100%)',
+                  border: '2px solid #f59e0b',
+                  boxShadow: '0 4px 14px -2px rgba(245, 158, 11, 0.18)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '18px' }}>📱</span>
+                      <div>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#b45309', display: 'block' }}>
+                          Estimasi Presisi Servis Layar LCD
+                        </span>
+                        <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>
+                          {selectedPhoneModel || 'Model Smartphone Terpilih'}
+                        </strong>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '3px 8px', borderRadius: '999px', background: '#d97706', color: '#ffffff' }}>
+                      Garansi 30 Hari
+                    </span>
+                  </div>
+
+                  {lcdEstimate.found ? (
+                    <>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px', marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #fcd34d' }}>
+                        <div style={{ background: '#ffffff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                          <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block' }}>Part LCD OG Super:</span>
+                          <strong style={{ fontSize: '0.85rem', color: '#b45309', fontFamily: 'monospace' }}>
+                            {lcdEstimate.formattedPartPrice}
+                          </strong>
+                        </div>
+                        <div style={{ background: '#ffffff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                          <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block' }}>Jasa Pasang Flat Meja Lab:</span>
+                          <strong style={{ fontSize: '0.85rem', color: '#047857', fontFamily: 'monospace' }}>
+                            {lcdEstimate.formattedServiceFee}
+                          </strong>
+                        </div>
+                        <div style={{ background: '#fef3c7', padding: '8px 10px', borderRadius: '8px', border: '1.5px solid #d97706' }}>
+                          <span style={{ fontSize: '0.68rem', color: '#92400e', fontWeight: 700, display: 'block' }}>Total Estimasi:</span>
+                          <strong style={{ fontSize: '0.95rem', color: '#78350f', fontFamily: 'monospace' }}>
+                            {lcdEstimate.formattedTotalPrice}
+                          </strong>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: '#78350f', marginTop: '8px', fontStyle: 'italic' }}>
+                        *Rumus resmi: Harga pokok x 1.15 + 5%. Biaya jasa flat Rp 100.000 dikerjakan transparan di hadapan Anda.
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #fcd34d' }}>
+                      Estimasi LCD model ini berkisar <strong>Rp 350.000 - Rp 1.850.000</strong>. Teknisi akan konfirmasi ketersediaan part dan harga presisi sebelum pengerjaan.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Step 3: Kontak Pemilik */}

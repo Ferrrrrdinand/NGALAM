@@ -94,6 +94,22 @@ router.use('/', promoRoutes);
 router.use('/', chatbotRoutes);
 router.use('/', adRoutes);
 
+// LCD OG SUPER CATALOG ENDPOINT
+router.get('/lcd-prices', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const catalogPath = path.join(__dirname, '../../data/lcd_og_super.json');
+    if (fs.existsSync(catalogPath)) {
+      const data = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+      return res.json({ success: true, ...data });
+    }
+    return res.status(404).json({ success: false, message: 'Katalog LCD belum dibuat.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ============================================================
 // ADMIN DASHBOARD AGGREGATE ENDPOINT
 // Satu request untuk semua data panel admin (menggantikan 6 request paralel).
