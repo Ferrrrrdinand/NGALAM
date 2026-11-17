@@ -169,7 +169,7 @@ function getAllPromoCodes(onlyUsable = false) {
     if (!Array.isArray(list) || list.length === 0) {
       list = [...DEFAULT_PROMO_CODES];
     } else {
-      // Ensure missing default promo codes (like MEMBER10) are always present
+      // Ensure missing default promo codes (like MEMBER5) are always present
       for (const def of DEFAULT_PROMO_CODES) {
         if (!list.some(p => p.code && p.code.toUpperCase() === def.code.toUpperCase())) {
           list.unshift(def);
@@ -252,17 +252,17 @@ async function hydrateFromPostgres() {
         };
       });
 
-      // Ensure MEMBER10 is always available in PostgreSQL
-      const hasMemberCode = promoCache.some(p => p.code.toUpperCase() === 'MEMBER10');
+      // Ensure MEMBER5 is always available in PostgreSQL
+      const hasMemberCode = promoCache.some(p => p.code.toUpperCase() === 'MEMBER5');
       if (!hasMemberCode) {
-        const memberPromo = DEFAULT_PROMO_CODES.find(p => p.code === 'MEMBER10');
+        const memberPromo = DEFAULT_PROMO_CODES.find(p => p.code === 'MEMBER5');
         if (memberPromo) {
           await syncPromoCodeToPostgres(memberPromo);
           promoCache.unshift(memberPromo);
         }
       }
     } else {
-      // If table is completely empty, seed default promo codes including MEMBER10
+      // If table is completely empty, seed default promo codes including MEMBER5
       for (const p of DEFAULT_PROMO_CODES) {
         await syncPromoCodeToPostgres(p);
       }

@@ -7,7 +7,7 @@ async function run() {
     console.log('[Migration] Database initialized.');
 
     // 1. Update target_url for ad-member-vip-10
-    await db.query(`UPDATE ads SET target_url = '/login?tab=register&promo=MEMBER10' WHERE id = 'ad-member-vip-10'`);
+    await db.query(`UPDATE ads SET target_url = '/login?tab=register&promo=MEMBER5', title = 'Member VIP Diskon 5%', badge = '👑 PRIVILEGE VIP MEMBER DISKON 5%' WHERE id = 'ad-member-vip-10'`);
     console.log('[Migration] ad-member-vip-10 updated.');
 
     // 2. Insert or update ad-mitra-afiliasi-10

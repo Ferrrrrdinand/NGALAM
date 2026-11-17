@@ -29,3 +29,4 @@ export function maskCustomerName(name: string | undefined | null): string {
     })
     .join(' ');
 }
+
