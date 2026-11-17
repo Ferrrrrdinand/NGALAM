@@ -201,6 +201,11 @@ export default function OrdersTab({
                         {o.date && (
                           <span className="block text-[10px] text-slate-400 mt-1">{o.date}</span>
                         )}
+                        {(Number(o.currentStep || o.step || 1) >= 4 || o.paid) && (
+                          <span className="inline-flex items-center gap-1 text-[9px] font-black text-emerald-800 bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 rounded mt-1">
+                            🛡️ Garansi Aktif
+                          </span>
+                        )}
                       </td>
 
                       {/* Customer Info */}
