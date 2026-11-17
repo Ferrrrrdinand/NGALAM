@@ -871,7 +871,7 @@ export default function PesanServis() {
               </label>
 
               {/* LIST VOUCHER PROMO AKTIF */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', marginTop: '10px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '10px', marginTop: '10px', marginBottom: '12px', width: '100%', boxSizing: 'border-box' }}>
                 {(availablePromoCodes.length > 0 ? availablePromoCodes.filter((p: any) => p.status === 'active' || p.active !== false) : [
                   { code: 'MEMBER10', name: 'Diskon Member Baru', discountValue: 10, minSpend: 100000, description: 'Potongan 10% untuk member baru' },
                   { code: 'NGALAM15', name: 'Promo Servis Bergaransi', discountValue: 15, minSpend: 150000, description: 'Diskon 15% servis smartphone' },
@@ -892,7 +892,10 @@ export default function PesanServis() {
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         position: 'relative',
-                        boxShadow: isApplied ? '0 4px 12px rgba(16,185,129,0.15)' : 'none'
+                        boxShadow: isApplied ? '0 4px 12px rgba(16,185,129,0.15)' : 'none',
+                        boxSizing: 'border-box',
+                        minWidth: 0,
+                        width: '100%'
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>

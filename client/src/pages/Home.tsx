@@ -892,7 +892,8 @@ export default function Home() {
                         className={`est-damage-chip ${selectedDamage === d.id ? 'active' : ''}`}
                         onClick={() => setSelectedDamage(d.id)}
                       >
-                        <span className="inline-flex items-center">{d.icon}</span> {d.label}
+                        <span className="inline-flex items-center shrink-0">{d.icon}</span>
+                        <span className="leading-tight">{d.label}</span>
                       </button>
                     ))}
                   </div>
@@ -921,21 +922,21 @@ export default function Home() {
 
                       {/* Kolom Estimasi: Desain Konsisten 100% Sama untuk Semua Kerusakan */}
                       <div style={{ marginTop: '12px', padding: '12px 14px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#334155', flexWrap: 'wrap', gap: '4px' }}>
                           <span>📦 Estimasi Part:</span>
                           <strong style={{ color: hasExcelPrice ? '#b45309' : '#0284c7', fontFamily: hasExcelPrice ? 'monospace' : 'inherit' }}>
                             {partPriceDisplay}
                           </strong>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#334155', flexWrap: 'wrap', gap: '4px' }}>
                           <span>🛠️ Biaya Jasa:</span>
                           <strong style={{ color: '#059669', fontFamily: 'monospace' }}>
                             {servicePriceDisplay}
                           </strong>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.86rem', fontWeight: 800, color: '#0f172a', paddingTop: '6px', borderTop: '1px dashed #cbd5e1' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.86rem', fontWeight: 800, color: '#0f172a', paddingTop: '6px', borderTop: '1px dashed #cbd5e1', flexWrap: 'wrap', gap: '4px' }}>
                           <span>✨ Total Estimasi:</span>
                           <strong style={{ color: '#b45309', fontSize: '0.94rem', fontFamily: hasExcelPrice ? 'monospace' : 'inherit' }}>
                             {totalPriceDisplay}
