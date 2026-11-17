@@ -424,6 +424,31 @@ async function updateUserById(id, updates = {}) {
   }
 
   await saveRoleBucket(bucket, list);
+
+  try {
+    const isMitra = merged.role === 'mitra' || merged.role === 'ojol' || String(merged.id || '').startsWith('USR-MITRA-');
+    await db.logActivity(
+      isMitra ? 'MITRA_PROFILE_UPDATED' : 'USER_UPDATE',
+      'users',
+      merged.id,
+      {
+        id: merged.id,
+        name: merged.name,
+        username: merged.username,
+        phone: merged.phone,
+        role: merged.role,
+        category: merged.category,
+        referralCode: merged.referralCode || merged.referral_code,
+        plateNumber: merged.plateNumber,
+        bankAccount: merged.bankAccount,
+        status: merged.status,
+        updatedAt: new Date().toISOString()
+      }
+    );
+  } catch (logErr) {
+    console.warn('[UserService] Activity log warning:', logErr.message);
+  }
+
   return merged;
 }
 

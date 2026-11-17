@@ -21,7 +21,9 @@ import {
   Megaphone,
   Star,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  QrCode,
+  FolderArchive
 } from 'lucide-react';
 import { formatDateId } from '../../utils/api';
 
@@ -126,6 +128,30 @@ function parseLogData(log: ActivityLogItem) {
     badgeTheme = 'bg-blue-50 text-blue-700 border-blue-200';
     icon = <User className="w-3.5 h-3.5" />;
     naturalSentence = `Data profil atau hak akses akun ${actorName} (#${log.record_id || '-'}) diperbarui.`;
+  } else if (action === 'MITRA_PROFILE_UPDATED') {
+    category = 'staff';
+    title = 'Input Pemilik / Update QR Mitra';
+    badgeTheme = 'bg-amber-50 text-amber-900 border-amber-300';
+    icon = <QrCode className="w-3.5 h-3.5" />;
+    naturalSentence = `Data pemilik akun mitra/QR ${payload.name || log.record_id || '-'} (${payload.referralCode || '-'}, WA: ${payload.phone || '-'}) berhasil diperbarui dan tersimpan ke basis data.`;
+  } else if (action === 'MITRA_REGISTER') {
+    category = 'staff';
+    title = 'Registrasi Mitra Afiliasi';
+    badgeTheme = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+    icon = <UserPlus className="w-3.5 h-3.5" />;
+    naturalSentence = `Pendaftaran mitra afiliasi baru: ${payload.name || actorName} (${payload.referralCode || '-'}).`;
+  } else if (action === 'MITRA_QR_ZIP_DOWNLOADED') {
+    category = 'system';
+    title = 'Unduh Arsip QR Code (.ZIP)';
+    badgeTheme = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+    icon = <FolderArchive className="w-3.5 h-3.5" />;
+    naturalSentence = `Admin mengunduh file ZIP ${payload.count ? `${payload.count} file QR Code mitra` : 'koleksi QR mitra'} dari sistem.`;
+  } else if (action === 'REFERRAL_SCANNED') {
+    category = 'marketing';
+    title = 'Scan QR / Kunjungan Referral';
+    badgeTheme = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+    icon = <QrCode className="w-3.5 h-3.5" />;
+    naturalSentence = `Calon pelanggan melakukan scan QR / mengunjungi link referral: ${payload.referralCode || '-'}${payload.mitraName ? ` (${payload.mitraName})` : ''}.`;
   } else if (action.includes('USER_DELETE')) {
     category = 'staff';
     title = 'Hapus Akun Pengguna';
@@ -258,7 +284,19 @@ function parseLogData(log: ActivityLogItem) {
     badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
     icon = <CreditCard className="w-3.5 h-3.5" />;
     naturalSentence = `Komisi mitra sebesar Rp ${Number(payload.amount || payload.commission || 0).toLocaleString('id-ID')} dicatat dari order #${payload.orderId || log.record_id || '-'}.`;
-  } else if (action.includes('COMMISSION_PAYOUT')) {
+  } else if (action === 'MEMBER_COMMISSION_EARNED') {
+    category = 'finance';
+    title = 'Komisi Referral Member (5%)';
+    badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
+    icon = <CreditCard className="w-3.5 h-3.5" />;
+    naturalSentence = `Member ${payload.name || actorName} mendapatkan komisi referral 5% sebesar Rp ${Number(payload.commission || payload.amount || 0).toLocaleString('id-ID')}.`;
+  } else if (action === 'MEMBER_PAYOUT_REQUEST') {
+    category = 'finance';
+    title = 'Pengajuan Tarik Saldo Member';
+    badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';
+    icon = <CreditCard className="w-3.5 h-3.5" />;
+    naturalSentence = `Member ${payload.name || actorName} mengajukan pencairan komisi sebesar Rp ${Number(payload.amount || 0).toLocaleString('id-ID')} ke rekening ${payload.bankName || ''} (${payload.accountNumber || ''}).`;
+  } else if (action === 'MITRA_PAYOUT_PROCESSED' || action.includes('COMMISSION_PAYOUT')) {
     category = 'finance';
     title = 'Pencairan Komisi Mitra';
     badgeTheme = 'bg-purple-50 text-purple-700 border-purple-200';

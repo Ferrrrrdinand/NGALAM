@@ -507,7 +507,7 @@ router.get('/check', async (req, res) => {
 });
 
 // GET /api/mitra/ref/:code - Verifikasi kode afiliasi saat pelanggan membuka link booking / scan QR
-router.get('/ref/:code', (req, res) => {
+router.get('/ref/:code', async (req, res) => {
   try {
     const rawCode = (req.params.code || '').trim().toUpperCase();
     if (!rawCode) {
@@ -525,6 +525,16 @@ router.get('/ref/:code', (req, res) => {
     }
 
     const details = buildMitraAffiliateDetails(req, mitra.referralCode);
+
+    try {
+      const db = require('../services/db');
+      await db.logActivity('REFERRAL_SCANNED', 'users', mitra.id, {
+        referralCode: mitra.referralCode,
+        mitraName: mitra.name,
+        visitorIp: req.ip || '',
+        scannedAt: new Date().toISOString()
+      });
+    } catch (_) {}
 
     res.json({
       success: true,
@@ -667,6 +677,16 @@ router.get('/download-qr-zip', async (req, res) => {
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Length', zipBuffer.length);
+
+    try {
+      const db = require('../services/db');
+      await db.logActivity('MITRA_QR_ZIP_DOWNLOADED', 'users', targetCodes.length >= 100 ? 'ALL_100' : 'SELECTED_BATCH', {
+        count: addedCount,
+        sampleCodes: targetCodes.slice(0, 8).join(', ') + (targetCodes.length > 8 ? ` (+${targetCodes.length - 8} lainnya)` : ''),
+        downloadedAt: new Date().toISOString()
+      });
+    } catch (_) {}
+
     return res.end(zipBuffer);
   } catch (err) {
     console.error('[Download QR Zip Error]', err);
@@ -837,6 +857,20 @@ router.post('/register', async (req, res) => {
       needsPhone: false
     };
 
+    try {
+      const db = require('../services/db');
+      await db.logActivity('MITRA_REGISTER', 'users', driver.id, {
+        id: driver.id,
+        name: driver.name,
+        username: driver.username,
+        phone: driver.phone,
+        referralCode: driver.referralCode,
+        role: driver.role,
+        category: driver.category,
+        registeredAt: new Date().toISOString()
+      });
+    } catch (_) {}
+
     res.status(201).json({
       success: true,
       message: `Pendaftaran Mitra berhasil! Kode unik afiliasi Anda "${refCode}" telah aktif.`,
@@ -866,6 +900,16 @@ router.post('/payout', async (req, res) => {
       return res.status(400).json(result);
     }
 
+    try {
+      const db = require('../services/db');
+      await db.logActivity('MITRA_PAYOUT_PROCESSED', 'commissions', referralCode, {
+        referralCode,
+        amount: Number(amount) || 0,
+        note: note || '',
+        processedAt: new Date().toISOString()
+      });
+    } catch (_) {}
+
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -881,9 +925,27 @@ router.patch('/:id', async (req, res) => {
     if (!updated) {
       return res.status(404).json({ success: false, message: `Mitra dengan ID "${id}" tidak ditemukan.` });
     }
+
+    try {
+      const db = require('../services/db');
+      await db.logActivity('MITRA_PROFILE_UPDATED', 'users', id, {
+        id: updated.id,
+        name: updated.name,
+        username: updated.username,
+        phone: updated.phone,
+        referralCode: updated.referralCode || updated.referral_code,
+        role: updated.role,
+        category: updated.category,
+        plateNumber: updated.plateNumber,
+        bankAccount: updated.bankAccount,
+        status: updated.status,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (_) {}
+
     res.json({
       success: true,
-      message: `Data mitra "${updated.name}" berhasil diperbarui.`,
+      message: `Data mitra "${updated.name}" berhasil diperbarui dan tersimpan ke database.`,
       data: updated
     });
   } catch (err) {
