@@ -11,18 +11,20 @@ const PROMO_CODES_FILE = path.join(__dirname, '..', 'data', 'promo_codes.json');
 // Initial default promo codes - seluruh promo berbasis persentase & minimal belanja
 const DEFAULT_PROMO_CODES = [
   {
-    id: 'PC-MEMBER10-VIP',
-    code: 'MEMBER10',
-    name: 'Diskon 10% Spesial Member Baru',
-    description: 'Potongan diskon 10% untuk seluruh servis smartphone, minimal belanja Rp 100.000.',
+    id: 'PC-MEMBER5-NEW',
+    code: 'MEMBER5',
+    name: 'Diskon 5% Member Baru (1x Pakai)',
+    description: 'Potongan diskon 5% sekali pakai khusus member baru, minimal transaksi Rp 500.000.',
     discountType: 'percentage',
-    discountValue: 10,
-    minSpend: 100000,
-    maxDiscount: 150000,
+    discountValue: 5,
+    minSpend: 500000,
+    maxDiscount: 100000,
     validFrom: '2026-10-01',
     validUntil: '2026-12-31',
-    usageLimit: 500,
-    usedCount: 14,
+    usageLimit: 1000,
+    usedCount: 0,
+    oneTimePerMember: true,
+    newMemberOnly: true,
     active: true,
     status: 'ACTIVE',
     isExpired: false
@@ -276,12 +278,13 @@ function findPromoByCode(code) {
   if (!code) return null;
   const list = getAllPromoCodes(false);
   const cleanCode = code.trim().toUpperCase();
-  return list.find((p) => p.code.toUpperCase() === cleanCode) || null;
+  const lookupCode = cleanCode === 'MEMBER10' ? 'MEMBER5' : cleanCode;
+  return list.find((p) => p.code.toUpperCase() === lookupCode || p.code.toUpperCase() === cleanCode) || null;
 }
 
 // Validate promo and calculate discount
-function validateAndCalculate(code, rawPrice = 350000) {
-  const basePrice = Math.max(0, parseInt(rawPrice, 10) || 350000);
+function validateAndCalculate(code, rawPrice = 350000, options = {}) {
+  const basePrice = Math.max(0, parseInt(rawPrice, 10) || 0);
   const promo = findPromoByCode(code);
 
   if (!promo) {
@@ -319,12 +322,30 @@ function validateAndCalculate(code, rawPrice = 350000) {
     };
   }
 
+  // Khusus voucher Member Baru (MEMBER5): Hanya untuk 1x pakai per member
+  if (promo.code === 'MEMBER5' || promo.code === 'MEMBER10' || promo.oneTimePerMember || promo.newMemberOnly) {
+    const custWa = String(options.customerWa || options.whatsapp || options.phone || '').trim();
+    if (custWa) {
+      try {
+        const { findCustomerByIdentifier } = require('./customerService');
+        const cust = findCustomerByIdentifier(custWa);
+        if (cust && (cust.hasUsedNewMemberPromo || cust.usedNewMemberPromo)) {
+          return {
+            valid: false,
+            code: promo.code,
+            message: `Voucher diskon 5% member baru (${promo.code}) hanya dapat digunakan 1x untuk transaksi pertama member baru (Min. transaksi Rp 500.000).`
+          };
+        }
+      } catch (_) {}
+    }
+  }
+
   // Check minimum spend (if basePrice is specified and greater than 0)
   if (basePrice > 0 && promo.minSpend && basePrice < promo.minSpend) {
     return {
       valid: false,
       code: promo.code,
-      message: `Minimal transaksi untuk promo "${promo.code}" adalah Rp ${promo.minSpend.toLocaleString('id-ID')}. Estimasi saat ini Rp ${basePrice.toLocaleString('id-ID')}.`
+      message: `Minimal transaksi untuk promo "${promo.code}" adalah Rp ${promo.minSpend.toLocaleString('id-ID')}. Subtotal saat ini Rp ${basePrice.toLocaleString('id-ID')}.`
     };
   }
 
@@ -350,6 +371,9 @@ function validateAndCalculate(code, rawPrice = 350000) {
     description: promo.description,
     discountType: promo.discountType,
     discountValue: promo.discountValue,
+    minSpend: promo.minSpend,
+    maxDiscount: promo.maxDiscount,
+    oneTimePerMember: Boolean(promo.oneTimePerMember || promo.newMemberOnly || promo.code === 'MEMBER5'),
     discountAmount,
     discountFormatted: `Rp ${discountAmount.toLocaleString('id-ID')}`,
     originalPrice: basePrice,
@@ -357,7 +381,7 @@ function validateAndCalculate(code, rawPrice = 350000) {
     finalPrice,
     finalPriceFormatted: `Rp ${finalPrice.toLocaleString('id-ID')}`,
     validUntil: promo.validUntil,
-    message: `✅ Kode "${promo.code}" berhasil dipasang! Anda hemat Rp ${discountAmount.toLocaleString('id-ID')}.`
+    message: `✅ Kode "${promo.code}" berhasil dipasang! Diskon ${promo.discountValue}% (Min. Transaksi Rp ${promo.minSpend?.toLocaleString('id-ID')}).`
   };
 }
 

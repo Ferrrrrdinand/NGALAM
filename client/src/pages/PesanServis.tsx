@@ -274,7 +274,7 @@ export default function PesanServis() {
     if (paramPromo) {
       handleApplyPromo(paramPromo);
     } else if (customer && !formData.promoCode) {
-      handleApplyPromo('MEMBER10');
+      handleApplyPromo('MEMBER5');
     }
 
     return () => {
@@ -352,7 +352,12 @@ export default function PesanServis() {
     try {
       const res = await fetchApi('/api/promo-codes/validate', {
         method: 'POST',
-        body: { promoCode: code, basePrice: 0 }
+        body: { 
+          promoCode: code, 
+          basePrice: 0,
+          whatsapp: formData.whatsapp || (customer as any)?.whatsapp || '',
+          customerId: (customer as any)?.id || ''
+        }
       });
       if (res.ok && res.data.valid) {
         setAppliedPromo(res.data);
@@ -873,7 +878,7 @@ export default function PesanServis() {
               {/* LIST VOUCHER PROMO AKTIF */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '10px', marginTop: '10px', marginBottom: '12px', width: '100%', boxSizing: 'border-box' }}>
                 {(availablePromoCodes.length > 0 ? availablePromoCodes.filter((p: any) => p.status === 'active' || p.active !== false) : [
-                  { code: 'MEMBER10', name: 'Diskon Member Baru', discountValue: 10, minSpend: 100000, description: 'Potongan 10% untuk member baru' },
+                  { code: 'MEMBER5', name: 'Diskon 5% Member Baru (1x Pakai)', discountValue: 5, minSpend: 500000, description: 'Potongan diskon 5% sekali pakai khusus member baru (Min. transaksi Rp 500.000)' },
                   { code: 'NGALAM15', name: 'Promo Servis Bergaransi', discountValue: 15, minSpend: 150000, description: 'Diskon 15% servis smartphone' },
                   { code: 'HEMAT20', name: 'Paket Hemat Mahasiswa & Pelajar', discountValue: 20, minSpend: 200000, description: 'Diskon 20% hemat' },
                   { code: 'SUPER25', name: 'Super Weekend & Gajian', discountValue: 25, minSpend: 300000, description: 'Diskon 25% servis all tipe' },

@@ -208,10 +208,10 @@ export default function Home() {
       pillBg: 'linear-gradient(135deg, #f59e0b, #d97706)',
       hint: 'Klik Banner untuk Daftar Member & Klaim Diskon 10%',
       cta: 'Daftar Member ↗',
-      title: 'Gabung Member VIP Ngalam Fix Pro: Potongan Diskon 10% Servis HP',
-      desc: 'Daftar akun gratis sekarang & nikmati potongan otomatis 10% untuk seluruh perbaikan smartphone, cek riwayat servis, klaim garansi resmi online, dan antrean prioritas Meja 1.',
-      code: 'MEMBER10',
-      link: '/login?tab=register&promo=MEMBER10'
+      title: 'Gabung Member VIP Ngalam Fix Pro: Potongan Diskon 5% Servis HP (1x Pakai)',
+      desc: 'Daftar akun gratis sekarang & nikmati potongan otomatis 5% khusus member baru (1x pakai, minimal transaksi Rp 500.000), cek riwayat servis, klaim garansi resmi online, dan antrean prioritas Meja 1.',
+      code: 'MEMBER5',
+      link: '/login?tab=register&promo=MEMBER5'
     },
     {
       img: banner1, fallbackImg: '/images/spesialis-hp-banner.jpg',

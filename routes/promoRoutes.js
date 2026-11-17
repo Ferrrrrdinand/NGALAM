@@ -170,10 +170,12 @@ router.post('/promo-codes/validate', (req, res) => {
   try {
     const code = (req.body.promoCode || req.body.code || '').trim();
     const price = req.body.basePrice !== undefined ? req.body.basePrice : req.body.price;
+    const customerWa = req.body.whatsapp || req.body.customerWa || req.body.phone || '';
+    const customerId = req.body.customerId || '';
     if (!code) {
       return res.status(400).json({ valid: false, message: 'Masukkan kode promo terlebih dahulu.' });
     }
-    const result = validateAndCalculate(code, price);
+    const result = validateAndCalculate(code, price, { customerWa, customerId });
     if (result && result.valid) {
       try {
         db.logActivity('PROMO_CODE_VALIDATED', 'promo_codes', (result.promo && result.promo.id) || code, {

@@ -90,7 +90,7 @@ export default function AffiliateInviteModal() {
   const handleGoToMember = () => {
     sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
     setIsOpen(false);
-    navigate('/login?tab=register&promo=MEMBER10');
+    navigate('/login?tab=register&promo=MEMBER5');
   };
 
   const handleGoToServis = () => {

@@ -749,7 +749,7 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
           </div>
         </div>
 
-        {/* Benefit Voucher Member Diskon 10% */}
+        {/* Benefit Voucher Member Diskon 5% (1x Pakai - Min. 500rb) */}
         <div 
           className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-400/20 to-amber-600/15 border border-amber-400/60 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3"
           style={{ boxShadow: '0 4px 18px -4px rgba(212, 175, 55, 0.18)' }}
@@ -760,18 +760,18 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <b className="text-slate-900 text-sm font-black">Voucher Diskon 10% Member Aktif</b>
+                <b className="text-slate-900 text-sm font-black">Voucher Diskon 5% Member Baru (1x Pakai)</b>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-white shadow-2xs">
                   Siap Digunakan
                 </span>
               </div>
               <p className="text-xs text-slate-600 mt-0.5">
-                Gunakan kode voucher <b className="font-mono text-amber-900 bg-amber-200/90 px-1.5 py-0.5 rounded border border-amber-300">MEMBER10</b> saat booking untuk potongan 10% langsung di nota kasir.
+                Gunakan kode voucher <b className="font-mono text-amber-900 bg-amber-200/90 px-1.5 py-0.5 rounded border border-amber-300">MEMBER5</b> saat booking untuk potongan 5% di kasir (Min. transaksi Rp 500.000).
               </p>
             </div>
           </div>
           <Link
-            to="/pesan-servis?promo=MEMBER10"
+            to="/pesan-servis?promo=MEMBER5"
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-xs shadow-md shadow-amber-500/20 whitespace-nowrap active:scale-95 transition-all shrink-0"
           >
             Gunakan Voucher (Pesan Servis) ↗
@@ -1445,7 +1445,7 @@ export default function CustomerLogin() {
                   tab === 'register' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                Daftar Baru (Diskon 10%)
+                Daftar Baru (Diskon 5%)
               </button>
             </div>
 
@@ -1458,7 +1458,7 @@ export default function CustomerLogin() {
                 <div className="text-xs">
                   <b className="text-slate-900 block font-black">Keuntungan Mendaftar Member:</b>
                   <span className="text-slate-700 leading-relaxed">
-                    Dapatkan <b className="text-amber-900 font-extrabold bg-amber-100 px-1 py-0.5 rounded border border-amber-300">Potongan Diskon 10%</b> otomatis (Kode: <code className="font-mono font-bold text-amber-800">MEMBER10</code>) langsung untuk servis HP Anda!
+                    Dapatkan <b className="text-amber-900 font-extrabold bg-amber-100 px-1 py-0.5 rounded border border-amber-300">Potongan Diskon 5% (1x Pakai)</b> otomatis (Kode: <code className="font-mono font-bold text-amber-800">MEMBER5</code>) untuk minimal transaksi Rp 500.000!
                   </span>
                 </div>
               </div>
@@ -1610,9 +1610,14 @@ export default function CustomerLogin() {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">
-                Nomor WhatsApp Aktif *
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-slate-700 block">
+                  Nomor WhatsApp Aktif *
+                </label>
+                <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                  Wajib Unik (1 No. = 1 Member)
+                </span>
+              </div>
               <input
                 type="tel"
                 required
@@ -1621,6 +1626,9 @@ export default function CustomerLogin() {
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
               />
+              <span className="block text-[11px] text-slate-500 mt-1 leading-tight">
+                🔒 Setiap member wajib memiliki nomor telepon berbeda untuk mendapatkan akses akun member.
+              </span>
             </div>
 
             <div>

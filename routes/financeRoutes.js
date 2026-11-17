@@ -255,6 +255,23 @@ router.post('/transactions', async (req, res) => {
               console.log(`[FinanceRoutes] Komisi mitra ${refCode} sebesar Rp ${commAmt} berhasil dialokasikan dari faktur ${newTx.invoiceNumber}`);
             }
           }
+
+          // Tandai voucher diskon 5% member baru (1x pakai) telah digunakan
+          const promoCodeUsed = String(targetOrder.promoCode || txData.promoCode || '').toUpperCase();
+          if (promoCodeUsed === 'MEMBER5' || promoCodeUsed === 'MEMBER10') {
+            try {
+              const { findCustomerByIdentifier, saveCustomerRecord } = require('../services/customerService');
+              const custPhone = targetOrder.whatsapp || targetOrder.phone || txData.customerPhone || txData.whatsapp || '';
+              const customerObj = findCustomerByIdentifier(custPhone);
+              if (customerObj) {
+                customerObj.hasUsedNewMemberPromo = true;
+                customerObj.newMemberPromoUsedAt = new Date().toISOString();
+                await saveCustomerRecord(customerObj);
+              }
+            } catch (pErr) {
+              console.warn('[FinanceRoutes] Mark new member promo used warning:', pErr.message);
+            }
+          }
         }
       } catch (affErr) {
         console.warn('[FinanceRoutes] Affiliate auto-commission recording warning:', affErr.message);

@@ -36,13 +36,13 @@ const DEFAULT_FALLBACK_ADS: AdItem[] = [
     active: true
   },
   {
-    id: 'ad-member-vip-10',
-    title: 'Member VIP Diskon 10%',
-    headline: 'Gabung Member VIP Gratis: Nikmati Diskon 10% Semua Servis + Garansi Prioritas!',
-    description: 'Daftar gratis hanya 10 detik! Dapatkan voucher hemat 10% untuk pergantian LCD, baterai, kamera & IC mesin, plus gratis cek kerusakan dan pantau status servis online.',
-    badge: '👑 PRIVILEGE VIP MEMBER DISKON 10%',
-    ctaText: 'Daftar & Ambil Diskon 10% ↗',
-    targetUrl: '/login?tab=register&promo=MEMBER10',
+    id: 'ad-member-vip-5',
+    title: 'Member Baru Diskon 5%',
+    headline: 'Gabung Member VIP Gratis: Nikmati Diskon 5% (1x Pakai • Min. Belanja Rp 500rb)!',
+    description: 'Daftar gratis hanya 10 detik! Dapatkan voucher hemat 5% khusus member baru untuk transaksi mulai Rp 500.000, plus gratis cek kerusakan dan pantau status servis online.',
+    badge: '👑 PRIVILEGE MEMBER DISKON 5% (1X PAKAI)',
+    ctaText: 'Daftar & Ambil Diskon 5% ↗',
+    targetUrl: '/login?tab=register&promo=MEMBER5',
     theme: 'gold',
     active: true
   },

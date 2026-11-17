@@ -423,7 +423,7 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
                   <div className="flex flex-wrap gap-1 mt-1.5">
                     <button
                       type="button"
-                      onClick={() => setForm({ ...form, targetUrl: '/login?tab=register&promo=MEMBER10', ctaText: 'Daftar Member VIP ↗' })}
+                      onClick={() => setForm({ ...form, targetUrl: '/login?tab=register&promo=MEMBER5', ctaText: 'Daftar Member VIP ↗' })}
                       className="px-2 py-0.5 rounded-md bg-amber-100 hover:bg-amber-200 text-amber-900 text-[10px] font-semibold cursor-pointer"
                     >
                       👑 Member VIP (/login?tab=register)
