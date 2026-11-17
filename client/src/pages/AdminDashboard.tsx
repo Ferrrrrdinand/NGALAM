@@ -88,7 +88,13 @@ export default function AdminDashboard() {
   // Cashier payment modal/state
   const [paymentOrder, setPaymentOrder] = useState<any>(null);
   const [paymentForm, setPaymentForm] = useState({
-    finalAmount: 0,
+    partCost: 150000,
+    serviceCost: 100000,
+    otherCost: 0,
+    otherCostNotes: '',
+    subtotal: 250000,
+    discountAmount: 0,
+    finalAmount: 250000,
     paymentMethod: 'Tunai (Cash)',
     notes: ''
   });
@@ -242,8 +248,33 @@ export default function AdminDashboard() {
     if (found) {
       setPaymentOrder(found);
       const rawCost = Number(String(found.cost || found.estimatedCost || '0').replace(/\D/g, '')) || 0;
+      const defaultTotal = rawCost > 0 ? rawCost : 250000;
+      const defaultService = 100000;
+      const defaultPart = Math.max(0, defaultTotal - defaultService);
+      const defaultOther = 0;
+      const defaultSubtotal = defaultPart + defaultService + defaultOther;
+
+      let discountAmt = 0;
+      if (found.promoCode) {
+        const discountPct = Number(found.promoDiscountValue) || 10;
+        const minSpend = Number(found.promoMinSpend) || 0;
+        if (defaultSubtotal >= minSpend) {
+          discountAmt = Math.round(defaultSubtotal * (discountPct / 100));
+          if (found.promoMaxDiscount && Number(found.promoMaxDiscount) > 0) {
+            discountAmt = Math.min(discountAmt, Number(found.promoMaxDiscount));
+          }
+        }
+      }
+      const finalAmt = Math.max(0, defaultSubtotal - discountAmt);
+
       setPaymentForm({
-        finalAmount: rawCost > 0 ? rawCost : 250000,
+        partCost: defaultPart,
+        serviceCost: defaultService,
+        otherCost: defaultOther,
+        otherCostNotes: '',
+        subtotal: defaultSubtotal,
+        discountAmount: discountAmt,
+        finalAmount: finalAmt,
         paymentMethod: 'Tunai (Cash)',
         notes: found.affiliateRef ? `Komisi Mitra 10%: ${found.partnerName || found.affiliateMitraName || found.affiliateRef}` : ''
       });
@@ -280,29 +311,87 @@ export default function AdminDashboard() {
     }
   };
 
-  // Payment settle -> Updates order & Records to finance transactions
-  const handleSettlePayment = async (e) => {
-    e.preventDefault();
+  // 1. Terbitkan & Cetak Struk Terlebih Dahulu (Preview/Draft Struk Kasir)
+  const handlePreviewReceipt = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!paymentOrder) return;
+
+    const partCost = Number(paymentForm.partCost) || 0;
+    const serviceCost = Number(paymentForm.serviceCost) || 0;
+    const otherCost = Number(paymentForm.otherCost) || 0;
+    const otherCostNotes = paymentForm.otherCostNotes || '';
+    const subtotalCost = (partCost + serviceCost + otherCost) > 0 
+      ? (partCost + serviceCost + otherCost) 
+      : (Number(paymentForm.subtotal || paymentForm.finalAmount) || 0);
+    const discountAmt = Number(paymentForm.discountAmount) || 0;
+    const finalCost = Math.max(0, subtotalCost - discountAmt);
+
+    const draftReceipt = {
+      invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
+      ticketId: paymentOrder.id,
+      customerName: paymentOrder.customerName,
+      customerPhone: paymentOrder.whatsapp,
+      phoneType: paymentOrder.phoneType,
+      serviceItem: paymentOrder.damage || paymentOrder.damageDescription || 'Servis Komponen & Hardware',
+      partCost,
+      serviceCost,
+      otherCost,
+      otherCostNotes,
+      subtotal: subtotalCost,
+      baseCost: subtotalCost,
+      discountAmount: discountAmt,
+      discount: discountAmt,
+      promoCode: paymentOrder.promoCode || '-',
+      discountPercent: paymentOrder.promoDiscountValue || null,
+      totalPaid: finalCost,
+      paymentMethod: paymentForm.paymentMethod,
+      cashier: user?.name || user?.username || 'Admin Kasir',
+      cashierName: user?.name || user?.username || 'Admin Kasir',
+      status: 'Menunggu Pelunasan (Draft Struk)',
+      isPaid: false,
+      createdAt: new Date().toISOString()
+    };
+
+    setReceiptTx(draftReceipt);
+  };
+
+  // 2. Selesaikan Pembayaran (LUNAS) -> baik dari formulir maupun tombol "Klik Lunas" di struk
+  const handleSettlePayment = async (e, overrideData) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const targetOrder = paymentOrder || (overrideData?.ticketId ? orders.find(o => o.id === overrideData.ticketId) : null);
+    if (!targetOrder && !overrideData) return;
+
     try {
-      const subtotalCost = Number(paymentForm.subtotal) || Number(paymentForm.finalAmount) || 0;
-      const discountAmt = Number(paymentForm.discountAmount) || 0;
-      const finalCost = Number(paymentForm.finalAmount) || Math.max(0, subtotalCost - discountAmt);
+      const partCost = Number(overrideData?.partCost !== undefined ? overrideData.partCost : paymentForm.partCost) || 0;
+      const serviceCost = Number(overrideData?.serviceCost !== undefined ? overrideData.serviceCost : paymentForm.serviceCost) || 0;
+      const otherCost = Number(overrideData?.otherCost !== undefined ? overrideData.otherCost : paymentForm.otherCost) || 0;
+      const otherCostNotes = overrideData?.otherCostNotes || paymentForm.otherCostNotes || '';
+      const subtotalCost = (partCost + serviceCost + otherCost) > 0 
+        ? (partCost + serviceCost + otherCost)
+        : (Number(overrideData?.subtotal || paymentForm.subtotal || paymentForm.finalAmount) || 0);
+      const discountAmt = Number(overrideData?.discountAmount !== undefined ? overrideData.discountAmount : paymentForm.discountAmount) || 0;
+      const finalCost = Math.max(0, subtotalCost - discountAmt);
       const settlementTimestamp = new Date().toISOString();
 
+      const orderId = targetOrder ? targetOrder.id : overrideData.ticketId;
+
       // 1. Update Order Status - Garansi aktif dan countdown dimulai dari timestamp pelunasan kasir ini
-      const resOrder = await fetchApi(`/api/orders/${paymentOrder.id}`, {
+      const resOrder = await fetchApi(`/api/orders/${orderId}`, {
         method: 'PUT',
         body: {
           paid: true,
           paidAt: settlementTimestamp,
+          partCost,
+          serviceCost,
+          otherCost,
+          otherCostNotes,
           subtotal: subtotalCost,
           discountAmount: discountAmt,
-          promoCode: paymentOrder.promoCode,
-          promoDiscountValue: paymentOrder.promoDiscountValue,
+          promoCode: targetOrder?.promoCode || overrideData?.promoCode,
+          promoDiscountValue: targetOrder?.promoDiscountValue || overrideData?.discountPercent,
           cost: finalCost,
-          paymentMethod: paymentForm.paymentMethod,
-          paymentNotes: paymentForm.notes,
+          paymentMethod: overrideData?.paymentMethod || paymentForm.paymentMethod,
+          paymentNotes: overrideData?.notes || paymentForm.notes,
           currentStep: 5,
           statusText: 'Pembayaran Lunas di Admin Workshop'
         }
@@ -312,48 +401,70 @@ export default function AdminDashboard() {
       const resTx = await fetchApi('/api/finance/transactions', {
         method: 'POST',
         body: {
-          ticketId: paymentOrder.id,
+          ticketId: orderId,
           paidAt: settlementTimestamp,
-          customerName: paymentOrder.customerName,
-          customerPhone: paymentOrder.whatsapp || '',
-          customerEmail: paymentOrder.email || '',
-          phoneType: paymentOrder.phoneType,
-          damage: paymentOrder.damage,
+          customerName: targetOrder?.customerName || overrideData?.customerName,
+          customerPhone: targetOrder?.whatsapp || overrideData?.customerPhone || '',
+          customerEmail: targetOrder?.email || overrideData?.customerEmail || '',
+          phoneType: targetOrder?.phoneType || overrideData?.phoneType,
+          damage: targetOrder?.damage || overrideData?.serviceItem,
+          serviceItem: targetOrder?.damage || overrideData?.serviceItem,
+          partCost,
+          serviceCost,
+          otherCost,
+          otherCostNotes,
           baseCost: subtotalCost,
           subtotal: subtotalCost,
           discount: discountAmt,
           discountAmount: discountAmt,
-          promoCode: paymentOrder.promoCode,
-          discountPercent: paymentOrder.promoDiscountValue,
+          promoCode: targetOrder?.promoCode || overrideData?.promoCode,
+          discountPercent: targetOrder?.promoDiscountValue || overrideData?.discountPercent,
           totalPaid: finalCost,
-          paymentMethod: paymentForm.paymentMethod,
-          notes: paymentForm.notes,
-          cashier: user?.name || user?.username || 'Admin Workshop'
+          paymentMethod: overrideData?.paymentMethod || paymentForm.paymentMethod,
+          notes: overrideData?.notes || paymentForm.notes,
+          cashier: user?.name || user?.username || 'Admin Kasir',
+          isPaid: true,
+          status: 'Lunas'
         }
       });
 
       if (resOrder.ok && resOrder.data.success) {
         const txData = resTx.ok && resTx.data.data ? {
           ...resTx.data.data,
+          partCost,
+          serviceCost,
+          otherCost,
+          otherCostNotes,
           subtotal: subtotalCost,
           discountAmount: discountAmt,
-          promoCode: paymentOrder.promoCode,
-          discountPercent: paymentOrder.promoDiscountValue,
-          totalPaid: finalCost
-        } : {
-          invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
-          ticketId: paymentOrder.id,
-          customerName: paymentOrder.customerName,
-          customerPhone: paymentOrder.whatsapp,
-          phoneType: paymentOrder.phoneType,
-          subtotal: subtotalCost,
-          discountAmount: discountAmt,
-          promoCode: paymentOrder.promoCode,
-          discountPercent: paymentOrder.promoDiscountValue,
+          promoCode: targetOrder?.promoCode || overrideData?.promoCode,
+          discountPercent: targetOrder?.promoDiscountValue || overrideData?.discountPercent,
           totalPaid: finalCost,
-          paymentMethod: paymentForm.paymentMethod,
-          cashier: user?.name || 'Admin Workshop',
-          createdAt: new Date().toISOString()
+          isPaid: true,
+          status: 'Lunas',
+          paidAt: settlementTimestamp
+        } : {
+          invoiceNumber: overrideData?.invoiceNumber || `INV-${Date.now().toString().slice(-6)}`,
+          ticketId: orderId,
+          customerName: targetOrder?.customerName || overrideData?.customerName,
+          customerPhone: targetOrder?.whatsapp || overrideData?.customerPhone,
+          phoneType: targetOrder?.phoneType || overrideData?.phoneType,
+          serviceItem: targetOrder?.damage || overrideData?.serviceItem || 'Servis Komponen & Hardware',
+          partCost,
+          serviceCost,
+          otherCost,
+          otherCostNotes,
+          subtotal: subtotalCost,
+          discountAmount: discountAmt,
+          promoCode: targetOrder?.promoCode || overrideData?.promoCode,
+          discountPercent: targetOrder?.promoDiscountValue || overrideData?.discountPercent,
+          totalPaid: finalCost,
+          paymentMethod: overrideData?.paymentMethod || paymentForm.paymentMethod,
+          cashier: user?.name || 'Admin Kasir',
+          isPaid: true,
+          status: 'Lunas',
+          paidAt: settlementTimestamp,
+          createdAt: settlementTimestamp
         };
 
         setReceiptTx(txData);
@@ -604,7 +715,11 @@ export default function AdminDashboard() {
               onGoToWarranty={() => setActiveTab('warranties')}
               onSelectOrderForPayment={(o) => {
                 const numericCost = Number(String(o.subtotal || o.cost || o.estimatedCost || "0").replace(/\D/g, "")) || 0;
-                const defaultSubtotal = numericCost > 0 ? numericCost : 250000;
+                const defaultTotal = numericCost > 0 ? numericCost : 250000;
+                const defaultService = 100000;
+                const defaultPart = Math.max(0, defaultTotal - defaultService);
+                const defaultOther = 0;
+                const defaultSubtotal = defaultPart + defaultService + defaultOther;
 
                 // Hitung diskon promo otomatis by system jika tiket memiliki promo
                 let discountAmt = 0;
@@ -622,6 +737,10 @@ export default function AdminDashboard() {
 
                 setPaymentOrder(o);
                 setPaymentForm({
+                  partCost: defaultPart,
+                  serviceCost: defaultService,
+                  otherCost: defaultOther,
+                  otherCostNotes: '',
                   subtotal: defaultSubtotal,
                   discountAmount: discountAmt,
                   finalAmount: finalAmt,
@@ -678,6 +797,7 @@ export default function AdminDashboard() {
               paymentForm={paymentForm}
               setPaymentForm={setPaymentForm}
               handleSettlePayment={handleSettlePayment}
+              handlePreviewReceipt={handlePreviewReceipt}
               setActiveTab={setActiveTab}
             />
           )}
@@ -735,6 +855,7 @@ export default function AdminDashboard() {
             setReceiptTx={setReceiptTx}
             printAreaRef={printAreaRef}
             handlePrint={handlePrint}
+            onConfirmSettle={(tx) => handleSettlePayment(null, tx)}
           />
         </main>
       </div>

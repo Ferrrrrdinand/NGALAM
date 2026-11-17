@@ -447,10 +447,15 @@ async function recordNewTransaction(txData) {
   const txId = txData.id || `TRX-${dateStr}-${rand}`;
   const invoiceNumber = txData.invoiceNumber || `INV-${dateStr}-${rand}`;
 
-  const baseCost = Math.max(0, parseInt(txData.baseCost, 10) || 0);
-  const discount = Math.max(0, parseInt(txData.discount, 10) || 0);
+  const baseCost = Math.max(0, parseInt(txData.baseCost || txData.subtotal, 10) || 0);
+  const partCost = Math.max(0, parseInt(txData.partCost, 10) || 0);
+  const serviceCost = Math.max(0, parseInt(txData.serviceCost, 10) || 0);
+  const otherCost = Math.max(0, parseInt(txData.otherCost, 10) || 0);
+  const otherCostNotes = txData.otherCostNotes || '';
+  const discount = Math.max(0, parseInt(txData.discountAmount || txData.discount, 10) || 0);
   const deliveryFee = Math.max(0, parseInt(txData.deliveryFee, 10) || 0);
-  const totalPaid = Math.max(0, parseInt(txData.totalPaid, 10) || (baseCost - discount + deliveryFee));
+  const subtotal = baseCost > 0 ? baseCost : (partCost + serviceCost + otherCost);
+  const totalPaid = Math.max(0, parseInt(txData.totalPaid, 10) || (subtotal - discount + deliveryFee));
   const amountReceived = Math.max(0, parseInt(txData.amountReceived, 10) || totalPaid);
   const change = Math.max(0, parseInt(txData.change, 10) || (amountReceived - totalPaid));
 
@@ -459,22 +464,31 @@ async function recordNewTransaction(txData) {
     invoiceNumber: invoiceNumber,
     date: txData.date || now.toISOString(),
     displayDate: txData.displayDate || getWitDisplayTime(now),
+    paidAt: txData.paidAt || now.toISOString(),
     ticketId: txData.ticketId || `NGF-${rand}`,
     customerName: txData.customerName || 'Pelanggan Meja 1',
     customerPhone: txData.customerPhone || '-',
     deviceType: txData.deviceType || 'Smartphone',
     phoneType: txData.phoneType || 'Smartphone',
     technicianName: txData.technicianName || 'Teknisi Lab Meja 1',
-    baseCost: baseCost,
+    partCost: partCost,
+    serviceCost: serviceCost,
+    otherCost: otherCost,
+    otherCostNotes: otherCostNotes,
+    subtotal: subtotal,
+    baseCost: subtotal,
     discount: discount,
+    discountAmount: discount,
     promoCode: txData.promoCode || '-',
+    discountPercent: txData.discountPercent || null,
     deliveryFee: deliveryFee,
     totalPaid: totalPaid,
     paymentMethod: txData.paymentMethod || 'Tunai (Cash)',
     amountReceived: amountReceived,
     change: change,
     status: txData.status || 'Lunas',
-    cashierName: txData.cashierName || 'Ibu Sarah (Meja 1)',
+    isPaid: txData.isPaid !== undefined ? Boolean(txData.isPaid) : true,
+    cashierName: txData.cashierName || txData.cashier || 'Admin Kasir',
     serviceItem: txData.serviceItem || txData.serviceName || txData.damageDescription || '',
     warrantyClaimStatus: txData.warrantyClaimStatus || 'unclaimed',
     warrantyClaimDate: txData.warrantyClaimDate || null,

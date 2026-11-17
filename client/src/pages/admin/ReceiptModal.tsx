@@ -1,23 +1,33 @@
 import React from 'react';
-import { Printer, X, ShieldCheck } from 'lucide-react';
+import { Printer, X, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 
 export default function ReceiptModal({
   receiptTx,
   setReceiptTx,
   printAreaRef,
-  handlePrint
+  handlePrint,
+  onConfirmSettle
 }) {
   if (!receiptTx) return null;
 
+  const isPaid = receiptTx.isPaid !== false && receiptTx.status !== 'Menunggu Pelunasan (Draft Struk)';
+
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
         
         <div className="flex items-center justify-between border-b pb-3">
-          <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-            <Printer className="w-4 h-4 text-amber-600" /> Struk Thermal Kasir
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <Printer className="w-4 h-4 text-amber-600" /> Struk Thermal Kasir
+            </span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+              isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900 animate-pulse'
+            }`}>
+              {isPaid ? 'LUNAS' : 'MENUNGGU PEMBAYARAN'}
+            </span>
+          </div>
           <button
             onClick={() => setReceiptTx(null)}
             className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
@@ -61,40 +71,65 @@ export default function ReceiptModal({
             </div>
             <div className="flex justify-between">
               <span>Masa Proteksi:</span>
-              <span className="font-bold text-emerald-700">Aktif (Countdown Berjalan)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Status Klaim:</span>
-              <span className={`font-semibold ${receiptTx.warrantyClaimStatus === 'claimed' ? 'text-amber-700' : 'text-emerald-700'}`}>
-                {receiptTx.warrantyClaimStatus === 'claimed' ? 'Sedang Diproses Klaim' : 'Belum Klaim (Aman)'}
+              <span className={`font-bold ${isPaid ? 'text-emerald-700' : 'text-amber-800'}`}>
+                {isPaid ? 'Aktif (Countdown Berjalan)' : 'Mulai setelah status lunas'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Kasir:</span>
-              <span>{receiptTx.cashier || 'Meja 1'}</span>
+              <span>{receiptTx.cashier || receiptTx.cashierName || 'Admin Kasir'}</span>
             </div>
           </div>
 
+          {/* RINCIAN PEMBIAYAAN TERINCI (SPAREPART, JASA, LAIN-LAIN) */}
           <div className="border-t border-dashed border-slate-300 pt-2 pb-1 space-y-1">
-            {(receiptTx.subtotal || receiptTx.baseCost) && (receiptTx.discountAmount > 0 || receiptTx.discount > 0) ? (
-              <>
-                <div className="flex justify-between text-[11px] text-slate-600">
-                  <span>Subtotal Biaya:</span>
-                  <span>{formatRp(receiptTx.subtotal || receiptTx.baseCost)}</span>
-                </div>
-                <div className="flex justify-between text-[11px] font-bold text-emerald-700">
-                  <span>Diskon ({receiptTx.promoCode || 'Promo'} {receiptTx.discountPercent ? `${receiptTx.discountPercent}%` : ''}):</span>
-                  <span>-{formatRp(receiptTx.discountAmount || receiptTx.discount)}</span>
-                </div>
-              </>
-            ) : null}
-            <div className="flex justify-between text-xs font-bold pt-1 border-t border-dashed border-slate-200">
-              <span>TOTAL BAYAR:</span>
-              <span>{formatRp(receiptTx.totalPaid || receiptTx.amount || 0)}</span>
+            <div className="text-[10px] font-bold text-slate-600 uppercase tracking-wider pb-0.5">
+              Rincian Biaya Servis:
             </div>
+            <div className="flex justify-between text-[11px] text-slate-700">
+              <span>• Harga Sparepart:</span>
+              <span>{formatRp(Number(receiptTx.partCost) || 0)}</span>
+            </div>
+            <div className="flex justify-between text-[11px] text-slate-700">
+              <span>• Harga Jasa Pasang:</span>
+              <span>{formatRp(Number(receiptTx.serviceCost) || 0)}</span>
+            </div>
+            {Number(receiptTx.otherCost) > 0 && (
+              <div className="flex justify-between text-[11px] text-slate-700">
+                <span>• Lain-lain {receiptTx.otherCostNotes ? `(${receiptTx.otherCostNotes})` : ''}:</span>
+                <span>{formatRp(Number(receiptTx.otherCost) || 0)}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between text-[11px] text-slate-600 pt-1 border-t border-dashed border-slate-200">
+              <span>Subtotal Biaya:</span>
+              <span>{formatRp(Number(receiptTx.subtotal || receiptTx.baseCost) || 0)}</span>
+            </div>
+
+            {(receiptTx.discountAmount > 0 || receiptTx.discount > 0) && (
+              <div className="flex justify-between text-[11px] font-bold text-emerald-700">
+                <span>Diskon ({receiptTx.promoCode || 'Promo'} {receiptTx.discountPercent ? `${receiptTx.discountPercent}%` : ''}):</span>
+                <span>-{formatRp(Number(receiptTx.discountAmount || receiptTx.discount) || 0)}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between text-xs font-black pt-1 border-t border-dashed border-slate-300 text-slate-900">
+              <span>TOTAL BAYAR:</span>
+              <span>{formatRp(Number(receiptTx.totalPaid || receiptTx.amount) || 0)}</span>
+            </div>
+
             <div className="flex justify-between text-[10px] text-slate-500">
               <span>Metode:</span>
               <span>{receiptTx.paymentMethod || 'Tunai'}</span>
+            </div>
+
+            <div className="flex justify-between text-[10px] font-bold pt-1 border-t border-dashed border-slate-200">
+              <span>Status Pembayaran:</span>
+              <span className={`px-2 py-0.5 rounded text-[9.5px] uppercase font-black ${
+                isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+              }`}>
+                {isPaid ? 'LUNAS (TERBAYAR)' : 'MENUNGGU PEMBAYARAN'}
+              </span>
             </div>
           </div>
 
@@ -104,7 +139,7 @@ export default function ReceiptModal({
               <span>
                 {/baterai|battery/i.test(receiptTx.serviceItem || receiptTx.orderId || '')
                   ? 'GARANSI RESMI LAB 90 HARI (BATERAI)'
-                  : 'GARANSI RESMI LAB (1 MINGGU - 1 BULAN)'}
+                  : 'GARANSI RESMI LAB 30 HARI (HARDWARE)'}
               </span>
             </p>
             <p>Simpan struk ini sebagai bukti klaim garansi servis smartphone Anda.</p>
@@ -112,19 +147,34 @@ export default function ReceiptModal({
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={handlePrint}
-            className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-          >
-            <Printer className="w-4 h-4" /> Cetak Struk
-          </button>
-          <button
-            onClick={() => setReceiptTx(null)}
-            className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
-          >
-            Tutup
-          </button>
+        {/* Action Buttons */}
+        <div className="space-y-2 pt-1">
+          {!isPaid && onConfirmSettle ? (
+            <button
+              type="button"
+              onClick={() => onConfirmSettle(receiptTx)}
+              className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-600/20 transition-all"
+            >
+              <CheckCircle className="w-4 h-4" />
+              <span>Konfirmasi Lunas &amp; Aktifkan Garansi Sekarang</span>
+            </button>
+          ) : null}
+
+          <div className="flex gap-2">
+            <button
+              onClick={handlePrint}
+              className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <Printer className="w-4 h-4" />
+              <span>{isPaid ? 'Cetak Ulang Struk Lunas' : 'Cetak Struk Pembelian'}</span>
+            </button>
+            <button
+              onClick={() => setReceiptTx(null)}
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
+            >
+              Tutup
+            </button>
+          </div>
         </div>
 
       </div>

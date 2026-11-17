@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag, ShieldCheck } from 'lucide-react';
+import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag, ShieldCheck, Printer, Wrench } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 
 export default function CashierTab({
@@ -12,8 +12,33 @@ export default function CashierTab({
   paymentForm,
   setPaymentForm,
   handleSettlePayment,
+  handlePreviewReceipt,
   setActiveTab
 }) {
+  const updateCosts = (part, service, other) => {
+    const subtotal = Math.max(0, part) + Math.max(0, service) + Math.max(0, other);
+    let discount = 0;
+    if (paymentOrder?.promoCode) {
+      const pct = Number(paymentOrder.promoDiscountValue) || 10;
+      const minSpend = Number(paymentOrder.promoMinSpend) || 0;
+      if (subtotal >= minSpend) {
+        discount = Math.round(subtotal * (pct / 100));
+        if (paymentOrder.promoMaxDiscount && Number(paymentOrder.promoMaxDiscount) > 0) {
+          discount = Math.min(discount, Number(paymentOrder.promoMaxDiscount));
+        }
+      }
+    }
+    const finalAmt = Math.max(0, subtotal - discount);
+    setPaymentForm({
+      ...paymentForm,
+      partCost: part,
+      serviceCost: service,
+      otherCost: other,
+      subtotal,
+      discountAmount: discount,
+      finalAmount: finalAmt
+    });
+  };
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       
@@ -176,68 +201,147 @@ export default function CashierTab({
               </div>
             ) : null}
 
-            {/* Input Perhitungan Subtotal & Diskon By System */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Subtotal Biaya Servis (Sebelum Diskon) <span className="text-rose-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="text-xs font-bold text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2">Rp</span>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    step="1000"
-                    value={paymentForm.subtotal !== undefined ? paymentForm.subtotal : paymentForm.finalAmount}
-                    onChange={(e) => {
-                      const subtotal = Math.max(0, Number(e.target.value) || 0);
-                      let discount = 0;
-                      if (paymentOrder?.promoCode) {
-                        const pct = Number(paymentOrder.promoDiscountValue) || 10;
-                        const minSpend = Number(paymentOrder.promoMinSpend) || 0;
-                        if (subtotal >= minSpend) {
-                          discount = Math.round(subtotal * (pct / 100));
-                          if (paymentOrder.promoMaxDiscount && Number(paymentOrder.promoMaxDiscount) > 0) {
-                            discount = Math.min(discount, Number(paymentOrder.promoMaxDiscount));
-                          }
-                        }
-                      }
-                      const finalAmt = Math.max(0, subtotal - discount);
-                      setPaymentForm({
-                        ...paymentForm,
-                        subtotal,
-                        discountAmount: discount,
-                        finalAmount: finalAmt
-                      });
-                    }}
-                    className="w-full text-xs pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent font-mono font-bold transition-all text-slate-900"
-                  />
+            {/* INPUT RINCIAN PEMBIAYAAN (SPAREPART, JASA, LAIN-LAIN) */}
+            <div className="space-y-3 p-4 bg-slate-50 border border-slate-200/80 rounded-2xl">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <Wrench className="w-4 h-4 text-amber-600" /> Rincian Biaya Servis
+                </span>
+                <span className="text-[11px] text-slate-500 font-medium">
+                  Rincian tercetak otomatis di struk pembelian
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* 1. Harga Sparepart */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    1. Harga Sparepart <span className="text-slate-400 font-normal">(Rp)</span>
+                  </label>
+                  <div className="relative">
+                    <span className="text-xs font-bold text-slate-400 absolute left-3 top-1/2 -translate-y-1/2">Rp</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1000"
+                      placeholder="0"
+                      value={paymentForm.partCost !== undefined ? paymentForm.partCost : ''}
+                      onChange={(e) => {
+                        const partCost = Math.max(0, Number(e.target.value) || 0);
+                        const serviceCost = Number(paymentForm.serviceCost) || 0;
+                        const otherCost = Number(paymentForm.otherCost) || 0;
+                        updateCosts(partCost, serviceCost, otherCost);
+                      }}
+                      className="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono font-bold text-slate-900"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Biaya suku cadang/part</span>
+                </div>
+
+                {/* 2. Harga Jasa */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    2. Harga Jasa <span className="text-rose-500">*</span> <span className="text-slate-400 font-normal">(Rp)</span>
+                  </label>
+                  <div className="relative">
+                    <span className="text-xs font-bold text-slate-400 absolute left-3 top-1/2 -translate-y-1/2">Rp</span>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      step="1000"
+                      placeholder="100000"
+                      value={paymentForm.serviceCost !== undefined ? paymentForm.serviceCost : 100000}
+                      onChange={(e) => {
+                        const serviceCost = Math.max(0, Number(e.target.value) || 0);
+                        const partCost = Number(paymentForm.partCost) || 0;
+                        const otherCost = Number(paymentForm.otherCost) || 0;
+                        updateCosts(partCost, serviceCost, otherCost);
+                      }}
+                      className="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono font-bold text-slate-900"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Jasa teknisi &amp; lab</span>
+                </div>
+
+                {/* 3. Harga Lain-lain (Opsional) */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    3. Biaya Lain-lain <span className="text-slate-400 font-normal">(Opsional)</span>
+                  </label>
+                  <div className="relative">
+                    <span className="text-xs font-bold text-slate-400 absolute left-3 top-1/2 -translate-y-1/2">Rp</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1000"
+                      placeholder="0"
+                      value={paymentForm.otherCost !== undefined ? paymentForm.otherCost : ''}
+                      onChange={(e) => {
+                        const otherCost = Math.max(0, Number(e.target.value) || 0);
+                        const partCost = Number(paymentForm.partCost) || 0;
+                        const serviceCost = Number(paymentForm.serviceCost) || 0;
+                        updateCosts(partCost, serviceCost, otherCost);
+                      }}
+                      className="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono font-bold text-slate-900"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Tambahan (jika ada)</span>
                 </div>
               </div>
 
+              {/* Keterangan Biaya Lain-lain */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Metode Pembayaran Kasir
-                </label>
-                <select
-                  value={paymentForm.paymentMethod}
-                  onChange={(e) => setPaymentForm({ ...paymentForm, paymentMethod: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all cursor-pointer text-slate-800"
-                >
-                  <option value="Tunai (Cash)">Tunai / Cash Counter</option>
-                  <option value="QRIS / Statis Workshop">QRIS Standar Workshop</option>
-                  <option value="Transfer Bank BCA/BRI">Transfer Bank BCA / BRI</option>
-                  <option value="Debit Card EDC">Kartu Debit / EDC</option>
-                </select>
+                <input
+                  type="text"
+                  placeholder="Keterangan Biaya Lain-lain (Opsional, cth: Tempered Glass 9D, Lem Seal Waterproof, Baut Khusus)"
+                  value={paymentForm.otherCostNotes || ''}
+                  onChange={(e) => setPaymentForm({ ...paymentForm, otherCostNotes: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-slate-400 text-slate-800"
+                />
               </div>
+            </div>
+
+            {/* Metode Pembayaran Kasir */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Metode Pembayaran Kasir
+              </label>
+              <select
+                value={paymentForm.paymentMethod}
+                onChange={(e) => setPaymentForm({ ...paymentForm, paymentMethod: e.target.value })}
+                className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all cursor-pointer text-slate-800"
+              >
+                <option value="Tunai (Cash)">Tunai / Cash Counter</option>
+                <option value="QRIS / Statis Workshop">QRIS Standar Workshop</option>
+                <option value="Transfer Bank BCA/BRI">Transfer Bank BCA / BRI</option>
+                <option value="Debit Card EDC">Kartu Debit / EDC</option>
+              </select>
             </div>
 
             {/* Rincian Potongan Diskon & Pelunasan Akhir */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider pb-1 border-b border-slate-200">
+                Ringkasan Faktur Struk:
+              </div>
               <div className="flex justify-between items-center text-xs text-slate-600">
+                <span>• Sparepart:</span>
+                <span className="font-mono text-slate-800 font-semibold">{formatRp(Number(paymentForm.partCost) || 0)}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs text-slate-600">
+                <span>• Jasa Teknisi:</span>
+                <span className="font-mono text-slate-800 font-semibold">{formatRp(Number(paymentForm.serviceCost) || 0)}</span>
+              </div>
+              {Number(paymentForm.otherCost) > 0 && (
+                <div className="flex justify-between items-center text-xs text-slate-600">
+                  <span>• Lain-lain {paymentForm.otherCostNotes ? `(${paymentForm.otherCostNotes})` : ''}:</span>
+                  <span className="font-mono text-slate-800 font-semibold">{formatRp(Number(paymentForm.otherCost) || 0)}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center text-xs text-slate-700 pt-1 border-t border-dashed border-slate-200 font-bold">
                 <span>Subtotal Pengerjaan:</span>
-                <span className="font-mono font-bold text-slate-800">
+                <span className="font-mono text-slate-900">
                   {formatRp(Number(paymentForm.subtotal !== undefined ? paymentForm.subtotal : paymentForm.finalAmount) || 0)}
                 </span>
               </div>
@@ -280,15 +384,15 @@ export default function CashierTab({
               <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <span className="font-bold text-emerald-900 block">
-                  Proteksi Garansi Resmi &amp; Countdown Otomatis Aktif
+                  Alur Terbit Struk &amp; Aktivasi Countdown Garansi
                 </span>
                 <p className="text-[11px] text-emerald-800 leading-relaxed">
-                  Begitu Anda menekan <strong>Konfirmasi Lunas</strong>, unit otomatis dicatat ke database garansi workshop, countdown masa garansi (30/90 hari) resmi dimulai hari ini, dan otomatis terhubung ke akun member pelanggan untuk kemudahan klaim.
+                  Anda dapat menekan <strong>Terbitkan &amp; Cetak Struk Dulu</strong> untuk memeriksa/mencetak struk rincian kepada pelanggan. Di dalam struk, terdapat tombol <strong>Klik Lunas</strong> untuk menyelesaikan pembayaran resmi, mencatat komisi mitra, dan mengaktifkan countdown garansi 30 hari.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-2.5 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => setPaymentOrder(null)}
@@ -296,15 +400,27 @@ export default function CashierTab({
               >
                 Batal
               </button>
+
+              {/* Tombol Utama: Terbitkan & Cetak Struk Terlebih Dahulu */}
+              <button
+                type="button"
+                onClick={handlePreviewReceipt}
+                className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs hover:shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
+              >
+                <Printer className="w-4 h-4 shrink-0 text-amber-400" />
+                <span>Terbitkan &amp; Cetak Struk Dulu</span>
+              </button>
+
+              {/* Tombol Cepat: Langsung Konfirmasi Lunas & Cetak */}
               <button
                 type="submit"
-                className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs hover:shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs hover:shadow-md cursor-pointer transition-all flex items-center justify-center gap-2"
               >
                 <CheckCircle className="w-4 h-4 shrink-0" />
                 <span>
                   {paymentOrder.affiliateRef && paymentOrder.affiliateCommissionStatus !== 'paid'
-                    ? 'Konfirmasi Lunas & Salurkan Komisi 10%'
-                    : 'Konfirmasi Lunas & Cetak Faktur'}
+                    ? 'Langsung Lunas & Komisi 10%'
+                    : 'Langsung Konfirmasi Lunas'}
                 </span>
               </button>
             </div>
