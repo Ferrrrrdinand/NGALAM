@@ -635,17 +635,19 @@ export default function MitraTab({
             </div>
 
             {/* Kartu Stiker Preview */}
-            <div className="p-4 rounded-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white text-center space-y-2.5 shadow-lg border border-amber-500/30">
-              <div className="flex items-center justify-between text-[10px] text-amber-400 font-bold uppercase tracking-wider border-b border-white/10 pb-2">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white text-center space-y-2.5 shadow-xl border border-amber-500/30">
+              <div className="flex items-center justify-between text-[11px] text-amber-400 font-bold uppercase tracking-wider border-b border-white/10 pb-2">
                 <span>Ngalam Fix Pro</span>
-                <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Mitra Resmi Rekanan</span>
+                <span className="bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded font-mono font-bold">
+                  Mitra Resmi #{String(selectedQrMitra.referralCode || '').replace(/\D/g, '').padStart(3, '0')}
+                </span>
               </div>
 
-              <div className="bg-white p-2.5 rounded-2xl inline-block shadow-md mx-auto">
+              <div className="bg-white p-2 rounded-2xl inline-block shadow-md mx-auto max-w-[280px]">
                 <img
                   src={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
                   alt={`QR Code ${selectedQrMitra.referralCode}`}
-                  className="w-44 h-44 object-contain mx-auto"
+                  className="w-full max-h-80 object-contain mx-auto rounded-xl shadow-xs"
                   onError={(e: any) => {
                     e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(getBookingUrl(selectedQrMitra.referralCode))}`;
                   }}
@@ -653,13 +655,9 @@ export default function MitraTab({
               </div>
 
               <div>
-                <span className="text-[11px] text-slate-300 block font-medium">Scan untuk Booking Servis &amp; Diskon 5%</span>
-                <strong className="text-base font-black tracking-wider text-amber-400 font-mono block mt-0.5">
-                  {selectedQrMitra.referralCode}
-                </strong>
-                <p className="text-[11px] text-slate-300 mt-1">
+                <p className="text-[11px] text-slate-300">
                   {isAssigned(selectedQrMitra) ? (
-                    <span className="text-emerald-400 font-bold">Pemilik: {selectedQrMitra.name} ({selectedQrMitra.phone})</span>
+                    <span className="text-emerald-400 font-bold">👤 Pemilik: {selectedQrMitra.name} ({selectedQrMitra.phone})</span>
                   ) : (
                     <span className="text-amber-300/90 italic">Belum Ada Pemilik (Stiker Siap Diberikan)</span>
                   )}
@@ -907,23 +905,25 @@ export default function MitraTab({
                 }
               `}</style>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {getBatchItems().map((m) => {
                   const assigned = isAssigned(m);
                   const isSelected = selectedCodes.includes(m.referralCode);
+                  const numStr = String(m.referralCode || '').replace(/\D/g, '').padStart(3, '0') || '001';
+
                   return (
                     <div
                       key={m.id}
                       onClick={() => toggleSelectCode(m.referralCode)}
-                      className={`qr-sticker-card p-3 rounded-2xl border-2 transition-all relative flex flex-col items-center justify-between text-center space-y-2 cursor-pointer ${
+                      className={`qr-sticker-card p-2.5 rounded-2xl border-2 transition-all relative flex flex-col items-center justify-between text-center space-y-2 cursor-pointer ${
                         isSelected
-                          ? 'border-amber-500 bg-amber-50/40 ring-2 ring-amber-400/80 shadow-md'
-                          : 'border-dashed border-amber-300 bg-white shadow-xs hover:shadow-md hover:border-amber-400'
+                          ? 'border-amber-500 bg-amber-50/50 ring-2 ring-amber-400 shadow-lg'
+                          : 'border-slate-200 bg-white shadow-xs hover:shadow-md hover:border-amber-400'
                       }`}
                     >
                       {/* Top Bar inside Card: Selection Checkbox & Single Download */}
-                      <div className="w-full flex items-center justify-between text-[9px] font-black uppercase text-amber-700 tracking-wider border-b border-amber-100 pb-1">
-                        <div className="flex items-center gap-1.5 no-print" onClick={(e) => e.stopPropagation()}>
+                      <div className="w-full flex items-center justify-between text-[10px] font-black uppercase text-amber-700 tracking-wider border-b border-amber-100 pb-1.5 no-print">
+                        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                           <button
                             type="button"
                             onClick={() => toggleSelectCode(m.referralCode)}
@@ -936,53 +936,49 @@ export default function MitraTab({
                               <Square className="w-4 h-4 text-slate-300 hover:text-amber-500" />
                             )}
                           </button>
-                          <span className="font-mono text-slate-800 text-[10px]">{m.referralCode}</span>
+                          <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-mono text-[9px] font-bold">
+                            #{numStr}
+                          </span>
                         </div>
-                        <span className="hidden print:inline font-mono text-slate-800">{m.referralCode}</span>
+                        <span className="font-mono text-slate-900 font-bold text-[11px]">{m.referralCode}</span>
                         
                         {/* Single Download button (No Print) */}
                         <a
                           href={`/qrcodes/mitra/${m.referralCode}.png`}
-                          download={`${m.referralCode}.png`}
+                          download={`NGALAM_FIX_PRO_${m.referralCode}.png`}
                           onClick={(e) => e.stopPropagation()}
-                          className="no-print p-1 text-slate-400 hover:text-amber-700 hover:bg-amber-100 rounded-md transition-colors"
-                          title="Download gambar QR code ini (PNG)"
+                          className="p-1 text-slate-400 hover:text-amber-700 hover:bg-amber-100 rounded-md transition-colors"
+                          title="Download Desain Kartu QR Code ini (PNG)"
                         >
                           <Download className="w-3.5 h-3.5" />
                         </a>
                       </div>
 
-                      {/* QR Image */}
-                      <div className="p-1 bg-white rounded-xl shadow-2xs border border-slate-100 my-0.5">
+                      {/* Branded Card Image Preview */}
+                      <div className="w-full bg-slate-50 p-1.5 rounded-xl border border-slate-200/80 my-0.5">
                         <img
                           src={`/qrcodes/mitra/${m.referralCode}.png`}
-                          alt={`QR ${m.referralCode}`}
-                          className="w-28 h-28 object-contain"
+                          alt={`QR Desain ${m.referralCode}`}
+                          className="w-full h-auto max-h-56 object-contain rounded-lg mx-auto shadow-2xs"
                           onError={(e: any) => {
                             e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(getBookingUrl(m.referralCode))}`;
                           }}
                         />
                       </div>
 
-                      <div className="w-full space-y-0.5">
-                        <span className="text-[9px] font-extrabold text-slate-600 block uppercase tracking-wide">
-                          Scan Diskon Servis 5%
-                        </span>
-                        <strong className="text-xs font-black font-mono text-slate-900 block">
-                          {m.referralCode}
-                        </strong>
-                        <div className="text-[9.5px] truncate pt-0.5 border-t border-slate-100 text-slate-500">
+                      {/* Mitra Details Footer */}
+                      <div className="w-full space-y-0.5 no-print">
+                        <div className="text-[10px] truncate pt-0.5 text-slate-600">
                           {assigned ? (
-                            <span className="font-bold text-emerald-700">{m.name}</span>
+                            <span className="font-bold text-emerald-700">👤 {m.name}</span>
                           ) : (
-                            <span className="italic text-slate-400">Nama: ______________</span>
+                            <span className="italic text-slate-400 font-medium">Belum terisi nama pemilik</span>
                           )}
                         </div>
-                      </div>
-
-                      <div className="w-full flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5 border-t border-slate-100">
-                        <span>ID: {m.id.replace('USR-MITRA-', '')}</span>
-                        <span>NgalamFixPro</span>
+                        <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 pt-1 border-t border-slate-100">
+                          <span className="font-bold text-amber-700">Mitra #{numStr}</span>
+                          <span>ID: {m.id.replace('USR-MITRA-', '')}</span>
+                        </div>
                       </div>
                     </div>
                   );

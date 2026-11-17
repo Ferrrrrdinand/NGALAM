@@ -34,3 +34,4 @@ if (errors.length > 0) {
   console.log('[Syntax Check] ALL JavaScript files passed syntax verification!');
   process.exit(0);
 }
+
