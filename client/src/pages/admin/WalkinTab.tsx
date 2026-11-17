@@ -142,75 +142,76 @@ export default function WalkinTab({
   const modelsByBrand: Record<string, string[]> = LCD_MODELS_BY_BRAND;
 
   // Daftar kerusakan & layanan komponen lengkap
+  // Seluruh jasa ganti LCD: Flat Rp 100.000. Jasa lainnya: start from Rp 100.000 hingga Rp 1.000.000
   const problemOptions = [
     { 
       id: 'lcd', 
       label: 'Ganti Layar / LCD', 
-      desc: 'OLED / Super Retina / Layar Sentuh / Kaca Retak',
-      defaultCost: 450000, 
+      desc: 'Jasa pasang flat Rp 100.000 seluruh tipe HP (+ part sesuai model)',
+      defaultCost: 100000, 
       warrantyDays: 30,
       icon: <Smartphone className="w-4 h-4 text-sky-500" />
     },
     { 
       id: 'baterai', 
       label: 'Ganti Baterai Original', 
-      desc: 'Baterai drop, kembung, boros, restart sendiri (Garansi 90 Hari Penuh)',
-      defaultCost: 250000, 
+      desc: 'Baterai drop, kembung, boros (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 90,
       icon: <Battery className="w-4 h-4 text-emerald-500" />
     },
     { 
       id: 'kaca', 
       label: 'Kaca Retak OCA (Glass)', 
-      desc: 'Ganti kaca luar saja, LCD dan touchscreen masih normal',
-      defaultCost: 300000, 
+      desc: 'Ganti kaca luar saja, LCD normal (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 30,
       icon: <Gem className="w-4 h-4 text-purple-500" />
     },
     { 
       id: 'charging', 
       label: 'Konektor / Port Cas', 
-      desc: 'Tidak bisa cas, cas longgar, arus pengisian lambat',
-      defaultCost: 150000, 
+      desc: 'Tidak bisa cas, longgar (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 14,
       icon: <Zap className="w-4 h-4 text-amber-500" />
     },
     { 
       id: 'kamera', 
       label: 'Kamera & Kaca Lensa', 
-      desc: 'Kamera buram, getar OIS, kaca lensa pecah, blank hitam',
-      defaultCost: 200000, 
+      desc: 'Kamera buram, OIS, lensa retak (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 30,
       icon: <Camera className="w-4 h-4 text-rose-500" />
     },
     { 
       id: 'matot', 
       label: 'Mati Total / IC Power', 
-      desc: 'Mati total, short sirkuit, konslet motherboard lab',
-      defaultCost: 350000, 
+      desc: 'Mati total, short sirkuit lab (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 30,
       icon: <PowerOff className="w-4 h-4 text-red-500" />
     },
     { 
       id: 'air', 
       label: 'Pembersihan Kena Air', 
-      desc: 'Water damage restoration, chemical cleaning sirkuit lab',
-      defaultCost: 175000, 
+      desc: 'Chemical cleaning sirkuit lab (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 14,
       icon: <Droplet className="w-4 h-4 text-cyan-500" />
     },
     { 
       id: 'speaker', 
       label: 'Speaker & Mic Suara', 
-      desc: 'Speaker kresek, suara telepon mati, mikrofon tidak terdengar',
-      defaultCost: 150000, 
+      desc: 'Speaker kresek, suara mati (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 14,
       icon: <Volume2 className="w-4 h-4 text-indigo-500" />
     },
     { 
       id: 'software', 
       label: 'Software & Flash', 
-      desc: 'Bootloop logo, stuck recovery, lupa pola/sandi, update gagal',
+      desc: 'Bootloop, recovery, pola/sandi (Start from Rp 100.000 - Rp 1.000.000)',
       defaultCost: 100000, 
       warrantyDays: 7,
       icon: <Cpu className="w-4 h-4 text-blue-500" />
@@ -218,8 +219,8 @@ export default function WalkinTab({
     { 
       id: 'casing', 
       label: 'Backdoor / Housing', 
-      desc: 'Backdoor pecah, housing bengkok, tombol volume/power',
-      defaultCost: 150000, 
+      desc: 'Backdoor pecah, housing bengkok (Start from Rp 100.000 - Rp 1.000.000)',
+      defaultCost: 100000, 
       warrantyDays: 30,
       icon: <ToolIcon className="w-4 h-4 text-slate-500" />
     }
@@ -288,7 +289,7 @@ export default function WalkinTab({
       const match = problemOptions.find(p => p.id === pId);
       if (match) total += match.defaultCost;
     });
-    return total > 0 ? total : 200000;
+    return total > 0 ? total : 100000;
   };
 
   // Update default model when brand changes

@@ -107,65 +107,63 @@ export default function Home() {
   const repairMatrix: Record<string, { title: string; price: string; time: string; warranty: string; warrantyNote: string }> = {
     garis_lightsaber: {
       title: 'Menghilangkan Garis Layar (Light Saber OLED)',
-      price: 'Rp 250.000 - Rp 650.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '1 - 2 Jam',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Resmi Panel Layar (1 Bulan)'
     },
     flex_fold: {
       title: 'Pergantian Fleksibel Z Flip & Z Fold',
-      price: 'Rp 650.000 - Rp 1.650.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '2 - 4 Jam',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Resmi Fleksibel Engsel (1 Bulan)'
     },
     baterai: {
       title: 'Pergantian Baterai Original',
-      price: 'Rp 180.000 - Rp 550.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '30 - 45 Menit',
       warranty: 'Garansi 90 Hari',
       warrantyNote: 'Garansi Spesial Baterai Original (3 Bulan Penuh)'
     },
     software_virus: {
       title: 'Software & Menghilangkan Virus HP',
-      price: 'Rp 75.000 - Rp 250.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '30 - 60 Menit',
       warranty: 'Garansi 7 Hari',
       warrantyNote: 'Garansi Sistem & Software (1 Minggu)'
     },
     lcd: {
       title: 'Ganti Layar / LCD / OLED Pecah',
-      price: lcdEstimate.found ? lcdEstimate.formattedTotalPrice : 'Rp 350.000 - Rp 1.850.000',
+      price: lcdEstimate.found ? lcdEstimate.formattedTotalPrice : 'Mulai Rp 350.000 (Jasa Flat Rp 100.000 + Part)',
       time: '30 - 60 Menit',
       warranty: 'Garansi 30 Hari',
-      warrantyNote: lcdEstimate.found 
-        ? 'Garansi Layar & Sentuhan (1 Bulan) • Jasa Pasang Flat Rp 100.000'
-        : 'Garansi Layar & Sentuhan (1 Bulan)'
+      warrantyNote: 'Garansi Resmi Layar & Sentuhan (1 Bulan) • Jasa Pasang Flat Rp 100.000 Seluruh Tipe'
     },
     kaca: {
       title: 'Ganti Kaca Saja (Glass OCA Laminating)',
-      price: 'Rp 180.000 - Rp 750.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '2 - 3 Jam',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Laminating OCA (1 Bulan)'
     },
     charging: {
       title: 'Port Cas / Konektor Charger Rusak',
-      price: 'Rp 120.000 - Rp 350.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '30 - 45 Menit',
       warranty: 'Garansi 14 Hari',
       warrantyNote: 'Garansi Port Konektor Cas (2 Minggu)'
     },
     kamera: {
       title: 'Kamera Getar (OIS) / Kaca Kamera Pecah',
-      price: 'Rp 200.000 - Rp 850.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '45 - 60 Menit',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Modul Lensa Kamera (1 Bulan)'
     },
     mati_total: {
       title: 'Mesin Mati Total / Kena Air',
-      price: 'Rp 250.000 - Rp 950.000',
+      price: 'Rp 100.000 - Rp 1.000.000',
       time: '1 - 2 Hari',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi IC & Jalur Motherboard (1 Bulan)'
@@ -590,8 +588,8 @@ export default function Home() {
 
             <div className="service-dual-meta">
               <div>
-                <span className="meta-label">Estimasi Mulai</span>
-                <span className="price">Rp 250.000</span>
+                <span className="meta-label">Estimasi Jasa Mulai</span>
+                <span className="price">Rp 100.000</span>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span className="speed flex items-center justify-end gap-1"><Zap className="w-3.5 h-3.5 text-amber-500 inline" /> 30–60 Menit</span>
@@ -648,8 +646,8 @@ export default function Home() {
 
             <div className="service-dual-meta">
               <div>
-                <span className="meta-label">Estimasi Mulai</span>
-                <span className="price">Rp 150.000</span>
+                <span className="meta-label">Estimasi Jasa Mulai</span>
+                <span className="price">Rp 100.000</span>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span className="speed flex items-center justify-end gap-1"><Zap className="w-3.5 h-3.5 text-amber-500 inline" /> 30–60 Menit</span>
@@ -900,30 +898,30 @@ export default function Home() {
 
                     <div className="est-price-container">
                       <span className="est-price-label">
-                        {selectedDamage === 'lcd' && lcdEstimate.found ? 'Estimasi Presisi Servis LCD (Part + Jasa):' : 'Estimasi Biaya Part + Pasang:'}
+                        {selectedDamage === 'lcd' ? 'Estimasi Biaya Servis LCD (Jasa Pasang Flat Rp 100.000):' : 'Estimasi Biaya Jasa Servis:'}
                       </span>
                       <div className="est-price-val" id="estPriceDisplay">{currentDamageInfo.price}</div>
                       
-                      {selectedDamage === 'lcd' && lcdEstimate.found ? (
+                      {selectedDamage === 'lcd' ? (
                         <div className="est-lcd-breakdown" style={{ marginTop: '10px', padding: '10px 12px', background: '#fffbeb', borderRadius: '10px', border: '1px solid #fde68a', textAlign: 'left' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
-                            <span>📦 Part Layar LCD OG Super:</span>
+                            <span>📦 Part Layar LCD:</span>
                             <span style={{ color: '#b45309', fontFamily: 'monospace', fontWeight: 800 }}>{lcdEstimate.formattedPartPrice}</span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
-                            <span>🛠️ Jasa Pasang LCD Flat Meja Lab:</span>
-                            <span style={{ color: '#047857', fontFamily: 'monospace', fontWeight: 800 }}>{lcdEstimate.formattedServiceFee}</span>
+                            <span>🛠️ Jasa Pasang LCD Flat (Seluruhnya):</span>
+                            <span style={{ color: '#047857', fontFamily: 'monospace', fontWeight: 800 }}>Rp 100.000</span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', paddingTop: '4px', borderTop: '1px dashed #fcd34d' }}>
-                            <span>✨ Total Estimasi Konsumen:</span>
+                            <span>✨ Total Biaya Konsumen (Kolom G Excel):</span>
                             <span style={{ color: '#92400e', fontFamily: 'monospace', fontSize: '0.9rem' }}>{lcdEstimate.formattedTotalPrice}</span>
                           </div>
                           <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '4px', fontStyle: 'italic' }}>
-                            *Harga part dihitung presisi (Harga Pokok x 1.15 + 5%). Jasa pasang Flat Rp 100.000.
+                            *Jasa ganti layar LCD seluruhnya flat Rp 100.000. Part presisi sesuai katalog Excel OG Super.
                           </div>
                         </div>
                       ) : (
-                        <div className="est-price-sub">*Suku cadang Grade Original + Teknisi Berpengalaman</div>
+                        <div className="est-price-sub">*Jasa servis lainnya start from Rp 100.000 hingga Rp 1.000.000 sesuai tingkat kerusakan.</div>
                       )}
                     </div>
 

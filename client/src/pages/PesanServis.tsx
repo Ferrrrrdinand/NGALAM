@@ -843,20 +843,20 @@ export default function PesanServis() {
                           </strong>
                         </div>
                         <div style={{ background: '#ffffff', padding: '8px 10px', borderRadius: '8px', border: '1px solid #fde68a' }}>
-                          <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block' }}>Jasa Pasang Flat Meja Lab:</span>
+                          <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block' }}>Jasa Pasang Flat (Seluruh Tipe):</span>
                           <strong style={{ fontSize: '0.85rem', color: '#047857', fontFamily: 'monospace' }}>
-                            {lcdEstimate.formattedServiceFee}
+                            Rp 100.000
                           </strong>
                         </div>
                         <div style={{ background: '#fef3c7', padding: '8px 10px', borderRadius: '8px', border: '1.5px solid #d97706' }}>
-                          <span style={{ fontSize: '0.68rem', color: '#92400e', fontWeight: 700, display: 'block' }}>Total Estimasi:</span>
+                          <span style={{ fontSize: '0.68rem', color: '#92400e', fontWeight: 700, display: 'block' }}>Total Biaya Servis:</span>
                           <strong style={{ fontSize: '0.95rem', color: '#78350f', fontFamily: 'monospace' }}>
                             {lcdEstimate.formattedTotalPrice}
                           </strong>
                         </div>
                       </div>
                       <div style={{ fontSize: '0.68rem', color: '#78350f', marginTop: '8px', fontStyle: 'italic' }}>
-                        *Rumus resmi: Harga pokok x 1.15 + 5%. Biaya jasa flat Rp 100.000 dikerjakan transparan di hadapan Anda.
+                        *Jasa ganti layar LCD flat seluruhnya Rp 100.000. Jasa servis lainnya start from Rp 100.000 hingga Rp 1.000.000.
                       </div>
                     </>
                   ) : (
