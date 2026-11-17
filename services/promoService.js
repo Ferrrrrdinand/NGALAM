@@ -38,7 +38,7 @@ const DEFAULT_PROMOS = [
     theme: 'green',
     promoCode: '🛡️ GARANSI RESMI TERJAMIN',
     buttonText: 'Konsultasi Teknisi Langsung ↗',
-    buttonLink: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
+    buttonLink: 'https://wa.me/628113185858?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
     image: 'images/spesialis-hp-banner.jpg',
     active: true,
     createdAt: '2026-10-23T08:05:00.000Z'

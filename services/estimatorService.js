@@ -270,7 +270,7 @@ function calculateEstimate({ brand = 'apple', model = '', damage = 'lcd' }) {
     time: matrix.time,
     warranty: matrix.warranty,
     detail: matrix.detail,
-    waUrl: `https://wa.me/6281330304321?text=${waMessage}`,
+    waUrl: `https://wa.me/628113185858?text=${waMessage}`,
     bookingUrl: bookingUrl,
   };
 }

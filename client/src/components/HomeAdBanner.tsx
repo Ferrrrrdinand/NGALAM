@@ -75,7 +75,7 @@ const DEFAULT_FALLBACK_ADS: AdItem[] = [
     description: 'Unit dijemput dan diantar ke rumah/kantor dengan laporan pengerjaan real-time via WhatsApp.',
     badge: '🛵 PICKUP & DELIVERY MALANG',
     ctaText: 'Pesan Antar Jemput WA ↗',
-    targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20mau%20layanan%20antar%20jemput%20servis%20HP',
+    targetUrl: 'https://wa.me/628113185858?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20mau%20layanan%20antar%20jemput%20servis%20HP',
     theme: 'dark',
     active: true
   },
@@ -86,7 +86,7 @@ const DEFAULT_FALLBACK_ADS: AdItem[] = [
     description: 'Peralatan micro-soldering & mesin OCA terbuka, tonton langsung pengerjaan di depan Anda.',
     badge: '⏱️ BISA DITUNGGU (30–60 MENIT)',
     ctaText: 'Konsultasi Teknisi ↗',
-    targetUrl: 'https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
+    targetUrl: 'https://wa.me/628113185858?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20tanya%20servis%20di%20workshop%20bisa%20ditunggu',
     theme: 'gold',
     active: true
   }
@@ -287,7 +287,7 @@ export default function HomeAdBanner() {
             )}
 
             <a
-              href={`https://wa.me/6281330304321?text=${encodeURIComponent(
+              href={`https://wa.me/628113185858?text=${encodeURIComponent(
                 `Halo Ngalam Fix Pro, saya ingin info terkait "${currentAd.headline}".`
               )}`}
               target="_blank"

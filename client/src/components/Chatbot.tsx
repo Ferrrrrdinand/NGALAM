@@ -73,7 +73,7 @@ export default function Chatbot() {
           ...prev,
           {
             sender: 'bot',
-            text: 'Halo kak, untuk info lebih cepat silakan langsung hubungi PIC kami via WhatsApp di <b>0813-3030-4321</b>.',
+            text: 'Halo kak, untuk info lebih cepat silakan langsung hubungi CS kami via WhatsApp di <b>+62 811-3185-858</b>.',
             chips: ['💬 Hubungi WhatsApp PIC', '📍 Lokasi Workshop'],
             time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
           }
@@ -84,7 +84,7 @@ export default function Chatbot() {
         ...prev,
         {
           sender: 'bot',
-          text: 'Jaringan sibuk. Anda dapat berkonsultasi langsung dengan tim teknisi kami via WhatsApp di <b>0813-3030-4321</b>.',
+          text: 'Jaringan sibuk. Anda dapat berkonsultasi langsung dengan CS kami via WhatsApp di <b>+62 811-3185-858</b>.',
           chips: ['💬 Hubungi WhatsApp PIC'],
           time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
         }
@@ -196,7 +196,7 @@ export default function Chatbot() {
 
           <div className="flex items-center gap-1.5">
             <a
-              href="https://wa.me/6281330304321?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20langsung"
+              href="https://wa.me/628113185858?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20langsung"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition-colors hidden sm:inline-flex items-center gap-1"

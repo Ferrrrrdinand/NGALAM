@@ -498,7 +498,7 @@ export default function WalkinTab({
           <div class="center border-b">
             <div class="title">NGALAM FIX PRO</div>
             <div class="subtitle">Pusat Reparasi Smartphone & Apple iPhone Malang</div>
-            <div class="subtitle">Jl. Candi Mendut No.12 • WhatsApp: 082245233306</div>
+            <div class="subtitle">Jl. Galunggung, Malang • CS WhatsApp: +62 811-3185-858</div>
             <div class="ticket-badge">${order.id}</div>
             <div class="subtitle">TANDA TERIMA INTAKE MEJA 1 (OFFLINE)</div>
           </div>

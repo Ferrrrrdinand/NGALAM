@@ -461,7 +461,7 @@ export default function Lacak() {
               {/* ==================================================== */}
               <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <a
-                  href={`https://wa.me/6281330304321?text=${encodeURIComponent(
+                  href={`https://wa.me/628113185858?text=${encodeURIComponent(
                     `Halo Admin & CS Ngalam Fix Pro,\nSaya ingin menanyakan progress perbaikan unit saya:\n• Nomor Tiket: ${order.id}\n• Tipe HP: ${cleanPhoneType(order.phoneType)}\n• Nama: ${order.customerName}\n• Tahap Saat Ini: Tahap ${currentStep} (${steps[currentStep - 1]?.title})\nTerima kasih!`
                   )}`}
                   target="_blank"

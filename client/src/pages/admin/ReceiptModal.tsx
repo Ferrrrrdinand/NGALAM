@@ -31,7 +31,7 @@ export default function ReceiptModal({
           <div className="text-center pb-2 border-b border-dashed border-slate-300">
             <strong className="text-sm block">NGALAM FIX PRO</strong>
             <span>Spesialis Servis HP &amp; iPhone Malang</span><br/>
-            <span className="text-[9px]">Jl. Candi Mendut No.12 • WA: 082245233306</span>
+            <span className="text-[9px]">Jl. Galunggung, Malang • CS WhatsApp: +62 811-3185-858</span>
           </div>
 
           <div className="space-y-1 py-1">

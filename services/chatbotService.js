@@ -7,8 +7,8 @@ const { getAllOrders } = require('./orderService');
 
 const PIC_CONTACT = {
   name: 'Liem Hingky Liman',
-  phone: '+62 813-3030-4321',
-  waUrl: 'https://wa.me/6281330304321',
+  phone: '+62 811-3185-858',
+  waUrl: 'https://wa.me/628113185858',
 };
 
 const WORKSHOP_INFO = {

@@ -471,7 +471,7 @@ export default function Layanan() {
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
             <a
-              href="https://wa.me/6281330304321?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kerusakan%20smartphone%20saya"
+              href="https://wa.me/628113185858?text=Halo%20Ngalam%20Fix%20Pro,%20saya%20ingin%20konsultasi%20kerusakan%20smartphone%20saya"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 active:scale-95 transition-all cursor-pointer"

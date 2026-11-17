@@ -46,7 +46,7 @@ function CustomerReceiptModal({ order, onClose }: { order: any; onClose: () => v
           <div className="text-center pb-3 border-b border-dashed border-amber-300">
             <strong className="text-sm block font-sans font-black tracking-wide text-slate-900">NGALAM FIX PRO</strong>
             <span className="text-[10px] text-slate-600">Spesialis Servis HP &amp; iPhone Malang</span>
-            <div className="text-[9px] text-slate-500 mt-1">Workshop Meja Terbuka • Hotline: 0813-3030-4321</div>
+            <div className="text-[9px] text-slate-500 mt-1">Workshop Meja Terbuka • Hotline: +62 811-3185-858</div>
           </div>
 
           <div className="space-y-1.5 py-1 text-[11px]">
@@ -180,7 +180,7 @@ function CustomerClaimWarrantyModal({
       `"${complaint.trim() || 'Unit mengalami kendala setelah perbaikan'}"\n\n` +
       `Mohon dibantu info jadwal pengecekan langsung di workshop lab. Terima kasih!`
     );
-    return `https://wa.me/6281330304321?text=${text}`;
+    return `https://wa.me/628113185858?text=${text}`;
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -969,7 +969,7 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
                           </Link>
                         ) : (
                           <a
-                            href={`https://wa.me/6281330304321?text=${encodeURIComponent(`Halo CS Ngalam Fix Pro, saya ingin konsultasi servis unit ${order.phoneType} (${order.id}) garansi lama.`)}`}
+                            href={`https://wa.me/628113185858?text=${encodeURIComponent(`Halo CS Ngalam Fix Pro, saya ingin konsultasi servis unit ${order.phoneType} (${order.id}) garansi lama.`)}`}
                             target="_blank"
                             rel="noreferrer"
                             className="w-full md:w-auto px-3.5 py-2 rounded-xl border border-slate-300 hover:border-amber-400 bg-white hover:bg-amber-50 text-slate-700 hover:text-amber-800 text-xs font-semibold transition-colors flex items-center justify-center gap-1"

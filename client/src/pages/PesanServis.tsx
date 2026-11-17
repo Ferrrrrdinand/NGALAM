@@ -525,7 +525,7 @@ export default function PesanServis() {
             <strong>Butuh Bantuan Mendesak?</strong>
             <span>Konsultasi Cepat via WhatsApp</span>
           </div>
-          <a href="https://wa.me/6281330304321" target="_blank" rel="noreferrer" className="booking-help-btn">
+          <a href="https://wa.me/628113185858" target="_blank" rel="noreferrer" className="booking-help-btn">
             <span>Chat WhatsApp</span>
           </a>
         </div>
@@ -567,7 +567,7 @@ export default function PesanServis() {
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
               <a
-                href={`https://wa.me/6281330304321?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20sudah%20booking%20dengan%20nomor%20tiket%20${successOrder.id}`}
+                href={`https://wa.me/628113185858?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20sudah%20booking%20dengan%20nomor%20tiket%20${successOrder.id}`}
                 target="_blank"
                 rel="noreferrer"
                 className="btn"

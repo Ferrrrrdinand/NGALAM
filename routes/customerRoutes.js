@@ -282,7 +282,7 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
     `• Masa Berlaku: s/d ${endDateFormatted} (Sisa ${daysRemaining} Hari)\n\n` +
     `Mohon dibantu jadwal pengecekan unit di workshop. Terima kasih!`
   );
-  const claimWaUrl = `https://wa.me/6281330304321?text=${waText}`;
+  const claimWaUrl = `https://wa.me/628113185858?text=${waText}`;
 
   return {
     warrantyCode,
@@ -826,7 +826,7 @@ router.post('/claim-warranty', async (req, res) => {
       `"${issueComplaint.trim()}"\n\n` +
       `Mohon konfirmasi kesiapan teknisi lab untuk pengecekan unit. Terima kasih!`
     );
-    const claimWaUrl = `https://wa.me/6281330304321?text=${waText}`;
+    const claimWaUrl = `https://wa.me/628113185858?text=${waText}`;
 
     // Catat ke Audit Trail / Log Aktivitas Database
     try {
