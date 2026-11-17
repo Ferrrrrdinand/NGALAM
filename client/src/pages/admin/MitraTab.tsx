@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   Banknote, X, Users, Wallet, ArrowDownRight, 
   Edit3, Key, Phone, Eye, EyeOff, Search,
-  QrCode, Printer, Download, Copy, Check, ExternalLink, ShieldCheck, Tag, Sparkles
+  QrCode, Printer, Download, Copy, Check, ExternalLink, ShieldCheck, Tag, Sparkles,
+  FolderArchive, CheckSquare, Square, DownloadCloud
 } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditMitraModal from './EditMitraModal';
@@ -33,6 +34,8 @@ export default function MitraTab({
   const [copiedLink, setCopiedLink] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
+  const [downloadingZip, setDownloadingZip] = useState(false);
 
   const togglePasswordVisibility = (id: string) => {
     setRevealedPasswords((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -94,6 +97,72 @@ export default function MitraTab({
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
     }
+  };
+
+  const handleDownloadAllZip = () => {
+    const link = document.createElement('a');
+    link.href = '/qrcodes/mitra/100_QR_Code_Mitra_NgalamFixPro.zip';
+    link.download = '100_QR_Code_Mitra_NgalamFixPro.zip';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownloadSelectedZip = async () => {
+    if (selectedCodes.length === 0) {
+      alert('Pilih minimal 1 QR code untuk diunduh dalam format ZIP.');
+      return;
+    }
+    if (selectedCodes.length >= 100 || (preGeneratedList.length > 0 && selectedCodes.length === preGeneratedList.length)) {
+      handleDownloadAllZip();
+      return;
+    }
+
+    setDownloadingZip(true);
+    try {
+      const url = `/api/mitra/download-qr-zip?codes=${encodeURIComponent(selectedCodes.join(','))}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Gagal mengunduh file ZIP');
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = `QR_Code_Mitra_${selectedCodes.length}_Pilihan.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err: any) {
+      console.error(err);
+      alert('Terjadi kendala saat membuat file ZIP: ' + (err.message || 'Silakan coba lagi.'));
+    } finally {
+      setDownloadingZip(false);
+    }
+  };
+
+  const toggleSelectCode = (code: string) => {
+    setSelectedCodes((prev) => 
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+    );
+  };
+
+  const selectAllVisible = () => {
+    const currentCodes = getBatchItems().map((m) => m.referralCode);
+    const allSelected = currentCodes.length > 0 && currentCodes.every((c) => selectedCodes.includes(c));
+    if (allSelected) {
+      setSelectedCodes((prev) => prev.filter((c) => !currentCodes.includes(c)));
+    } else {
+      setSelectedCodes((prev) => Array.from(new Set([...prev, ...currentCodes])));
+    }
+  };
+
+  const selectAll100 = () => {
+    const all100Codes = preGeneratedList.map((m) => m.referralCode);
+    setSelectedCodes(all100Codes);
+  };
+
+  const clearSelection = () => {
+    setSelectedCodes([]);
   };
 
   const totalBalance = mitras.reduce((acc, m) => acc + (Number(m.balance) || 0), 0);
@@ -203,11 +272,20 @@ export default function MitraTab({
         <div className="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto">
           <button
             type="button"
+            onClick={handleDownloadAllZip}
+            className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            title="Download seluruh 100 file QR code dalam 1 arsip ZIP"
+          >
+            <FolderArchive className="w-4 h-4" />
+            <span>Unduh 100 QR (.ZIP)</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setShowBatchPrintModal(true)}
             className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <Printer className="w-4 h-4" />
-            <span>Cetak 100 Stiker QR</span>
+            <span>Cetak &amp; Pilih QR</span>
           </button>
           <button
             type="button"
@@ -643,30 +721,60 @@ export default function MitraTab({
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           <div className="bg-white rounded-3xl max-w-5xl w-full p-6 shadow-2xl space-y-5 my-6 animate-in fade-in duration-200">
             {/* Modal Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 no-print">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4 no-print">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
                     <Printer className="w-4 h-4" />
                   </span>
                   <h3 className="text-base font-black text-slate-900">
-                    Cetak Lembar Stiker QR Code 100 Mitra
+                    Cetak &amp; Unduh Koleksi QR Code 100 Mitra
                   </h3>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
-                  Format stiker siap cetak di kertas A4 label atau stiker motor. ID &amp; Kode referral paten selaras dengan database.
+                  Pilih QR mana saja yang ingin diunduh dalam arsip ZIP, atau gunakan 1 tombol cepat untuk mendownload seluruh 100 QR.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* 1-Click Fast Download ALL 100 */}
+                <button
+                  type="button"
+                  onClick={handleDownloadAllZip}
+                  className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer transition-all"
+                  title="Unduh seluruh 100 file QR code mitra sekaligus (.zip)"
+                >
+                  <FolderArchive className="w-4 h-4" />
+                  <span>Unduh Semua 100 (.ZIP)</span>
+                </button>
+
+                {/* Download Selected as ZIP */}
+                <button
+                  type="button"
+                  onClick={handleDownloadSelectedZip}
+                  disabled={selectedCodes.length === 0 || downloadingZip}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer ${
+                    selectedCodes.length > 0 && !downloadingZip
+                      ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/20'
+                      : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                  }`}
+                  title={selectedCodes.length > 0 ? `Unduh ${selectedCodes.length} file QR terpilih dalam file ZIP` : 'Pilih minimal 1 QR untuk mengunduh ZIP'}
+                >
+                  <DownloadCloud className={`w-4 h-4 ${downloadingZip ? 'animate-bounce' : ''}`} />
+                  <span>{downloadingZip ? 'Menyiapkan ZIP...' : `Unduh ZIP Terpilih (${selectedCodes.length})`}</span>
+                </button>
+
+                {/* Print Sheet */}
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-emerald-600/20 cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-slate-900/20 cursor-pointer transition-all"
                 >
                   <Printer className="w-4 h-4" />
-                  <span>Cetak Lembar Stiker ({getBatchItems().length})</span>
+                  <span>Cetak Stiker ({getBatchItems().length})</span>
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setShowBatchPrintModal(false)}
@@ -678,65 +786,98 @@ export default function MitraTab({
             </div>
 
             {/* Filter Group Tabs (No Print) */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl no-print text-xs">
-              <button
-                type="button"
-                onClick={() => setBatchFilter('all')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                  batchFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Semua 100 Stiker ({preGeneratedList.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setBatchFilter('unassigned')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                  batchFilter === 'unassigned' ? 'bg-white text-amber-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Belum Terisi Pemilik ({unassignedCount})
-              </button>
-              <button
-                type="button"
-                onClick={() => setBatchFilter('batch1')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                  batchFilter === 'batch1' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                001 - 025
-              </button>
-              <button
-                type="button"
-                onClick={() => setBatchFilter('batch2')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                  batchFilter === 'batch2' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                026 - 050
-              </button>
-              <button
-                type="button"
-                onClick={() => setBatchFilter('batch3')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                  batchFilter === 'batch3' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                051 - 075
-              </button>
-              <button
-                type="button"
-                onClick={() => setBatchFilter('batch4')}
-                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                  batchFilter === 'batch4' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                076 - 100
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-2 no-print">
+              <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-2xl text-xs">
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('all')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Semua ({preGeneratedList.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('unassigned')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'unassigned' ? 'bg-white text-amber-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Belum Terisi ({unassignedCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch1')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch1' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  001 - 025
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch2')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch2' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  026 - 050
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch3')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch3' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  051 - 075
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch4')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch4' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  076 - 100
+                </button>
+              </div>
+
+              {/* Selection Controls Toolbar */}
+              <div className="flex items-center gap-1.5 text-xs">
+                <button
+                  type="button"
+                  onClick={selectAllVisible}
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <CheckSquare className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Pilih Yang Tampil</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={selectAll100}
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all cursor-pointer"
+                >
+                  Pilih Semua 100
+                </button>
+                {selectedCodes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition-all cursor-pointer"
+                  >
+                    Batal ({selectedCodes.length})
+                  </button>
+                )}
+                <span className="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-800 font-extrabold border border-amber-200/60">
+                  {selectedCodes.length} Dipilih
+                </span>
+              </div>
             </div>
 
             {/* Printable Grid Area */}
-            <div id="mitra-batch-print-area" className="max-h-[68vh] overflow-y-auto p-2">
+            <div id="mitra-batch-print-area" className="max-h-[66vh] overflow-y-auto p-2">
               <style>{`
                 @media print {
                   body * {
@@ -769,16 +910,49 @@ export default function MitraTab({
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
                 {getBatchItems().map((m) => {
                   const assigned = isAssigned(m);
+                  const isSelected = selectedCodes.includes(m.referralCode);
                   return (
                     <div
                       key={m.id}
-                      className="qr-sticker-card p-3 rounded-2xl border-2 border-dashed border-amber-300 bg-white flex flex-col items-center justify-between text-center space-y-2 shadow-xs hover:shadow-md transition-all relative"
+                      onClick={() => toggleSelectCode(m.referralCode)}
+                      className={`qr-sticker-card p-3 rounded-2xl border-2 transition-all relative flex flex-col items-center justify-between text-center space-y-2 cursor-pointer ${
+                        isSelected
+                          ? 'border-amber-500 bg-amber-50/40 ring-2 ring-amber-400/80 shadow-md'
+                          : 'border-dashed border-amber-300 bg-white shadow-xs hover:shadow-md hover:border-amber-400'
+                      }`}
                     >
+                      {/* Top Bar inside Card: Selection Checkbox & Single Download */}
                       <div className="w-full flex items-center justify-between text-[9px] font-black uppercase text-amber-700 tracking-wider border-b border-amber-100 pb-1">
-                        <span>NGALAM FIX PRO</span>
-                        <span className="font-mono text-slate-800">{m.referralCode}</span>
+                        <div className="flex items-center gap-1.5 no-print" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            onClick={() => toggleSelectCode(m.referralCode)}
+                            className="text-amber-600 hover:text-amber-700 cursor-pointer"
+                            title={isSelected ? 'Hapus pilihan' : 'Pilih untuk download ZIP'}
+                          >
+                            {isSelected ? (
+                              <CheckSquare className="w-4 h-4 fill-amber-500 text-white" />
+                            ) : (
+                              <Square className="w-4 h-4 text-slate-300 hover:text-amber-500" />
+                            )}
+                          </button>
+                          <span className="font-mono text-slate-800 text-[10px]">{m.referralCode}</span>
+                        </div>
+                        <span className="hidden print:inline font-mono text-slate-800">{m.referralCode}</span>
+                        
+                        {/* Single Download button (No Print) */}
+                        <a
+                          href={`/qrcodes/mitra/${m.referralCode}.png`}
+                          download={`${m.referralCode}.png`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="no-print p-1 text-slate-400 hover:text-amber-700 hover:bg-amber-100 rounded-md transition-colors"
+                          title="Download gambar QR code ini (PNG)"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                        </a>
                       </div>
 
+                      {/* QR Image */}
                       <div className="p-1 bg-white rounded-xl shadow-2xs border border-slate-100 my-0.5">
                         <img
                           src={`/qrcodes/mitra/${m.referralCode}.png`}
