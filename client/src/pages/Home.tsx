@@ -122,67 +122,62 @@ export default function Home() {
   );
 
   const lcdEstimate = getLcdEstimate(selectedBrand, selectedModel);
+  const hasExcelPrice = selectedDamage === 'lcd' && lcdEstimate.found;
+  const partPriceDisplay = hasExcelPrice ? lcdEstimate.formattedPartPrice : 'Konsul via WhatsApp';
+  const servicePriceDisplay = hasExcelPrice ? 'Rp 100.000' : 'Start from Rp 100.000';
+  const totalPriceDisplay = hasExcelPrice ? lcdEstimate.formattedTotalPrice : 'Mulai Rp 100.000 + Part';
 
-  const repairMatrix: Record<string, { title: string; price: string; time: string; warranty: string; warrantyNote: string }> = {
+  const repairMatrix: Record<string, { title: string; time: string; warranty: string; warrantyNote: string }> = {
     garis_lightsaber: {
-      title: 'Menghilangkan Garis Layar (Light Saber OLED)',
-      price: 'Rp 100.000 - Rp 1.000.000',
+      title: 'Hilangkan Garis Layar (Light Saber)',
       time: '1 - 2 Jam',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Resmi Panel Layar (1 Bulan)'
     },
     flex_fold: {
-      title: 'Pergantian Fleksibel Z Flip & Z Fold',
-      price: 'Rp 100.000 - Rp 1.000.000',
+      title: 'Fleksibel Z Flip & Z Fold',
       time: '2 - 4 Jam',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Resmi Fleksibel Engsel (1 Bulan)'
     },
     baterai: {
       title: 'Pergantian Baterai Original',
-      price: 'Rp 100.000 - Rp 1.000.000',
       time: '30 - 45 Menit',
       warranty: 'Garansi 90 Hari',
-      warrantyNote: 'Garansi Spesial Baterai Original (3 Bulan Penuh)'
+      warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh)'
     },
     software_virus: {
-      title: 'Software & Menghilangkan Virus HP',
-      price: 'Rp 100.000 - Rp 1.000.000',
+      title: 'Software & Virus HP',
       time: '30 - 60 Menit',
       warranty: 'Garansi 7 Hari',
       warrantyNote: 'Garansi Sistem & Software (1 Minggu)'
     },
     lcd: {
-      title: 'Ganti Layar / LCD / OLED Pecah',
-      price: lcdEstimate.found ? lcdEstimate.formattedTotalPrice : 'Mulai Rp 350.000 (Jasa Flat Rp 100.000 + Part)',
+      title: 'Ganti Layar / LCD / OLED',
       time: '30 - 60 Menit',
       warranty: 'Garansi 30 Hari',
-      warrantyNote: 'Garansi Resmi Layar & Sentuhan (1 Bulan) • Jasa Pasang Flat Rp 100.000 Seluruh Tipe'
+      warrantyNote: 'Garansi Layar & Sentuhan (1 Bulan)'
     },
     kaca: {
-      title: 'Ganti Kaca Saja (Glass OCA Laminating)',
-      price: 'Rp 100.000 - Rp 1.000.000',
+      title: 'Ganti Kaca OCA (Glass Laminating)',
       time: '2 - 3 Jam',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Laminating OCA (1 Bulan)'
     },
     charging: {
-      title: 'Port Cas / Konektor Charger Rusak',
-      price: 'Rp 100.000 - Rp 1.000.000',
+      title: 'Port Cas / Charger',
       time: '30 - 45 Menit',
       warranty: 'Garansi 14 Hari',
       warrantyNote: 'Garansi Port Konektor Cas (2 Minggu)'
     },
     kamera: {
-      title: 'Kamera Getar (OIS) / Kaca Kamera Pecah',
-      price: 'Rp 100.000 - Rp 1.000.000',
+      title: 'Kamera / OIS Rusak',
       time: '45 - 60 Menit',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi Modul Lensa Kamera (1 Bulan)'
     },
     mati_total: {
       title: 'Mesin Mati Total / Kena Air',
-      price: 'Rp 100.000 - Rp 1.000.000',
       time: '1 - 2 Hari',
       warranty: 'Garansi 30 Hari',
       warrantyNote: 'Garansi IC & Jalur Motherboard (1 Bulan)'
@@ -918,31 +913,41 @@ export default function Home() {
 
                     <div className="est-price-container">
                       <span className="est-price-label">
-                        {selectedDamage === 'lcd' ? 'Estimasi Biaya Servis LCD (Jasa Pasang Flat Rp 100.000):' : 'Estimasi Biaya Jasa Servis:'}
+                        ESTIMASI BIAYA SERVIS {currentDamageInfo.title.toUpperCase()}
                       </span>
-                      <div className="est-price-val" id="estPriceDisplay">{currentDamageInfo.price}</div>
-                      
-                      {selectedDamage === 'lcd' ? (
-                        <div className="est-lcd-breakdown" style={{ marginTop: '10px', padding: '10px 12px', background: '#fffbeb', borderRadius: '10px', border: '1px solid #fde68a', textAlign: 'left' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
-                            <span>📦 Part Layar LCD:</span>
-                            <span style={{ color: '#b45309', fontFamily: 'monospace', fontWeight: 800 }}>{lcdEstimate.formattedPartPrice}</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>
-                            <span>🛠️ Jasa Pasang LCD Flat (Seluruhnya):</span>
-                            <span style={{ color: '#047857', fontFamily: 'monospace', fontWeight: 800 }}>Rp 100.000</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', paddingTop: '4px', borderTop: '1px dashed #fcd34d' }}>
-                            <span>✨ Total Biaya Servis (Harga Akhir):</span>
-                            <span style={{ color: '#92400e', fontFamily: 'monospace', fontSize: '0.9rem' }}>{lcdEstimate.formattedTotalPrice}</span>
-                          </div>
-                          <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '4px', fontStyle: 'italic' }}>
-                            *Total biaya menggunakan Harga Akhir Excel. Biaya jasa pasang flat Rp 100.000 dipisah di rincian.
-                          </div>
+                      <div className="est-price-val" id="estPriceDisplay">
+                        {totalPriceDisplay}
+                      </div>
+
+                      {/* Kolom Estimasi: Desain Konsisten 100% Sama untuk Semua Kerusakan */}
+                      <div style={{ marginTop: '12px', padding: '12px 14px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                          <span>📦 Estimasi Part:</span>
+                          <strong style={{ color: hasExcelPrice ? '#b45309' : '#0284c7', fontFamily: hasExcelPrice ? 'monospace' : 'inherit' }}>
+                            {partPriceDisplay}
+                          </strong>
                         </div>
-                      ) : (
-                        <div className="est-price-sub">*Jasa servis lainnya start from Rp 100.000 hingga Rp 1.000.000 sesuai tingkat kerusakan.</div>
-                      )}
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                          <span>🛠️ Biaya Jasa:</span>
+                          <strong style={{ color: '#059669', fontFamily: 'monospace' }}>
+                            {servicePriceDisplay}
+                          </strong>
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.86rem', fontWeight: 800, color: '#0f172a', paddingTop: '6px', borderTop: '1px dashed #cbd5e1' }}>
+                          <span>✨ Total Estimasi:</span>
+                          <strong style={{ color: '#b45309', fontSize: '0.94rem', fontFamily: hasExcelPrice ? 'monospace' : 'inherit' }}>
+                            {totalPriceDisplay}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '8px', lineHeight: 1.4 }}>
+                        {hasExcelPrice
+                          ? '*Estimasi resmi part LCD + jasa pasang flat Rp 100.000.'
+                          : '*Harga part dikonsultasikan via WhatsApp. Biaya jasa pengerjaan start from Rp 100.000.'}
+                      </div>
                     </div>
 
                     <div className="est-perks-list">
@@ -975,9 +980,9 @@ export default function Home() {
                   <div className="est-actions-box">
                     <a
                       href={`https://wa.me/628113185858?text=${encodeURIComponent(
-                        selectedDamage === 'lcd' && lcdEstimate.found
-                          ? `Halo Ngalam Fix Pro (Liem Hingky Liman),\nSaya ingin konsultasi servis LCD HP:\n• Tipe HP: ${selectedModel}\n• Estimasi Part LCD OG Super: ${lcdEstimate.formattedPartPrice}\n• Jasa Pasang Flat Meja Lab: Rp 100.000\n• Total Estimasi: ${lcdEstimate.formattedTotalPrice}\n• Garansi: ${lcdEstimate.warranty}\nApakah suku cadang LCD ini tersedia hari ini?`
-                          : `Halo Ngalam Fix Pro (Liem Hingky Liman),\nSaya ingin konsultasi servis HP:\n• Merek/Model: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi: ${currentDamageInfo.price} (${currentDamageInfo.time})\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
+                        hasExcelPrice
+                          ? `Halo CS Ngalam Fix Pro,\nSaya ingin konsultasi servis HP:\n• Tipe HP: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi Part: ${lcdEstimate.formattedPartPrice}\n• Biaya Jasa: Rp 100.000\n• Total Biaya: ${lcdEstimate.formattedTotalPrice}\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
+                          : `Halo CS Ngalam Fix Pro,\nSaya ingin konsultasi servis HP:\n• Tipe HP: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi Jasa: Start from Rp 100.000\n• Harga Part: Ingin konsul harga & ketersediaan part via WA\nMohon info ketersediaan suku cadang dan jadwalnya, terima kasih!`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -985,7 +990,7 @@ export default function Home() {
                       id="estCtaButton"
                     >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                      <span>Chat WhatsApp Cek Stok Part ↗</span>
+                      <span>Chat WhatsApp Konsul Part &amp; Servis ↗</span>
                     </a>
                     <Link
                       to={`/pesan-servis?brand=${encodeURIComponent(selectedBrand)}&model=${encodeURIComponent(selectedModel)}&problem=${encodeURIComponent(selectedDamage)}`}
