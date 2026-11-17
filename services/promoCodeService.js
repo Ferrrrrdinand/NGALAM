@@ -8,87 +8,92 @@ const path = require('path');
 
 const PROMO_CODES_FILE = path.join(__dirname, '..', 'data', 'promo_codes.json');
 
-// Initial default promo codes
+// Initial default promo codes - seluruh promo berbasis persentase & minimal belanja
 const DEFAULT_PROMO_CODES = [
   {
     id: 'PC-MEMBER10-VIP',
     code: 'MEMBER10',
     name: 'Diskon 10% Spesial Member Baru',
-    description: 'Potongan harga langsung 10% untuk seluruh perbaikan smartphone khusus pelanggan terdaftar member Ngalam Fix Pro.',
-    discountType: 'percentage', // 'percentage' | 'fixed'
-    discountValue: 10, // 10%
-    minSpend: 0,
+    description: 'Potongan diskon 10% untuk seluruh servis smartphone, minimal belanja Rp 100.000.',
+    discountType: 'percentage',
+    discountValue: 10,
+    minSpend: 100000,
     maxDiscount: 150000,
     validFrom: '2026-10-01',
     validUntil: '2026-12-31',
     usageLimit: 500,
-    usedCount: 12,
+    usedCount: 14,
     active: true,
-    createdAt: '2026-11-05T08:00:00.000Z'
+    status: 'ACTIVE',
+    isExpired: false
   },
   {
-    id: 'PC-20261023-01',
-    code: 'NGALAMPROMO30',
-    name: 'Diskon Spesial 30% Servis HP Malang',
-    description: 'Potongan harga 30% untuk penggantian layar OLED, baterai original, dan perbaikan IC.',
-    discountType: 'percentage', // 'percentage' | 'fixed'
-    discountValue: 30, // 30%
+    id: 'PC-NGALAM15',
+    code: 'NGALAM15',
+    name: 'Diskon 15% Servis Express Meja Terbuka',
+    description: 'Potongan diskon 15% untuk pengerjaan servis langsung di meja terbuka, minimal belanja Rp 150.000.',
+    discountType: 'percentage',
+    discountValue: 15,
     minSpend: 150000,
-    maxDiscount: 150000,
-    validFrom: '2026-10-01',
-    validUntil: '2026-12-31', // Masih aktif
-    usageLimit: 100,
-    usedCount: 18,
-    active: true,
-    createdAt: '2026-10-23T08:00:00.000Z'
-  },
-  {
-    id: 'PC-20261023-02',
-    code: 'HEMAT50',
-    name: 'Potongan Langsung Rp 50.000',
-    description: 'Voucher potongan langsung Rp 50.000 untuk minimal servis Rp 150.000.',
-    discountType: 'fixed',
-    discountValue: 50000, // Rp 50.000
-    minSpend: 150000,
-    maxDiscount: 50000,
-    validFrom: '2026-10-01',
-    validUntil: '2026-12-31', // Masih aktif
-    usageLimit: 50,
-    usedCount: 9,
-    active: true,
-    createdAt: '2026-10-23T08:05:00.000Z'
-  },
-  {
-    id: 'PC-20261023-03',
-    code: 'FREEGLASS9H',
-    name: 'Paket Komplit Bonus Tempered Glass 9H',
-    description: 'Potongan senilai tempered glass 9H presisi senilai Rp 35.000 untuk ganti LCD.',
-    discountType: 'fixed',
-    discountValue: 35000,
-    minSpend: 200000,
-    maxDiscount: 35000,
+    maxDiscount: 200000,
     validFrom: '2026-10-01',
     validUntil: '2026-12-31',
     usageLimit: 200,
-    usedCount: 42,
+    usedCount: 22,
     active: true,
-    createdAt: '2026-10-23T08:10:00.000Z'
+    status: 'ACTIVE',
+    isExpired: false
   },
   {
-    id: 'PC-20261023-04',
-    code: 'FLASHEXPIRED',
-    name: 'Flash Sale Weekend (Contoh Masa Sudah Selesai)',
-    description: 'Promo kilat akhir pekan yang masa berlakunya sudah berakhir.',
+    id: 'PC-HEMAT20',
+    code: 'HEMAT20',
+    name: 'Diskon 20% Servis Layar & Baterai',
+    description: 'Potongan diskon 20% khusus pergantian baterai atau laminasi layar kaca, minimal belanja Rp 200.000.',
     discountType: 'percentage',
-    discountValue: 50,
-    minSpend: 100000,
-    maxDiscount: 200000,
-    validFrom: '2026-10-10',
-    validUntil: '2026-10-20', // Sudah lewat! Auto-expired
-    usageLimit: 30,
-    usedCount: 30,
+    discountValue: 20,
+    minSpend: 200000,
+    maxDiscount: 250000,
+    validFrom: '2026-10-01',
+    validUntil: '2026-12-31',
+    usageLimit: 150,
+    usedCount: 35,
     active: true,
-    createdAt: '2026-10-10T08:00:00.000Z'
+    status: 'ACTIVE',
+    isExpired: false
+  },
+  {
+    id: 'PC-SUPER25',
+    code: 'SUPER25',
+    name: 'Diskon 25% Pergantian Sparepart Original',
+    description: 'Potongan diskon 25% untuk penggantian modul sparepart original bergaransi, minimal belanja Rp 300.000.',
+    discountType: 'percentage',
+    discountValue: 25,
+    minSpend: 300000,
+    maxDiscount: 350000,
+    validFrom: '2026-10-01',
+    validUntil: '2026-12-31',
+    usageLimit: 100,
+    usedCount: 18,
+    active: true,
+    status: 'ACTIVE',
+    isExpired: false
+  },
+  {
+    id: 'PC-VIP30',
+    code: 'VIP30',
+    name: 'Diskon 30% Servis Mesin & Layar OLED',
+    description: 'Potongan diskon 30% untuk pengerjaan mesin berat atau pergantian panel OLED, minimal belanja Rp 500.000.',
+    discountType: 'percentage',
+    discountValue: 30,
+    minSpend: 500000,
+    maxDiscount: 500000,
+    validFrom: '2026-10-01',
+    validUntil: '2026-12-31',
+    usageLimit: 100,
+    usedCount: 41,
+    active: true,
+    status: 'ACTIVE',
+    isExpired: false
   }
 ];
 
@@ -314,12 +319,12 @@ function validateAndCalculate(code, rawPrice = 350000) {
     };
   }
 
-  // Check minimum spend
-  if (promo.minSpend && basePrice < promo.minSpend) {
+  // Check minimum spend (if basePrice is specified and greater than 0)
+  if (basePrice > 0 && promo.minSpend && basePrice < promo.minSpend) {
     return {
       valid: false,
       code: promo.code,
-      message: `Minimal estimasi biaya untuk promo "${promo.code}" adalah Rp ${promo.minSpend.toLocaleString('id-ID')}. Estimasi saat ini Rp ${basePrice.toLocaleString('id-ID')}.`
+      message: `Minimal transaksi untuk promo "${promo.code}" adalah Rp ${promo.minSpend.toLocaleString('id-ID')}. Estimasi saat ini Rp ${basePrice.toLocaleString('id-ID')}.`
     };
   }
 

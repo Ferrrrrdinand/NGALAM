@@ -71,8 +71,20 @@ export default function ReceiptModal({
             </div>
           </div>
 
-          <div className="border-t border-dashed border-slate-300 pt-2 pb-1">
-            <div className="flex justify-between text-xs font-bold">
+          <div className="border-t border-dashed border-slate-300 pt-2 pb-1 space-y-1">
+            {(receiptTx.subtotal || receiptTx.baseCost) && (receiptTx.discountAmount > 0 || receiptTx.discount > 0) ? (
+              <>
+                <div className="flex justify-between text-[11px] text-slate-600">
+                  <span>Subtotal Biaya:</span>
+                  <span>{formatRp(receiptTx.subtotal || receiptTx.baseCost)}</span>
+                </div>
+                <div className="flex justify-between text-[11px] font-bold text-emerald-700">
+                  <span>Diskon ({receiptTx.promoCode || 'Promo'} {receiptTx.discountPercent ? `${receiptTx.discountPercent}%` : ''}):</span>
+                  <span>-{formatRp(receiptTx.discountAmount || receiptTx.discount)}</span>
+                </div>
+              </>
+            ) : null}
+            <div className="flex justify-between text-xs font-bold pt-1 border-t border-dashed border-slate-200">
               <span>TOTAL BAYAR:</span>
               <span>{formatRp(receiptTx.totalPaid || receiptTx.amount || 0)}</span>
             </div>

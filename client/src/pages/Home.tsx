@@ -1212,21 +1212,14 @@ export default function Home() {
             </div>
             <div className="promo-modal-body">
               <p className="promo-modal-desc">{selectedPromo.desc}</p>
-              <div className="promo-modal-code-card">
-                <div className="code-card-left">
-                  <span className="code-label">KODE VOUCHER PROMO:</span>
-                  <div className="code-display">{selectedPromo.code}</div>
-                </div>
-                <button type="button" className="btn-copy-code" onClick={() => copyPromoCode(selectedPromo.code)}>
-                  <span className="copy-icon"><Copy className="w-4 h-4" /></span>
-                  <span className="copy-text">Salin Kode</span>
-                </button>
+              <div style={{ padding: '14px 16px', background: '#fffdf5', border: '1.5px dashed #f59e0b', borderRadius: '12px', textAlign: 'center', marginBottom: '16px' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
+                  🏷️ KODE VOUCHER DAPAT DILIHAT SAAT BOOKING SERVIS
+                </span>
+                <p style={{ fontSize: '0.82rem', color: '#334155', margin: '4px 0 0', lineHeight: 1.5 }}>
+                  Seluruh daftar kode promo, persentase potongan diskon, dan syarat minimal belanja dapat langsung Anda lihat dan pilih saat melakukan <strong>Booking Servis</strong>.
+                </p>
               </div>
-              {copyToast && (
-                <div className="copy-toast" style={{ display: 'block' }}>
-                  <CheckCircle2 className="w-4 h-4 inline mr-1 text-emerald-500" /> Kode promo berhasil disalin ke clipboard!
-                </div>
-              )}
               <div className="promo-modal-perks">
                 <div className="perk-item">
                   <span className="perk-icon"><ShieldCheck className="w-4 h-4 text-emerald-500" /></span>

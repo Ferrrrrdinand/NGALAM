@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft } from 'lucide-react';
+import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 
 export default function CashierTab({
@@ -100,6 +100,47 @@ export default function CashierTab({
               </div>
             </div>
 
+            {/* Banner Promo Voucher Servis */}
+            {paymentOrder.promoCode && (
+              <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-amber-900">
+                    <Tag className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span className="text-xs font-bold uppercase tracking-wide">
+                      Voucher Promo Booking: {paymentOrder.promoCode} ({paymentOrder.promoDiscountValue || 10}% Off)
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">
+                    Dipotong Otomatis By System
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                  <div>
+                    <span className="text-slate-500 block text-[11px]">Nama Promo:</span>
+                    <strong className="text-slate-900">{paymentOrder.promoName || paymentOrder.promoCode}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[11px]">Syarat Min. Belanja:</span>
+                    <span className="font-semibold text-slate-700">
+                      {paymentOrder.promoMinSpend ? formatRp(paymentOrder.promoMinSpend) : 'Rp 100.000'}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-[11px] text-amber-800 pt-1 border-t border-amber-200/70 flex items-center justify-between">
+                  <span>Status Diskon:</span>
+                  <span className={`font-bold ${
+                    (Number(paymentForm.subtotal || paymentForm.finalAmount) >= (paymentOrder.promoMinSpend || 0))
+                      ? 'text-emerald-700'
+                      : 'text-rose-600'
+                  }`}>
+                    {(Number(paymentForm.subtotal || paymentForm.finalAmount) >= (paymentOrder.promoMinSpend || 0))
+                      ? `✅ Memenuhi syarat • Potongan diskon ${paymentOrder.promoDiscountValue || 10}% aktif`
+                      : `⚠️ Subtotal belum memenuhi min. belanja (${formatRp(paymentOrder.promoMinSpend || 0)})`}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Banner Mitra Afiliasi */}
             {paymentOrder.affiliateRef ? (
               <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-xl space-y-2">
@@ -133,17 +174,13 @@ export default function CashierTab({
                   </span>
                 </div>
               </div>
-            ) : (
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500">
-                Unit datang reguler / tanpa kode referral mitra.
-              </div>
-            )}
+            ) : null}
 
-            {/* Input Nominal Bayar & Metode */}
+            {/* Input Perhitungan Subtotal & Diskon By System */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Nominal Pelunasan Akhir (Rp) <span className="text-rose-500">*</span>
+                  Subtotal Biaya Servis (Sebelum Diskon) <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <span className="text-xs font-bold text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2">Rp</span>
@@ -152,8 +189,28 @@ export default function CashierTab({
                     required
                     min="0"
                     step="1000"
-                    value={paymentForm.finalAmount}
-                    onChange={(e) => setPaymentForm({ ...paymentForm, finalAmount: e.target.value })}
+                    value={paymentForm.subtotal !== undefined ? paymentForm.subtotal : paymentForm.finalAmount}
+                    onChange={(e) => {
+                      const subtotal = Math.max(0, Number(e.target.value) || 0);
+                      let discount = 0;
+                      if (paymentOrder?.promoCode) {
+                        const pct = Number(paymentOrder.promoDiscountValue) || 10;
+                        const minSpend = Number(paymentOrder.promoMinSpend) || 0;
+                        if (subtotal >= minSpend) {
+                          discount = Math.round(subtotal * (pct / 100));
+                          if (paymentOrder.promoMaxDiscount && Number(paymentOrder.promoMaxDiscount) > 0) {
+                            discount = Math.min(discount, Number(paymentOrder.promoMaxDiscount));
+                          }
+                        }
+                      }
+                      const finalAmt = Math.max(0, subtotal - discount);
+                      setPaymentForm({
+                        ...paymentForm,
+                        subtotal,
+                        discountAmount: discount,
+                        finalAmount: finalAmt
+                      });
+                    }}
                     className="w-full text-xs pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent font-mono font-bold transition-all text-slate-900"
                   />
                 </div>
@@ -173,6 +230,35 @@ export default function CashierTab({
                   <option value="Transfer Bank BCA/BRI">Transfer Bank BCA / BRI</option>
                   <option value="Debit Card EDC">Kartu Debit / EDC</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Rincian Potongan Diskon & Pelunasan Akhir */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div className="flex justify-between items-center text-xs text-slate-600">
+                <span>Subtotal Pengerjaan:</span>
+                <span className="font-mono font-bold text-slate-800">
+                  {formatRp(Number(paymentForm.subtotal !== undefined ? paymentForm.subtotal : paymentForm.finalAmount) || 0)}
+                </span>
+              </div>
+
+              {paymentOrder.promoCode && (
+                <div className="flex justify-between items-center text-xs text-emerald-700 font-bold py-1 border-t border-dashed border-slate-200">
+                  <span className="flex items-center gap-1">
+                    <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Diskon Promo {paymentOrder.promoCode} ({paymentOrder.promoDiscountValue || 10}%):</span>
+                  </span>
+                  <span className="font-mono">
+                    -{formatRp(Number(paymentForm.discountAmount) || 0)}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center text-sm font-black text-slate-900 pt-1 border-t border-slate-200">
+                <span>Total Pelunasan Akhir:</span>
+                <span className="font-mono text-base text-amber-700">
+                  {formatRp(Number(paymentForm.finalAmount) || 0)}
+                </span>
               </div>
             </div>
 

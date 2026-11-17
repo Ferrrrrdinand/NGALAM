@@ -219,6 +219,13 @@ export default function OrdersTab({
                         <span className="text-[11px] text-slate-500 line-clamp-1 mt-0.5" title={o.damage}>
                           {o.damage || 'Pemeriksaan umum'}
                         </span>
+                        {o.promoCode && (
+                          <div className="mt-1">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-300">
+                              🏷️ Promo: {o.promoCode} ({o.promoDiscountValue || 10}% Off)
+                            </span>
+                          </div>
+                        )}
                       </td>
 
                       {/* Step Badge */}
@@ -232,6 +239,11 @@ export default function OrdersTab({
                       {/* Cost */}
                       <td className="py-3.5 px-5 align-top font-medium text-slate-900">
                         <span className="font-semibold block">{formatRp(o.cost || 0)}</span>
+                        {o.subtotal && o.discountAmount > 0 && (
+                          <span className="text-[10px] text-emerald-600 font-semibold block">
+                            Hemat {formatRp(o.discountAmount)} ({o.promoCode})
+                          </span>
+                        )}
                         {o.technician && (
                           <span className="text-[10px] text-slate-400 block mt-0.5 truncate max-w-[120px]">
                             Teknisi: {o.technician}

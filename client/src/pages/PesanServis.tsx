@@ -346,13 +346,13 @@ export default function PesanServis() {
   };
 
   const handleApplyPromo = async (codeToUse?: string) => {
-    const code = (codeToUse || formData.promoCode).trim().toUpperCase();
+    const code = (codeToUse || formData.promoCode || '').trim().toUpperCase();
     if (!code) return;
     setPromoError('');
     try {
       const res = await fetchApi('/api/promo-codes/validate', {
         method: 'POST',
-        body: { promoCode: code, basePrice: 250000 }
+        body: { promoCode: code, basePrice: 0 }
       });
       if (res.ok && res.data.valid) {
         setAppliedPromo(res.data);
@@ -398,6 +398,10 @@ export default function PesanServis() {
       serviceMethod: formData.serviceMethod,
       damage: fullDamage,
       promoCode: appliedPromo ? formData.promoCode.trim().toUpperCase() : '',
+      promoName: appliedPromo?.promo?.name || appliedPromo?.name || '',
+      promoDiscountValue: appliedPromo ? (appliedPromo.discountValue || appliedPromo.promo?.discountValue || 0) : 0,
+      promoMinSpend: appliedPromo ? (appliedPromo.minSpend || appliedPromo.promo?.minSpend || 0) : 0,
+      promoMaxDiscount: appliedPromo ? (appliedPromo.maxDiscount || appliedPromo.promo?.maxDiscount || 0) : 0,
       discountAmount: appliedPromo ? appliedPromo.discountAmount || 0 : 0,
       referralCode: activeRefCode,
       affiliateRef: activeRefCode
@@ -854,19 +858,132 @@ export default function PesanServis() {
               </div>
             </div>
 
-            {/* Step 4: Promo Code */}
+            {/* Step 4: Promo Code & Voucher Catalogue */}
             <div className="b-form-group">
               <label className="b-form-label">
                 <span>
-                  <span className="b-form-step-badge">PROMO</span>
-                  <span>Klaim Kode Voucher Diskon (Opsional)</span>
+                  <span className="b-form-step-badge" style={{ background: '#f59e0b', color: '#0f172a' }}>PROMO</span>
+                  <span>Pilih Voucher Promo &amp; Diskon Servis</span>
+                </span>
+                <span className="sub" style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', marginTop: '3px' }}>
+                  Katalog kode promo eksklusif hanya dapat dilihat &amp; diklaim langsung saat booking servis di bawah ini.
                 </span>
               </label>
 
+              {/* LIST VOUCHER PROMO AKTIF */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', marginTop: '10px', marginBottom: '12px' }}>
+                {(availablePromoCodes.length > 0 ? availablePromoCodes.filter((p: any) => p.status === 'active' || p.active !== false) : [
+                  { code: 'MEMBER10', name: 'Diskon Member Baru', discountValue: 10, minSpend: 100000, description: 'Potongan 10% untuk member baru' },
+                  { code: 'NGALAM15', name: 'Promo Servis Bergaransi', discountValue: 15, minSpend: 150000, description: 'Diskon 15% servis smartphone' },
+                  { code: 'HEMAT20', name: 'Paket Hemat Mahasiswa & Pelajar', discountValue: 20, minSpend: 200000, description: 'Diskon 20% hemat' },
+                  { code: 'SUPER25', name: 'Super Weekend & Gajian', discountValue: 25, minSpend: 300000, description: 'Diskon 25% servis all tipe' },
+                  { code: 'VIP30', name: 'Mega Servis Prioritas', discountValue: 30, minSpend: 500000, description: 'Diskon 30% perbaikan spesial' }
+                ]).map((p: any) => {
+                  const isApplied = formData.promoCode.toUpperCase() === p.code.toUpperCase();
+                  return (
+                    <div
+                      key={p.code}
+                      onClick={() => handleApplyPromo(p.code)}
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: '12px',
+                        border: isApplied ? '2px solid #10b981' : '1.5px solid #e2e8f0',
+                        background: isApplied ? '#f0fdf4' : '#ffffff',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        position: 'relative',
+                        boxShadow: isApplied ? '0 4px 12px rgba(16,185,129,0.15)' : 'none'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{
+                          background: isApplied ? '#10b981' : '#fef3c7',
+                          color: isApplied ? '#ffffff' : '#b45309',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          padding: '2px 8px',
+                          borderRadius: '6px'
+                        }}>
+                          Diskon {p.discountValue || 10}%
+                        </span>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, fontFamily: 'monospace', color: '#64748b' }}>
+                          {p.code}
+                        </span>
+                      </div>
+
+                      <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
+                        {p.name}
+                      </div>
+
+                      <div style={{ fontSize: '0.74rem', color: '#475569', lineHeight: 1.4 }}>
+                        <div>🛒 Min. Belanja: <strong>{formatRp(p.minSpend || 100000)}</strong></div>
+                        {p.maxDiscount ? <div>🛡️ Maks. Diskon: {formatRp(p.maxDiscount)}</div> : null}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleApplyPromo(p.code);
+                        }}
+                        style={{
+                          marginTop: '8px',
+                          width: '100%',
+                          padding: '6px 10px',
+                          borderRadius: '8px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          border: 'none',
+                          cursor: 'pointer',
+                          background: isApplied ? '#10b981' : '#0f172a',
+                          color: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        {isApplied ? (
+                          <>
+                            <CheckCircle2 style={{ width: '13px', height: '13px' }} />
+                            <span>Voucher Terpasang</span>
+                          </>
+                        ) : (
+                          <span>Gunakan Voucher Ini</span>
+                        )}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Status Sukses Voucher Terpasang */}
+              {appliedPromo && (
+                <div style={{
+                  padding: '10px 14px',
+                  background: '#ecfdf5',
+                  border: '1.5px solid #a7f3d0',
+                  borderRadius: '10px',
+                  marginBottom: '10px',
+                  color: '#065f46',
+                  fontSize: '0.8rem',
+                  lineHeight: 1.5
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, marginBottom: '2px' }}>
+                    <CheckCircle2 style={{ width: '15px', height: '15px', color: '#10b981' }} />
+                    <span>Voucher {formData.promoCode} Berhasil Terpasang!</span>
+                  </div>
+                  <div>
+                    Potongan <strong>{appliedPromo.discountValue || appliedPromo.promo?.discountValue || 10}%</strong> (Syarat Min. Belanja: {formatRp(appliedPromo.minSpend || appliedPromo.promo?.minSpend || 100000)}). Subtotal pengerjaan akan otomatis dipotong langsung by system di kasir saat pembayaran selesai.
+                  </div>
+                </div>
+              )}
+
+              {/* Input Manual Kode Voucher */}
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
-                  placeholder="Masukkan kode promo (Cth: NGALAMPROMO30)"
+                  placeholder="Atau ketik kode voucher lain..."
                   className="b-input form-control"
                   style={{ textTransform: 'uppercase', fontFamily: 'monospace' }}
                   value={formData.promoCode}
@@ -885,33 +1002,6 @@ export default function PesanServis() {
               {promoError && (
                 <div style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '6px' }}>{promoError}</div>
               )}
-              {appliedPromo && (
-                <div style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: 700, marginTop: '6px' }} className="flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>Voucher {formData.promoCode} aktif! Hemat {formatRp(appliedPromo.discountAmount || 20000)}</span>
-                </div>
-              )}
-
-              {/* Quick Member 10% Voucher Chip */}
-              <div style={{ marginTop: '10px' }} className="flex flex-wrap items-center gap-2">
-                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Voucher Member:</span>
-                <button
-                  type="button"
-                  onClick={() => handleApplyPromo('MEMBER10')}
-                  className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
-                  title="Klik untuk pasang diskon 10% member baru"
-                >
-                  <span>👑 MEMBER10 (Diskon 10% Member Baru)</span>
-                </button>
-                {!customer && (
-                  <Link
-                    to="/login?tab=register&promo=MEMBER10"
-                    style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 700, textDecoration: 'underline' }}
-                  >
-                    Daftar Akun Member ↗
-                  </Link>
-                )}
-              </div>
             </div>
 
             {/* Step 5: Kode Referral Mitra Afiliasi */}

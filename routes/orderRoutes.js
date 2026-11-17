@@ -78,7 +78,21 @@ router.post('/', async (req, res) => {
     }
 
     if (orderData.promoCode) {
-      incrementUsage(orderData.promoCode);
+      try {
+        const { findPromoByCode } = require('../services/promoCodeService');
+        const promoInfo = findPromoByCode(orderData.promoCode);
+        if (promoInfo) {
+          orderData.promoCode = promoInfo.code;
+          orderData.promoName = promoInfo.name;
+          orderData.promoDiscountValue = promoInfo.discountValue; // e.g. 10 (%)
+          orderData.promoDiscountType = promoInfo.discountType;
+          orderData.promoMinSpend = promoInfo.minSpend;
+          orderData.promoMaxDiscount = promoInfo.maxDiscount;
+        }
+        incrementUsage(orderData.promoCode);
+      } catch (pErr) {
+        console.warn('[OrderRoutes] Promo lookup error:', pErr.message);
+      }
     }
 
     // Pemrosesan Afiliasi Mitra (QR Code Scan, Referral Link, atau Profil Pelanggan)

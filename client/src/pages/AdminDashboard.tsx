@@ -275,13 +275,19 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!paymentOrder) return;
     try {
-      const finalCost = Number(paymentForm.finalAmount) || 0;
+      const subtotalCost = Number(paymentForm.subtotal) || Number(paymentForm.finalAmount) || 0;
+      const discountAmt = Number(paymentForm.discountAmount) || 0;
+      const finalCost = Number(paymentForm.finalAmount) || Math.max(0, subtotalCost - discountAmt);
 
       // 1. Update Order Status
       const resOrder = await fetchApi(`/api/orders/${paymentOrder.id}`, {
         method: 'PUT',
         body: {
           paid: true,
+          subtotal: subtotalCost,
+          discountAmount: discountAmt,
+          promoCode: paymentOrder.promoCode,
+          promoDiscountValue: paymentOrder.promoDiscountValue,
           cost: finalCost,
           paymentMethod: paymentForm.paymentMethod,
           paymentNotes: paymentForm.notes,
@@ -300,6 +306,12 @@ export default function AdminDashboard() {
           customerEmail: paymentOrder.email || '',
           phoneType: paymentOrder.phoneType,
           damage: paymentOrder.damage,
+          baseCost: subtotalCost,
+          subtotal: subtotalCost,
+          discount: discountAmt,
+          discountAmount: discountAmt,
+          promoCode: paymentOrder.promoCode,
+          discountPercent: paymentOrder.promoDiscountValue,
           totalPaid: finalCost,
           paymentMethod: paymentForm.paymentMethod,
           notes: paymentForm.notes,
@@ -308,12 +320,23 @@ export default function AdminDashboard() {
       });
 
       if (resOrder.ok && resOrder.data.success) {
-        const txData = resTx.ok && resTx.data.data ? resTx.data.data : {
+        const txData = resTx.ok && resTx.data.data ? {
+          ...resTx.data.data,
+          subtotal: subtotalCost,
+          discountAmount: discountAmt,
+          promoCode: paymentOrder.promoCode,
+          discountPercent: paymentOrder.promoDiscountValue,
+          totalPaid: finalCost
+        } : {
           invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
           ticketId: paymentOrder.id,
           customerName: paymentOrder.customerName,
           customerPhone: paymentOrder.whatsapp,
           phoneType: paymentOrder.phoneType,
+          subtotal: subtotalCost,
+          discountAmount: discountAmt,
+          promoCode: paymentOrder.promoCode,
+          discountPercent: paymentOrder.promoDiscountValue,
           totalPaid: finalCost,
           paymentMethod: paymentForm.paymentMethod,
           cashier: user?.name || 'Admin Workshop',
@@ -544,12 +567,32 @@ export default function AdminDashboard() {
               loading={loading}
               filteredOrders={filteredOrders}
               onSelectOrderForPayment={(o) => {
-                const numericCost = Number(String(o.cost || o.estimatedCost || "0").replace(/\D/g, "")) || 0;
+                const numericCost = Number(String(o.subtotal || o.cost || o.estimatedCost || "0").replace(/\D/g, "")) || 0;
+                const defaultSubtotal = numericCost > 0 ? numericCost : 250000;
+
+                // Hitung diskon promo otomatis by system jika tiket memiliki promo
+                let discountAmt = 0;
+                if (o.promoCode) {
+                  const discountPct = Number(o.promoDiscountValue) || 10;
+                  const minSpend = Number(o.promoMinSpend) || 0;
+                  if (defaultSubtotal >= minSpend) {
+                    discountAmt = Math.round(defaultSubtotal * (discountPct / 100));
+                    if (o.promoMaxDiscount && Number(o.promoMaxDiscount) > 0) {
+                      discountAmt = Math.min(discountAmt, Number(o.promoMaxDiscount));
+                    }
+                  }
+                }
+                const finalAmt = Math.max(0, defaultSubtotal - discountAmt);
+
                 setPaymentOrder(o);
                 setPaymentForm({
-                  finalAmount: numericCost > 0 ? numericCost : 250000,
+                  subtotal: defaultSubtotal,
+                  discountAmount: discountAmt,
+                  finalAmount: finalAmt,
                   paymentMethod: "Tunai (Cash)",
-                  notes: o.affiliateRef ? `Komisi Mitra 10%: ${o.partnerName || o.affiliateMitraName || o.affiliateRef}` : ""
+                  notes: o.promoCode 
+                    ? `Promo ${o.promoCode} (${o.promoDiscountValue || 10}%): Diskon ${formatRp(discountAmt)} (Dipotong by system)`
+                    : (o.affiliateRef ? `Komisi Mitra 10%: ${o.partnerName || o.affiliateMitraName || o.affiliateRef}` : "")
                 });
                 setActiveTab("cashier");
               }}
