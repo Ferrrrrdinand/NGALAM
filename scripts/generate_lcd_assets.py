@@ -251,17 +251,14 @@ for idx, it in enumerate(items):
     base = it['base']
     item_id = f"lcd-og-{idx+1:03d}"
 
-    # Di Excel persis:
-    # Kolom C (HARGA x 1,15) = round(base * 1.15)
-    # Kolom D (JASA) = 100000 (Jasa pasang flat 100 ribu seluruhnya)
-    # Kolom E (SUBTOTAL) = C + D
-    # Kolom F (AFFILIATE 5%) = round(E * 0.05)
-    # Kolom G (HARGA AKHIR) = E + F = round((C + 100000) * 1.05)
-    part_price = round(base * 1.15)
+    # Formula sesuai instruksi:
+    # 1. Total Harga = Harga Akhir (Kolom G di Excel)
+    # 2. Jasa Pasang LCD Flat = Rp 100.000 (dipisah di harga jasa)
+    # 3. Harga Part LCD = Harga Akhir - 100.000
+    total_price = round(((base * 1.15) + 100000) * 1.05)
     service_fee = 100000
-    subtotal = part_price + service_fee
-    affiliate_fee = round(subtotal * 0.05)
-    total_price = subtotal + affiliate_fee
+    part_price = total_price - service_fee
+    affiliate_fee = round(((base * 1.15) + 100000) * 0.05)
     excel_final = total_price
 
     s = re.sub(r'^LCD\s*\+\s*TS\s*', '', raw, flags=re.IGNORECASE)

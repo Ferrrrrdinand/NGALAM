@@ -913,11 +913,11 @@ export default function Home() {
                             <span style={{ color: '#047857', fontFamily: 'monospace', fontWeight: 800 }}>Rp 100.000</span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', paddingTop: '4px', borderTop: '1px dashed #fcd34d' }}>
-                            <span>✨ Total Biaya Konsumen (Kolom G Excel):</span>
+                            <span>✨ Total Biaya Servis (Harga Akhir):</span>
                             <span style={{ color: '#92400e', fontFamily: 'monospace', fontSize: '0.9rem' }}>{lcdEstimate.formattedTotalPrice}</span>
                           </div>
                           <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '4px', fontStyle: 'italic' }}>
-                            *Jasa ganti layar LCD seluruhnya flat Rp 100.000. Part presisi sesuai katalog Excel OG Super.
+                            *Total biaya menggunakan Harga Akhir Excel. Biaya jasa pasang flat Rp 100.000 dipisah di rincian.
                           </div>
                         </div>
                       ) : (

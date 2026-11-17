@@ -856,7 +856,7 @@ export default function PesanServis() {
                         </div>
                       </div>
                       <div style={{ fontSize: '0.68rem', color: '#78350f', marginTop: '8px', fontStyle: 'italic' }}>
-                        *Jasa ganti layar LCD flat seluruhnya Rp 100.000. Jasa servis lainnya start from Rp 100.000 hingga Rp 1.000.000.
+                        *Total biaya menggunakan Harga Akhir Excel. Jasa pasang LCD flat seluruhnya Rp 100.000 dipisah di rincian. Jasa servis lainnya start from Rp 100.000 hingga Rp 1.000.000.
                       </div>
                     </>
                   ) : (
