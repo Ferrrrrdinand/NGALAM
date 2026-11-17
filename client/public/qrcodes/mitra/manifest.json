@@ -1,0 +1,702 @@
+[
+  {
+    "id": "USR-MITRA-PRE-001",
+    "code": "MITRA-001",
+    "name": "Mitra Rekanan 001",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-001",
+    "file": "/qrcodes/mitra/MITRA-001.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-002",
+    "code": "MITRA-002",
+    "name": "Mitra Rekanan 002",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-002",
+    "file": "/qrcodes/mitra/MITRA-002.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-003",
+    "code": "MITRA-003",
+    "name": "Mitra Rekanan 003",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-003",
+    "file": "/qrcodes/mitra/MITRA-003.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-004",
+    "code": "MITRA-004",
+    "name": "Mitra Rekanan 004",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-004",
+    "file": "/qrcodes/mitra/MITRA-004.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-005",
+    "code": "MITRA-005",
+    "name": "Mitra Rekanan 005",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-005",
+    "file": "/qrcodes/mitra/MITRA-005.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-006",
+    "code": "MITRA-006",
+    "name": "Mitra Rekanan 006",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-006",
+    "file": "/qrcodes/mitra/MITRA-006.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-007",
+    "code": "MITRA-007",
+    "name": "Mitra Rekanan 007",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-007",
+    "file": "/qrcodes/mitra/MITRA-007.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-008",
+    "code": "MITRA-008",
+    "name": "Mitra Rekanan 008",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-008",
+    "file": "/qrcodes/mitra/MITRA-008.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-009",
+    "code": "MITRA-009",
+    "name": "Mitra Rekanan 009",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-009",
+    "file": "/qrcodes/mitra/MITRA-009.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-010",
+    "code": "MITRA-010",
+    "name": "Mitra Rekanan 010",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-010",
+    "file": "/qrcodes/mitra/MITRA-010.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-011",
+    "code": "MITRA-011",
+    "name": "Mitra Rekanan 011",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-011",
+    "file": "/qrcodes/mitra/MITRA-011.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-012",
+    "code": "MITRA-012",
+    "name": "Mitra Rekanan 012",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-012",
+    "file": "/qrcodes/mitra/MITRA-012.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-013",
+    "code": "MITRA-013",
+    "name": "Mitra Rekanan 013",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-013",
+    "file": "/qrcodes/mitra/MITRA-013.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-014",
+    "code": "MITRA-014",
+    "name": "Mitra Rekanan 014",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-014",
+    "file": "/qrcodes/mitra/MITRA-014.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-015",
+    "code": "MITRA-015",
+    "name": "Mitra Rekanan 015",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-015",
+    "file": "/qrcodes/mitra/MITRA-015.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-016",
+    "code": "MITRA-016",
+    "name": "Mitra Rekanan 016",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-016",
+    "file": "/qrcodes/mitra/MITRA-016.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-017",
+    "code": "MITRA-017",
+    "name": "Mitra Rekanan 017",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-017",
+    "file": "/qrcodes/mitra/MITRA-017.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-018",
+    "code": "MITRA-018",
+    "name": "Mitra Rekanan 018",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-018",
+    "file": "/qrcodes/mitra/MITRA-018.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-019",
+    "code": "MITRA-019",
+    "name": "Mitra Rekanan 019",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-019",
+    "file": "/qrcodes/mitra/MITRA-019.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-020",
+    "code": "MITRA-020",
+    "name": "Mitra Rekanan 020",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-020",
+    "file": "/qrcodes/mitra/MITRA-020.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-021",
+    "code": "MITRA-021",
+    "name": "Mitra Rekanan 021",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-021",
+    "file": "/qrcodes/mitra/MITRA-021.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-022",
+    "code": "MITRA-022",
+    "name": "Mitra Rekanan 022",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-022",
+    "file": "/qrcodes/mitra/MITRA-022.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-023",
+    "code": "MITRA-023",
+    "name": "Mitra Rekanan 023",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-023",
+    "file": "/qrcodes/mitra/MITRA-023.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-024",
+    "code": "MITRA-024",
+    "name": "Mitra Rekanan 024",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-024",
+    "file": "/qrcodes/mitra/MITRA-024.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-025",
+    "code": "MITRA-025",
+    "name": "Mitra Rekanan 025",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-025",
+    "file": "/qrcodes/mitra/MITRA-025.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-026",
+    "code": "MITRA-026",
+    "name": "Mitra Rekanan 026",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-026",
+    "file": "/qrcodes/mitra/MITRA-026.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-027",
+    "code": "MITRA-027",
+    "name": "Mitra Rekanan 027",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-027",
+    "file": "/qrcodes/mitra/MITRA-027.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-028",
+    "code": "MITRA-028",
+    "name": "Mitra Rekanan 028",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-028",
+    "file": "/qrcodes/mitra/MITRA-028.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-029",
+    "code": "MITRA-029",
+    "name": "Mitra Rekanan 029",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-029",
+    "file": "/qrcodes/mitra/MITRA-029.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-030",
+    "code": "MITRA-030",
+    "name": "Mitra Rekanan 030",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-030",
+    "file": "/qrcodes/mitra/MITRA-030.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-031",
+    "code": "MITRA-031",
+    "name": "Mitra Rekanan 031",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-031",
+    "file": "/qrcodes/mitra/MITRA-031.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-032",
+    "code": "MITRA-032",
+    "name": "Mitra Rekanan 032",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-032",
+    "file": "/qrcodes/mitra/MITRA-032.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-033",
+    "code": "MITRA-033",
+    "name": "Mitra Rekanan 033",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-033",
+    "file": "/qrcodes/mitra/MITRA-033.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-034",
+    "code": "MITRA-034",
+    "name": "Mitra Rekanan 034",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-034",
+    "file": "/qrcodes/mitra/MITRA-034.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-035",
+    "code": "MITRA-035",
+    "name": "Mitra Rekanan 035",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-035",
+    "file": "/qrcodes/mitra/MITRA-035.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-036",
+    "code": "MITRA-036",
+    "name": "Mitra Rekanan 036",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-036",
+    "file": "/qrcodes/mitra/MITRA-036.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-037",
+    "code": "MITRA-037",
+    "name": "Mitra Rekanan 037",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-037",
+    "file": "/qrcodes/mitra/MITRA-037.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-038",
+    "code": "MITRA-038",
+    "name": "Mitra Rekanan 038",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-038",
+    "file": "/qrcodes/mitra/MITRA-038.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-039",
+    "code": "MITRA-039",
+    "name": "Mitra Rekanan 039",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-039",
+    "file": "/qrcodes/mitra/MITRA-039.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-040",
+    "code": "MITRA-040",
+    "name": "Mitra Rekanan 040",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-040",
+    "file": "/qrcodes/mitra/MITRA-040.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-041",
+    "code": "MITRA-041",
+    "name": "Mitra Rekanan 041",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-041",
+    "file": "/qrcodes/mitra/MITRA-041.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-042",
+    "code": "MITRA-042",
+    "name": "Mitra Rekanan 042",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-042",
+    "file": "/qrcodes/mitra/MITRA-042.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-043",
+    "code": "MITRA-043",
+    "name": "Mitra Rekanan 043",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-043",
+    "file": "/qrcodes/mitra/MITRA-043.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-044",
+    "code": "MITRA-044",
+    "name": "Mitra Rekanan 044",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-044",
+    "file": "/qrcodes/mitra/MITRA-044.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-045",
+    "code": "MITRA-045",
+    "name": "Mitra Rekanan 045",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-045",
+    "file": "/qrcodes/mitra/MITRA-045.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-046",
+    "code": "MITRA-046",
+    "name": "Mitra Rekanan 046",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-046",
+    "file": "/qrcodes/mitra/MITRA-046.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-047",
+    "code": "MITRA-047",
+    "name": "Mitra Rekanan 047",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-047",
+    "file": "/qrcodes/mitra/MITRA-047.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-048",
+    "code": "MITRA-048",
+    "name": "Mitra Rekanan 048",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-048",
+    "file": "/qrcodes/mitra/MITRA-048.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-049",
+    "code": "MITRA-049",
+    "name": "Mitra Rekanan 049",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-049",
+    "file": "/qrcodes/mitra/MITRA-049.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-050",
+    "code": "MITRA-050",
+    "name": "Mitra Rekanan 050",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-050",
+    "file": "/qrcodes/mitra/MITRA-050.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-051",
+    "code": "MITRA-051",
+    "name": "Mitra Rekanan 051",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-051",
+    "file": "/qrcodes/mitra/MITRA-051.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-052",
+    "code": "MITRA-052",
+    "name": "Mitra Rekanan 052",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-052",
+    "file": "/qrcodes/mitra/MITRA-052.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-053",
+    "code": "MITRA-053",
+    "name": "Mitra Rekanan 053",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-053",
+    "file": "/qrcodes/mitra/MITRA-053.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-054",
+    "code": "MITRA-054",
+    "name": "Mitra Rekanan 054",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-054",
+    "file": "/qrcodes/mitra/MITRA-054.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-055",
+    "code": "MITRA-055",
+    "name": "Mitra Rekanan 055",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-055",
+    "file": "/qrcodes/mitra/MITRA-055.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-056",
+    "code": "MITRA-056",
+    "name": "Mitra Rekanan 056",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-056",
+    "file": "/qrcodes/mitra/MITRA-056.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-057",
+    "code": "MITRA-057",
+    "name": "Mitra Rekanan 057",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-057",
+    "file": "/qrcodes/mitra/MITRA-057.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-058",
+    "code": "MITRA-058",
+    "name": "Mitra Rekanan 058",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-058",
+    "file": "/qrcodes/mitra/MITRA-058.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-059",
+    "code": "MITRA-059",
+    "name": "Mitra Rekanan 059",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-059",
+    "file": "/qrcodes/mitra/MITRA-059.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-060",
+    "code": "MITRA-060",
+    "name": "Mitra Rekanan 060",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-060",
+    "file": "/qrcodes/mitra/MITRA-060.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-061",
+    "code": "MITRA-061",
+    "name": "Mitra Rekanan 061",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-061",
+    "file": "/qrcodes/mitra/MITRA-061.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-062",
+    "code": "MITRA-062",
+    "name": "Mitra Rekanan 062",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-062",
+    "file": "/qrcodes/mitra/MITRA-062.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-063",
+    "code": "MITRA-063",
+    "name": "Mitra Rekanan 063",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-063",
+    "file": "/qrcodes/mitra/MITRA-063.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-064",
+    "code": "MITRA-064",
+    "name": "Mitra Rekanan 064",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-064",
+    "file": "/qrcodes/mitra/MITRA-064.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-065",
+    "code": "MITRA-065",
+    "name": "Mitra Rekanan 065",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-065",
+    "file": "/qrcodes/mitra/MITRA-065.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-066",
+    "code": "MITRA-066",
+    "name": "Mitra Rekanan 066",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-066",
+    "file": "/qrcodes/mitra/MITRA-066.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-067",
+    "code": "MITRA-067",
+    "name": "Mitra Rekanan 067",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-067",
+    "file": "/qrcodes/mitra/MITRA-067.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-068",
+    "code": "MITRA-068",
+    "name": "Mitra Rekanan 068",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-068",
+    "file": "/qrcodes/mitra/MITRA-068.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-069",
+    "code": "MITRA-069",
+    "name": "Mitra Rekanan 069",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-069",
+    "file": "/qrcodes/mitra/MITRA-069.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-070",
+    "code": "MITRA-070",
+    "name": "Mitra Rekanan 070",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-070",
+    "file": "/qrcodes/mitra/MITRA-070.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-071",
+    "code": "MITRA-071",
+    "name": "Mitra Rekanan 071",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-071",
+    "file": "/qrcodes/mitra/MITRA-071.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-072",
+    "code": "MITRA-072",
+    "name": "Mitra Rekanan 072",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-072",
+    "file": "/qrcodes/mitra/MITRA-072.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-073",
+    "code": "MITRA-073",
+    "name": "Mitra Rekanan 073",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-073",
+    "file": "/qrcodes/mitra/MITRA-073.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-074",
+    "code": "MITRA-074",
+    "name": "Mitra Rekanan 074",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-074",
+    "file": "/qrcodes/mitra/MITRA-074.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-075",
+    "code": "MITRA-075",
+    "name": "Mitra Rekanan 075",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-075",
+    "file": "/qrcodes/mitra/MITRA-075.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-076",
+    "code": "MITRA-076",
+    "name": "Mitra Rekanan 076",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-076",
+    "file": "/qrcodes/mitra/MITRA-076.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-077",
+    "code": "MITRA-077",
+    "name": "Mitra Rekanan 077",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-077",
+    "file": "/qrcodes/mitra/MITRA-077.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-078",
+    "code": "MITRA-078",
+    "name": "Mitra Rekanan 078",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-078",
+    "file": "/qrcodes/mitra/MITRA-078.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-079",
+    "code": "MITRA-079",
+    "name": "Mitra Rekanan 079",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-079",
+    "file": "/qrcodes/mitra/MITRA-079.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-080",
+    "code": "MITRA-080",
+    "name": "Mitra Rekanan 080",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-080",
+    "file": "/qrcodes/mitra/MITRA-080.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-081",
+    "code": "MITRA-081",
+    "name": "Mitra Rekanan 081",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-081",
+    "file": "/qrcodes/mitra/MITRA-081.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-082",
+    "code": "MITRA-082",
+    "name": "Mitra Rekanan 082",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-082",
+    "file": "/qrcodes/mitra/MITRA-082.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-083",
+    "code": "MITRA-083",
+    "name": "Mitra Rekanan 083",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-083",
+    "file": "/qrcodes/mitra/MITRA-083.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-084",
+    "code": "MITRA-084",
+    "name": "Mitra Rekanan 084",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-084",
+    "file": "/qrcodes/mitra/MITRA-084.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-085",
+    "code": "MITRA-085",
+    "name": "Mitra Rekanan 085",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-085",
+    "file": "/qrcodes/mitra/MITRA-085.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-086",
+    "code": "MITRA-086",
+    "name": "Mitra Rekanan 086",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-086",
+    "file": "/qrcodes/mitra/MITRA-086.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-087",
+    "code": "MITRA-087",
+    "name": "Mitra Rekanan 087",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-087",
+    "file": "/qrcodes/mitra/MITRA-087.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-088",
+    "code": "MITRA-088",
+    "name": "Mitra Rekanan 088",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-088",
+    "file": "/qrcodes/mitra/MITRA-088.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-089",
+    "code": "MITRA-089",
+    "name": "Mitra Rekanan 089",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-089",
+    "file": "/qrcodes/mitra/MITRA-089.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-090",
+    "code": "MITRA-090",
+    "name": "Mitra Rekanan 090",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-090",
+    "file": "/qrcodes/mitra/MITRA-090.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-091",
+    "code": "MITRA-091",
+    "name": "Mitra Rekanan 091",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-091",
+    "file": "/qrcodes/mitra/MITRA-091.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-092",
+    "code": "MITRA-092",
+    "name": "Mitra Rekanan 092",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-092",
+    "file": "/qrcodes/mitra/MITRA-092.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-093",
+    "code": "MITRA-093",
+    "name": "Mitra Rekanan 093",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-093",
+    "file": "/qrcodes/mitra/MITRA-093.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-094",
+    "code": "MITRA-094",
+    "name": "Mitra Rekanan 094",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-094",
+    "file": "/qrcodes/mitra/MITRA-094.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-095",
+    "code": "MITRA-095",
+    "name": "Mitra Rekanan 095",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-095",
+    "file": "/qrcodes/mitra/MITRA-095.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-096",
+    "code": "MITRA-096",
+    "name": "Mitra Rekanan 096",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-096",
+    "file": "/qrcodes/mitra/MITRA-096.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-097",
+    "code": "MITRA-097",
+    "name": "Mitra Rekanan 097",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-097",
+    "file": "/qrcodes/mitra/MITRA-097.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-098",
+    "code": "MITRA-098",
+    "name": "Mitra Rekanan 098",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-098",
+    "file": "/qrcodes/mitra/MITRA-098.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-099",
+    "code": "MITRA-099",
+    "name": "Mitra Rekanan 099",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-099",
+    "file": "/qrcodes/mitra/MITRA-099.png"
+  },
+  {
+    "id": "USR-MITRA-PRE-100",
+    "code": "MITRA-100",
+    "name": "Mitra Rekanan 100",
+    "url": "https://ngalam1-delta.vercel.app/pesan-servis?ref=MITRA-100",
+    "file": "/qrcodes/mitra/MITRA-100.png"
+  }
+]

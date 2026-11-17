@@ -87,13 +87,15 @@ function setCustomerTokenCookie(res, token, maxAge) {
 
 function buildCustomerSession(cust, tokenInfo, rememberMe, extra = {}) {
   const hasPhone = Boolean(cust.whatsapp && String(cust.whatsapp).trim());
+  const refCode = cust.referralCode || (customerService.generateCustomerReferralCode ? customerService.generateCustomerReferralCode(cust) : `MBR-${String(cust.name || 'MEMBER').replace(/[^A-Z0-9]/gi, '').slice(0, 6).toUpperCase()}-${String(cust.whatsapp || '').slice(-4) || '2026'}`);
+
   return {
     isCustomer: true,
     accountType: cust.accountType || 'customer',
     id: cust.id,
     mitraId: cust.mitraId || '',
     username: cust.username || '',
-    referralCode: cust.referralCode || '',
+    referralCode: refCode,
     name: cust.name,
     whatsapp: cust.whatsapp || '',
     email: cust.email || '',
@@ -105,6 +107,18 @@ function buildCustomerSession(cust, tokenInfo, rememberMe, extra = {}) {
     activeOrders: extra.activeOrders || 0,
     completedOrders: extra.completedOrders || 0,
     activeWarranties: extra.activeWarranties || 0,
+    affiliate: {
+      referralCode: refCode,
+      affiliateUrl: extra.affiliateUrl || `/pesan-servis?ref=${refCode}`,
+      commissionRate: 5,
+      balance: Number(cust.balance || 0),
+      totalCommission: Number(cust.totalCommission || 0),
+      withdrawnCommission: Number(cust.withdrawnCommission || 0),
+      commissionHistory: Array.isArray(cust.commissionHistory) ? cust.commissionHistory : [],
+      bankAccount: cust.bankAccount || '',
+      totalReferredOrders: extra.totalReferredOrders || (Array.isArray(extra.referredOrders) ? extra.referredOrders.length : 0),
+      referredOrders: extra.referredOrders || []
+    },
     databaseConnected: true,
     token: tokenInfo ? tokenInfo.token : '',
     rememberMe: Boolean(rememberMe),
@@ -430,6 +444,43 @@ async function getCombinedCustomerOrders(cleanId, additionalWa = '', additionalE
         diagnoseNote: `Faktur kasir resmi: ${tx.invoiceNumber} via ${tx.paymentMethod}. Pengerjaan selesai dan terproteksi garansi resmi lab (${/baterai|battery/i.test(tx.serviceItem || '') ? '90 Hari Baterai' : '7 s/d 30 Hari'}).`,
         createdAt: tx.displayTime || tx.paidAt
       });
+    }
+  });
+
+  return matched;
+}
+
+/**
+ * Helper untuk mengambil daftar pesanan yang direferensikan oleh kode afiliasi member
+ */
+async function getReferredOrdersForMember(refCode) {
+  if (!refCode) return [];
+  const cleanRef = String(refCode).trim().toUpperCase();
+  const allOrders = await getAllOrders();
+  const matched = [];
+  const seenIds = new Set();
+
+  allOrders.forEach(o => {
+    if (o.affiliateRef && String(o.affiliateRef).trim().toUpperCase() === cleanRef) {
+      const orderId = String(o.id || '').toUpperCase();
+      if (!seenIds.has(orderId)) {
+        seenIds.add(orderId);
+        const costNum = Number(o.cost || o.totalPaid || o.estimatedCost || 0);
+        const commAmt = Number(o.affiliateCommission) || Math.round(costNum * 0.05);
+        const isPaid = Boolean(o.paid || (o.currentStep >= 5 || o.step >= 5) || o.affiliateCommissionStatus === 'paid');
+        matched.push({
+          id: orderId,
+          ticketId: orderId,
+          customerName: o.customerName || 'Teman Member',
+          phoneType: o.phoneType || o.brandModel || 'Smartphone',
+          cost: costNum,
+          commissionAmount: commAmt,
+          commissionRate: 5,
+          isPaid,
+          status: isPaid ? 'Lunas & Komisi Siap Cair' : 'Menunggu Pelunasan di Kasir',
+          createdAt: o.createdAt || 'Baru Masuk'
+        });
+      }
     }
   });
 
@@ -762,6 +813,29 @@ router.get('/orders', async (req, res) => {
       );
     } catch (_) {}
 
+    const custObj = findCustomerByIdentifier(query) ||
+      findCustomerByPhone(primary.whatsapp || query) ||
+      findCustomerByEmail(primary.email || query);
+
+    let affiliateData = null;
+    if (custObj) {
+      const myRefCode = custObj.referralCode || (customerService.generateCustomerReferralCode ? customerService.generateCustomerReferralCode(custObj) : `MBR-${String(custObj.name || 'MEMBER').replace(/[^A-Z0-9]/gi, '').slice(0, 6).toUpperCase()}-${String(custObj.whatsapp || '').slice(-4) || '2026'}`);
+      custObj.referralCode = myRefCode;
+      const refOrders = await getReferredOrdersForMember(myRefCode);
+      affiliateData = {
+        referralCode: myRefCode,
+        affiliateUrl: `/pesan-servis?ref=${myRefCode}`,
+        commissionRate: 5,
+        balance: Number(custObj.balance || 0),
+        totalCommission: Number(custObj.totalCommission || 0),
+        withdrawnCommission: Number(custObj.withdrawnCommission || 0),
+        commissionHistory: Array.isArray(custObj.commissionHistory) ? custObj.commissionHistory : [],
+        bankAccount: custObj.bankAccount || '',
+        totalReferredOrders: refOrders.length,
+        referredOrders: refOrders
+      };
+    }
+
     res.json({
       success: true,
       count: formattedList.length,
@@ -773,7 +847,8 @@ router.get('/orders', async (req, res) => {
         totalOrders: formattedList.length,
         activeOrders: activeOrdersCount,
         completedOrders: completedOrdersCount,
-        activeWarranties: memberWarranties.length > 0 ? memberWarranties.filter(w => w.isActive).length : activeWarrantiesCount
+        activeWarranties: memberWarranties.length > 0 ? memberWarranties.filter(w => w.isActive).length : activeWarrantiesCount,
+        affiliate: affiliateData
       },
       orders: formattedList,
       warranties: memberWarranties
@@ -1376,6 +1451,78 @@ router.post('/complete-profile', async (req, res) => {
     });
   } catch (err) {
     return sendAuthError(res, err, 'Gagal melengkapi profil pelanggan.');
+  }
+});
+
+// POST /api/customer/request-payout - Penarikan saldo komisi afiliasi member
+router.post('/request-payout', async (req, res) => {
+  try {
+    const token = getCustomerToken(req);
+    const payload = verifyToken(token);
+    if (!payload) {
+      return res.status(401).json({ success: false, message: 'Silakan masuk ke akun member Anda terlebih dahulu.' });
+    }
+    const cust = findCustomerByIdentifier(payload.customerId) ||
+      findCustomerByEmail(payload.email) ||
+      findCustomerByIdentifier(payload.whatsapp);
+    if (!cust) {
+      return res.status(404).json({ success: false, message: 'Akun pelanggan tidak ditemukan.' });
+    }
+
+    const { bankName, accountNumber, accountHolder, amount } = req.body;
+    const withdrawAmount = Math.max(0, parseInt(amount, 10) || 0);
+    const currentBalance = Number(cust.balance || 0);
+
+    if (withdrawAmount < 10000) {
+      return res.status(400).json({ success: false, message: 'Minimal penarikan saldo komisi adalah Rp 10.000.' });
+    }
+    if (withdrawAmount > currentBalance) {
+      return res.status(400).json({ success: false, message: `Saldo komisi tidak mencukupi. Saldo Anda saat ini Rp ${currentBalance.toLocaleString('id-ID')}` });
+    }
+    if (!bankName || !accountNumber) {
+      return res.status(400).json({ success: false, message: 'Nama Bank / E-Wallet dan Nomor Rekening wajib diisi.' });
+    }
+
+    const bankAccountStr = `${bankName.trim()} - ${accountNumber.trim()} (a.n ${accountHolder ? accountHolder.trim() : cust.name})`;
+    cust.balance = currentBalance - withdrawAmount;
+    cust.withdrawnCommission = (Number(cust.withdrawnCommission) || 0) + withdrawAmount;
+    cust.bankAccount = bankAccountStr;
+    if (!Array.isArray(cust.commissionHistory)) cust.commissionHistory = [];
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+
+    cust.commissionHistory.unshift({
+      id: `WD-MBR-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`,
+      type: 'payout',
+      title: 'Pencairan Saldo Komisi Afiliasi Member',
+      amount: withdrawAmount,
+      bankInfo: bankAccountStr,
+      status: 'Sedang Diproses Kasir',
+      createdAt: `${dateStr}, ${timeStr}`
+    });
+
+    await customerService.saveCustomerRecord(cust);
+
+    try {
+      db.logActivity('MEMBER_PAYOUT_REQUEST', 'customers', cust.id, {
+        name: cust.name,
+        amount: withdrawAmount,
+        bankAccount: bankAccountStr,
+        remainingBalance: cust.balance
+      });
+    } catch (_) {}
+
+    return res.json({
+      success: true,
+      message: `Permintaan penarikan komisi Rp ${withdrawAmount.toLocaleString('id-ID')} berhasil diajukan! Kasir/Admin akan mentransfer ke ${bankAccountStr}.`,
+      balance: cust.balance,
+      withdrawnCommission: cust.withdrawnCommission,
+      commissionHistory: cust.commissionHistory
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

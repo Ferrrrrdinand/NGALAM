@@ -122,18 +122,36 @@ router.post('/', async (req, res) => {
         );
 
         if (mitra) {
-          const rate = mitra.commissionRate !== undefined ? Number(mitra.commissionRate) : 10;
+          const rate = mitra.commissionRate !== undefined ? Number(mitra.commissionRate) : 5;
 
           orderData.isPartner = true;
           orderData.partnerName = mitra.name;
           orderData.affiliateRef = mitra.referralCode || mitra.referral_code || affiliateCode;
           orderData.affiliateMitraName = mitra.name;
+          orderData.affiliateType = 'mitra';
           orderData.affiliateCommissionRate = rate;
           orderData.affiliateCommission = 0; // Menunggu pelunasan kasir/admin
           orderData.affiliateCommissionStatus = 'pending';
           console.log(`[OrderRoutes] Order berhasil dikoneksikan ke mitra ${mitra.name} (${orderData.affiliateRef}) dengan komisi ${rate}%`);
+        } else {
+          // Cek apakah referral dari Member (Pelanggan)
+          const customerService = require('../services/customerService');
+          const memberAffiliate = customerService.findCustomerByReferralCode(affiliateCode);
+          if (memberAffiliate) {
+            orderData.isPartner = true;
+            orderData.partnerName = memberAffiliate.name;
+            orderData.affiliateRef = memberAffiliate.referralCode || affiliateCode;
+            orderData.affiliateMitraName = memberAffiliate.name;
+            orderData.affiliateType = 'member';
+            orderData.affiliateCommissionRate = 5;
+            orderData.affiliateCommission = 0;
+            orderData.affiliateCommissionStatus = 'pending';
+            console.log(`[OrderRoutes] Order berhasil dikoneksikan ke referral Member ${memberAffiliate.name} (${orderData.affiliateRef}) dengan komisi 5%`);
+          }
+        }
 
-          // Hubungkan pelanggan (baik tamu maupun akun terdaftar) ke mitra ini secara permanen
+        if (orderData.affiliateRef) {
+          // Hubungkan pelanggan (baik tamu maupun akun terdaftar) ke mitra/member ini secara permanen
           try {
             const customerService = require('../services/customerService');
             const custPhone = orderData.whatsapp || orderData.phone || orderData.customerPhone || '';
@@ -148,7 +166,7 @@ router.post('/', async (req, res) => {
               });
             }
           } catch (linkErr) {
-            console.warn('[OrderRoutes] Auto-linking customer to mitra warning:', linkErr.message);
+            console.warn('[OrderRoutes] Auto-linking customer to affiliate warning:', linkErr.message);
           }
         }
       } catch (affErr) {
@@ -161,12 +179,22 @@ router.post('/', async (req, res) => {
     // Jika order langsung berstatus lunas saat dibuat, proses komisi langsung
     if (orderData.paid === true && orderData.affiliateRef) {
       try {
-        const { recordMitraCommission } = require('../services/financeService');
         const costNum = Number(orderData.cost || orderData.totalPaid || orderData.estimatedCost || 0);
-        const rate = Number(orderData.affiliateCommissionRate || 10);
+        const rate = Number(orderData.affiliateCommissionRate || 5);
         const commAmt = Math.round(costNum * (rate / 100));
         if (commAmt > 0) {
-          await recordMitraCommission(orderData.affiliateRef, commAmt, newOrder.id);
+          const isMember = orderData.affiliateType === 'member' || String(orderData.affiliateRef).startsWith('MBR-');
+          if (isMember) {
+            const customerService = require('../services/customerService');
+            await customerService.recordCustomerCommission(orderData.affiliateRef, commAmt, newOrder.id, {
+              customerName: orderData.customerName,
+              phoneType: orderData.phoneType,
+              cost: costNum
+            });
+          } else {
+            const { recordMitraCommission } = require('../services/financeService');
+            await recordMitraCommission(orderData.affiliateRef, commAmt, newOrder.id);
+          }
           await updateOrder(newOrder.id, {
             affiliateCommission: commAmt,
             affiliateCommissionStatus: 'paid',
@@ -229,15 +257,26 @@ async function handleUpdateOrder(req, res) {
             }
           }
         }
-        const rate = Number(existing.affiliateCommissionRate || updates.affiliateCommissionRate || 10);
+        const rate = Number(existing.affiliateCommissionRate || updates.affiliateCommissionRate || 5);
         const commissionAmt = Math.round(finalCost * (rate / 100));
 
         if (commissionAmt > 0) {
-          await recordMitraCommission(affiliateRef, commissionAmt, id);
+          const isMember = existing.affiliateType === 'member' || updates.affiliateType === 'member' || String(affiliateRef).startsWith('MBR-');
+          if (isMember) {
+            const customerService = require('../services/customerService');
+            await customerService.recordCustomerCommission(affiliateRef, commissionAmt, id, {
+              customerName: existing.customerName || updates.customerName,
+              phoneType: existing.phoneType || updates.phoneType,
+              cost: finalCost
+            });
+          } else {
+            const { recordMitraCommission } = require('../services/financeService');
+            await recordMitraCommission(affiliateRef, commissionAmt, id);
+          }
           updates.affiliateCommission = commissionAmt;
           updates.affiliateCommissionStatus = 'paid';
           updates.affiliateCommissionPaidAt = new Date().toISOString();
-          console.log(`[OrderRoutes] Komisi mitra ${affiliateRef} sebesar Rp ${commissionAmt} berhasil dicatat dari order ${id}`);
+          console.log(`[OrderRoutes] Komisi afiliasi ${affiliateRef} (${isMember ? 'Member' : 'Mitra'}) sebesar Rp ${commissionAmt} berhasil dicatat dari order ${id}`);
         }
       } catch (commErr) {
         console.warn('[OrderRoutes] Gagal memproses komisi kasir mitra:', commErr.message);

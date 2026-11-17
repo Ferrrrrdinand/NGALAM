@@ -190,7 +190,7 @@ export default function Navbar() {
                   </span>
                   <div className="nav-dropdown-item-text">
                     <strong style={{ color: '#059669' }}>Portal Mitra & QR Afiliasi</strong>
-                    <small style={{ color: '#475569' }}>Komisi 10% & referral QR Code</small>
+                    <small style={{ color: '#475569' }}>Komisi 5% & referral QR Code</small>
                   </div>
                 </Link>
 

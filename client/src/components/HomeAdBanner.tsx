@@ -26,10 +26,10 @@ export interface AdItem {
 const DEFAULT_FALLBACK_ADS: AdItem[] = [
   {
     id: 'ad-mitra-afiliasi-10',
-    title: 'Mitra Afiliasi Komisi 10%',
-    headline: 'Peluang Cuan Tanpa Modal: Jadi Mitra & Dapatkan Komisi 10% Tiap Rekomendasi Servis!',
-    description: 'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
-    badge: '💰 CUAN 10% TANPA MODAL • MITRA RESMI',
+    title: 'Mitra Afiliasi Komisi 5%',
+    headline: 'Peluang Cuan Tanpa Modal: Jadi Mitra & Dapatkan Komisi 5% Tiap Rekomendasi Servis!',
+    description: 'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 5% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
+    badge: '💰 CUAN 5% TANPA MODAL • MITRA RESMI',
     ctaText: 'Daftar Mitra Sekarang ↗',
     targetUrl: '/mitra?tab=register',
     theme: 'emerald',

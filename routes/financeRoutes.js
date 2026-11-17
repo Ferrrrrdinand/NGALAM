@@ -241,10 +241,21 @@ router.post('/transactions', async (req, res) => {
 
           if (refCode && targetOrder.affiliateCommissionStatus !== 'paid') {
             const finalCost = Number(txData.totalPaid) || Number(targetOrder.cost) || 0;
-            const rate = Number(targetOrder.affiliateCommissionRate || 10);
+            const rate = Number(targetOrder.affiliateCommissionRate || 5);
             const commAmt = Math.round(finalCost * (rate / 100));
             if (commAmt > 0) {
-              await recordMitraCommission(refCode, commAmt, targetOrder.id);
+              const isMember = targetOrder.affiliateType === 'member' || String(refCode).startsWith('MBR-');
+              if (isMember) {
+                const customerService = require('../services/customerService');
+                await customerService.recordCustomerCommission(refCode, commAmt, targetOrder.id, {
+                  customerName: targetOrder.customerName,
+                  phoneType: targetOrder.phoneType,
+                  cost: finalCost,
+                  invoiceNumber: newTx.invoiceNumber
+                });
+              } else {
+                await recordMitraCommission(refCode, commAmt, targetOrder.id);
+              }
               await updateOrder(targetOrder.id, {
                 paid: true,
                 affiliateRef: refCode,
@@ -252,7 +263,7 @@ router.post('/transactions', async (req, res) => {
                 affiliateCommissionStatus: 'paid',
                 affiliateCommissionPaidAt: new Date().toISOString()
               });
-              console.log(`[FinanceRoutes] Komisi mitra ${refCode} sebesar Rp ${commAmt} berhasil dialokasikan dari faktur ${newTx.invoiceNumber}`);
+              console.log(`[FinanceRoutes] Komisi afiliasi ${refCode} (${isMember ? 'Member' : 'Mitra'}) sebesar Rp ${commAmt} berhasil dialokasikan dari faktur ${newTx.invoiceNumber}`);
             }
           }
 
@@ -277,15 +288,25 @@ router.post('/transactions', async (req, res) => {
         console.warn('[FinanceRoutes] Affiliate auto-commission recording warning:', affErr.message);
       }
     } else if (txData.referralCode || txData.affiliateRef) {
-      // Transaksi kasir langsung (tanpa tiket servis) yang menyertakan kode mitra
+      // Transaksi kasir langsung (tanpa tiket servis) yang menyertakan kode mitra atau member
       try {
-        const { recordMitraCommission } = require('../services/financeService');
         const ref = (txData.referralCode || txData.affiliateRef).trim().toUpperCase();
         const finalCost = Number(txData.totalPaid) || 0;
-        const commAmt = Math.round(finalCost * 0.1); // 10% komisi mitra
+        const commAmt = Math.round(finalCost * 0.05); // 5% komisi
         if (commAmt > 0) {
-          await recordMitraCommission(ref, commAmt, newTx.invoiceNumber);
-          console.log(`[FinanceRoutes] Komisi mitra direct ${ref} sebesar Rp ${commAmt} berhasil dialokasikan.`);
+          const isMember = String(ref).startsWith('MBR-');
+          if (isMember) {
+            const customerService = require('../services/customerService');
+            await customerService.recordCustomerCommission(ref, commAmt, newTx.invoiceNumber, {
+              customerName: txData.customerName || 'Pelanggan Langsung',
+              cost: finalCost,
+              invoiceNumber: newTx.invoiceNumber
+            });
+          } else {
+            const { recordMitraCommission } = require('../services/financeService');
+            await recordMitraCommission(ref, commAmt, newTx.invoiceNumber);
+          }
+          console.log(`[FinanceRoutes] Komisi direct ${ref} (${isMember ? 'Member' : 'Mitra'}) sebesar Rp ${commAmt} berhasil dialokasikan.`);
         }
       } catch (directAffErr) {
         console.warn('[FinanceRoutes] Direct affiliate recording warning:', directAffErr.message);

@@ -149,5 +149,20 @@
     "referredByMitra": "MTR-RUDIG-5632",
     "registeredAt": "05 Nov 2026, 16.15",
     "registeredVia": "guest_booking_referral"
+  },
+  {
+    "id": "CUST-20261117-8255",
+    "name": "Member Pertama",
+    "whatsapp": "089988776655",
+    "email": "member1@test.com",
+    "district": "Klojen, Kota Malang",
+    "pin": "$2b$10$78qE53.UHKcHxKOeuZiSXeTZitg3ohJcOKlIg2VbVZMFX3XfCEj72",
+    "passwordHash": "$2b$10$78qE53.UHKcHxKOeuZiSXeTZitg3ohJcOKlIg2VbVZMFX3XfCEj72",
+    "plainPassword": "password123",
+    "status": "Aktif",
+    "googleId": "",
+    "referredByMitra": "",
+    "registeredAt": "17 Nov 2026, 15.24",
+    "registeredVia": "Portal Pelanggan Web"
   }
 ]

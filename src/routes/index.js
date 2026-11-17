@@ -178,7 +178,7 @@ router.get('/admin/dashboard', async (req, res) => {
         plainPassword: d.plainPassword || (d.password && !String(d.password).startsWith('$2') ? d.password : ''),
         isPasswordHashed: Boolean(d.password && String(d.password).startsWith('$2')),
         referralCode: refCode,
-        commissionRate: d.commissionRate !== undefined ? d.commissionRate : 10,
+        commissionRate: d.commissionRate !== undefined ? d.commissionRate : 5,
         totalCommission: d.totalCommission || 0,
         balance: d.balance !== undefined ? d.balance : (d.totalCommission || 0),
         withdrawnCommission: d.withdrawnCommission || 0,

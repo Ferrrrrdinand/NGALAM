@@ -1,5 +1,18 @@
 [
   {
+    "id": "LOG-1794903865950-827",
+    "action": "CUSTOMER_REGISTER",
+    "table_name": "customers",
+    "record_id": "CUST-20261117-8255",
+    "payload": {
+      "name": "Member Pertama",
+      "whatsapp": "089988776655",
+      "district": "Klojen, Kota Malang",
+      "registeredVia": "Portal Pelanggan Web"
+    },
+    "performed_at": "2026-11-17T08:24:25.950Z"
+  },
+  {
     "id": "LOG-1794895363564-121",
     "action": "CUSTOMER_REGISTER",
     "table_name": "customers",

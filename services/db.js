@@ -108,7 +108,7 @@ async function runInitDb() {
           phone VARCHAR(50),
           email VARCHAR(255),
           referral_code VARCHAR(100),
-          commission_rate NUMERIC DEFAULT 10,
+          commission_rate NUMERIC DEFAULT 5,
           total_commission NUMERIC DEFAULT 0,
           status VARCHAR(50),
           last_active VARCHAR(100),
@@ -355,6 +355,9 @@ async function runInitDb() {
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS button_link VARCHAR(255);
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS image_url TEXT;
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS raw_data JSONB;
+
+          -- Pastikan seluruh mitra diselaraskan ke komisi 5%
+          UPDATE users SET commission_rate = 5 WHERE role IN ('mitra', 'ojol', 'kurir') AND (commission_rate = 10 OR commission_rate IS NULL);
         `);
         console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners, commissions, ads, warranties) siap.');
     } finally {

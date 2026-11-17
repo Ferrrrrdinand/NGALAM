@@ -276,7 +276,7 @@ export default function AdminDashboard() {
         discountAmount: discountAmt,
         finalAmount: finalAmt,
         paymentMethod: 'Tunai (Cash)',
-        notes: found.affiliateRef ? `Komisi Mitra 10%: ${found.partnerName || found.affiliateMitraName || found.affiliateRef}` : ''
+        notes: found.affiliateRef ? `Komisi Mitra 5%: ${found.partnerName || found.affiliateMitraName || found.affiliateRef}` : ''
       });
       setBookingSearchInput('');
     } else {
@@ -747,7 +747,7 @@ export default function AdminDashboard() {
                   paymentMethod: "Tunai (Cash)",
                   notes: o.promoCode 
                     ? `Promo ${o.promoCode} (${o.promoDiscountValue || 10}%): Diskon ${formatRp(discountAmt)} (Dipotong by system)`
-                    : (o.affiliateRef ? `Komisi Mitra 10%: ${o.partnerName || o.affiliateMitraName || o.affiliateRef}` : "")
+                    : (o.affiliateRef ? `Komisi Mitra 5%: ${o.partnerName || o.affiliateMitraName || o.affiliateRef}` : "")
                 });
                 setActiveTab("cashier");
               }}

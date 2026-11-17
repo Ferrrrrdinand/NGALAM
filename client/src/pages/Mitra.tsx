@@ -41,7 +41,7 @@ export default function Mitra() {
   const [dashboardStats, setDashboardStats] = useState({
     totalCommission: 0,
     totalOrders: 0,
-    commissionRate: 10,
+    commissionRate: 5,
     orders: []
   });
 
@@ -140,7 +140,7 @@ export default function Mitra() {
           setDashboardStats({
             totalCommission: d.totalCommission || d.balance || 0,
             totalOrders: d.totalOrders || 0,
-            commissionRate: d.commissionRate || 10,
+            commissionRate: d.commissionRate || 5,
             orders: d.referredOrders || []
           });
         }
@@ -334,7 +334,7 @@ export default function Mitra() {
             </div>
             <h1 className="mitra-hero-title">
               Rekomendasikan Servis HP,<br />
-              <span style={{ color: '#059669' }}>Dapatkan Komisi 10% Per Transaksi!</span>
+              <span style={{ color: '#059669' }}>Dapatkan Komisi 5% Per Transaksi!</span>
             </h1>
             <p className="mitra-hero-desc">
               Khusus Mitra Driver Ojol (Gojek, Grab, Maxim, Shopee) dan Toko/Bengkel Rekanan Malang. Setiap mitra memiliki <strong>Kode Unik Otomatis</strong> & <strong>QR Code Pribadi</strong>. Pelanggan cukup scan QR Code Anda saat memesan servis, dan komisi otomatis masuk ke akun Anda!
@@ -742,10 +742,10 @@ export default function Mitra() {
                       <Coins className="w-6 h-6 text-emerald-600" />
                     </div>
                     <strong style={{ fontSize: '0.85rem', color: '#000000', display: 'block', marginBottom: '4px' }}>
-                      3. Komisi 10% Otomatis
+                      3. Komisi 5% Otomatis
                     </strong>
                     <p style={{ margin: 0, fontSize: '0.78rem', color: '#000000', lineHeight: 1.35 }}>
-                      Komisi 10% langsung dihitung dan dicatat di database sistem.
+                      Komisi 5% langsung dihitung dan dicatat di database sistem.
                     </p>
                   </div>
                 </div>
@@ -796,7 +796,7 @@ export default function Mitra() {
                             </td>
                             <td style={{ padding: '12px', fontWeight: 600 }}>{formatRp(o.totalCost || o.price || 0)}</td>
                             <td style={{ padding: '12px', fontWeight: 700, color: '#059669' }}>
-                              {formatRp(Math.round((o.totalCost || o.price || 0) * 0.1))}
+                              {formatRp(Math.round((o.totalCost || o.price || 0) * 0.05))}
                             </td>
                           </tr>
                         ))

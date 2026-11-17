@@ -169,7 +169,7 @@ async function createMitraFromGoogle(users, profile) {
     phone: '',
     email: String(profile.email || '').trim().toLowerCase(),
     referralCode: refCode,
-    commissionRate: 10,
+    commissionRate: 5,
     totalCommission: 0,
     balance: 0,
     withdrawnCommission: 0,
@@ -467,7 +467,7 @@ router.get('/check', async (req, res) => {
         plateNumber: mitra.plateNumber || '',
         bankAccount: mitra.bankAccount || '',
         referralCode: mitra.referralCode,
-        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 10,
+        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 5,
         totalCommission: mitra.totalCommission || 0,
         totalEarned: mitra.totalCommission || 0,
         balance: balance,
@@ -488,7 +488,7 @@ router.get('/check', async (req, res) => {
         plateNumber: mitra.plateNumber || '',
         bankAccount: mitra.bankAccount || '',
         referralCode: mitra.referralCode,
-        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 10,
+        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 5,
         totalCommission: mitra.totalCommission || 0,
         totalEarned: mitra.totalCommission || 0,
         balance: balance,
@@ -535,7 +535,7 @@ router.get('/ref/:code', (req, res) => {
         category: mitra.category || (mitra.role === 'ojol' ? 'Mitra Kurir Ojek Online' : 'Mitra Bengkel / Toko Rekanan'),
         avatar: mitra.avatar || '🛵',
         referralCode: mitra.referralCode,
-        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 10,
+        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 5,
         affiliateUrl: details.affiliateUrl
       }
     });
@@ -571,7 +571,7 @@ router.get('/list', (req, res) => {
         plainPassword: d.plainPassword || (d.password && !String(d.password).startsWith('$2') ? d.password : ''),
         isPasswordHashed: Boolean(d.password && String(d.password).startsWith('$2')),
         referralCode: refCode,
-        commissionRate: d.commissionRate !== undefined ? d.commissionRate : 10,
+        commissionRate: d.commissionRate !== undefined ? d.commissionRate : 5,
         totalCommission: d.totalCommission || 0,
         balance: d.balance !== undefined ? d.balance : (d.totalCommission || 0),
         withdrawnCommission: d.withdrawnCommission || 0,
@@ -722,7 +722,7 @@ router.post('/register', async (req, res) => {
       phone: cleanPhone,
       email: cleanEmail,
       referralCode: refCode,
-      commissionRate: 10, // 10% komisi per servis
+      commissionRate: 5, // 5% komisi per servis
       totalCommission: 0,
       balance: 0,
       withdrawnCommission: 0,
@@ -875,7 +875,7 @@ router.post('/login', async (req, res) => {
           phone: staffUser.phone || '',
           email: staffUser.email || '',
           referralCode: staffUser.referralCode || 'NGALAM-SUPER-2026',
-          commissionRate: 10,
+          commissionRate: 5,
           totalCommission: 0,
           status: 'Siaga / Aktif',
           lastActive: 'Hari ini'
@@ -980,7 +980,7 @@ router.get('/dashboard', async (req, res) => {
         phone: mitra.phone,
         email: mitra.email,
         referralCode: mitra.referralCode,
-        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 10,
+        commissionRate: mitra.commissionRate !== undefined ? mitra.commissionRate : 5,
         totalCommission: mitra.totalCommission || 0,
         balance: balance,
         status: mitra.status || 'Siaga / Aktif',

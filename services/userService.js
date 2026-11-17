@@ -80,7 +80,7 @@ function normalizeDbUser(row) {
     phone: raw.phone || row.phone || '',
     email: raw.email || row.email || '',
     referralCode: raw.referralCode || raw.referral_code || row.referral_code || '',
-    commissionRate: raw.commissionRate !== undefined ? Number(raw.commissionRate) : Number(row.commission_rate || 10),
+    commissionRate: raw.commissionRate !== undefined ? Number(raw.commissionRate) : Number(row.commission_rate || 5),
     totalCommission,
     withdrawnCommission,
     balance,
@@ -264,7 +264,7 @@ async function upsertUserRow(user) {
     user.phone || '',
     user.email || '',
     user.referralCode || user.referral_code || '',
-    Number(user.commissionRate || user.commission_rate || 10),
+    Number(user.commissionRate || user.commission_rate || 5),
     Number(user.totalCommission || user.total_commission || 0),
     user.status || 'Active',
     user.lastActive || user.last_active || 'Baru Saja',
@@ -399,6 +399,12 @@ async function updateUserById(id, updates = {}) {
     ...updates,
     id: user.id
   };
+
+  // Pastikan ID dan referralCode untuk 100 mitra pre-generated tidak berubah
+  if (user.id.startsWith('USR-MITRA-PRE-')) {
+    merged.referralCode = user.referralCode || user.referral_code;
+    merged.referral_code = merged.referralCode;
+  }
 
   if (updates.password && String(updates.password).trim().length > 0) {
     const { hashPassword } = require('../src/utils/security');

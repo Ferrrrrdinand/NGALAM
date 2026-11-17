@@ -52,7 +52,7 @@ export default function CashierTab({
             </span>
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Validasi pembayaran nota servis, otomatisasi cetak struk thermal, dan kalkulasi bagi hasil komisi mitra 10%.
+            Validasi pembayaran nota servis, otomatisasi cetak struk thermal, dan kalkulasi bagi hasil komisi mitra 5%.
           </p>
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function CashierTab({
                 <div className="flex items-center gap-2 text-emerald-800">
                   <Users className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span className="text-xs font-bold uppercase tracking-wide">
-                    Pesanan Referal Mitra Resmi (Komisi 10%)
+                    Pesanan Referal Mitra Resmi (Komisi 5%)
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
@@ -182,9 +182,9 @@ export default function CashierTab({
                     <span className="text-[11px] font-mono text-emerald-700 block">({paymentOrder.affiliateRef})</span>
                   </div>
                   <div>
-                    <span className="text-slate-500 block text-[11px]">Komisi 10% dari Nota:</span>
+                    <span className="text-slate-500 block text-[11px]">Komisi 5% dari Nota:</span>
                     <strong className="text-base text-emerald-700 font-bold">
-                      {formatRp(Math.round((Number(paymentForm.finalAmount) || 0) * 0.1))}
+                      {formatRp(Math.round((Number(paymentForm.finalAmount) || 0) * 0.05))}
                     </strong>
                   </div>
                 </div>
@@ -419,7 +419,7 @@ export default function CashierTab({
                 <CheckCircle className="w-4 h-4 shrink-0" />
                 <span>
                   {paymentOrder.affiliateRef && paymentOrder.affiliateCommissionStatus !== 'paid'
-                    ? 'Langsung Lunas & Komisi 10%'
+                    ? 'Langsung Lunas & Komisi 5%'
                     : 'Langsung Konfirmasi Lunas'}
                 </span>
               </button>

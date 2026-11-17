@@ -128,7 +128,7 @@ export default function AffiliateInviteModal() {
               Peluang Cuan Tanpa Modal
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/30 text-emerald-100 text-xs font-semibold">
-              <Zap className="w-3 h-3 text-emerald-300" /> Komisi 10% Tunai
+              <Zap className="w-3 h-3 text-emerald-300" /> Komisi 5% Tunai
             </span>
           </div>
 
@@ -150,11 +150,11 @@ export default function AffiliateInviteModal() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold uppercase text-amber-700 tracking-wide">
-                  Bagikan Link &bull; Dapat 10% Cash
+                  Bagikan Link &bull; Dapat 5% Cash
                 </span>
               </div>
               <p className="text-slate-700 text-xs md:text-sm font-semibold mt-0.5 leading-snug">
-                Setiap 1 unit servis selesai (misal ganti LCD Rp 600.000), Anda otomatis kantongi komisi <span className="text-emerald-700 font-extrabold">Rp 60.000 tunai</span> langsung masuk ke saldo Anda!
+                Setiap 1 unit servis selesai (misal ganti LCD Rp 600.000), Anda otomatis kantongi komisi <span className="text-emerald-700 font-extrabold">Rp 30.000 tunai</span> langsung masuk ke saldo Anda!
               </p>
             </div>
           </div>

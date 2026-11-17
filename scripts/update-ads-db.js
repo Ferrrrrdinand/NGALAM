@@ -15,10 +15,10 @@ async function run() {
       INSERT INTO ads (id, title, headline, description, badge, image_url, target_url, cta_text, theme, active, location, views_count, clicks_count, created_at, updated_at)
       VALUES (
         'ad-mitra-afiliasi-10',
-        'Mitra Afiliasi Komisi 10%',
-        'Peluang Cuan Tanpa Modal: Jadi Mitra & Dapatkan Komisi 10% Tiap Rekomendasi Servis!',
-        'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 10% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
-        '💰 CUAN 10% TANPA MODAL • MITRA RESMI',
+        'Mitra Afiliasi Komisi 5%',
+        'Peluang Cuan Tanpa Modal: Jadi Mitra & Dapatkan Komisi 5% Tiap Rekomendasi Servis!',
+        'Punya teman, saudara, atau grup WA yang butuh servis HP? Cukup bagikan QR Code atau link referral Anda. Komisi 5% tunai otomatis cair ke rekening Anda setiap kali servis selesai!',
+        '💰 CUAN 5% TANPA MODAL • MITRA RESMI',
         '',
         '/mitra?tab=register',
         'Daftar Mitra Sekarang ↗',

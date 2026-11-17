@@ -433,7 +433,7 @@ export default function AdsSubTab({ onToast }: AdsSubTabProps) {
                       onClick={() => setForm({ ...form, targetUrl: '/mitra?tab=register', ctaText: 'Daftar Jadi Mitra ↗' })}
                       className="px-2 py-0.5 rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-[10px] font-semibold cursor-pointer"
                     >
-                      💰 Mitra 10% (/mitra?tab=register)
+                      💰 Mitra 5% (/mitra?tab=register)
                     </button>
                     <button
                       type="button"

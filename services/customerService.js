@@ -18,14 +18,29 @@ let customerCache = null;
 let customersHydratedAt = 0;
 let customersHydration = null;
 
+function generateCustomerReferralCode(cust) {
+  if (cust && cust.referralCode) return cust.referralCode;
+  const namePart = String((cust && cust.name) || 'MEMBER')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, 6) || 'MEMBER';
+  const phoneDigits = String((cust && (cust.whatsapp || cust.phone)) || '').replace(/\D/g, '');
+  const suffix = phoneDigits.slice(-4) || String(Math.floor(1000 + Math.random() * 9000));
+  return `MBR-${namePart}-${suffix}`;
+}
+
 function normalizeDbCustomer(row) {
   const raw = row && row.raw_data && typeof row.raw_data === 'object' ? row.raw_data : {};
+  const cName = raw.name || row.name || '';
+  const cWa = raw.whatsapp !== undefined ? raw.whatsapp : (row.phone || row.whatsapp || '');
+  const refCode = raw.referralCode || (row.referral_code && row.referral_code.startsWith('MBR-') ? row.referral_code : '') || generateCustomerReferralCode({ name: cName, whatsapp: cWa });
+
   return {
     ...raw,
     id: raw.id || row.id,
     username: raw.username || row.username || '',
-    name: raw.name || row.name || '',
-    whatsapp: raw.whatsapp !== undefined ? raw.whatsapp : (row.phone || row.whatsapp),
+    name: cName,
+    whatsapp: cWa,
     email: raw.email || row.email || '',
     district: raw.district || row.district || '',
     pin: raw.pin || row.password || row.pin || '',
@@ -34,6 +49,13 @@ function normalizeDbCustomer(row) {
     status: raw.status || row.status || 'Aktif',
     googleId: raw.googleId || '',
     referredByMitra: raw.referredByMitra || '',
+    referralCode: refCode,
+    commissionRate: 5,
+    balance: Number(raw.balance !== undefined ? raw.balance : (row.balance || 0)),
+    totalCommission: Number(raw.totalCommission !== undefined ? raw.totalCommission : (row.total_commission || 0)),
+    withdrawnCommission: Number(raw.withdrawnCommission || 0),
+    commissionHistory: Array.isArray(raw.commissionHistory) ? raw.commissionHistory : [],
+    bankAccount: raw.bankAccount || '',
     registeredAt: raw.registeredAt || row.registered_at || '',
     registeredVia: raw.registeredVia || row.registered_via || '',
     avatar: raw.avatar || row.avatar || ''
@@ -114,12 +136,14 @@ function buildCustomerUsername(customer) {
 async function persistCustomerUser(customer) {
   if (!customer || !customer.id || !db.isDbConnected()) return false;
   const username = buildCustomerUsername(customer);
+  const myRefCode = customer.referralCode || generateCustomerReferralCode(customer);
+  customer.referralCode = myRefCode;
   await db.query(`
     INSERT INTO users (
       id, username, password, name, role, category, avatar, phone, email,
       referral_code, commission_rate, total_commission, status, last_active, desk, specialty, raw_data
     )
-    VALUES ($1, $2, $3, $4, 'customer', $5, $6, $7, $8, $9, 0, 0, $10, $11, '', '', $12)
+    VALUES ($1, $2, $3, $4, 'customer', $5, $6, $7, $8, $9, $10, $11, $12, $13, '', '', $14)
     ON CONFLICT (id) DO UPDATE SET
       username = EXCLUDED.username,
       password = EXCLUDED.password,
@@ -130,6 +154,8 @@ async function persistCustomerUser(customer) {
       phone = EXCLUDED.phone,
       email = EXCLUDED.email,
       referral_code = EXCLUDED.referral_code,
+      commission_rate = EXCLUDED.commission_rate,
+      total_commission = EXCLUDED.total_commission,
       status = EXCLUDED.status,
       last_active = EXCLUDED.last_active,
       raw_data = EXCLUDED.raw_data
@@ -142,7 +168,9 @@ async function persistCustomerUser(customer) {
     customer.avatar && String(customer.avatar).length <= 50 ? customer.avatar : '👤',
     customer.whatsapp || '',
     customer.email || '',
-    customer.referredByMitra || '',
+    myRefCode,
+    Number(customer.commissionRate || 5),
+    Number(customer.totalCommission || 0),
     customer.status || 'Aktif',
     customer.registeredAt || '',
     JSON.stringify(customer)
@@ -277,6 +305,7 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
 
   const rawPass = password || pin || '123456';
   const passwordHash = hashPassword(rawPass);
+  const myRefCode = generateCustomerReferralCode({ name: name.trim(), whatsapp: cleanWa });
 
   const newCust = {
     id: newId,
@@ -290,6 +319,13 @@ async function registerNewCustomer({ name, whatsapp, email = '', district = 'Klo
     status: 'Aktif',
     googleId: googleId || '',
     referredByMitra: (referredByMitra || '').trim().toUpperCase(),
+    referralCode: myRefCode,
+    commissionRate: 5,
+    balance: 0,
+    totalCommission: 0,
+    withdrawnCommission: 0,
+    commissionHistory: [],
+    bankAccount: '',
     registeredAt: `${dateStr}, ${timeStr}`,
     registeredVia: registeredVia
   };
@@ -479,8 +515,72 @@ async function updateCustomerById(id, updates = {}) {
     console.warn('[CustomerService] PostgreSQL update customer warning:', pgErr.message);
   }
 
-  return updated;
   return merged;
+}
+
+/**
+ * Cari pelanggan berdasarkan kode afiliasi referral member
+ */
+function findCustomerByReferralCode(code) {
+  if (!code) return null;
+  const clean = String(code).trim().toUpperCase();
+  const customers = getAllCustomers();
+  return customers.find(c => {
+    const cRef = (c.referralCode || '').toUpperCase();
+    return cRef === clean || (c.id && c.id.toUpperCase() === clean);
+  }) || null;
+}
+
+/**
+ * Alokasikan komisi 5% kepada member yang mereferensikan transaksi
+ */
+async function recordCustomerCommission(refCode, commissionAmount, orderId, orderDetails = {}) {
+  const commNum = Math.max(0, parseInt(commissionAmount, 10) || 0);
+  if (commNum <= 0) return null;
+
+  await refreshCustomersFromDb();
+  let customer = findCustomerByReferralCode(refCode);
+  if (!customer) {
+    // Coba cari dari identifier
+    customer = findCustomerByIdentifier(refCode);
+  }
+  if (!customer) return null;
+
+  customer.balance = (Number(customer.balance) || 0) + commNum;
+  customer.totalCommission = (Number(customer.totalCommission) || 0) + commNum;
+  if (!Array.isArray(customer.commissionHistory)) customer.commissionHistory = [];
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+
+  const historyEntry = {
+    id: `COMM-MBR-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`,
+    orderId: orderId || orderDetails.id || '',
+    invoiceNumber: orderDetails.invoiceNumber || '',
+    customerName: orderDetails.customerName || 'Teman Member',
+    phoneType: orderDetails.phoneType || '',
+    orderCost: orderDetails.cost || orderDetails.totalPaid || 0,
+    commissionAmount: commNum,
+    rate: 5,
+    status: 'Tersedia di Saldo',
+    createdAt: `${dateStr}, ${timeStr}`
+  };
+
+  customer.commissionHistory.unshift(historyEntry);
+  await saveCustomerRecord(customer);
+
+  try {
+    await db.logActivity('MEMBER_COMMISSION_EARNED', 'customers', customer.id, {
+      referralCode: refCode,
+      memberName: customer.name,
+      orderId: orderId,
+      commissionAmount: commNum,
+      newBalance: customer.balance
+    });
+  } catch (_) {}
+
+  return { customer, historyEntry };
 }
 
 module.exports = {
@@ -491,6 +591,9 @@ module.exports = {
   findCustomerByEmail,
   findCustomerByPhone,
   findCustomerByGoogleId,
+  findCustomerByReferralCode,
+  generateCustomerReferralCode,
+  recordCustomerCommission,
   registerNewCustomer,
   ensureCustomerAccount,
   saveCustomerRecord,

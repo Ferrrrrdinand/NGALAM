@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Banknote, X, Users, Wallet, ArrowDownRight, 
-  Edit3, Key, Phone, Eye, EyeOff, Search
+  Edit3, Key, Phone, Eye, EyeOff, Search,
+  QrCode, Printer, Download, Copy, Check, ExternalLink, ShieldCheck, Tag, Sparkles
 } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditMitraModal from './EditMitraModal';
@@ -26,12 +27,28 @@ export default function MitraTab({
   onMitraUpdated?: (updated: any) => void;
 }) {
   const [editingMitra, setEditingMitra] = useState<any>(null);
+  const [selectedQrMitra, setSelectedQrMitra] = useState<any>(null);
+  const [showBatchPrintModal, setShowBatchPrintModal] = useState(false);
+  const [batchFilter, setBatchFilter] = useState<'all' | 'unassigned' | 'batch1' | 'batch2' | 'batch3' | 'batch4'>('all');
+  const [copiedLink, setCopiedLink] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
 
   const togglePasswordVisibility = (id: string) => {
     setRevealedPasswords((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const isPreGenerated = (m: any) => 
+    String(m.id || '').startsWith('USR-MITRA-PRE-') || String(m.referralCode || '').startsWith('MITRA-');
+
+  const isAssigned = (m: any) => 
+    Boolean(m.phone && String(m.phone).trim() && !String(m.name || '').startsWith('Mitra Rekanan '));
+
+  const preGeneratedList = mitras
+    .filter(isPreGenerated)
+    .sort((a, b) => String(a.referralCode || '').localeCompare(String(b.referralCode || '')));
+
+  const unassignedCount = preGeneratedList.filter((m) => !isAssigned(m)).length;
 
   const filteredMitras = mitras.filter((m) => {
     if (!searchTerm) return true;
@@ -41,9 +58,43 @@ export default function MitraTab({
       (m.username && m.username.toLowerCase().includes(s)) ||
       (m.phone && m.phone.includes(s)) ||
       (m.referralCode && m.referralCode.toLowerCase().includes(s)) ||
-      (m.plateNumber && m.plateNumber.toLowerCase().includes(s))
+      (m.plateNumber && m.plateNumber.toLowerCase().includes(s)) ||
+      (s === 'unassigned' && isPreGenerated(m) && !isAssigned(m)) ||
+      (s === 'pre' && isPreGenerated(m))
     );
   });
+
+  const getBatchItems = () => {
+    if (batchFilter === 'unassigned') {
+      return preGeneratedList.filter((m) => !isAssigned(m));
+    }
+    if (batchFilter === 'batch1') {
+      return preGeneratedList.slice(0, 25);
+    }
+    if (batchFilter === 'batch2') {
+      return preGeneratedList.slice(25, 50);
+    }
+    if (batchFilter === 'batch3') {
+      return preGeneratedList.slice(50, 75);
+    }
+    if (batchFilter === 'batch4') {
+      return preGeneratedList.slice(75, 100);
+    }
+    return preGeneratedList;
+  };
+
+  const getBookingUrl = (refCode: string) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ngalam1-delta.vercel.app';
+    return `${origin}/pesan-servis?ref=${encodeURIComponent(refCode || '')}`;
+  };
+
+  const copyToClipboard = (text: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
 
   const totalBalance = mitras.reduce((acc, m) => acc + (Number(m.balance) || 0), 0);
   const totalCommission = mitras.reduce((acc, m) => acc + (Number(m.totalCommission) || 0), 0);
@@ -116,11 +167,60 @@ export default function MitraTab({
             <div className="text-2xl font-black text-slate-900">
               {formatRp(totalCommission)}
             </div>
-            <span className="text-[11px] text-slate-400 font-medium">Akumulasi bagi hasil 10%</span>
+            <span className="text-[11px] text-slate-400 font-medium">Akumulasi bagi hasil 5%</span>
           </div>
           <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-200/40">
             <ArrowDownRight className="w-6 h-6" />
           </div>
+        </div>
+      </div>
+
+      {/* Banner 100 QR Code Pre-Generated */}
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-amber-500/15 border border-amber-300 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="space-y-1 max-w-2xl">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+              <Sparkles className="w-3 h-3" />
+              100 QR Code Siap Pakai
+            </span>
+            <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
+              MITRA-001 s/d MITRA-100
+            </span>
+            {unassignedCount > 0 && (
+              <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-200">
+                {unassignedCount} Belum Ada Pemilik
+              </span>
+            )}
+          </div>
+          <h3 className="text-sm sm:text-base font-black text-slate-900">
+            Koleksi Stiker QR Code Referral 100 Mitra Workshop
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Kode referral (<code>MITRA-001</code> s/d <code>MITRA-100</code>) dan ID mitra terkunci permanen. Anda bisa langsung mencetak lembar stiker QR untuk dibagikan ke driver ojol atau toko rekanan, lalu input nama pemiliknya kapan saja saat mitra aktif.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto">
+          <button
+            type="button"
+            onClick={() => setShowBatchPrintModal(true)}
+            className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Printer className="w-4 h-4" />
+            <span>Cetak 100 Stiker QR</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSearchTerm(searchTerm === 'unassigned' ? '' : 'unassigned')}
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
+              searchTerm === 'unassigned'
+                ? 'bg-amber-100 text-amber-900 border-amber-400'
+                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
+            }`}
+          >
+            <Tag className="w-3.5 h-3.5 text-amber-700" />
+            <span>{searchTerm === 'unassigned' ? 'Tampilkan Semua' : 'Filter Belum Terisi'}</span>
+          </button>
         </div>
       </div>
 
@@ -251,9 +351,22 @@ export default function MitraTab({
 
                       {/* Referral & Saldo */}
                       <td className="py-3.5 px-4">
-                        <span className="font-mono font-bold bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded text-[11px] inline-block mb-1">
-                          {m.referralCode}
-                        </span>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="font-mono font-bold bg-amber-50 border border-amber-200 text-amber-700 px-2 py-0.5 rounded text-[11px] inline-block">
+                            {m.referralCode}
+                          </span>
+                          {isPreGenerated(m) && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedQrMitra(m)}
+                              className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-500 hover:bg-amber-600 text-white cursor-pointer shadow-2xs transition-all flex items-center gap-0.5"
+                              title="Lihat Stiker QR Code"
+                            >
+                              <QrCode className="w-2.5 h-2.5" />
+                              <span>QR</span>
+                            </button>
+                          )}
+                        </div>
                         <div className="text-[11px]">
                           <span className="text-slate-500">Saldo: </span>
                           <strong className={unwithdrawn > 0 ? 'text-emerald-700 font-bold' : 'text-slate-500 font-medium'}>
@@ -267,14 +380,14 @@ export default function MitraTab({
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           String(m.status || '').toLowerCase().includes('aktif') || String(m.status || '').toLowerCase().includes('siaga')
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-red-50 text-red-700 border border-red-200'
+                            : 'bg-amber-50 text-amber-800 border border-amber-300'
                         }`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${
                             String(m.status || '').toLowerCase().includes('aktif') || String(m.status || '').toLowerCase().includes('siaga')
                               ? 'bg-emerald-500'
-                              : 'bg-red-500'
+                              : 'bg-amber-500'
                           }`} />
-                          <span>{m.status || 'Siaga / Aktif'}</span>
+                          <span>{m.status || (isPreGenerated(m) && !isAssigned(m) ? 'Menunggu Aktivasi' : 'Siaga / Aktif')}</span>
                         </span>
                       </td>
 
@@ -282,12 +395,27 @@ export default function MitraTab({
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
-                            onClick={() => setEditingMitra(m)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-amber-300 bg-amber-50/80 hover:bg-amber-100 text-amber-900 font-bold text-xs cursor-pointer shadow-2xs transition-all"
-                            title="Edit data & kata sandi mitra"
+                            type="button"
+                            onClick={() => setSelectedQrMitra(m)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs cursor-pointer shadow-2xs transition-all"
+                            title="Lihat & Unduh QR Code Stiker Mitra"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-amber-700" />
-                            <span>Edit</span>
+                            <QrCode className="w-3.5 h-3.5 text-slate-700" />
+                            <span>QR</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setEditingMitra(m)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs cursor-pointer shadow-2xs transition-all border ${
+                              isPreGenerated(m) && !isAssigned(m)
+                                ? 'border-amber-400 bg-amber-500 hover:bg-amber-600 text-white font-extrabold shadow-sm'
+                                : 'border-amber-300 bg-amber-50/80 hover:bg-amber-100 text-amber-900 font-bold'
+                            }`}
+                            title={isPreGenerated(m) && !isAssigned(m) ? "Input pemilik akun mitra ini" : "Edit data & kata sandi mitra"}
+                          >
+                            <Edit3 className={`w-3.5 h-3.5 ${isPreGenerated(m) && !isAssigned(m) ? 'text-white' : 'text-amber-700'}`} />
+                            <span>{isPreGenerated(m) && !isAssigned(m) ? "Input Pemilik" : "Edit"}</span>
                           </button>
 
                           {setPayoutModalMitra && setPayoutAmount && (
@@ -398,6 +526,295 @@ export default function MitraTab({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Single QR Code Mitra */}
+      {selectedQrMitra && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200 border border-amber-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                  <QrCode className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 leading-tight">
+                    Stiker QR Code Mitra
+                  </h3>
+                  <span className="text-[11px] font-mono text-amber-700 font-bold">
+                    {selectedQrMitra.referralCode} • {selectedQrMitra.id}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedQrMitra(null)}
+                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Kartu Stiker Preview */}
+            <div className="p-4 rounded-2xl bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white text-center space-y-2.5 shadow-lg border border-amber-500/30">
+              <div className="flex items-center justify-between text-[10px] text-amber-400 font-bold uppercase tracking-wider border-b border-white/10 pb-2">
+                <span>Ngalam Fix Pro</span>
+                <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Mitra Resmi Rekanan</span>
+              </div>
+
+              <div className="bg-white p-2.5 rounded-2xl inline-block shadow-md mx-auto">
+                <img
+                  src={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
+                  alt={`QR Code ${selectedQrMitra.referralCode}`}
+                  className="w-44 h-44 object-contain mx-auto"
+                  onError={(e: any) => {
+                    e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(getBookingUrl(selectedQrMitra.referralCode))}`;
+                  }}
+                />
+              </div>
+
+              <div>
+                <span className="text-[11px] text-slate-300 block font-medium">Scan untuk Booking Servis &amp; Diskon 5%</span>
+                <strong className="text-base font-black tracking-wider text-amber-400 font-mono block mt-0.5">
+                  {selectedQrMitra.referralCode}
+                </strong>
+                <p className="text-[11px] text-slate-300 mt-1">
+                  {isAssigned(selectedQrMitra) ? (
+                    <span className="text-emerald-400 font-bold">Pemilik: {selectedQrMitra.name} ({selectedQrMitra.phone})</span>
+                  ) : (
+                    <span className="text-amber-300/90 italic">Belum Ada Pemilik (Stiker Siap Diberikan)</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Input Link Booking */}
+            <div className="space-y-1">
+              <label className="block text-[11px] font-bold text-slate-600">Link Booking Referral</label>
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  readOnly
+                  value={getBookingUrl(selectedQrMitra.referralCode)}
+                  className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 font-mono text-slate-700"
+                />
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(getBookingUrl(selectedQrMitra.referralCode))}
+                  className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedLink ? 'Tersalin' : 'Salin'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <a
+                href={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
+                download={`QR_Mitra_${selectedQrMitra.referralCode}.png`}
+                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer text-center"
+              >
+                <Download className="w-4 h-4" />
+                <span>Unduh PNG</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const m = selectedQrMitra;
+                  setSelectedQrMitra(null);
+                  setEditingMitra(m);
+                }}
+                className="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>{isAssigned(selectedQrMitra) ? 'Edit Profil' : 'Input Pemilik'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Batch Cetak 100 Stiker QR Code */}
+      {showBatchPrintModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-5xl w-full p-6 shadow-2xl space-y-5 my-6 animate-in fade-in duration-200">
+            {/* Modal Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 no-print">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                    <Printer className="w-4 h-4" />
+                  </span>
+                  <h3 className="text-base font-black text-slate-900">
+                    Cetak Lembar Stiker QR Code 100 Mitra
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Format stiker siap cetak di kertas A4 label atau stiker motor. ID &amp; Kode referral paten selaras dengan database.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-emerald-600/20 cursor-pointer"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>Cetak Lembar Stiker ({getBatchItems().length})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowBatchPrintModal(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Group Tabs (No Print) */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl no-print text-xs">
+              <button
+                type="button"
+                onClick={() => setBatchFilter('all')}
+                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                  batchFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Semua 100 Stiker ({preGeneratedList.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBatchFilter('unassigned')}
+                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                  batchFilter === 'unassigned' ? 'bg-white text-amber-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Belum Terisi Pemilik ({unassignedCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBatchFilter('batch1')}
+                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                  batchFilter === 'batch1' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                001 - 025
+              </button>
+              <button
+                type="button"
+                onClick={() => setBatchFilter('batch2')}
+                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                  batchFilter === 'batch2' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                026 - 050
+              </button>
+              <button
+                type="button"
+                onClick={() => setBatchFilter('batch3')}
+                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                  batchFilter === 'batch3' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                051 - 075
+              </button>
+              <button
+                type="button"
+                onClick={() => setBatchFilter('batch4')}
+                className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                  batchFilter === 'batch4' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                076 - 100
+              </button>
+            </div>
+
+            {/* Printable Grid Area */}
+            <div id="mitra-batch-print-area" className="max-h-[68vh] overflow-y-auto p-2">
+              <style>{`
+                @media print {
+                  body * {
+                    visibility: hidden !important;
+                  }
+                  #mitra-batch-print-area, #mitra-batch-print-area * {
+                    visibility: visible !important;
+                  }
+                  #mitra-batch-print-area {
+                    position: absolute !important;
+                    left: 0 !important;
+                    top: 0 !important;
+                    width: 100% !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                  }
+                  .no-print {
+                    display: none !important;
+                  }
+                  .qr-sticker-card {
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                    border: 1.5px dashed #000000 !important;
+                  }
+                }
+              `}</style>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                {getBatchItems().map((m) => {
+                  const assigned = isAssigned(m);
+                  return (
+                    <div
+                      key={m.id}
+                      className="qr-sticker-card p-3 rounded-2xl border-2 border-dashed border-amber-300 bg-white flex flex-col items-center justify-between text-center space-y-2 shadow-xs hover:shadow-md transition-all relative"
+                    >
+                      <div className="w-full flex items-center justify-between text-[9px] font-black uppercase text-amber-700 tracking-wider border-b border-amber-100 pb-1">
+                        <span>NGALAM FIX PRO</span>
+                        <span className="font-mono text-slate-800">{m.referralCode}</span>
+                      </div>
+
+                      <div className="p-1 bg-white rounded-xl shadow-2xs border border-slate-100 my-0.5">
+                        <img
+                          src={`/qrcodes/mitra/${m.referralCode}.png`}
+                          alt={`QR ${m.referralCode}`}
+                          className="w-28 h-28 object-contain"
+                          onError={(e: any) => {
+                            e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(getBookingUrl(m.referralCode))}`;
+                          }}
+                        />
+                      </div>
+
+                      <div className="w-full space-y-0.5">
+                        <span className="text-[9px] font-extrabold text-slate-600 block uppercase tracking-wide">
+                          Scan Diskon Servis 5%
+                        </span>
+                        <strong className="text-xs font-black font-mono text-slate-900 block">
+                          {m.referralCode}
+                        </strong>
+                        <div className="text-[9.5px] truncate pt-0.5 border-t border-slate-100 text-slate-500">
+                          {assigned ? (
+                            <span className="font-bold text-emerald-700">{m.name}</span>
+                          ) : (
+                            <span className="italic text-slate-400">Nama: ______________</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="w-full flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5 border-t border-slate-100">
+                        <span>ID: {m.id.replace('USR-MITRA-', '')}</span>
+                        <span>NgalamFixPro</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       )}
