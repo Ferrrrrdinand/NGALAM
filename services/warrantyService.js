@@ -655,3 +655,4 @@ module.exports = {
   updateClaimStatus,
   determineWarrantyPolicy
 };
+

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   ShieldCheck, ShieldAlert, AlertTriangle, CheckCircle, Clock, 
   Search, Phone, Smartphone, User, FileText, ArrowRight, ExternalLink,
-  RefreshCw, Wrench, Calendar, Tag, Check, X, MessageSquare, Send
+  RefreshCw, Wrench, Calendar, Tag, Check, X, MessageSquare, Send,
+  Sparkles, HelpCircle, ChevronRight, CheckCircle2
 } from 'lucide-react';
 import { fetchApi, formatDateId } from '../../utils/api';
 
@@ -21,6 +22,14 @@ export default function WarrantyTab({
 }: WarrantyTabProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'in_repair' | 'active' | 'expired'>('all');
+  
+  // Quick Lookup / Cek Garansi Admin States
+  const [lookupQuery, setLookupQuery] = useState('');
+  const [lookupResult, setLookupResult] = useState<any | null>(null);
+  const [lookupNotFound, setLookupNotFound] = useState(false);
+  const [lookupLoading, setLookupLoading] = useState(false);
+
+  // Modal Review & Update Status Klaim
   const [selectedWarranty, setSelectedWarranty] = useState<any | null>(null);
   const [actionModalOpen, setActionModalOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -28,7 +37,61 @@ export default function WarrantyTab({
   const [technicianNotes, setTechnicianNotes] = useState('');
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Filter Data
+  // Modal Ajukan Klaim Baru dari Sisi Admin
+  const [newClaimModalOpen, setNewClaimModalOpen] = useState(false);
+  const [claimComplaint, setClaimComplaint] = useState('');
+  const [claimMethod, setClaimMethod] = useState('Datang Langsung ke Workshop Meja 1');
+  const [submittingClaim, setSubmittingClaim] = useState(false);
+
+  // Handle Cek Garansi Cepat Admin
+  const handleQuickLookup = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const q = lookupQuery.trim().toLowerCase();
+    if (!q) return;
+
+    setLookupLoading(true);
+    setLookupNotFound(false);
+    setLookupResult(null);
+
+    const qDigits = q.replace(/\D/g, '');
+
+    // 1. Cek di memori lokal tab
+    const matched = warranties.find(w => {
+      const code = String(w.warranty_code || '').toLowerCase();
+      const orderId = String(w.order_id || '').toLowerCase();
+      const inv = String(w.invoice_number || '').toLowerCase();
+      const wa = String(w.customer_whatsapp || '').replace(/\D/g, '');
+      const name = String(w.customer_name || '').toLowerCase();
+
+      return code.includes(q) ||
+        orderId.includes(q) ||
+        inv.includes(q) ||
+        (qDigits.length >= 6 && wa.includes(qDigits)) ||
+        (name.length >= 3 && name.includes(q));
+    });
+
+    if (matched) {
+      setLookupResult(matched);
+      setLookupLoading(false);
+      return;
+    }
+
+    // 2. Jika tidak ada di cache, query ke backend API
+    try {
+      const res = await fetchApi(`/api/warranties?search=${encodeURIComponent(lookupQuery.trim())}`);
+      if (res.ok && res.data && res.data.data && res.data.data.length > 0) {
+        setLookupResult(res.data.data[0]);
+      } else {
+        setLookupNotFound(true);
+      }
+    } catch {
+      setLookupNotFound(true);
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
+  // Filter Data untuk Tabel
   const filteredWarranties = warranties.filter((w) => {
     // 1. Status Filter
     if (statusFilter === 'pending' && w.claimStatus !== 'pending') return false;
@@ -59,6 +122,15 @@ export default function WarrantyTab({
     setActionModalOpen(true);
   };
 
+  // Open New Claim Modal
+  const handleOpenNewClaimModal = (w: any) => {
+    setSelectedWarranty(w);
+    setClaimComplaint('');
+    setClaimMethod('Datang Langsung ke Workshop Meja 1');
+    setFeedbackMsg(null);
+    setNewClaimModalOpen(true);
+  };
+
   // Submit Claim Status Update
   const handleSaveClaimStatus = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +151,12 @@ export default function WarrantyTab({
       if (res.ok && res.data && res.data.success) {
         setFeedbackMsg({ type: 'success', text: `Status klaim unit berhasil diubah menjadi: ${newClaimStatus}` });
         if (onRefresh) onRefresh();
+        
+        // Update lookupResult jika sedang dibuka
+        if (lookupResult && lookupResult.id === selectedWarranty.id) {
+          setLookupResult(res.data.data);
+        }
+
         setTimeout(() => {
           setActionModalOpen(false);
         }, 1200);
@@ -89,6 +167,51 @@ export default function WarrantyTab({
       setFeedbackMsg({ type: 'error', text: 'Terjadi kesalahan koneksi saat memperbarui status klaim.' });
     } finally {
       setUpdating(false);
+    }
+  };
+
+  // Submit Pengajuan Klaim Baru oleh Admin
+  const handleAdminSubmitClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedWarranty || !claimComplaint.trim()) {
+      setFeedbackMsg({ type: 'error', text: 'Harap jelaskan keluhan kerusakan pada unit.' });
+      return;
+    }
+
+    setSubmittingClaim(true);
+    setFeedbackMsg(null);
+
+    try {
+      const res = await fetchApi('/api/warranties/claim', {
+        method: 'POST',
+        body: {
+          warrantyCode: selectedWarranty.warranty_code,
+          ticketId: selectedWarranty.order_id,
+          complaint: claimComplaint.trim(),
+          claimMethod,
+          customerName: selectedWarranty.customer_name,
+          whatsapp: selectedWarranty.customer_whatsapp
+        }
+      });
+
+      if (res.ok && res.data && res.data.success) {
+        setFeedbackMsg({ type: 'success', text: `Klaim berhasil diajukan dengan No: ${res.data.claimId}!` });
+        if (onRefresh) onRefresh();
+
+        if (lookupResult && lookupResult.id === selectedWarranty.id) {
+          setLookupResult(res.data.warranty);
+        }
+
+        setTimeout(() => {
+          setNewClaimModalOpen(false);
+        }, 1200);
+      } else {
+        setFeedbackMsg({ type: 'error', text: res.data?.message || 'Gagal mengajukan klaim garansi.' });
+      }
+    } catch {
+      setFeedbackMsg({ type: 'error', text: 'Terjadi kesalahan koneksi saat mengajukan klaim garansi.' });
+    } finally {
+      setSubmittingClaim(false);
     }
   };
 
@@ -131,10 +254,10 @@ export default function WarrantyTab({
         <div>
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-amber-600" />
-            <span>Database Tabel Garansi Unit &amp; Manajemen Klaim Servis</span>
+            <span>Pusat Cek Garansi &amp; Manajemen Klaim Servis</span>
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Data tersimpan terpusat di database PostgreSQL &amp; sinkron dengan setiap akun member (Baterai 90 hari, Layar &amp; Hardware 30 hari).
+            Cek validitas masa garansi unit pelanggan, pantau sisa hari aktif, verifikasi sertifikat resmi, dan setujui klaim perbaikan workshop.
           </p>
         </div>
 
@@ -145,12 +268,242 @@ export default function WarrantyTab({
             className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-amber-600' : ''}`} />
-            <span>Segarkan</span>
+            <span>Segarkan Data</span>
           </button>
         </div>
       </div>
 
-      {/* 2. Stat Cards */}
+      {/* 2. FORM CEK GARANSI CEPAT ADMIN (QUICK WARRANTY LOOKUP) */}
+      <div className="bg-gradient-to-br from-amber-500/10 via-amber-50/60 to-white p-5 sm:p-6 rounded-3xl border-2 border-amber-300 shadow-md">
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold shadow-xs">
+            <Search className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-sm font-black text-slate-900 tracking-tight">Form Cek Validitas Garansi Unit (Lookup Admin)</h3>
+            <p className="text-[11px] text-slate-600">
+              Ketik No. Tiket (<code className="font-mono text-amber-800">NGF-...</code>), Kode Garansi (<code className="font-mono text-amber-800">GAR-...</code>), No. Faktur (<code className="font-mono text-amber-800">INV-...</code>), atau Nomor WhatsApp Member
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleQuickLookup} className="flex flex-col sm:flex-row gap-2.5">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Contoh: GAR-90D-1033 / NGF-20261105-5755 / 081377889900..."
+              value={lookupQuery}
+              onChange={(e) => { setLookupQuery(e.target.value); setLookupNotFound(false); }}
+              className="w-full pl-10 pr-4 py-3 bg-white border border-amber-200 rounded-2xl text-xs text-slate-900 font-semibold focus:outline-hidden focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all shadow-xs"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={lookupLoading || !lookupQuery.trim()}
+            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs rounded-2xl shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          >
+            {lookupLoading ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Memeriksa...</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-4 h-4" />
+                <span>Cek Garansi Sekarang</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Not Found Alert */}
+        {lookupNotFound && (
+          <div className="mt-3.5 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 flex items-center justify-between gap-2 animate-fadeIn">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>Data garansi untuk kata kunci "<b>{lookupQuery}</b>" tidak ditemukan di database. Pastikan nomor tiket, kode garansi, atau nomor WA sudah benar.</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setLookupNotFound(false)}
+              className="text-rose-500 hover:text-rose-700 text-xs font-bold"
+            >
+              Tutup
+            </button>
+          </div>
+        )}
+
+        {/* HASIL CEK GARANSI INTERAKTIF (SERTIFIKAT DIGITAL PREVIEW) */}
+        {lookupResult && (
+          <div className="mt-4 p-5 sm:p-6 bg-white border-2 border-amber-400 rounded-3xl shadow-lg space-y-4 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-amber-500/10 text-amber-700">
+                  <ShieldCheck className="w-5 h-5 text-amber-600" />
+                </span>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-wider text-amber-700">Sertifikat Garansi Resmi Workshop Lab</div>
+                  <div className="text-base font-black text-slate-900 font-mono">{lookupResult.warranty_code}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {lookupResult.claimStatus === 'pending' ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-white animate-pulse">
+                    ⏳ KLAIM DALAM PENINJAUAN LAB
+                  </span>
+                ) : lookupResult.claimStatus === 'approved' ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-100 text-blue-800 border border-blue-300">
+                    ✓ KLAIM DISETUJUI LAB
+                  </span>
+                ) : lookupResult.claimStatus === 'in_repair' ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-300">
+                    ⚙️ SEDANG DALAM PENANGANAN LAB
+                  </span>
+                ) : lookupResult.claimStatus === 'resolved' ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    🎉 KLAIM SELESAI DIGANTI
+                  </span>
+                ) : lookupResult.isActive ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    🛡️ GARANSI AKTIF ({lookupResult.daysRemaining} Hari Lagi)
+                  </span>
+                ) : (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-slate-200 text-slate-600">
+                    ⚠️ MASA GARANSI BERAKHIR
+                  </span>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setLookupResult(null)}
+                  className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  title="Tutup Hasil Pencarian"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* 4-Box Grid Detail */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Pelanggan / Member</span>
+                <strong className="text-slate-900 block font-bold text-sm">{lookupResult.customer_name}</strong>
+                <div className="flex items-center gap-1 text-slate-500 text-[11px] mt-0.5">
+                  <Phone className="w-3 h-3 text-slate-400" />
+                  <span>{lookupResult.customer_whatsapp || '-'}</span>
+                </div>
+                {lookupResult.customer_id && (
+                  <span className="inline-block px-1.5 py-0.5 mt-1 bg-amber-100 text-amber-900 rounded text-[9px] font-black">
+                    Member Terdaftar
+                  </span>
+                )}
+              </div>
+
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Perangkat Smartphone</span>
+                <strong className="text-slate-900 block font-bold text-sm">{lookupResult.brand_model || lookupResult.device_type}</strong>
+                <span className="text-[11px] text-slate-500 block truncate mt-0.5">{lookupResult.service_item}</span>
+                <span className="text-[10px] font-bold text-amber-800 block mt-1">
+                  Tiket: {lookupResult.order_id || lookupResult.invoice_number || '-'}
+                </span>
+              </div>
+
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Cakupan Proteksi</span>
+                <strong className="text-amber-800 block font-bold text-sm">{lookupResult.warranty_type_label}</strong>
+                <div className="text-[11px] text-slate-600 mt-0.5">
+                  Masa Berlaku: <b>{lookupResult.startDateFormatted}</b> s/d <b>{lookupResult.endDateFormatted}</b>
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Status Klaim &amp; Frekuensi</span>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <strong className="text-slate-900 font-bold text-sm">
+                    {lookupResult.claimCount > 0 ? `${lookupResult.claimCount}x Klaim Tercatat` : 'Belum Pernah Klaim'}
+                  </strong>
+                </div>
+                <div className="text-[11px] text-slate-500 mt-1">
+                  {lookupResult.claimStatus === 'pending'
+                    ? '⚠️ Butuh keputusan lab segera'
+                    : lookupResult.claimStatus === 'resolved'
+                    ? 'Selesai diganti / normal'
+                    : 'Kondisi proteksi aman'}
+                </div>
+              </div>
+            </div>
+
+            {/* Riwayat Klaim Terakhir Jika Ada */}
+            {lookupResult.claimHistory && lookupResult.claimHistory.length > 0 && (
+              <div className="p-4 bg-amber-50/60 border border-amber-200 rounded-2xl text-xs space-y-1.5">
+                <div className="font-bold text-amber-900 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-600" />
+                  <span>Riwayat Keluhan Klaim Pelanggan:</span>
+                </div>
+                <div className="p-3 bg-white border border-amber-200 rounded-xl text-slate-800 italic">
+                  "{lookupResult.claimHistory[lookupResult.claimHistory.length - 1].complaint || 'Tidak ada catatan keluhan tertulis.'}"
+                </div>
+                {lookupResult.technician_notes && (
+                  <div className="text-[11px] text-slate-600 pt-1">
+                    <b>Catatan Teknisi Lab:</b> {lookupResult.technician_notes}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Action Bar Khusus Hasil Pencarian */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center gap-2">
+                {lookupResult.claimStatus === 'pending' || lookupResult.claimStatus === 'in_repair' ? (
+                  <button
+                    type="button"
+                    onClick={() => handleOpenActionModal(lookupResult)}
+                    className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Wrench className="w-4 h-4" />
+                    <span>Tinjau &amp; Putuskan Klaim</span>
+                  </button>
+                ) : lookupResult.isActive ? (
+                  <button
+                    type="button"
+                    onClick={() => handleOpenNewClaimModal(lookupResult)}
+                    className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <ShieldAlert className="w-4 h-4" />
+                    <span>Ajukan Klaim untuk Unit Ini</span>
+                  </button>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={() => handleOpenActionModal(lookupResult)}
+                  className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                >
+                  Ubah Catatan Teknisi
+                </button>
+              </div>
+
+              {lookupResult.customer_whatsapp && (
+                <a
+                  href={`https://wa.me/${lookupResult.customer_whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Halo Kak ${lookupResult.customer_name}, perihal garansi unit ${lookupResult.brand_model} (${lookupResult.warranty_code}) dari Ngalam Fix Pro...`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-colors flex items-center gap-1.5 shadow-xs"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Hubungi Pelanggan via WhatsApp</span>
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 3. Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between">
@@ -209,7 +562,7 @@ export default function WarrantyTab({
         </div>
       </div>
 
-      {/* 3. Search & Filter Bar */}
+      {/* 4. Filter & Search Bar untuk Tabel */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs font-bold">
           <button
@@ -272,12 +625,12 @@ export default function WarrantyTab({
           </button>
         </div>
 
-        {/* Search Input */}
+        {/* Filter Input */}
         <div className="relative min-w-[260px]">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Cari Kode Garansi, Member, No HP, Tipe HP..."
+            placeholder="Filter daftar tabel di bawah..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-slate-800"
@@ -285,7 +638,7 @@ export default function WarrantyTab({
         </div>
       </div>
 
-      {/* 4. Table / Card List */}
+      {/* 5. Tabel Seluruh Data Garansi */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         {filteredWarranties.length === 0 ? (
           <div className="py-16 text-center space-y-3">
@@ -306,7 +659,7 @@ export default function WarrantyTab({
                   <th className="py-3 px-4">Masa Berlaku</th>
                   <th className="py-3 px-4 text-center">Status Garansi</th>
                   <th className="py-3 px-4 text-center">Status Klaim</th>
-                  <th className="py-3 px-4 text-right">Aksi</th>
+                  <th className="py-3 px-4 text-right">Aksi Cepat</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -429,9 +782,21 @@ export default function WarrantyTab({
                         )}
                       </td>
 
-                      {/* 7. Aksi */}
+                      {/* 7. Aksi Cepat */}
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setLookupResult(w);
+                              window.scrollTo({ top: 120, behavior: 'smooth' });
+                            }}
+                            className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                            title="Tampilkan Detail Sertifikat Garansi"
+                          >
+                            Cek Detail
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => handleOpenActionModal(w)}
@@ -441,7 +806,7 @@ export default function WarrantyTab({
                                 : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
                             }`}
                           >
-                            <span>{hasPendingClaim ? 'Tinjau Klaim' : 'Kelola Klaim'}</span>
+                            <span>{hasPendingClaim ? 'Tinjau Klaim' : 'Kelola'}</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
 
@@ -467,7 +832,7 @@ export default function WarrantyTab({
         )}
       </div>
 
-      {/* 5. Modal Review / Kelola Status Klaim Garansi */}
+      {/* 6. Modal Review / Kelola Keputusan Status Klaim Garansi */}
       {actionModalOpen && selectedWarranty && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
@@ -652,6 +1017,80 @@ export default function WarrantyTab({
               </div>
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {/* 7. Modal Ajukan Klaim Baru dari Sisi Admin */}
+      {newClaimModalOpen && selectedWarranty && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-amber-600" />
+                <h3 className="text-sm font-bold text-slate-900">Ajukan Klaim Garansi untuk Pelanggan</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNewClaimModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-xl text-xs space-y-1">
+              <div>No. Sertifikat: <b className="font-mono">{selectedWarranty.warranty_code}</b></div>
+              <div>Pelanggan: <b>{selectedWarranty.customer_name}</b> ({selectedWarranty.customer_whatsapp})</div>
+              <div>Perangkat: <b>{selectedWarranty.brand_model}</b></div>
+            </div>
+
+            <form onSubmit={handleAdminSubmitClaim} className="space-y-3">
+              {feedbackMsg && (
+                <div className={`p-3 rounded-xl text-xs font-semibold ${
+                  feedbackMsg.type === 'success' ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+                }`}>
+                  {feedbackMsg.text}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Keluhan / Kendala Unit Pelanggan:
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  value={claimComplaint}
+                  onChange={(e) => setClaimComplaint(e.target.value)}
+                  placeholder="Jelaskan kendala yang dialami unit..."
+                  className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Metode Kedatangan Unit:</label>
+                <select
+                  value={claimMethod}
+                  onChange={(e) => setClaimMethod(e.target.value)}
+                  className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                >
+                  <option value="Datang Langsung ke Workshop Meja 1">Datang Langsung ke Workshop Meja 1</option>
+                  <option value="Layanan Antar-Jemput (Pickup) Workshop">Layanan Antar-Jemput (Pickup) Workshop</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="submit"
+                  disabled={submittingClaim}
+                  className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  {submittingClaim ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-4 h-4" />}
+                  <span>Kirim &amp; Catat Pengajuan Klaim</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

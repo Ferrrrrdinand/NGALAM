@@ -395,7 +395,7 @@ export default function AdminDashboard() {
     { id: 'technician', label: 'Meja Kerja Lab Teknisi', icon: <Wrench className="w-4 h-4 shrink-0" /> },
     { 
       id: 'warranties', 
-      label: 'Klaim & Garansi Unit', 
+      label: 'Cek & Klaim Garansi Unit', 
       icon: <ShieldAlert className="w-4 h-4 shrink-0" />, 
       count: warranties.filter(w => w.claimStatus === 'pending').length || (warranties.length > 0 ? warranties.length : undefined) 
     },
@@ -550,6 +550,21 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            {/* Tombol Cepat Cek Garansi Admin */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('warranties')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === 'warranties'
+                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                  : 'bg-amber-50 hover:bg-amber-100/80 text-amber-900 border border-amber-200 shadow-2xs'
+              }`}
+              title="Cek Status Garansi Unit & Kelola Klaim Pelanggan"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-600" />
+              <span>Cek Garansi Unit</span>
+            </button>
+
             {dbStatus && (
               <div className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs ${
                 dbStatus.connected 
