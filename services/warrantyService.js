@@ -59,19 +59,69 @@ function formatDateId(dateInput) {
 }
 
 // 3. Hitung status garansi aktif, sisa hari, dan kedaluwarsa
+// Countdown 30/90 hari resmi dimulai tepat saat kasir menyelesaikan pembayaran
 function enrichWarrantyCalculations(w) {
+  const duration = Number(w.duration_days) || 30;
+  const isPaid = Boolean(
+    w.is_paid ||
+    w.paid ||
+    w.invoice_number ||
+    w.paid_at ||
+    (w.raw_data && (w.raw_data.paid || w.raw_data.paidAt || w.raw_data.invoiceNumber || w.raw_data.invoiceNo)) ||
+    (w.status === 'active' && w.start_date)
+  );
+
+  // Jika belum diselesaikan kasir (belum lunas): Garansi siaga, countdown belum berjalan
+  if (!isPaid && (!w.start_date || w.status === 'pending_payment')) {
+    return {
+      ...w,
+      isPaid: false,
+      isActive: false,
+      isExpired: false,
+      status: 'pending_payment',
+      statusLabel: 'Menunggu Pelunasan Kasir',
+      durationDays: duration,
+      daysRemaining: duration,
+      hoursRemaining: 0,
+      countdownLabel: `${duration} Hari (Mulai saat kasir menyelesaikan pembayaran)`,
+      countdownStarted: false,
+      startDateFormatted: 'Mulai saat kasir menyelesaikan pembayaran',
+      endDateFormatted: `+${duration} Hari setelah lunas`,
+      claimStatus: 'none',
+      claimCount: 0,
+      claimHistory: [],
+      claimWaUrl: '#'
+    };
+  }
+
+  // Jika sudah lunas diselesaikan kasir: Countdown berjalan real-time dari waktu pelunasan kasir
   const now = new Date();
   const start = w.start_date ? new Date(w.start_date) : now;
-  const duration = Number(w.duration_days) || 30;
   const end = w.end_date ? new Date(w.end_date) : new Date(start.getTime() + duration * 24 * 60 * 60 * 1000);
 
   const diffTime = end.getTime() - now.getTime();
   const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-  const isExpired = diffTime < 0;
+  const hoursRemaining = Math.max(0, Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+  const minutesRemaining = Math.max(0, Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60)));
+  const isExpired = diffTime <= 0;
 
   let computedStatus = w.status || 'active';
-  if (isExpired && computedStatus === 'active') {
+  if (computedStatus === 'pending_payment') {
+    computedStatus = 'active';
+  }
+  if (isExpired) {
     computedStatus = 'expired';
+  }
+
+  let countdownLabel = '';
+  if (isExpired) {
+    countdownLabel = 'Masa Garansi Berakhir';
+  } else if (daysRemaining > 1) {
+    countdownLabel = `Sisa ${daysRemaining} Hari (${hoursRemaining} Jam Lagi)`;
+  } else if (daysRemaining === 1) {
+    countdownLabel = `Sisa 1 Hari (${hoursRemaining} Jam Lagi)`;
+  } else {
+    countdownLabel = `Sisa ${hoursRemaining} Jam ${minutesRemaining} Menit`;
   }
 
   // Pre-filled WhatsApp claim message
@@ -85,7 +135,7 @@ function enrichWarrantyCalculations(w) {
     `👤 Pemilik: ${w.customer_name}\n` +
     `📞 WhatsApp: ${w.customer_whatsapp || '-'}\n` +
     `🛡️ Jenis: ${w.warranty_type_label}\n` +
-    `⏳ Masa Berlaku: s/d ${formatDateId(end)} (Sisa ${daysRemaining} Hari)\n` +
+    `⏳ Masa Berlaku: s/d ${formatDateId(end)} (${countdownLabel})\n` +
     `---------------------------------------\n` +
     `Mohon info ketersediaan teknisi lab workshop. Terima kasih!`
   );
@@ -93,13 +143,20 @@ function enrichWarrantyCalculations(w) {
 
   return {
     ...w,
-    startDateFormatted: formatDateId(start),
-    endDateFormatted: formatDateId(end),
+    isPaid: true,
+    isActive: !isExpired && computedStatus !== 'void',
+    isExpired,
+    status: computedStatus,
+    statusLabel: isExpired ? 'Kedaluwarsa' : 'Aktif',
     durationDays: duration,
     daysRemaining,
-    isExpired,
-    isActive: !isExpired && computedStatus !== 'void',
-    status: computedStatus,
+    hoursRemaining,
+    minutesRemaining,
+    countdownLabel,
+    countdownStarted: true,
+    paidAtFormatted: formatDateId(start),
+    startDateFormatted: formatDateId(start),
+    endDateFormatted: formatDateId(end),
     claimStatus: w.claim_status || 'none',
     claimCount: Number(w.claim_count) || 0,
     claimHistory: Array.isArray(w.claim_history) ? w.claim_history : [],
@@ -424,14 +481,39 @@ async function createOrUpdateWarrantyForOrder(orderOrTx) {
 
   // Tentukan kebijakan garansi (Baterai 90 hari, Software 7 hari, Cas 14 hari, Hardware 30 hari)
   const policy = determineWarrantyPolicy(serviceText || brandModel);
+  const duration = policy.durationDays;
 
-  const startDate = orderOrTx.paidAt || orderOrTx.completedAt || orderOrTx.createdAt || new Date().toISOString();
-  const start = new Date(startDate);
-  const end = new Date(start.getTime() + policy.durationDays * 24 * 60 * 60 * 1000);
+  // Cek apakah kasir telah menyelesaikan pembayaran
+  const isPaid = Boolean(
+    orderOrTx.paid === true ||
+    orderOrTx.paidAt ||
+    orderOrTx.paymentDate ||
+    orderOrTx.invoiceNumber ||
+    orderOrTx.invoiceNo ||
+    orderOrTx.totalPaid > 0 ||
+    orderOrTx.paymentMethod ||
+    (typeof orderOrTx.statusText === 'string' && orderOrTx.statusText.toLowerCase().includes('lunas')) ||
+    (orderOrTx.currentStep === 5 || orderOrTx.step === 5)
+  );
+
+  // Countdown 30/90 hari resmi dimulai tepat saat kasir menyelesaikan pembayaran!
+  let startDate = null;
+  let endDate = null;
+  let status = 'pending_payment';
+
+  if (isPaid) {
+    status = 'active';
+    // Waktu kasir menyelesaikan pembayaran
+    const paymentTimestamp = orderOrTx.paidAt || orderOrTx.paymentDate || (orderOrTx.invoiceNumber ? orderOrTx.createdAt : null) || new Date().toISOString();
+    const start = new Date(paymentTimestamp);
+    startDate = start.toISOString();
+    const end = new Date(start.getTime() + duration * 24 * 60 * 60 * 1000);
+    endDate = end.toISOString();
+  }
 
   // Buat kode garansi unik
   const cleanDigits = String(orderId || invoiceNo || Date.now()).replace(/\D/g, '').slice(-6) || Math.floor(100000 + Math.random() * 900000);
-  const warrantyCode = `GAR-${policy.durationDays}D-${cleanDigits}`;
+  const warrantyCode = `GAR-${duration}D-${cleanDigits}`;
 
   // Cek apakah garansi sudah ada sebelumnya
   const existingIdx = list.findIndex(w => 
@@ -441,18 +523,27 @@ async function createOrUpdateWarrantyForOrder(orderOrTx) {
 
   let record;
   if (existingIdx >= 0) {
+    const existing = list[existingIdx];
+    // Jika sebelumnya belum ada startDate dan sekarang kasir telah menyelesaikan pembayaran:
+    const finalStartDate = existing.start_date || startDate;
+    const finalEndDate = existing.end_date || endDate;
+    const finalStatus = isPaid ? (existing.status === 'pending_payment' ? 'active' : existing.status) : (existing.status || 'pending_payment');
+
     record = {
-      ...list[existingIdx],
-      customer_id: customerId || list[existingIdx].customer_id,
-      customer_name: customerName || list[existingIdx].customer_name,
-      customer_whatsapp: phone || list[existingIdx].customer_whatsapp,
-      customer_email: email || list[existingIdx].customer_email,
-      brand_model: brandModel || list[existingIdx].brand_model,
-      service_item: serviceText || list[existingIdx].service_item,
+      ...existing,
+      customer_id: customerId || existing.customer_id,
+      customer_name: customerName || existing.customer_name,
+      customer_whatsapp: phone || existing.customer_whatsapp,
+      customer_email: email || existing.customer_email,
+      brand_model: brandModel || existing.brand_model,
+      service_item: serviceText || existing.service_item,
       warranty_type_label: policy.label,
-      duration_days: policy.durationDays,
-      start_date: list[existingIdx].start_date || start.toISOString(),
-      end_date: list[existingIdx].end_date || end.toISOString(),
+      duration_days: duration,
+      is_paid: isPaid || existing.is_paid,
+      paid_at: finalStartDate,
+      start_date: finalStartDate,
+      end_date: finalEndDate,
+      status: finalStatus,
       updated_at: new Date().toISOString()
     };
     list[existingIdx] = record;
@@ -470,10 +561,12 @@ async function createOrUpdateWarrantyForOrder(orderOrTx) {
       brand_model: brandModel,
       service_item: serviceText,
       warranty_type_label: policy.label,
-      duration_days: policy.durationDays,
-      start_date: start.toISOString(),
-      end_date: end.toISOString(),
-      status: 'active',
+      duration_days: duration,
+      is_paid: isPaid,
+      paid_at: startDate,
+      start_date: startDate,
+      end_date: endDate,
+      status: status,
       claim_status: 'none',
       claim_count: 0,
       claim_history: [],

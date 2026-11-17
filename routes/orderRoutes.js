@@ -200,6 +200,9 @@ async function handleUpdateOrder(req, res) {
     // Jika pembayaran lunas dikonfirmasi kasir/admin:
     // Cek apakah order memiliki mitra referral untuk dicairkan komisinya
     const isPayingNow = updates.paid === true || updates.currentStep === 5 || updates.step === 5 || (typeof updates.statusText === 'string' && updates.statusText.toLowerCase().includes('lunas'));
+    if (isPayingNow && !updates.paidAt) {
+      updates.paidAt = new Date().toISOString();
+    }
     const affiliateRef = existing.affiliateRef || updates.affiliateRef || existing.referralCode || updates.referralCode;
     const isAffiliatePending = existing.affiliateCommissionStatus !== 'paid' && Boolean(affiliateRef);
 

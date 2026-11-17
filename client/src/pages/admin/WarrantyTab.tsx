@@ -492,20 +492,39 @@ export default function WarrantyTab({
                         </div>
                       </td>
 
-                      {/* 5. MASA BERLAKU */}
+                      {/* 5. MASA BERLAKU & COUNTDOWN REAL-TIME */}
                       <td className="py-3.5 px-4 align-top">
                         <div className="text-[11px] text-slate-700">
-                          <div>S/d: <b>{w.endDateFormatted || formatDateId(w.end_date)}</b></div>
-                        </div>
-                        <div className="mt-1">
-                          {w.isExpired ? (
-                            <span className="text-[10px] font-bold text-rose-600 flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> Kedaluwarsa
-                            </span>
+                          {w.countdownStarted ? (
+                            <>
+                              <div className="text-[10px] text-slate-400">
+                                Mulai (Kasir): <span className="text-slate-600 font-semibold">{w.startDateFormatted || formatDateId(w.start_date)}</span>
+                              </div>
+                              <div className="mt-0.5">
+                                Berakhir: <b>{w.endDateFormatted || formatDateId(w.end_date)}</b>
+                              </div>
+                            </>
                           ) : (
-                            <span className="text-[10px] font-bold text-emerald-700 flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full inline-block">
-                              <ShieldCheck className="w-3 h-3 text-emerald-600 inline" />
-                              Sisa {w.daysRemaining} Hari
+                            <div className="text-[10.5px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                              ⏳ Countdown mulai saat kasir menyelesaikan pembayaran
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-1.5">
+                          {w.countdownStarted ? (
+                            w.isExpired ? (
+                              <span className="text-[10px] font-bold text-rose-600 flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> Kedaluwarsa
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold text-emerald-800 flex items-center gap-1 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-full inline-block shadow-2xs">
+                                <ShieldCheck className="w-3 h-3 text-emerald-600 inline" />
+                                {w.countdownLabel || `Sisa ${w.daysRemaining} Hari`}
+                              </span>
+                            )
+                          ) : (
+                            <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full inline-block">
+                              Durasi: {w.durationDays || 30} Hari
                             </span>
                           )}
                         </div>
@@ -513,10 +532,14 @@ export default function WarrantyTab({
 
                       {/* 6. STATUS GARANSI */}
                       <td className="py-3.5 px-4 align-top text-center">
-                        {w.isActive ? (
+                        {w.countdownStarted && w.isActive ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-full text-[10px] font-black">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Aktif
+                            Garansi Aktif
+                          </span>
+                        ) : !w.countdownStarted ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-[10px] font-bold">
+                            Menunggu Kasir
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-600 border border-slate-200 rounded-full text-[10px] font-bold">

@@ -188,31 +188,10 @@ async function buildMitraCustomerLogin(req, mitra, rememberMe) {
 }
 
 /**
- * Hitung Status Garansi Resmi 90 Hari Workshop Lab
+ * Hitung Status Garansi Resmi Workshop Lab
+ * Countdown 30/90 hari resmi dimulai ketika kasir menyelesaikan pembayaran!
  */
-function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = '', customerName = '', damageTypeOrDesc = '', statusStr = '') {
-  let orderDate = new Date();
-  if (orderDateStr) {
-    const parsed = new Date(orderDateStr);
-    if (!isNaN(parsed.getTime())) {
-      orderDate = parsed;
-    } else {
-      // Indonesian date string parser, e.g. "23 Okt 2026, 11.00"
-      const match = String(orderDateStr).match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
-      if (match) {
-        const months = {
-          'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'may': 4, 'jun': 5,
-          'jul': 6, 'agu': 7, 'aug': 7, 'sep': 8, 'okt': 9, 'oct': 9, 'nov': 10, 'des': 11, 'dec': 11
-        };
-        const day = parseInt(match[1], 10);
-        const mKey = match[2].toLowerCase().substring(0, 3);
-        const month = months[mKey] !== undefined ? months[mKey] : 9;
-        const year = parseInt(match[3], 10);
-        orderDate = new Date(year, month, day);
-      }
-    }
-  }
-
+function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = '', customerName = '', damageTypeOrDesc = '', statusStr = '', isPaid = false, paidAt = '') {
   // Tentukan durasi garansi: Baterai = 90 Hari, lainnya 7 s/d 30 Hari
   const damageStr = String(damageTypeOrDesc || '').toLowerCase();
   let warrantyDurationDays = 30; // default 1 bulan
@@ -231,41 +210,62 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
     warrantyDurationDays = 30; // LCD, OLED, Kaca OCA, Fleksibel, IC Motherboard, Kamera OIS: 1 Bulan
     warrantyTypeLabel = 'Garansi Servis Hardware (30 Hari / 1 Bulan)';
   }
-  const startDate = new Date(orderDate);
-  const endDate = new Date(startDate.getTime() + (warrantyDurationDays * 24 * 60 * 60 * 1000));
-  const today = new Date();
 
-  // Reset hours to start of day for accurate remaining days
-  const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-  const endDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-  const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-  const diffTime = endDay.getTime() - todayDay.getTime();
-  const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-  const isExpired = diffTime < 0;
-
-  // Siap Diambil (Step 4) atau Sudah Diambil / Selesai (Step 5) otomatis masuk Garansi Aktif & Selesai Diambil
   const sText = String(statusStr || '').toLowerCase();
-  const isReadyOrDone = parseInt(step, 10) >= 4 ||
-    sText.includes('siap') ||
-    sText.includes('ambil') ||
-    sText.includes('selesai') ||
-    sText.includes('lunas');
+  const isCompletedOrPaid = isPaid === true ||
+    Boolean(paidAt) ||
+    sText.includes('lunas') ||
+    (parseInt(step, 10) >= 5 && (sText.includes('selesai') || sText.includes('ambil')));
 
   const formatDate = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-  const startDateFormatted = formatDate(startDate);
-  const endDateFormatted = formatDate(endDate);
-
   const cleanNum = String(ticketId).replace(/[^0-9]/g, '').slice(-8) || `${warrantyDurationDays}D`;
   const warrantyCode = `GAR-${warrantyDurationDays}D-${cleanNum}`;
 
+  // JIKA BELUM LUNAS DI KASIR: Countdown belum berjalan
+  if (!isCompletedOrPaid) {
+    return {
+      warrantyCode,
+      warrantyTypeLabel,
+      durationDays: warrantyDurationDays,
+      startDate: 'Belum Mulai (Menunggu Pelunasan)',
+      endDate: `+${warrantyDurationDays} Hari setelah kasir menyelesaikan pembayaran`,
+      daysRemaining: warrantyDurationDays,
+      isExpired: false,
+      isActive: false,
+      countdownStarted: false,
+      isPendingCompletion: true,
+      statusLabel: `⏳ Garansi Siaga (Countdown ${warrantyDurationDays} Hari mulai ketika kasir menyelesaikan pembayaran)`,
+      statusBadgeClass: 'pending',
+      coverage: 'Garansi Komponen/Sparepart Asli, Kalibrasi Hardware & Bebas Biaya Jasa Pemasangan Ulang',
+      claimWaUrl: '#'
+    };
+  }
+
+  // JIKA SUDAH LUNAS: Countdown 30/90 hari berjalan sejak waktu kasir menyelesaikan pembayaran!
+  let paymentDate = new Date();
+  const dateCandidate = paidAt || orderDateStr;
+  if (dateCandidate) {
+    const parsed = new Date(dateCandidate);
+    if (!isNaN(parsed.getTime())) {
+      paymentDate = parsed;
+    }
+  }
+
+  const startDate = new Date(paymentDate);
+  const endDate = new Date(startDate.getTime() + (warrantyDurationDays * 24 * 60 * 60 * 1000));
+  const today = new Date();
+
+  const diffTime = endDate.getTime() - today.getTime();
+  const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  const isExpired = diffTime <= 0;
+
+  const startDateFormatted = formatDate(startDate);
+  const endDateFormatted = formatDate(endDate);
+
   let statusLabel = '';
   let statusBadgeClass = '';
-  if (!isReadyOrDone) {
-    statusLabel = `⏳ Garansi Siaga (Aktif Penuh ${warrantyDurationDays} Hari Setelah Unit Siap / Selesai Diambil)`;
-    statusBadgeClass = 'pending';
-  } else if (!isExpired) {
-    statusLabel = `🛡️ ${warrantyTypeLabel} Aktif (Sisa ${daysRemaining} Hari)`;
+  if (!isExpired) {
+    statusLabel = `🛡️ ${warrantyTypeLabel} Aktif (Sisa ${daysRemaining} Hari • Dimulai saat pelunasan kasir)`;
     statusBadgeClass = 'active';
   } else {
     statusLabel = `⚠️ Masa Garansi ${warrantyDurationDays} Hari Telah Berakhir (${endDateFormatted})`;
@@ -283,6 +283,24 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
     `Mohon dibantu jadwal pengecekan unit di workshop. Terima kasih!`
   );
   const claimWaUrl = `https://wa.me/628113185858?text=${waText}`;
+
+  return {
+    warrantyCode,
+    warrantyTypeLabel,
+    durationDays: warrantyDurationDays,
+    startDate: startDateFormatted,
+    endDate: endDateFormatted,
+    daysRemaining: daysRemaining,
+    isExpired: isExpired,
+    isActive: !isExpired,
+    countdownStarted: true,
+    isPendingCompletion: false,
+    statusLabel,
+    statusBadgeClass,
+    coverage: 'Garansi Komponen/Sparepart Asli, Kalibrasi Hardware & Bebas Biaya Jasa Pemasangan Ulang',
+    claimWaUrl
+  };
+}
 
   return {
     warrantyCode,
@@ -314,7 +332,8 @@ function formatCustomerOrder(o) {
   const phoneType = o.phoneType || o.brandModel || 'Smartphone';
   const customerName = o.customerName || o.name || 'Pelanggan Ngalam Fix Pro';
   const damageText = o.damageDescription || o.damage || o.damageType || (Array.isArray(o.problemTags) ? o.problemTags.join(' ') : 'Servis Komponen');
-  const warranty = calculateWarranty(o.createdAt || o.paidAt, step, ticketId, phoneType, customerName, damageText, statusStr);
+  const isPaid = Boolean(o.paid || o.paidAt || (typeof o.statusText === 'string' && o.statusText.toLowerCase().includes('lunas')) || (typeof o.status === 'string' && o.status.toLowerCase().includes('lunas')));
+  const warranty = calculateWarranty(o.createdAt || o.paidAt, step, ticketId, phoneType, customerName, damageText, statusStr, isPaid, o.paidAt);
 
   return {
     id: ticketId,

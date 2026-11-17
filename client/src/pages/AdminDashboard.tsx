@@ -288,12 +288,14 @@ export default function AdminDashboard() {
       const subtotalCost = Number(paymentForm.subtotal) || Number(paymentForm.finalAmount) || 0;
       const discountAmt = Number(paymentForm.discountAmount) || 0;
       const finalCost = Number(paymentForm.finalAmount) || Math.max(0, subtotalCost - discountAmt);
+      const settlementTimestamp = new Date().toISOString();
 
-      // 1. Update Order Status
+      // 1. Update Order Status - Garansi aktif dan countdown dimulai dari timestamp pelunasan kasir ini
       const resOrder = await fetchApi(`/api/orders/${paymentOrder.id}`, {
         method: 'PUT',
         body: {
           paid: true,
+          paidAt: settlementTimestamp,
           subtotal: subtotalCost,
           discountAmount: discountAmt,
           promoCode: paymentOrder.promoCode,
@@ -311,6 +313,7 @@ export default function AdminDashboard() {
         method: 'POST',
         body: {
           ticketId: paymentOrder.id,
+          paidAt: settlementTimestamp,
           customerName: paymentOrder.customerName,
           customerPhone: paymentOrder.whatsapp || '',
           customerEmail: paymentOrder.email || '',
