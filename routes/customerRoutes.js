@@ -750,6 +750,16 @@ router.get('/orders', async (req, res) => {
     const completedOrdersCount = formattedList.filter(o => isReadyOrDoneOrder(o)).length;
     const activeWarrantiesCount = formattedList.filter(o => o.warranty && o.warranty.isActive).length;
 
+    let memberWarranties = [];
+    try {
+      const warrantyService = require('../services/warrantyService');
+      memberWarranties = await warrantyService.getWarrantiesByCustomer(
+        primary.customerId || '',
+        primary.whatsapp || query,
+        primary.email || ''
+      );
+    } catch (_) {}
+
     res.json({
       success: true,
       count: formattedList.length,
@@ -761,12 +771,40 @@ router.get('/orders', async (req, res) => {
         totalOrders: formattedList.length,
         activeOrders: activeOrdersCount,
         completedOrders: completedOrdersCount,
-        activeWarranties: activeWarrantiesCount
+        activeWarranties: memberWarranties.length > 0 ? memberWarranties.filter(w => w.isActive).length : activeWarrantiesCount
       },
-      orders: formattedList
+      orders: formattedList,
+      warranties: memberWarranties
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/customer/warranties - Ambil riwayat garansi khusus untuk akun member
+router.get('/warranties', async (req, res) => {
+  try {
+    const token = getCustomerToken(req);
+    const decoded = token ? verifyToken(token) : null;
+    const customerId = (decoded && (decoded.customerId || decoded.id)) || req.query.customerId || '';
+    const phone = (decoded && (decoded.whatsapp || decoded.phone)) || req.query.phone || req.query.whatsapp || '';
+    const email = (decoded && decoded.email) || req.query.email || '';
+
+    if (!customerId && !phone && !email) {
+      return res.status(401).json({ success: false, message: 'Harap masuk ke akun member terlebih dahulu.' });
+    }
+
+    const warrantyService = require('../services/warrantyService');
+    const memberWarranties = await warrantyService.getWarrantiesByCustomer(customerId, phone, email);
+
+    return res.json({
+      success: true,
+      count: memberWarranties.length,
+      data: memberWarranties
+    });
+  } catch (err) {
+    console.error('[Get Customer Warranties Error]', err);
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -785,89 +823,62 @@ router.post('/claim-warranty', async (req, res) => {
       notes = ''
     } = req.body;
 
-    if (!ticketId) {
-      return res.status(400).json({ success: false, message: 'Nomor Tiket servis wajib disertakan.' });
+    const targetKey = warrantyCode || ticketId;
+    if (!targetKey) {
+      return res.status(400).json({ success: false, message: 'Nomor Tiket servis atau Kode Garansi wajib disertakan.' });
     }
     if (!issueComplaint || !String(issueComplaint).trim()) {
       return res.status(400).json({ success: false, message: 'Harap jelaskan kendala atau keluhan unit untuk pengajuan klaim garansi.' });
     }
 
-    // Cari order terkait untuk verifikasi
-    const cleanId = String(ticketId).trim();
-    const cleanDigits = cleanId.replace(/\D/g, '');
-    const matched = await getCombinedCustomerOrders(cleanId, cleanDigits);
-    const targetOrder = matched.length > 0 ? formatCustomerOrder(matched[0]) : null;
-
-    const claimId = `CLM-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
-    const claimDate = new Date();
-    const claimDateFormatted = claimDate.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-
-    const finalCustomerName = customerName || (targetOrder ? targetOrder.customerName : 'Pelanggan');
-    const finalPhone = whatsapp || (targetOrder ? targetOrder.whatsapp : '');
-    const finalPhoneType = phoneType || (targetOrder ? targetOrder.phoneType : 'Smartphone');
-    const finalWarrantyCode = warrantyCode || (targetOrder && targetOrder.warranty ? targetOrder.warranty.warrantyCode : `GAR-CLAIM-${cleanId}`);
-    const warrantyType = targetOrder && targetOrder.warranty ? targetOrder.warranty.warrantyTypeLabel : 'Garansi Servis Resmi';
-
-    // Format pesan WhatsApp klaim garansi otomatis untuk CS / Meja Workshop
-    const waText = encodeURIComponent(
-      `Halo Tim Servis Ngalam Fix Pro,\n\n` +
-      `Saya ingin mengajukan KLAIM GARANSI resmi untuk unit servis saya:\n` +
-      `---------------------------------------\n` +
-      `📋 No. Tiket Klaim: ${claimId}\n` +
-      `🎫 No. Tiket Servis: ${cleanId}\n` +
-      `📱 Tipe HP: ${finalPhoneType}\n` +
-      `👤 Nama Pemilik: ${finalCustomerName}\n` +
-      `📞 WhatsApp: ${finalPhone}\n` +
-      `🛡️ Jenis Garansi: ${warrantyType}\n` +
-      `🏷️ Kode Sertifikat: ${finalWarrantyCode}\n` +
-      `🚗 Metode: ${claimMethod}\n` +
-      `---------------------------------------\n` +
-      `⚠️ Kendala / Keluhan Garansi:\n` +
-      `"${issueComplaint.trim()}"\n\n` +
-      `Mohon konfirmasi kesiapan teknisi lab untuk pengecekan unit. Terima kasih!`
-    );
-    const claimWaUrl = `https://wa.me/628113185858?text=${waText}`;
-
-    // Catat ke Audit Trail / Log Aktivitas Database
-    try {
-      db.logActivity('WARRANTY_CLAIM_SUBMITTED', 'orders', cleanId, {
-        claimId,
-        ticketId: cleanId,
-        warrantyCode: finalWarrantyCode,
-        customerName: finalCustomerName,
-        whatsapp: finalPhone,
-        phoneType: finalPhoneType,
-        complaint: issueComplaint.trim(),
-        claimMethod,
-        claimedAt: claimDateFormatted
-      });
-    } catch (e) {
-      console.warn('[Claim Warranty] Audit log warning:', e.message);
+    const warrantyService = require('../services/warrantyService');
+    const cleanId = String(ticketId || warrantyCode).trim();
+    
+    // Cari apakah order terkait perlu di-sync ke garansi terlebih dahulu jika belum tercatat
+    let existingWarr = await warrantyService.findWarranty(targetKey);
+    if (!existingWarr && ticketId) {
+      const cleanDigits = String(ticketId).replace(/\D/g, '');
+      const matched = await getCombinedCustomerOrders(cleanId, cleanDigits);
+      if (matched.length > 0) {
+        existingWarr = await warrantyService.createOrUpdateWarrantyForOrder(matched[0]);
+      }
     }
+
+    const claimResult = await warrantyService.submitWarrantyClaim(
+      existingWarr ? existingWarr.warranty_code : targetKey,
+      {
+        complaint: issueComplaint,
+        claimMethod,
+        customerName,
+        whatsapp,
+        notes
+      }
+    );
+
+    const w = claimResult.warranty;
+    const claimReceipt = claimResult.claimReceipt;
 
     return res.json({
       success: true,
-      claimId,
-      ticketId: cleanId,
-      customerName: finalCustomerName,
-      whatsapp: finalPhone,
-      phoneType: finalPhoneType,
-      warrantyCode: finalWarrantyCode,
-      warrantyType,
-      claimDate: claimDateFormatted,
-      complaint: issueComplaint.trim(),
-      claimMethod,
-      claimWaUrl,
-      message: 'Pengajuan klaim garansi resmi Anda berhasil dicatat dalam sistem lab workshop.'
+      claimId: claimReceipt.claimId,
+      ticketId: w.order_id || cleanId,
+      customerName: w.customer_name,
+      whatsapp: w.customer_whatsapp,
+      phoneType: w.brand_model,
+      warrantyCode: w.warranty_code,
+      warrantyType: w.warranty_type_label,
+      claimDate: w.endDateFormatted,
+      complaint: claimReceipt.complaint,
+      claimMethod: claimReceipt.claimMethod,
+      claimWaUrl: w.claimWaUrl,
+      warranty: w,
+      message: 'Pengajuan klaim garansi resmi Anda berhasil dicatat dalam database lab workshop.'
     });
   } catch (err) {
     console.error('[Claim Warranty Error]', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
     return res.status(500).json({ success: false, error: err.message });
   }
 });

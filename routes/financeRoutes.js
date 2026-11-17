@@ -292,6 +292,18 @@ router.post('/transactions', async (req, res) => {
       }
     }
 
+    // Otomatis catat ke database tabel garansi agar tersimpan di akun pelanggan/member
+    try {
+      const warrantyService = require('../services/warrantyService');
+      await warrantyService.createOrUpdateWarrantyForOrder({
+        ...newTx,
+        ...txData
+      });
+      console.log(`[FinanceRoutes] Transaksi ${newTx.invoiceNumber} otomatis tercatat di tabel garansi.`);
+    } catch (warrErr) {
+      console.warn('[FinanceRoutes] Gagal mencatat transaksi ke garansi:', warrErr.message);
+    }
+
     res.status(201).json({
       success: true,
       message: `Faktur transaksi ${newTx.invoiceNumber} berhasil dicatat & disimpan!`,

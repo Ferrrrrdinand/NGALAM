@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
-  ShieldCheck, Wrench, RefreshCw, 
+  ShieldCheck, ShieldAlert, Wrench, RefreshCw, 
   LogOut, Plus, 
   Database, Users, Banknote, Menu,
   ClipboardList, History, Gift, UserCheck, UserPlus
@@ -23,6 +23,7 @@ import PromosTab from "./admin/PromosTab";
 import LogsTab from "./admin/LogsTab";
 import ReceiptModal from "./admin/ReceiptModal";
 import ProspectsTab from "./admin/ProspectsTab";
+import WarrantyTab from "./admin/WarrantyTab";
 export default function AdminDashboard() {
   const { user, loading: authLoading, logoutStaff } = useAuth();
   const navigate = useNavigate();
@@ -36,6 +37,8 @@ export default function AdminDashboard() {
   const [mitras, setMitras] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [prospects, setProspects] = useState<any[]>([]);
+  const [warranties, setWarranties] = useState<any[]>([]);
+  const [warrantyStats, setWarrantyStats] = useState<any>({});
   const [dbStatus, setDbStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -106,12 +109,14 @@ export default function AdminDashboard() {
         setMitras(dashRes.data.mitras || []);
         setCustomers(dashRes.data.customers || []);
         setProspects(dashRes.data.prospects || []);
+        setWarranties(dashRes.data.warranties || []);
+        setWarrantyStats(dashRes.data.warrantyStats || {});
         setDbStatus(dashRes.data.dbStatus || null);
         return;
       }
 
       // Fallback ke endpoint individual bila agregat tidak tersedia
-      const [ordRes, dbRes, promoRes, logRes, txRes, mitraRes, custRes, prospectRes] = await Promise.all([
+      const [ordRes, dbRes, promoRes, logRes, txRes, mitraRes, custRes, prospectRes, warrRes] = await Promise.all([
         fetchApi('/api/orders'),
         fetchApi('/api/database/status'),
         fetchApi('/api/promos?all=true'),
@@ -119,7 +124,8 @@ export default function AdminDashboard() {
         fetchApi('/api/finance/transactions'),
         fetchApi('/api/mitra/list'),
         fetchApi('/api/customer/list'),
-        fetchApi('/api/admin/prospects')
+        fetchApi('/api/admin/prospects'),
+        fetchApi('/api/warranties')
       ]);
 
       if (ordRes.ok && ordRes.data.success) setOrders(ordRes.data.data || []);
@@ -130,6 +136,10 @@ export default function AdminDashboard() {
       if (mitraRes.ok && mitraRes.data.success) setMitras(mitraRes.data.data || []);
       if (custRes.ok && custRes.data.success) setCustomers(custRes.data.data || []);
       if (prospectRes.ok && prospectRes.data.success) setProspects(prospectRes.data.data || []);
+      if (warrRes.ok && warrRes.data.success) {
+        setWarranties(warrRes.data.data || []);
+        setWarrantyStats(warrRes.data.stats || {});
+      }
     } catch (err) {
       console.error('Error loading dashboard data', err);
     } finally {
@@ -383,6 +393,12 @@ export default function AdminDashboard() {
     
     { section: 'Workshop & Teknisi' },
     { id: 'technician', label: 'Meja Kerja Lab Teknisi', icon: <Wrench className="w-4 h-4 shrink-0" /> },
+    { 
+      id: 'warranties', 
+      label: 'Klaim & Garansi Unit', 
+      icon: <ShieldAlert className="w-4 h-4 shrink-0" />, 
+      count: warranties.filter(w => w.claimStatus === 'pending').length || (warranties.length > 0 ? warranties.length : undefined) 
+    },
     { id: 'mitra', label: 'Mitra & Komisi Driver', icon: <Users className="w-4 h-4 shrink-0" />, count: mitras.length },
     { id: 'customers', label: 'Akun Pelanggan (Customer)', icon: <UserCheck className="w-4 h-4 shrink-0" />, count: customers.length },
 
@@ -674,6 +690,15 @@ export default function AdminDashboard() {
               customers={customers}
               loading={loading}
               onCustomerUpdated={handleCustomerUpdated}
+            />
+          )}
+
+          {activeTab === "warranties" && (
+            <WarrantyTab
+              warranties={warranties}
+              stats={warrantyStats}
+              loading={loading}
+              onRefresh={loadData}
             />
           )}
 

@@ -618,7 +618,39 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
     try {
       const res = await fetchApi(`/api/customer/orders?query=${encodeURIComponent(customerIdentifier)}`);
       if (res.ok && res.data && res.data.success) {
-        setOrders(res.data.orders || []);
+        const rawOrders = res.data.orders || [];
+        const dbWarranties = res.data.warranties || [];
+
+        // Gabungkan catatan tabel garansi database ke data transaksi pelanggan
+        const mergedOrders = rawOrders.map((o: any) => {
+          const matchedWarr = dbWarranties.find((w: any) => 
+            (w.order_id && w.order_id === o.id) || 
+            (w.invoice_number && w.invoice_number === o.id) ||
+            (w.warranty_code && o.warranty && w.warranty_code === o.warranty.warrantyCode)
+          );
+          if (matchedWarr) {
+            return {
+              ...o,
+              warranty: {
+                ...o.warranty,
+                warrantyCode: matchedWarr.warranty_code,
+                warrantyTypeLabel: matchedWarr.warranty_type_label,
+                durationDays: matchedWarr.duration_days,
+                startDate: matchedWarr.startDateFormatted || o.warranty?.startDate,
+                endDate: matchedWarr.endDateFormatted || o.warranty?.endDate,
+                daysRemaining: matchedWarr.daysRemaining !== undefined ? matchedWarr.daysRemaining : o.warranty?.daysRemaining,
+                isActive: matchedWarr.isActive !== undefined ? matchedWarr.isActive : o.warranty?.isActive,
+                isExpired: matchedWarr.isExpired !== undefined ? matchedWarr.isExpired : o.warranty?.isExpired,
+                claimStatus: matchedWarr.claim_status || matchedWarr.claimStatus || 'none',
+                claimCount: matchedWarr.claim_count || 0,
+                claimHistory: matchedWarr.claim_history || []
+              }
+            };
+          }
+          return o;
+        });
+
+        setOrders(mergedOrders);
       } else {
         setOrders([]);
       }
@@ -1080,7 +1112,23 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
                             {warranty.warrantyTypeLabel || (isBattery ? 'Garansi Baterai Original (90 Hari)' : 'Garansi Servis Hardware (30 Hari)')}
                           </span>
 
-                          {hasActiveWarranty ? (
+                          {warranty.claimStatus === 'pending' ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-white animate-pulse">
+                              ⏳ KLAIM DALAM PENINJAUAN LAB
+                            </span>
+                          ) : warranty.claimStatus === 'approved' ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-800 border border-blue-300">
+                              ✓ KLAIM DISETUJUI LAB
+                            </span>
+                          ) : warranty.claimStatus === 'in_repair' ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-100 text-indigo-800 border border-indigo-300">
+                              ⚙️ SEDANG DALAM PENANGANAN LAB
+                            </span>
+                          ) : warranty.claimStatus === 'resolved' ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              🎉 KLAIM SELESAI DIGANTI
+                            </span>
+                          ) : hasActiveWarranty ? (
                             <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
                               🛡️ GARANSI AKTIF ({warranty.daysRemaining || 30} Hari Lagi)
                             </span>
@@ -1105,7 +1153,15 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
                         </div>
 
                         <p className="text-[10.5px] text-slate-500 pl-8">
-                          {hasActiveWarranty 
+                          {warranty.claimStatus === 'pending'
+                            ? 'Pengajuan klaim garansi Anda telah tercatat di database lab workshop dan sedang ditinjau teknisi.'
+                            : warranty.claimStatus === 'approved'
+                            ? 'Klaim garansi telah disetujui tim lab! Silakan bawa unit ke workshop Meja 1 untuk penggantian komponen bebas biaya.'
+                            : warranty.claimStatus === 'in_repair'
+                            ? 'Unit HP Anda saat ini sedang dalam penanganan pengerjaan di lab workshop oleh teknisi spesialis.'
+                            : warranty.claimStatus === 'resolved'
+                            ? 'Pengerjaan klaim garansi telah selesai dikerjakan dengan suku cadang original baru dan lulus uji QC.'
+                            : hasActiveWarranty 
                             ? (isStep4Ready
                                 ? 'Unit telah selesai diperbaiki dan siap diambil di counter workshop! Masa garansi resmi aktif penuh, bebas biaya perbaikan ulang & suku cadang.'
                                 : 'Unit telah diserahkan & diambil. Bebas biaya sparepart pengganti original & jasa teknisi selama masa garansi aktif.')
@@ -1124,7 +1180,13 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
                             className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white text-xs font-black shadow-md shadow-amber-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-102 active:scale-98"
                           >
                             <ShieldCheck className="w-4 h-4" />
-                            <span>Klaim Garansi Unit Ini</span>
+                            <span>
+                              {warranty.claimStatus === 'pending' 
+                                ? 'Klaim Sedang Diproses ⏳' 
+                                : warranty.claimStatus === 'approved'
+                                ? 'Klaim Disetujui (Bawa Unit) ✓'
+                                : 'Klaim Garansi Unit Ini'}
+                            </span>
                           </button>
                         ) : !isReadyOrDone ? (
                           <Link

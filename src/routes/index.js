@@ -81,6 +81,7 @@ const chatbotRoutes = require('../../routes/chatbotRoutes');
 const mitraRoutes = require('../../routes/mitraRoutes');
 const exportRoutes = require('../../routes/exportRoutes');
 const adRoutes = require('../../routes/adRoutes');
+const warrantyRoutes = require('../../routes/warrantyRoutes');
 
 // Mount Domain Routers
 router.use('/auth', authRoutes);
@@ -90,6 +91,7 @@ router.use('/technicians', technicianRoutes);
 router.use('/finance', financeRoutes);
 router.use('/export', exportRoutes);
 router.use('/mitra', mitraRoutes);
+router.use('/warranties', warrantyRoutes);
 router.use('/', promoRoutes);
 router.use('/', chatbotRoutes);
 router.use('/', adRoutes);
@@ -132,7 +134,7 @@ router.get('/admin/dashboard', async (req, res) => {
     }
   };
 
-  const [orders, transactions, promos, activityLogs, mitraUsers, customerList, adsList, prospectsList] = await Promise.all([
+  const [orders, transactions, promos, activityLogs, mitraUsers, customerList, adsList, prospectsList, warrantiesData] = await Promise.all([
     safe(() => getAllOrders(), []),
     safe(async () => readTransactions(), []),
     safe(async () => getAllPromos(true), []),
@@ -149,7 +151,11 @@ router.get('/admin/dashboard', async (req, res) => {
     safe(async () => {
       const unregisteredUserService = require('../../services/unregisteredUserService');
       return unregisteredUserService.getAllProspects();
-    }, [])
+    }, []),
+    safe(async () => {
+      const warrantyService = require('../../services/warrantyService');
+      return warrantyService.getAllWarranties({ status: 'all', claimStatus: 'all' });
+    }, { warranties: [], stats: {} })
   ]);
 
   const mitras = (mitraUsers || [])
@@ -224,6 +230,8 @@ router.get('/admin/dashboard', async (req, res) => {
     customers,
     prospects: prospectsList || [],
     ads: adsList || [],
+    warranties: (warrantiesData && warrantiesData.warranties) || [],
+    warrantyStats: (warrantiesData && warrantiesData.stats) || {},
     dbStatus: {
       connected: pgDb.isDbConnected(),
       mode: pgDb.isDbConnected() ? 'postgresql' : 'fallback'

@@ -243,6 +243,21 @@ async function handleUpdateOrder(req, res) {
 
     const updated = await updateOrder(id, updates);
 
+    // Otomatis catat ke tabel garansi jika pesanan selesai atau siap diambil
+    const stepVal = parseInt(updates.step || updates.currentStep || updated.step || updated.currentStep || 0, 10);
+    const statusTextLower = String(updates.statusText || updates.status || updated.status || '').toLowerCase();
+    const isCompletedOrReady = stepVal >= 4 || statusTextLower.includes('selesai') || statusTextLower.includes('siap') || statusTextLower.includes('ambil') || statusTextLower.includes('lunas') || updates.paid === true;
+
+    if (isCompletedOrReady) {
+      try {
+        const warrantyService = require('../services/warrantyService');
+        await warrantyService.createOrUpdateWarrantyForOrder(updated);
+        console.log(`[OrderRoutes] Sertifikat garansi resmi otomatis tercatat di database untuk tiket ${id}`);
+      } catch (warrErr) {
+        console.warn('[OrderRoutes] Gagal mencatat garansi otomatis:', warrErr.message);
+      }
+    }
+
     if (updates.step !== undefined || updates.currentStep !== undefined) {
       try {
         await handleOrderStepChange(updated, updates.step || updates.currentStep);

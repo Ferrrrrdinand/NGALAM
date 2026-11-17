@@ -304,6 +304,40 @@ async function runInitDb() {
           CREATE INDEX IF NOT EXISTS idx_unreg_ref ON unregistered_users(referral_code);
           CREATE INDEX IF NOT EXISTS idx_unreg_mitra ON unregistered_users(referred_by_mitra);
 
+          -- Tabel Garansi Unit & Klaim Servis (Warranties)
+          CREATE TABLE IF NOT EXISTS warranties (
+            id VARCHAR(100) PRIMARY KEY,
+            warranty_code VARCHAR(100) UNIQUE,
+            order_id VARCHAR(100),
+            invoice_number VARCHAR(100),
+            customer_id VARCHAR(100),
+            customer_name VARCHAR(255) NOT NULL,
+            customer_whatsapp VARCHAR(50),
+            customer_email VARCHAR(255),
+            device_type VARCHAR(100) DEFAULT 'Smartphone',
+            brand_model VARCHAR(255),
+            service_item TEXT,
+            warranty_type_label VARCHAR(255) NOT NULL,
+            duration_days INTEGER DEFAULT 30,
+            start_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            end_date TIMESTAMP WITH TIME ZONE,
+            status VARCHAR(50) DEFAULT 'active',
+            claim_status VARCHAR(50) DEFAULT 'none',
+            claim_count INTEGER DEFAULT 0,
+            claim_history JSONB DEFAULT '[]'::jsonb,
+            technician_notes TEXT,
+            raw_data JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          CREATE INDEX IF NOT EXISTS idx_warranties_order_id ON warranties(order_id);
+          CREATE INDEX IF NOT EXISTS idx_warranties_cust_wa ON warranties(customer_whatsapp);
+          CREATE INDEX IF NOT EXISTS idx_warranties_cust_id ON warranties(customer_id);
+          CREATE INDEX IF NOT EXISTS idx_warranties_code ON warranties(warranty_code);
+          CREATE INDEX IF NOT EXISTS idx_warranties_status ON warranties(status);
+          CREATE INDEX IF NOT EXISTS idx_warranties_claim_status ON warranties(claim_status);
+
           -- Pastikan kolom tabel promo_codes dan banners selalu lengkap (idempotent migration)
           ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS name VARCHAR(255);
           ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS max_discount NUMERIC DEFAULT 0;
@@ -322,7 +356,7 @@ async function runInitDb() {
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS image_url TEXT;
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS raw_data JSONB;
         `);
-        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners, commissions, ads) siap.');
+        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners, commissions, ads, warranties) siap.');
     } finally {
       client.release();
     }
