@@ -60,9 +60,13 @@ export default function ReceiptModal({
               <span className="font-bold text-amber-800">{receiptTx.warrantyTypeLabel || 'Garansi Resmi 30 Hari'}</span>
             </div>
             <div className="flex justify-between">
-              <span>Status Garansi:</span>
+              <span>Masa Proteksi:</span>
+              <span className="font-bold text-emerald-700">Aktif (Countdown Berjalan)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Status Klaim:</span>
               <span className={`font-semibold ${receiptTx.warrantyClaimStatus === 'claimed' ? 'text-amber-700' : 'text-emerald-700'}`}>
-                {receiptTx.warrantyClaimStatus === 'claimed' ? 'Sudah Pernah Klaim' : 'Belum Klaim (Aktif)'}
+                {receiptTx.warrantyClaimStatus === 'claimed' ? 'Sedang Diproses Klaim' : 'Belum Klaim (Aman)'}
               </span>
             </div>
             <div className="flex justify-between">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag } from 'lucide-react';
+import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag, ShieldCheck } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 
 export default function CashierTab({
@@ -273,6 +273,19 @@ export default function CashierTab({
                 onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })}
                 className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all placeholder:text-slate-400"
               />
+            </div>
+
+            {/* Banner Otomatisasi Garansi & Countdown */}
+            <div className="p-3.5 bg-emerald-50/90 border border-emerald-300 rounded-xl flex items-start gap-3 text-xs text-emerald-950">
+              <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <span className="font-bold text-emerald-900 block">
+                  Proteksi Garansi Resmi &amp; Countdown Otomatis Aktif
+                </span>
+                <p className="text-[11px] text-emerald-800 leading-relaxed">
+                  Begitu Anda menekan <strong>Konfirmasi Lunas</strong>, unit otomatis dicatat ke database garansi workshop, countdown masa garansi (30/90 hari) resmi dimulai hari ini, dan otomatis terhubung ke akun member pelanggan untuk kemudahan klaim.
+                </p>
+              </div>
             </div>
 
             <div className="flex gap-2.5 pt-2">
