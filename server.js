@@ -22,8 +22,9 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(jsonSyntaxErrorHandler);
 
-// Serve static images and promo uploads.
+// Serve static images, promo uploads, and branded QR codes.
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+app.use('/qrcodes', express.static(path.join(__dirname, 'public', 'qrcodes')));
 
 // Master API Routes
 app.use('/api', apiRoutes);
@@ -88,7 +89,9 @@ function startServer(portToTry) {
   });
 }
 
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+// In standard hosting (e.g. Rumahweb cPanel Node.js Selector, VPS, local), start the HTTP server.
+// On Vercel serverless platform, export app directly.
+if (!process.env.VERCEL) {
   startServer(PORT);
 }
 
