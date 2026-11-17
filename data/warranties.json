@@ -1,5 +1,64 @@
 [
   {
+    "id": "WARR-141795-1794",
+    "warranty_code": "GAR-90D-1794",
+    "order_id": "NGF-TEST-1794",
+    "invoice_number": null,
+    "customer_id": "CUST-20261117-3202",
+    "customer_name": "Budi Test Garansi",
+    "customer_whatsapp": "081233445566",
+    "customer_email": "member_garansi@test.com",
+    "device_type": "Apple iPhone",
+    "brand_model": "iPhone 14 Pro Max",
+    "service_item": "Ganti Baterai Original 100% Health",
+    "warranty_type_label": "Garansi Baterai Original (90 Hari / 3 Bulan)",
+    "duration_days": 90,
+    "is_paid": true,
+    "paid_at": "2026-11-17T08:12:21.794Z",
+    "start_date": "2026-11-17T08:12:21.794Z",
+    "end_date": "2027-02-15T08:12:21.794Z",
+    "status": "active",
+    "claim_status": "resolved",
+    "claim_count": 1,
+    "claim_history": [
+      {
+        "claimId": "CLM-141944-812",
+        "complaint": "Baterai mengalami restart mendadak setelah 3 hari pemakaian.",
+        "claimMethod": "Datang Langsung ke Workshop Meja 1",
+        "customerName": "Budi Test Garansi",
+        "whatsapp": "081233445566",
+        "claimedAt": "2026-11-17T08:12:21.944Z",
+        "status": "resolved",
+        "notes": "",
+        "timeline": [
+          {
+            "status": "pending",
+            "timestamp": "2026-11-17T08:12:21.944Z",
+            "title": "Pengajuan Klaim Diterima",
+            "note": "Klaim garansi dicatat dalam sistem dan menunggu peninjauan teknisi lab."
+          },
+          {
+            "status": "approved",
+            "timestamp": "2026-11-17T08:12:22.814Z",
+            "title": "Klaim Disetujui",
+            "note": "Klaim disetujui. Unit silakan dibawa ke workshop Meja 1 untuk penggantian modul baterai baru."
+          },
+          {
+            "status": "resolved",
+            "timestamp": "2026-11-17T08:12:23.332Z",
+            "title": "Klaim Selesai Diganti / Diperbaiki",
+            "note": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%."
+          }
+        ],
+        "resolvedAt": "2026-11-17T08:12:23.332Z",
+        "technicianNotes": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%."
+      }
+    ],
+    "technician_notes": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%.",
+    "created_at": "2026-11-17T08:12:21.795Z",
+    "updated_at": "2026-11-17T08:12:23.332Z"
+  },
+  {
     "id": "WARR-944409-4409",
     "warranty_code": "GAR-90D-4409",
     "order_id": "NGF-TEST-4409",
@@ -13,8 +72,6 @@
     "service_item": "Ganti Baterai Original 100% Health",
     "warranty_type_label": "Garansi Baterai Original (90 Hari / 3 Bulan)",
     "duration_days": 90,
-    "is_paid": true,
-    "paid_at": "2026-11-17T08:09:04.409Z",
     "start_date": "2026-11-17T08:09:04.409Z",
     "end_date": "2027-02-15T08:09:04.409Z",
     "status": "active",
@@ -22,41 +79,42 @@
     "claim_count": 1,
     "claim_history": [
       {
-        "claimId": "CLM-945249-739",
-        "complaint": "Baterai mengalami restart mendadak setelah 3 hari pemakaian.",
-        "claimMethod": "Datang Langsung ke Workshop Meja 1",
-        "customerName": "Budi Test Garansi",
-        "whatsapp": "081233445566",
-        "claimedAt": "2026-11-17T08:09:05.249Z",
-        "status": "resolved",
         "notes": "",
+        "status": "resolved",
+        "claimId": "CLM-945249-739",
         "timeline": [
           {
-            "status": "pending",
-            "timestamp": "2026-11-17T08:09:05.249Z",
+            "note": "Klaim garansi dicatat dalam sistem dan menunggu peninjauan teknisi lab.",
             "title": "Pengajuan Klaim Diterima",
-            "note": "Klaim garansi dicatat dalam sistem dan menunggu peninjauan teknisi lab."
+            "status": "pending",
+            "timestamp": "2026-11-17T08:09:05.249Z"
           },
           {
-            "status": "approved",
-            "timestamp": "2026-11-17T08:09:06.371Z",
+            "note": "Klaim disetujui. Unit silakan dibawa ke workshop Meja 1 untuk penggantian modul baterai baru.",
             "title": "Klaim Disetujui",
-            "note": "Klaim disetujui. Unit silakan dibawa ke workshop Meja 1 untuk penggantian modul baterai baru."
+            "status": "approved",
+            "timestamp": "2026-11-17T08:09:06.371Z"
           },
           {
-            "status": "resolved",
-            "timestamp": "2026-11-17T08:09:06.630Z",
+            "note": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%.",
             "title": "Klaim Selesai Diganti / Diperbaiki",
-            "note": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%."
+            "status": "resolved",
+            "timestamp": "2026-11-17T08:09:06.630Z"
           }
         ],
+        "whatsapp": "081233445566",
+        "claimedAt": "2026-11-17T08:09:05.249Z",
+        "complaint": "Baterai mengalami restart mendadak setelah 3 hari pemakaian.",
         "resolvedAt": "2026-11-17T08:09:06.630Z",
+        "claimMethod": "Datang Langsung ke Workshop Meja 1",
+        "customerName": "Budi Test Garansi",
         "technicianNotes": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%."
       }
     ],
     "technician_notes": "Modul baterai baru grade original telah dipasang dan lulus uji QC 100%.",
+    "raw_data": {},
     "created_at": "2026-11-17T08:09:04.409Z",
-    "updated_at": "2026-11-17T08:09:06.630Z"
+    "updated_at": "2026-11-17T08:09:06.685Z"
   },
   {
     "id": "WARR-515299-5297",

@@ -62,6 +62,8 @@ interface TransactionsTabProps {
   loading: boolean;
   handleExportExcel: () => void;
   setReceiptTx: (tx: any) => void;
+  warranties?: any[];
+  onGoToWarranty?: (key: string) => void;
 }
 
 export default function TransactionsTab({
@@ -69,7 +71,9 @@ export default function TransactionsTab({
   setTransactions,
   loading,
   handleExportExcel,
-  setReceiptTx
+  setReceiptTx,
+  warranties = [],
+  onGoToWarranty
 }: TransactionsTabProps) {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'unclaimed' | 'claimed' | 'battery' | 'screen'>('all');
@@ -444,30 +448,66 @@ export default function TransactionsTab({
                             <span>{tx.serviceItem || 'Servis Komponen & Hardware'}</span>
                           </div>
 
-                          {/* Badge Durasi Garansi & Masa Berlaku */}
-                          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                            <span
-                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
-                                tx.warrantyDurationDays === 90
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
-                                  : tx.warrantyDurationDays === 14
-                                  ? 'bg-purple-50 text-purple-700 border-purple-200'
-                                  : 'bg-blue-50 text-blue-700 border-blue-200'
-                              }`}
-                            >
-                              🛡️ {tx.warrantyDurationDays || 30} Hari
-                            </span>
+                          {/* Badge Durasi Garansi & Countdown Sisa Hari Nyata */}
+                          {(() => {
+                            const matchedWarr = warranties?.find(w => 
+                              (w.invoice_number && (w.invoice_number === tx.invoiceNumber || w.invoice_number === tx.invoiceNo)) ||
+                              (w.order_id && (w.order_id === tx.ticketId || w.order_id === tx.id)) ||
+                              (tx.ticketId && w.order_id === tx.ticketId)
+                            );
 
-                            {tx.isExpired ? (
-                              <span className="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                                Berakhir ({tx.warrantyValidUntil})
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                                Sisa {tx.daysRemaining !== undefined ? `${tx.daysRemaining} Hari` : 'Aktif'}
-                              </span>
-                            )}
-                          </div>
+                            let duration = Number(matchedWarr?.duration_days || tx.warrantyDurationDays) || 30;
+                            if (/baterai|battery/i.test(tx.serviceItem || '')) duration = 90;
+
+                            let remainingDays = 0;
+                            let isExpired = false;
+
+                            if (matchedWarr && matchedWarr.daysRemaining !== undefined) {
+                              remainingDays = Number(matchedWarr.daysRemaining);
+                              isExpired = matchedWarr.isExpired || remainingDays <= 0;
+                            } else if (typeof tx.daysRemaining === 'number') {
+                              remainingDays = tx.daysRemaining;
+                              isExpired = tx.isExpired || remainingDays <= 0;
+                            } else {
+                              const start = tx.paidAt ? new Date(tx.paidAt) : (tx.date ? new Date(tx.date) : new Date());
+                              const end = new Date(start.getTime() + duration * 24 * 60 * 60 * 1000);
+                              const now = new Date();
+                              const diff = end.getTime() - now.getTime();
+                              remainingDays = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+                              isExpired = diff <= 0;
+                            }
+
+                            return (
+                              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                <span
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                                    duration === 90
+                                      ? 'bg-amber-100 text-amber-900 border-amber-300'
+                                      : duration === 14
+                                      ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                      : 'bg-blue-50 text-blue-700 border-blue-200'
+                                  }`}
+                                >
+                                  🛡️ {duration} Hari
+                                </span>
+
+                                {isExpired ? (
+                                  <span className="text-[10px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 flex items-center gap-1">
+                                    <Clock className="w-3 h-3" />
+                                    <span>Kedaluwarsa</span>
+                                  </span>
+                                ) : (
+                                  <span 
+                                    className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 shadow-2xs"
+                                    title={`Garansi resmi aktif: Sisa ${remainingDays} hari`}
+                                  >
+                                    <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
+                                    <span>Sisa {remainingDays} Hari</span>
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </td>
 

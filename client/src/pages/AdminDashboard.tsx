@@ -809,6 +809,8 @@ export default function AdminDashboard() {
               loading={loading}
               handleExportExcel={handleExportExcel}
               setReceiptTx={setReceiptTx}
+              warranties={warranties}
+              onGoToWarranty={() => setActiveTab('warranties')}
             />
           )}
 
