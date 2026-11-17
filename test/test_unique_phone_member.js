@@ -3,7 +3,7 @@
  */
 
 const assert = require('assert');
-const { registerNewCustomer, findCustomerByPhone } = require('../services/customerService');
+const { registerNewCustomer, findCustomerByPhone, saveCustomerRecord } = require('../services/customerService');
 const { validateAndCalculate } = require('../services/promoCodeService');
 
 async function runTests() {
@@ -88,6 +88,7 @@ async function runTests() {
   const custObj = findCustomerByPhone(testPhone);
   if (custObj) {
     custObj.hasUsedNewMemberPromo = true;
+    await saveCustomerRecord(custObj);
   }
 
   // Pengujian 2b: Member sudah pernah pakai -> DITOLAK

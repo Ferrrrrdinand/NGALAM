@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import logoImg from "../assets/images/logo-ngalam-fix-pro.jpg";
-import { fetchApi } from "../utils/api";
+import { fetchApi, formatRp } from "../utils/api";
 import "./AdminDashboard.css";
 
 // Subcomponents for tab separation
@@ -746,7 +746,7 @@ export default function AdminDashboard() {
                   finalAmount: finalAmt,
                   paymentMethod: "Tunai (Cash)",
                   notes: o.promoCode 
-                    ? `Promo ${o.promoCode} (${o.promoDiscountValue || 10}%): Diskon ${formatRp(discountAmt)} (Dipotong by system)`
+                    ? `Promo ${o.promoCode} (${o.promoDiscountValue || 5}%): Diskon ${formatRp(discountAmt)} (Dipotong by system)`
                     : (o.affiliateRef ? `Komisi Mitra 5%: ${o.partnerName || o.affiliateMitraName || o.affiliateRef}` : "")
                 });
                 setActiveTab("cashier");
