@@ -12,7 +12,9 @@ export default function OrdersTab({
   handleExportExcel,
   loading,
   filteredOrders,
-  onSelectOrderForPayment
+  warranties = [],
+  onSelectOrderForPayment,
+  onGoToWarranty
 }) {
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'unpaid' | 'paid' | 'step5' | 'in_progress'
 
@@ -201,11 +203,29 @@ export default function OrdersTab({
                         {o.date && (
                           <span className="block text-[10px] text-slate-400 mt-1">{o.date}</span>
                         )}
-                        {(Number(o.currentStep || o.step || 1) >= 4 || o.paid) && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-black text-emerald-800 bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 rounded mt-1">
-                            🛡️ Garansi Aktif
-                          </span>
-                        )}
+                        {(() => {
+                          const w = warranties?.find(item => item.orderId === o.id || item.ticketId === o.id);
+                          if (w) {
+                            return (
+                              <button
+                                type="button"
+                                onClick={() => onGoToWarranty && onGoToWarranty(w.ticketId || o.id)}
+                                className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded mt-1 transition-colors cursor-pointer text-left"
+                                title={`Klik untuk cek garansi ${w.id}`}
+                              >
+                                🛡️ {w.id} ({w.warrantyDays || 30} Hari)
+                              </button>
+                            );
+                          }
+                          if (Number(o.currentStep || o.step || 1) >= 4 || o.paid) {
+                            return (
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black text-emerald-800 bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 rounded mt-1">
+                                🛡️ Garansi Aktif (30 Hari)
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
                       </td>
 
                       {/* Customer Info */}

@@ -390,15 +390,15 @@ export default function AdminDashboard() {
     { id: 'prospects', label: 'Log Calon Pelanggan', icon: <UserPlus className="w-4 h-4 shrink-0" />, count: prospects.length },
     { id: 'cashier', label: 'Kasir & Pembayaran', icon: <Banknote className="w-4 h-4 shrink-0" /> },
     { id: 'transactions', label: 'Faktur & Riwayat Kasir', icon: <History className="w-4 h-4 shrink-0" />, count: transactions.length },
+    { 
+      id: 'warranties', 
+      label: 'Klaim & Garansi Servis', 
+      icon: <ShieldCheck className="w-4 h-4 shrink-0" />, 
+      count: warranties.length 
+    },
     
     { section: 'Workshop & Teknisi' },
     { id: 'technician', label: 'Meja Kerja Lab Teknisi', icon: <Wrench className="w-4 h-4 shrink-0" /> },
-    { 
-      id: 'warranties', 
-      label: 'Cek & Klaim Garansi Unit', 
-      icon: <ShieldAlert className="w-4 h-4 shrink-0" />, 
-      count: warranties.filter(w => w.claimStatus === 'pending').length || (warranties.length > 0 ? warranties.length : undefined) 
-    },
     { id: 'mitra', label: 'Mitra & Komisi Driver', icon: <Users className="w-4 h-4 shrink-0" />, count: mitras.length },
     { id: 'customers', label: 'Akun Pelanggan (Customer)', icon: <UserCheck className="w-4 h-4 shrink-0" />, count: customers.length },
 
@@ -597,6 +597,8 @@ export default function AdminDashboard() {
               handleExportExcel={handleExportExcel}
               loading={loading}
               filteredOrders={filteredOrders}
+              warranties={warranties}
+              onGoToWarranty={() => setActiveTab('warranties')}
               onSelectOrderForPayment={(o) => {
                 const numericCost = Number(String(o.subtotal || o.cost || o.estimatedCost || "0").replace(/\D/g, "")) || 0;
                 const defaultSubtotal = numericCost > 0 ? numericCost : 250000;
