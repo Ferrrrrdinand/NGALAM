@@ -7,7 +7,9 @@
     "rating": 5,
     "text": "Ganti baterai dan servis layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi. Mantap!",
     "date": "23 Okt 2026",
-    "verified": true
+    "verified": true,
+    "maskedName": "Ri** Pra****",
+    "statusServis": "Selesai"
   },
   {
     "id": "TESTI-20261023-0001",
@@ -17,7 +19,9 @@
     "rating": 5,
     "text": "Layar iPhone tiba-tiba green screen blank setelah update iOS, sempat panik karena di tempat resmi divonis ganti whole unit jutaan. Di Ngalam Fix Pro berhasil diperbaiki jalurnya dalam 1,5 jam, TrueTone aktif normal dan data utuh. Luar biasa!",
     "date": "23 Okt 2026",
-    "verified": true
+    "verified": true,
+    "maskedName": "Di*** Pra*****",
+    "statusServis": "Selesai"
   },
   {
     "id": "TESTI-20261022-0002",
@@ -27,7 +31,9 @@
     "rating": 5,
     "text": "Port cas kendor dan kamera belakang getar OIS saat buka Instagram. Dikerjakan langsung di depan mata dalam 45 menit selesai. Fast charging 45W lancar lagi dan kamera fokus mulus. Tempat servis HP paling jujur.",
     "date": "22 Okt 2026",
-    "verified": true
+    "verified": true,
+    "maskedName": "Si** Rah******",
+    "statusServis": "Selesai"
   },
   {
     "id": "TESTI-20261021-0003",
@@ -37,6 +43,8 @@
     "rating": 5,
     "text": "HP Xiaomi anak saya tercebur ke ember air dan mati total. Dibawa ke Ngalam Fix Pro langsung ditangani ultrasonic cleaning dan ganti IC power. Nyala normal kembali tanpa kehilangan foto-foto keluarga. Recommended!",
     "date": "21 Okt 2026",
-    "verified": true
+    "verified": true,
+    "maskedName": "Bu** San****",
+    "statusServis": "Selesai"
   }
 ]

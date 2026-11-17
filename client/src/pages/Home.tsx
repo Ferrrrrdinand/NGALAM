@@ -1,20 +1,23 @@
 import banner1 from '../assets/images/spesialis-hp-banner.jpg';
 import banner2 from '../assets/images/promo-banner-1.jpg';
 import banner3 from '../assets/images/promo-banner-tempered-glass.jpg';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Zap, ShieldCheck, Smartphone, RefreshCw, Battery, 
   Gem, Cable, Camera, PowerOff, Microscope, PenTool, 
-  X, Copy, CheckCircle2, Sparkles, Star, Gift, Flame, Rocket, Search, Check, ChevronDown
+  X, Copy, CheckCircle2, Sparkles, Star, Gift, Flame, Rocket, Search, Check, ChevronDown, Lock
 } from 'lucide-react';
 import { fetchApi } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
+import { maskCustomerName } from '../utils/maskHelper';
 import HomeAdBanner from '../components/HomeAdBanner';
 import LandingModal from '../components/LandingModal';
 import { LCD_MODELS_BY_BRAND, getLcdEstimate } from '../data/lcdPrices';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { customer } = useAuth();
   const [activeSlide, setActiveSlide] = useState(0);
   const [showLandingModal, setShowLandingModal] = useState(false);
 
@@ -48,7 +51,8 @@ export default function Home() {
   const [selectedPromo, setSelectedPromo] = useState(null);
   const [copyToast, setCopyToast] = useState(false);
 
-  // Testimonial Modal state
+  // Testimonial Modal & Data state
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [testiModalOpen, setTestiModalOpen] = useState(false);
   const [testiTicket, setTestiTicket] = useState('');
   const [testiName, setTestiName] = useState('');
@@ -56,6 +60,21 @@ export default function Home() {
   const [testiRating, setTestiRating] = useState(5);
   const [testiText, setTestiText] = useState('');
   const [testiSuccess, setTestiSuccess] = useState(false);
+
+  const loadTestimonials = useCallback(async () => {
+    try {
+      const res = await fetchApi('/api/testimonials');
+      if (res.ok && res.data && res.data.success && Array.isArray(res.data.data)) {
+        setTestimonials(res.data.data);
+      }
+    } catch {
+      // keep fallback
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTestimonials();
+  }, [loadTestimonials]);
 
   // Landing Modal trigger
   useEffect(() => {
@@ -350,13 +369,14 @@ export default function Home() {
         method: 'POST',
         body: {
           ticketId: testiTicket,
-          name: testiName,
+          name: testiName || customer?.name || 'Member Ngalam Fix Pro',
           device: testiDevice,
           rating: testiRating,
           comment: testiText
         }
       });
       setTestiSuccess(true);
+      loadTestimonials();
       setTimeout(() => {
         setTestiSuccess(false);
         setTestiModalOpen(false);
@@ -1043,7 +1063,7 @@ export default function Home() {
 
       {/* TESTIMONIALS SECTION */}
       <section className="section wrap testimonials-section">
-        <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 40px' }}>
+        <div style={{ textAlign: 'center', maxWidth: '820px', margin: '0 auto 40px' }}>
           <div className="eyebrow blue">ULASAN & KEPUASAN PELANGGAN</div>
           <h2>
             Dipercaya Lebih dari <span>2.400+ Pemilik Smartphone</span>
@@ -1051,74 +1071,122 @@ export default function Home() {
           <p style={{ color: '#000000', fontSize: '1.02rem', marginTop: '12px', lineHeight: 1.6 }}>
             Lihat pengalaman nyata dari pengguna iPhone dan HP Android yang telah mempercayakan perbaikannya kepada teknisi Ngalam Fix Pro.
           </p>
-          <div style={{ marginTop: '14px' }}>
+
+          {/* Kotak Informasi Transparansi Testimoni Member & Sensor Privasi */}
+          <div style={{
+            marginTop: '20px',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '18px',
+            padding: '18px 22px',
+            textAlign: 'left',
+            boxShadow: '0 2px 8px rgba(15,23,42,0.04)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '4px 11px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                <CheckCircle2 style={{ width: '13px', height: '13px' }} /> Eksklusif Member Servis Selesai
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 11px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                <Lock style={{ width: '13px', height: '13px' }} /> Nama Disensor Demi Privasi
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', padding: '4px 11px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                <Smartphone style={{ width: '13px', height: '13px' }} /> Ulasan Riil Sesuai Unit HP
+              </span>
+            </div>
+            <p style={{ color: '#334155', fontSize: '0.86rem', lineHeight: 1.65, margin: 0 }}>
+              Koleksi testimoni ini akan terus bertambah seiring banyaknya pengerjaan unit HP di workshop kami. Seluruh ulasan ini <strong>berasal eksklusif dari member-member yang sudah terdaftarkan akunnya</strong> dan <strong>telah menyelesaikan servis smartphone hingga statusnya dinyatakan "Selesai"</strong>. Member yang telah selesai servis diberikan akses khusus untuk menuliskan ulasan transparan mengenai HP yang telah dia servis. Demi menjaga keamanan dan kerahasiaan data pelanggan, <strong>seluruh nama tidak ditampilkan lengkap, melainkan hanya beberapa huruf saja dan sisanya disensor</strong>.
+            </p>
+          </div>
+
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <button
               type="button"
-              onClick={() => setTestiModalOpen(true)}
-              className="btn small outline darkoutline flex items-center gap-1.5"
-              style={{ borderRadius: '999px', padding: '8px 18px', fontSize: '0.82rem' }}
+              onClick={() => {
+                if (customer) {
+                  setTestiName(customer.name || '');
+                }
+                setTestiModalOpen(true);
+              }}
+              className="btn small outline darkoutline flex items-center gap-1.5 cursor-pointer"
+              style={{ borderRadius: '999px', padding: '9px 22px', fontSize: '0.84rem', fontWeight: 700 }}
             >
-              <PenTool className="w-3.5 h-3.5 text-amber-500" /> Tulis Testimoni Pelanggan
+              <PenTool className="w-3.5 h-3.5 text-amber-500" /> Tulis Testimoni Servis Pelanggan
             </button>
+            <Link
+              to="/customer-login"
+              style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2563eb', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+            >
+              <span>Portal Member &amp; Riwayat Servis ↗</span>
+            </Link>
           </div>
         </div>
 
         <div className="testimonials-grid" id="testimonialsGrid">
-          <div className="testimonial-card">
-            <div className="testimonial-stars flex gap-1 items-center">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-            </div>
-            <p className="testimonial-text">"Layar iPhone tiba-tiba green screen blank setelah update iOS, sempat panik karena di tempat resmi divonis ganti whole unit jutaan. Di Ngalam Fix Pro berhasil diperbaiki jalurnya dalam 1,5 jam, TrueTone aktif normal dan data utuh. Luar biasa!"</p>
-            <div className="testimonial-user">
-              <div className="testimonial-avatar">D</div>
-              <div className="testimonial-info">
-                <strong>Dimas Prasetyo</strong>
-                <small>Pengguna Apple iPhone 14 Pro Max • 23 Okt 2026</small>
+          {(testimonials.length > 0 ? testimonials : [
+            {
+              id: 'TESTI-20261023-0001',
+              name: 'Dimas Prasetyo',
+              device: 'Apple iPhone 14 Pro Max',
+              date: '23 Okt 2026',
+              text: 'Layar iPhone tiba-tiba green screen blank setelah update iOS, sempat panik karena di tempat resmi divonis ganti whole unit jutaan. Di Ngalam Fix Pro berhasil diperbaiki jalurnya dalam 1,5 jam, TrueTone aktif normal dan data utuh. Luar biasa!',
+              rating: 5
+            },
+            {
+              id: 'TESTI-20261022-0002',
+              name: 'Siti Rahmawati',
+              device: 'Samsung Galaxy S23 Ultra',
+              date: '22 Okt 2026',
+              text: 'Port cas kendor dan kamera belakang getar OIS saat buka Instagram. Dikerjakan langsung di depan mata dalam 45 menit selesai. Fast charging 45W lancar lagi dan kamera fokus mulus. Tempat servis HP paling jujur.',
+              rating: 5
+            },
+            {
+              id: 'TESTI-20261021-0003',
+              name: 'Budi Santoso',
+              device: 'Xiaomi 13T & iPhone 13',
+              date: '21 Okt 2026',
+              text: 'HP Xiaomi anak saya tercebur ke ember air dan mati total. Dibawa ke Ngalam Fix Pro langsung ditangani ultrasonic cleaning dan ganti IC power. Nyala normal kembali tanpa kehilangan foto-foto keluarga. Recommended!',
+              rating: 5
+            },
+            {
+              id: 'TESTI-1792723751464',
+              name: 'Rian Pratama',
+              device: 'Samsung S22 Ultra',
+              date: '23 Okt 2026',
+              text: 'Ganti baterai dan servis layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi. Suku cadang original dan teknisi transparan. Mantap!',
+              rating: 5
+            }
+          ]).map((item, idx) => (
+            <div key={item.id || idx} className="testimonial-card">
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <div className="testimonial-stars flex gap-1 items-center">
+                    {[...Array(item.rating || 5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#047857', background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '999px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <CheckCircle2 style={{ width: '11px', height: '11px' }} /> Servis Selesai
+                  </span>
+                </div>
+                <p className="testimonial-text">"{item.text || item.comment}"</p>
               </div>
-            </div>
-          </div>
 
-          <div className="testimonial-card">
-            <div className="testimonial-stars flex gap-1 items-center">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-            </div>
-            <p className="testimonial-text">"Port cas kendor dan kamera belakang getar OIS saat buka Instagram. Dikerjakan langsung di depan mata dalam 45 menit selesai. Fast charging 45W lancar lagi dan kamera fokus mulus. Tempat servis HP paling jujur."</p>
-            <div className="testimonial-user">
-              <div className="testimonial-avatar">S</div>
-              <div className="testimonial-info">
-                <strong>Siti Rahmawati</strong>
-                <small>Pengguna Samsung Galaxy S23 Ultra • 22 Okt 2026</small>
+              <div className="testimonial-user">
+                <div className="testimonial-avatar">
+                  {(item.name || 'M').charAt(0).toUpperCase()}
+                </div>
+                <div className="testimonial-info">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <strong>{maskCustomerName(item.name || item.maskedName)}</strong>
+                    <span style={{ fontSize: '0.68rem', color: '#64748b', background: '#f1f5f9', padding: '1px 6px', borderRadius: '4px' }} title="Nama disensor untuk privasi">
+                      🔒 Disensor
+                    </span>
+                  </div>
+                  <small>Pengguna {item.device} • {item.date || 'Member Terverifikasi'}</small>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="testimonial-card">
-            <div className="testimonial-stars flex gap-1 items-center">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-            </div>
-            <p className="testimonial-text">"HP Xiaomi anak saya tercebur ke ember air dan mati total. Dibawa ke Ngalam Fix Pro langsung ditangani ultrasonic cleaning dan ganti IC power. Nyala normal kembali tanpa kehilangan foto-foto keluarga. Recommended!"</p>
-            <div className="testimonial-user">
-              <div className="testimonial-avatar">B</div>
-              <div className="testimonial-info">
-                <strong>Budi Santoso</strong>
-                <small>Pengguna Xiaomi 13T & iPhone 13 • 21 Okt 2026</small>
-              </div>
-            </div>
-          </div>
-
-          <div className="testimonial-card">
-            <div className="testimonial-stars flex gap-1 items-center">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-            </div>
-            <p className="testimonial-text">"Ganti baterai dan servis layar selesai dalam 40 menit di depan saya, hasil sangat presisi dan ada garansi resmi. Suku cadang original dan teknisi transparan. Mantap!"</p>
-            <div className="testimonial-user">
-              <div className="testimonial-avatar">R</div>
-              <div className="testimonial-info">
-                <strong>Rian Pratama</strong>
-                <small>Pengguna Samsung S22 Ultra • 23 Okt 2026</small>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -1207,19 +1275,39 @@ export default function Home() {
       {/* TESTIMONIAL MODAL POPUP */}
       {testiModalOpen && (
         <div className="receipt-modal-backdrop" style={{ display: 'flex', zIndex: 9999 }}>
-          <div className="receipt-modal-container" style={{ maxWidth: '560px', textAlign: 'left' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#000000', margin: 0 }} className="flex items-center gap-1.5">
-                <Star className="w-5 h-5 fill-amber-400 text-amber-400" /> Form Ulasan &amp; Testimoni Pelanggan
-              </h3>
+          <div className="receipt-modal-container" style={{ maxWidth: '580px', textAlign: 'left' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#000000', margin: 0 }} className="flex items-center gap-1.5">
+                  <Star className="w-5 h-5 fill-amber-400 text-amber-400" /> Tulis Testimoni Servis Pelanggan
+                </h3>
+                <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 600 }}>
+                  Akses Khusus Member Terdaftar • Status Servis Selesai
+                </span>
+              </div>
               <button type="button" onClick={() => setTestiModalOpen(false)} style={{ background: 'transparent', border: 'none', color: '#000000', cursor: 'pointer' }}>
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p style={{ color: '#000000', fontSize: '0.88rem', marginBottom: '18px' }}>
-              Pengalaman Anda setelah melakukan perbaikan di Ngalam Fix Pro sangat berharga bagi kami.
-            </p>
+            {/* Banner Penjelasan & Privasi Sensor */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '12px 14px', marginBottom: '16px', fontSize: '0.82rem', color: '#334155', lineHeight: 1.5 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
+                <Lock className="w-3.5 h-3.5 text-blue-600" />
+                <span>Privasi Anda 100% Terjaga:</span>
+              </div>
+              <div>
+                Ulasan hanya diberikan untuk smartphone yang perbaikannya telah berstatus <strong>"Selesai"</strong>. Nama Anda akan otomatis disamarkan (sensor) sebagian di website (misal: <em>{testiName ? maskCustomerName(testiName) : 'Di*** Pra*****'}</em>).
+              </div>
+              {!customer && (
+                <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed #cbd5e1', fontSize: '0.78rem' }}>
+                  <span>Sudah punya akun member? </span>
+                  <Link to="/customer-login" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>
+                    Login ke Portal Member ↗
+                  </Link>
+                </div>
+              )}
+            </div>
 
             <form onSubmit={handleTestiSubmit}>
               <div className="b-form-group">
@@ -1229,7 +1317,7 @@ export default function Home() {
                 <input
                   type="text"
                   required
-                  placeholder="NGF-20261023-XXXX (atau Nomor WhatsApp)"
+                  placeholder="NGF-20261023-XXXX (Tiket servis unit yang telah selesai)"
                   value={testiTicket}
                   onChange={(e) => setTestiTicket(e.target.value)}
                   className="b-input form-control"
@@ -1239,16 +1327,19 @@ export default function Home() {
               <div className="form-row-2 b-form-group">
                 <div>
                   <label className="b-form-label">
-                    <span>Nama Lengkap <span className="req">*</span></span>
+                    <span>Nama Pelanggan <span className="req">*</span></span>
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Nama Anda"
+                    placeholder="Nama Lengkap Anda"
                     value={testiName}
                     onChange={(e) => setTestiName(e.target.value)}
                     className="b-input form-control"
                   />
+                  <small style={{ fontSize: '0.72rem', color: '#64748b', display: 'block', marginTop: '3px' }}>
+                    Tampil di web: <b>{maskCustomerName(testiName || 'Nama Anda')}</b>
+                  </small>
                 </div>
                 <div>
                   <label className="b-form-label">
@@ -1294,7 +1385,7 @@ export default function Home() {
                 <textarea
                   rows={3}
                   required
-                  placeholder="Ceritakan pengalaman perbaikan di Ngalam Fix Pro..."
+                  placeholder="Ceritakan pengalaman perbaikan di Ngalam Fix Pro (hasil pengerjaan, ketepatan waktu, kejujuran teknisi)..."
                   value={testiText}
                   onChange={(e) => setTestiText(e.target.value)}
                   className="b-textarea form-control"
@@ -1308,7 +1399,7 @@ export default function Home() {
               {testiSuccess && (
                 <div style={{ marginTop: '14px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '12px', padding: '14px', textAlign: 'center', color: '#059669', fontSize: '0.9rem', fontWeight: 700 }} className="flex items-center justify-center gap-1.5">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                  <span>Terima kasih banyak! Ulasan dan testimoni servis Anda telah berhasil disimpan.</span>
+                  <span>Terima kasih banyak! Ulasan dan testimoni servis Anda telah berhasil disimpan dan disensor demi privasi.</span>
                 </div>
               )}
             </form>
