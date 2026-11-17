@@ -302,23 +302,6 @@ function calculateWarranty(orderDateStr, step = 5, ticketId = '', phoneType = ''
   };
 }
 
-  return {
-    warrantyCode,
-    warrantyTypeLabel,
-    durationDays: warrantyDurationDays,
-    startDate: startDateFormatted,
-    endDate: endDateFormatted,
-    daysRemaining: daysRemaining,
-    isExpired: isExpired,
-    isActive: isReadyOrDone && !isExpired,
-    isPendingCompletion: !isReadyOrDone,
-    statusLabel,
-    statusBadgeClass,
-    coverage: 'Garansi Komponen/Sparepart Asli, Kalibrasi Hardware & Bebas Biaya Jasa Pemasangan Ulang',
-    claimWaUrl
-  };
-}
-
 // Helper to format order for transparent customer tracking & member area
 function formatCustomerOrder(o) {
   if (!o) return null;
@@ -895,9 +878,6 @@ router.post('/claim-warranty', async (req, res) => {
     });
   } catch (err) {
     console.error('[Claim Warranty Error]', err);
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
     return res.status(500).json({ success: false, error: err.message });
   }
 });
