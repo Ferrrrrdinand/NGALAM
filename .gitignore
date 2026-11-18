@@ -19,6 +19,13 @@ credentials.json
 data/sessions.json
 data/technician_logs.json
 
+# Generated QR Codes & Temporary Archives (Semua QR di-generate in-memory & unduh langsung via ZIP)
+public/qrcodes/
+public/qr-codes/
+client/public/qrcodes/
+client/public/qr-codes/
+*.zip
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

@@ -14,6 +14,7 @@ import { maskCustomerName } from '../utils/maskHelper';
 import HomeAdBanner from '../components/HomeAdBanner';
 import LandingModal from '../components/LandingModal';
 import { LCD_MODELS_BY_BRAND, getLcdEstimate } from '../data/lcdPrices';
+import { getBatteryEstimate } from '../data/batteryPrices';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -122,10 +123,32 @@ export default function Home() {
   );
 
   const lcdEstimate = getLcdEstimate(selectedBrand, selectedModel);
-  const hasExcelPrice = selectedDamage === 'lcd' && lcdEstimate.found;
-  const partPriceDisplay = hasExcelPrice ? lcdEstimate.formattedPartPrice : 'Konsul via WhatsApp';
-  const servicePriceDisplay = hasExcelPrice ? 'Rp 100.000' : 'Start from Rp 100.000';
-  const totalPriceDisplay = hasExcelPrice ? lcdEstimate.formattedTotalPrice : 'Mulai Rp 100.000 + Part';
+  const batteryEstimate = getBatteryEstimate(selectedBrand, selectedModel);
+
+  const isLcd = selectedDamage === 'lcd';
+  const isBattery = selectedDamage === 'baterai';
+
+  const hasExcelPrice = (isLcd && lcdEstimate.found) || (isBattery && batteryEstimate.found);
+  
+  const partPriceDisplay = isLcd && lcdEstimate.found
+    ? lcdEstimate.formattedPartPrice
+    : isBattery && batteryEstimate.found
+    ? batteryEstimate.formattedPartPrice
+    : 'Konsul via WhatsApp';
+
+  const servicePriceDisplay = isLcd
+    ? (lcdEstimate.found ? 'Rp 100.000' : 'Start from Rp 100.000')
+    : isBattery
+    ? (batteryEstimate.found ? 'Rp 100.000' : 'Start from Rp 150.000')
+    : 'Start from Rp 100.000';
+
+  const totalPriceDisplay = isLcd && lcdEstimate.found
+    ? lcdEstimate.formattedTotalPrice
+    : isBattery && batteryEstimate.found
+    ? batteryEstimate.formattedTotalPrice
+    : isBattery
+    ? 'Mulai Rp 150.000 + Part'
+    : 'Mulai Rp 100.000 + Part';
 
   const repairMatrix: Record<string, { title: string; time: string; warranty: string; warrantyNote: string }> = {
     garis_lightsaber: {
@@ -945,8 +968,12 @@ export default function Home() {
                       </div>
 
                       <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '8px', lineHeight: 1.4 }}>
-                        {hasExcelPrice
+                        {isLcd && lcdEstimate.found
                           ? '*Estimasi resmi part LCD + jasa pasang flat Rp 100.000.'
+                          : isBattery && batteryEstimate.found
+                          ? '*Estimasi resmi part baterai original + jasa pasang flat Rp 100.000.'
+                          : isBattery
+                          ? '*Harga part dikonsultasikan via WhatsApp. Biaya jasa baterai start from Rp 150.000.'
                           : '*Harga part dikonsultasikan via WhatsApp. Biaya jasa pengerjaan start from Rp 100.000.'}
                       </div>
                     </div>
@@ -982,8 +1009,8 @@ export default function Home() {
                     <a
                       href={`https://wa.me/628113185858?text=${encodeURIComponent(
                         hasExcelPrice
-                          ? `Halo CS Ngalam Fix Pro,\nSaya ingin konsultasi servis HP:\n• Tipe HP: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi Part: ${lcdEstimate.formattedPartPrice}\n• Biaya Jasa: Rp 100.000\n• Total Biaya: ${lcdEstimate.formattedTotalPrice}\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
-                          : `Halo CS Ngalam Fix Pro,\nSaya ingin konsultasi servis HP:\n• Tipe HP: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi Jasa: Start from Rp 100.000\n• Harga Part: Ingin konsul harga & ketersediaan part via WA\nMohon info ketersediaan suku cadang dan jadwalnya, terima kasih!`
+                          ? `Halo CS Ngalam Fix Pro,\nSaya ingin konsultasi servis HP:\n• Tipe HP: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi Part: ${partPriceDisplay}\n• Biaya Jasa: ${servicePriceDisplay}\n• Total Biaya: ${totalPriceDisplay}\n• Garansi: ${currentDamageInfo.warranty}\nApakah suku cadangnya tersedia hari ini?`
+                          : `Halo CS Ngalam Fix Pro,\nSaya ingin konsultasi servis HP:\n• Tipe HP: ${selectedModel}\n• Kendala: ${currentDamageInfo.title}\n• Estimasi Jasa: ${servicePriceDisplay}\n• Harga Part: Ingin konsul harga & ketersediaan part via WA\nMohon info ketersediaan suku cadang dan jadwalnya, terima kasih!`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"

@@ -112,6 +112,22 @@ router.get('/lcd-prices', (req, res) => {
   }
 });
 
+// BATTERY CATALOG ENDPOINT
+router.get('/battery-prices', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const catalogPath = path.join(__dirname, '../../data/battery_prices.json');
+    if (fs.existsSync(catalogPath)) {
+      const items = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+      return res.json({ success: true, total: items.length, items });
+    }
+    return res.status(404).json({ success: false, message: 'Katalog Baterai belum dibuat.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ============================================================
 // ADMIN DASHBOARD AGGREGATE ENDPOINT
 // Satu request untuk semua data panel admin (menggantikan 6 request paralel).

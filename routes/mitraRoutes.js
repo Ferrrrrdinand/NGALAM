@@ -602,19 +602,12 @@ router.get('/list', (req, res) => {
   }
 });
 
-// GET /api/mitra/download-qr-zip - Unduh file ZIP berisi QR Code mitra yang dipilih
+// GET /api/mitra/download-qr-zip - Unduh file ZIP berisi QR Code mitra (In-Memory, tanpa simpan ke disk)
 router.get('/download-qr-zip', async (req, res) => {
   try {
     const JSZip = require('jszip');
+    const QRCode = require('qrcode');
     const { codes, batch } = req.query;
-    let qrDir = path.join(__dirname, '..', 'public', 'qrcodes', 'mitra');
-    if (!fs.existsSync(qrDir)) {
-      qrDir = path.join(__dirname, '..', 'client', 'public', 'qrcodes', 'mitra');
-    }
-
-    if (!fs.existsSync(qrDir)) {
-      return res.status(404).json({ success: false, message: 'Direktori QR Code belum tersedia.' });
-    }
 
     let targetCodes = [];
     if (codes && typeof codes === 'string') {
@@ -628,41 +621,43 @@ router.get('/download-qr-zip', async (req, res) => {
     } else if (batch === '4') {
       for (let i = 76; i <= 100; i++) targetCodes.push(`MITRA-${String(i).padStart(3, '0')}`);
     } else {
-      const allFiles = fs.readdirSync(qrDir).filter(f => f.startsWith('MITRA-') && f.endsWith('.png'));
-      targetCodes = allFiles.map(f => f.replace('.png', ''));
+      for (let i = 1; i <= 100; i++) targetCodes.push(`MITRA-${String(i).padStart(3, '0')}`);
     }
 
     if (targetCodes.length === 0) {
       return res.status(400).json({ success: false, message: 'Tidak ada kode QR yang dipilih.' });
     }
 
-    const pregeneratedZip = path.join(qrDir, '100_QR_Code_Mitra_NgalamFixPro.zip');
-    if (targetCodes.length >= 100 && fs.existsSync(pregeneratedZip) && (!codes || targetCodes.length === 100)) {
-      return res.download(pregeneratedZip, '100_QR_Code_Mitra_NgalamFixPro.zip');
-    }
+    const host = req.get('host') || 'ngalamfixpro.com';
+    const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const baseUrl = `${proto}://${host}`;
 
     const zip = new JSZip();
+    const folder = zip.folder('QR_Mitra_NgalamFixPro') || zip;
     let addedCount = 0;
 
     for (const code of targetCodes) {
-      const filePath = path.join(qrDir, `${code}.png`);
-      if (fs.existsSync(filePath)) {
-        zip.file(`${code}.png`, fs.readFileSync(filePath));
-        addedCount++;
-      }
+      const bookingUrl = `${baseUrl}/pesan-servis?ref=${encodeURIComponent(code)}`;
+      const pngBuffer = await QRCode.toBuffer(bookingUrl, {
+        width: 500,
+        margin: 2,
+        color: { dark: '#0f172a', light: '#ffffff' },
+        errorCorrectionLevel: 'H'
+      });
+      folder.file(`${code}.png`, pngBuffer);
+      addedCount++;
     }
 
-    if (addedCount === 0) {
-      return res.status(404).json({ success: false, message: 'File gambar QR yang dipilih tidak ditemukan.' });
-    }
-
-    const readme = `NGALAM FIX PRO - QR CODE REFERRAL MITRA REKANAN\n` +
+    const readme = `========================================================================\n` +
+      `NGALAM FIX PRO - KOLEKSI STIKER QR CODE REFERRAL MITRA REKANAN\n` +
+      `========================================================================\n` +
       `Tanggal Unduh: ${new Date().toLocaleString('id-ID')}\n` +
-      `Jumlah File: ${addedCount} Item\n\n` +
+      `Jumlah File  : ${addedCount} Item (In-Memory Generated)\n` +
+      `Komisi Mitra : 5% Tunai per transaksi servis selesai\n\n` +
       `Daftar Kode Referral:\n` +
-      targetCodes.map((c, idx) => `${idx + 1}. ${c} -> https://ngalam1-delta.vercel.app/pesan-servis?ref=${c}`).join('\n');
+      targetCodes.map((c, idx) => `${String(idx + 1).padStart(3, '0')}. ${c} -> ${baseUrl}/pesan-servis?ref=${c}`).join('\n');
 
-    zip.file('README_DAFTAR_MITRA.txt', readme);
+    folder.file('README_DAFTAR_MITRA.txt', readme);
 
     const zipBuffer = await zip.generateAsync({
       type: 'nodebuffer',

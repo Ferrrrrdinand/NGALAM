@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { fetchApi, formatRp } from '../../utils/api';
 import { LCD_MODELS_BY_BRAND, getLcdEstimate } from '../../data/lcdPrices';
+import { getBatteryEstimate } from '../../data/batteryPrices';
 
 export default function WalkinTab({
   walkin,
@@ -155,8 +156,8 @@ export default function WalkinTab({
     { 
       id: 'baterai', 
       label: 'Ganti Baterai Original', 
-      desc: 'Baterai drop, kembung, boros (Start from Rp 100.000 - Rp 1.000.000)',
-      defaultCost: 100000, 
+      desc: 'Baterai drop, kembung, boros (Jasa mulai dari Rp 150.000 / Flat 100k sheet)',
+      defaultCost: 150000, 
       warrantyDays: 90,
       icon: <Battery className="w-4 h-4 text-emerald-500" />
     },
@@ -283,6 +284,13 @@ export default function WalkinTab({
         const lcdEst = getLcdEstimate(brand, model);
         if (lcdEst.found) {
           total += lcdEst.totalPrice;
+          return;
+        }
+      }
+      if (pId === 'baterai') {
+        const battEst = getBatteryEstimate(brand, model);
+        if (battEst.found) {
+          total += battEst.totalPrice;
           return;
         }
       }
@@ -838,9 +846,15 @@ export default function WalkinTab({
                 {problemOptions.map((item) => {
                   const isChecked = selectedProblems.has(item.id);
                   const isLcd = item.id === 'lcd';
+                  const isBattery = item.id === 'baterai';
                   const currentPhone = isCustomModel ? customModelInput : selectedModel;
                   const lcdEst = isLcd ? getLcdEstimate(selectedBrand, currentPhone) : null;
-                  const displayCost = (isLcd && lcdEst && lcdEst.found) ? lcdEst.totalPrice : item.defaultCost;
+                  const battEst = isBattery ? getBatteryEstimate(selectedBrand, currentPhone) : null;
+                  const displayCost = (isLcd && lcdEst && lcdEst.found) 
+                    ? lcdEst.totalPrice 
+                    : (isBattery && battEst && battEst.found)
+                    ? battEst.totalPrice
+                    : item.defaultCost;
 
                   return (
                     <button
@@ -872,6 +886,10 @@ export default function WalkinTab({
                         {isLcd && lcdEst && lcdEst.found ? (
                           <p className="text-[10px] text-amber-700 font-semibold mt-0.5 truncate">
                             Part: {lcdEst.formattedPartPrice} + Jasa Flat 100k (OG Super)
+                          </p>
+                        ) : isBattery && battEst && battEst.found ? (
+                          <p className="text-[10px] text-emerald-700 font-semibold mt-0.5 truncate">
+                            Part: {battEst.formattedPartPrice} + Jasa Flat 100k (Original)
                           </p>
                         ) : (
                           <p className="text-[10px] text-slate-500 mt-0.5 truncate">

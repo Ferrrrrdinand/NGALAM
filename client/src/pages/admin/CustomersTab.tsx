@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   UserCheck, Search, Phone, Mail, Key, Eye, EyeOff, Edit3, ShieldCheck, 
   ShoppingBag, MapPin, Tag, QrCode, Printer, FolderArchive, DownloadCloud, 
-  X, CheckSquare, Square
+  X, CheckSquare, Square, Sparkles
 } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditCustomerModal from './EditCustomerModal';
@@ -28,14 +28,16 @@ export default function CustomersTab({
 
   // Batch Print & ZIP 100 Member state
   const [showBatchPrintModal, setShowBatchPrintModal] = useState(false);
-  const [batchFilter, setBatchFilter] = useState<'all' | 'registered' | 'batch1' | 'batch2' | 'batch3' | 'batch4'>('all');
+  const [batchFilter, setBatchFilter] = useState<'all' | 'registered' | 'unassigned' | 'batch1' | 'batch2' | 'batch3' | 'batch4'>('all');
   const [selectedMemberCodes, setSelectedMemberCodes] = useState<string[]>([]);
   const [downloadingZip, setDownloadingZip] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<string | null>(null);
 
   // Koleksi 100 Slot Member QR (Pelanggan Terdaftar + Slot VIP Siaga)
   const memberList100 = useMemo(() => {
     const list = [];
-    for (let i = 1; i <= 100; i++) {
+    const totalSlots = Math.max(100, customers.length);
+    for (let i = 1; i <= totalSlots; i++) {
       const numStr = String(i).padStart(3, '0');
       const existing = customers[i - 1];
       const memberCode = `MBR-${numStr}`;
@@ -59,7 +61,7 @@ export default function CustomersTab({
           numStr,
           id: `USR-MBR-PRE-${numStr}`,
           code: memberCode,
-          name: `Member Baru #${numStr}`,
+          name: '',
           whatsapp: '',
           phone: '',
           district: 'Kota Malang',
@@ -72,6 +74,9 @@ export default function CustomersTab({
     return list;
   }, [customers]);
 
+  const registeredCount = memberList100.filter((m) => m.isRegistered).length;
+  const unassignedCount = memberList100.filter((m) => !m.isRegistered).length;
+
   const toggleSelectMemberCode = (code: string) => {
     setSelectedMemberCodes((prev) =>
       prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
@@ -80,6 +85,7 @@ export default function CustomersTab({
 
   const getBatchMembers = () => {
     if (batchFilter === 'registered') return memberList100.filter((m) => m.isRegistered);
+    if (batchFilter === 'unassigned') return memberList100.filter((m) => !m.isRegistered);
     if (batchFilter === 'batch1') return memberList100.slice(0, 25);
     if (batchFilter === 'batch2') return memberList100.slice(25, 50);
     if (batchFilter === 'batch3') return memberList100.slice(50, 75);
@@ -89,24 +95,30 @@ export default function CustomersTab({
 
   const handleDownloadAllMembersZip = async () => {
     setDownloadingZip(true);
+    setDownloadProgress('Menyiapkan (0/100)...');
     try {
       await downloadBulkMemberZip(
         memberList100.map((m) => ({
           index: m.index,
           id: m.id,
+          code: m.code,
           name: m.name,
           whatsapp: m.whatsapp,
           phone: m.phone,
           district: m.district,
           status: m.status
         })),
-        '100_QR_Code_Member_NgalamFixPro.zip'
+        '100_QR_Code_Member_NgalamFixPro.zip',
+        (curr, total) => setDownloadProgress(`Memproses ${curr}/${total}...`)
       );
     } catch (err: any) {
-      console.error(err);
-      alert('Gagal membuat file ZIP member: ' + (err.message || 'Silakan coba lagi.'));
+      console.warn('Client-side ZIP failed, falling back to server-side ZIP generator...', err);
+      setDownloadProgress('Mengunduh dari server...');
+      // Fallback ke server-side in-memory zip
+      window.location.href = '/api/customer/download-qr-zip';
     } finally {
       setDownloadingZip(false);
+      setDownloadProgress(null);
     }
   };
 
@@ -120,6 +132,7 @@ export default function CustomersTab({
       .map((m) => ({
         index: m.index,
         id: m.id,
+        code: m.code,
         name: m.name,
         whatsapp: m.whatsapp,
         phone: m.phone,
@@ -128,24 +141,39 @@ export default function CustomersTab({
       }));
 
     setDownloadingZip(true);
+    setDownloadProgress(`Menyiapkan (0/${selected.length})...`);
     try {
-      await downloadBulkMemberZip(selected, `QR_Member_${selected.length}_Pilihan.zip`);
+      await downloadBulkMemberZip(
+        selected,
+        `QR_Member_${selected.length}_Pilihan.zip`,
+        (curr, total) => setDownloadProgress(`Memproses ${curr}/${total}...`)
+      );
     } catch (err: any) {
-      console.error(err);
-      alert('Gagal membuat file ZIP member: ' + (err.message || 'Silakan coba lagi.'));
+      console.warn('Client-side ZIP failed, falling back to server-side ZIP generator...', err);
+      setDownloadProgress('Mengunduh dari server...');
+      window.location.href = `/api/customer/download-qr-zip?codes=${encodeURIComponent(selectedMemberCodes.join(','))}`;
     } finally {
       setDownloadingZip(false);
+      setDownloadProgress(null);
     }
   };
 
   const handleSelectAllInBatch = () => {
     const currentCodes = getBatchMembers().map((m) => m.code);
-    const allSelected = currentCodes.every((c) => selectedMemberCodes.includes(c));
+    const allSelected = currentCodes.length > 0 && currentCodes.every((c) => selectedMemberCodes.includes(c));
     if (allSelected) {
       setSelectedMemberCodes((prev) => prev.filter((c) => !currentCodes.includes(c)));
     } else {
       setSelectedMemberCodes((prev) => Array.from(new Set([...prev, ...currentCodes])));
     }
+  };
+
+  const selectAll100 = () => {
+    setSelectedMemberCodes(memberList100.map((m) => m.code));
+  };
+
+  const clearSelection = () => {
+    setSelectedMemberCodes([]);
   };
 
   const togglePasswordVisibility = (id: string) => {
@@ -254,6 +282,65 @@ export default function CustomersTab({
           <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-200/40">
             <ShieldCheck className="w-6 h-6" />
           </div>
+        </div>
+      </div>
+
+      {/* Banner 100 QR Code Member Prioritas (Sama Seperti Mitra) */}
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-amber-500/15 border border-amber-300 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="space-y-1 max-w-2xl">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+              <Sparkles className="w-3 h-3" />
+              100 QR Code Member Siap Pakai
+            </span>
+            <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
+              MBR-001 s/d MBR-100
+            </span>
+            {unassignedCount > 0 && (
+              <span className="text-[11px] font-semibold text-sky-800 bg-sky-100 px-2 py-0.5 rounded-md border border-sky-200">
+                {unassignedCount} Kartu Siaga Siap Pakai
+              </span>
+            )}
+          </div>
+          <h3 className="text-sm sm:text-base font-black text-slate-900">
+            Koleksi Kartu &amp; Stiker QR Code 100 Member Prioritas Workshop
+          </h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Format resmi kartu member prioritas (<code>MBR-001</code> s/d <code>MBR-100</code>). Pelanggan mendapatkan hak Diskon Servis 5%, cek status servis, dan pelacakan garansi lab secara otomatis tanpa simpan lokal di proyek. Seluruh berkas diunduh langsung dalam arsip ZIP in-memory atau dicetak.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto">
+          <button
+            type="button"
+            onClick={handleDownloadAllMembersZip}
+            disabled={downloadingZip}
+            className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            title="Download seluruh 100 file QR code member dalam 1 arsip ZIP (In-Memory)"
+          >
+            <FolderArchive className="w-4 h-4" />
+            <span>{downloadingZip ? 'Menyiapkan ZIP...' : 'Unduh 100 QR (.ZIP)'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowBatchPrintModal(true)}
+            className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs shadow-md shadow-amber-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Printer className="w-4 h-4" />
+            <span>Cetak &amp; Pilih QR</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setBatchFilter(batchFilter === 'unassigned' ? 'all' : 'unassigned')}
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
+              batchFilter === 'unassigned'
+                ? 'bg-amber-100 text-amber-900 border-amber-400'
+                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
+            }`}
+          >
+            <Tag className="w-3.5 h-3.5 text-amber-700" />
+            <span>{batchFilter === 'unassigned' ? 'Tampilkan Semua' : 'Filter Siap Pakai'}</span>
+          </button>
         </div>
       </div>
 
@@ -495,7 +582,7 @@ export default function CustomersTab({
                   title="Unduh seluruh 100 kartu QR Member dalam file ZIP (In-Memory)"
                 >
                   <FolderArchive className="w-4 h-4" />
-                  <span>{downloadingZip ? 'Menyiapkan ZIP...' : 'Unduh Semua 100 (.ZIP)'}</span>
+                  <span>{downloadProgress || (downloadingZip ? 'Menyiapkan ZIP...' : 'Unduh Semua 100 (.ZIP)')}</span>
                 </button>
 
                 <button
@@ -510,7 +597,7 @@ export default function CustomersTab({
                   title={selectedMemberCodes.length > 0 ? `Unduh ${selectedMemberCodes.length} QR terpilih` : 'Pilih minimal 1 QR'}
                 >
                   <DownloadCloud className={`w-4 h-4 ${downloadingZip ? 'animate-bounce' : ''}`} />
-                  <span>{`Unduh ZIP Terpilih (${selectedMemberCodes.length})`}</span>
+                  <span>{downloadProgress || `Unduh ZIP Terpilih (${selectedMemberCodes.length})`}</span>
                 </button>
 
                 <button
@@ -542,7 +629,7 @@ export default function CustomersTab({
                     batchFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Semua (100)
+                  Semua ({memberList100.length})
                 </button>
                 <button
                   type="button"
@@ -551,7 +638,16 @@ export default function CustomersTab({
                     batchFilter === 'registered' ? 'bg-white text-amber-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Terdaftar ({customers.length})
+                  Terdaftar ({registeredCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('unassigned')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'unassigned' ? 'bg-white text-sky-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Belum Terisi ({unassignedCount})
                 </button>
                 <button
                   type="button"
@@ -591,15 +687,35 @@ export default function CustomersTab({
                 </button>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Selection Controls Toolbar */}
+              <div className="flex items-center gap-1.5 text-xs">
                 <button
                   type="button"
                   onClick={handleSelectAllInBatch}
-                  className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 cursor-pointer bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200"
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all flex items-center gap-1 cursor-pointer"
                 >
-                  <CheckSquare className="w-3.5 h-3.5" />
-                  <span>Pilih Semua di Tab Ini</span>
+                  <CheckSquare className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Pilih Yang Tampil</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={selectAll100}
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all cursor-pointer"
+                >
+                  Pilih Semua 100
+                </button>
+                {selectedMemberCodes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition-all cursor-pointer"
+                  >
+                    Batal ({selectedMemberCodes.length})
+                  </button>
+                )}
+                <span className="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-800 font-extrabold border border-amber-200/60">
+                  {selectedMemberCodes.length} Dipilih
+                </span>
               </div>
             </div>
 

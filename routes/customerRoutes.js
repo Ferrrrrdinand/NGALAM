@@ -1526,6 +1526,129 @@ router.post('/request-payout', async (req, res) => {
   }
 });
 
+// GET /api/customer/download-qr-zip - Unduh file ZIP 100 QR Code Member (In-Memory, tanpa simpan ke disk)
+router.get('/download-qr-zip', async (req, res) => {
+  try {
+    const JSZip = require('jszip');
+    const QRCode = require('qrcode');
+    const { codes, batch } = req.query;
+
+    const allCustomers = await getAllCustomers();
+    const host = req.get('host') || 'ngalamfixpro.com';
+    const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const baseUrl = `${proto}://${host}`;
+
+    // Siapkan daftar 100 member
+    const totalSlots = Math.max(100, allCustomers.length);
+    const full100List = [];
+    for (let i = 1; i <= totalSlots; i++) {
+      const numStr = String(i).padStart(3, '0');
+      const defaultCode = `MBR-${numStr}`;
+      const defaultId = `USR-MBR-PRE-${numStr}`;
+      const cust = allCustomers[i - 1];
+
+      if (cust) {
+        full100List.push({
+          index: i,
+          numStr,
+          id: cust.id || defaultId,
+          code: cust.memberCode || defaultCode,
+          name: cust.name || `Member Prioritas #${numStr}`,
+          phone: cust.whatsapp || cust.phone || '',
+          url: `${baseUrl}/lacak?search=${encodeURIComponent(cust.whatsapp || cust.phone || cust.id)}&member=${encodeURIComponent(cust.id || defaultCode)}`
+        });
+      } else {
+        full100List.push({
+          index: i,
+          numStr,
+          id: defaultId,
+          code: defaultCode,
+          name: '',
+          phone: '',
+          url: `${baseUrl}/lacak?member=${defaultCode}`
+        });
+      }
+    }
+
+    let targetItems = [];
+    if (codes && typeof codes === 'string') {
+      const splitCodes = codes.split(',').map(c => c.trim().toUpperCase()).filter(Boolean);
+      targetItems = full100List.filter(m => splitCodes.includes(m.code) || splitCodes.includes(m.id));
+    } else if (batch === '1') {
+      targetItems = full100List.slice(0, 25);
+    } else if (batch === '2') {
+      targetItems = full100List.slice(25, 50);
+    } else if (batch === '3') {
+      targetItems = full100List.slice(50, 75);
+    } else if (batch === '4') {
+      targetItems = full100List.slice(75, 100);
+    } else {
+      targetItems = full100List.slice(0, 100);
+    }
+
+    if (targetItems.length === 0) {
+      return res.status(400).json({ success: false, message: 'Tidak ada member yang dipilih.' });
+    }
+
+    const zip = new JSZip();
+    const folder = zip.folder('QR_Member_NgalamFixPro') || zip;
+    let addedCount = 0;
+
+    for (const m of targetItems) {
+      const pngBuffer = await QRCode.toBuffer(m.url, {
+        width: 500,
+        margin: 2,
+        color: { dark: '#0f172a', light: '#ffffff' },
+        errorCorrectionLevel: 'H'
+      });
+      const safeName = (m.name || 'SiapPakai').replace(/[^a-zA-Z0-9_-]/g, '_');
+      folder.file(`QR_${m.code}_${safeName}.png`, pngBuffer);
+      addedCount++;
+    }
+
+    const manifest = targetItems.map((m, idx) => 
+      `${String(idx + 1).padStart(3, '0')}. ${m.code} | Nama: ${m.name || '(Belum Terisi)'} | WA: ${m.phone || '-'} | URL: ${m.url}`
+    ).join('\n');
+
+    const readme = `========================================================================\n` +
+      `NGALAM FIX PRO - KOLEKSI 100 KARTU QR CODE MEMBER PRIORITAS RESMI\n` +
+      `========================================================================\n` +
+      `Tanggal Unduh: ${new Date().toLocaleString('id-ID')}\n` +
+      `Jumlah File  : ${addedCount} Item (In-Memory Generated)\n` +
+      `Diskon Member: 5% Potongan Servis Resmi\n\n` +
+      `Daftar Kartu Member:\n` + manifest;
+
+    folder.file('README_DAFTAR_MEMBER.txt', readme);
+
+    const zipBuffer = await zip.generateAsync({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 9 }
+    });
+
+    const filename = targetItems.length >= 100
+      ? '100_QR_Code_Member_NgalamFixPro.zip'
+      : `QR_Code_Member_${addedCount}_Pilihan.zip`;
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', zipBuffer.length);
+
+    try {
+      db.logActivity('MEMBER_QR_ZIP_DOWNLOADED', 'customers', targetItems.length >= 100 ? 'ALL_100' : 'SELECTED_BATCH', {
+        count: addedCount,
+        sampleCodes: targetItems.slice(0, 8).map(m => m.code).join(', '),
+        downloadedAt: new Date().toISOString()
+      });
+    } catch (_) {}
+
+    return res.end(zipBuffer);
+  } catch (err) {
+    console.error('[Download Member QR Zip Error]', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
 module.exports.formatCustomerOrder = formatCustomerOrder;
 module.exports.calculateWarranty = calculateWarranty;

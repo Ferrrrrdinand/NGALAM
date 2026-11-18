@@ -1,6 +1,16 @@
 import QRCode from 'qrcode';
 import JSZip from 'jszip';
 
+export function escapeXml(str: string): string {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 export interface CardMitraData {
   index?: number;
   referralCode: string;
@@ -17,6 +27,9 @@ export interface CardMemberData {
   phone?: string;
   district?: string;
   status?: string;
+  code?: string;
+  memberCode?: string;
+  isRegistered?: boolean;
 }
 
 /**
@@ -46,7 +59,7 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
 
   const cleanQr = qrSvg.replace(/<\?xml.*?\?>/i, '').replace(/<!DOCTYPE.*?>/i, '');
 
-  return `
+  return `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="mHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -86,7 +99,7 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
       
       <!-- Big Prominent Indicator: MITRA RESMI #XXX -->
       <rect x="${width / 2 - 140}" y="108" width="280" height="42" rx="21" fill="url(#mGoldGrad)" />
-      <text x="${width / 2}" y="135" text-anchor="middle" class="m-black" font-size="16" fill="#0f172a" letter-spacing="1.5">MITRA RESMI #${numStr} DARI 100</text>
+      <text x="${width / 2}" y="135" text-anchor="middle" class="m-black" font-size="16" fill="#0f172a" letter-spacing="1.5">MITRA RESMI #${escapeXml(numStr)} DARI 100</text>
 
       <!-- Discount Ribbon -->
       <rect x="44" y="184" width="${width - 88}" height="48" rx="14" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2" />
@@ -98,7 +111,7 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
       <rect x="80" y="233" width="140" height="18" rx="5" fill="#d97706" />
       <text x="150" y="246" text-anchor="middle" class="m-black" font-size="10.5" fill="#ffffff" letter-spacing="1">IDENTITAS RESMI</text>
       <text x="${width / 2}" y="276" text-anchor="middle" class="m-mono" font-size="22" fill="#ffffff" letter-spacing="2">
-        ID QR: <tspan fill="#fbbf24">${mitra.referralCode}</tspan> • <tspan font-size="16" fill="#cbd5e1">${mitra.id}</tspan>
+        ID QR: <tspan fill="#fbbf24">${escapeXml(mitra.referralCode)}</tspan> &#8226; <tspan font-size="16" fill="#cbd5e1">${escapeXml(mitra.id)}</tspan>
       </text>
 
       <!-- QR Code Outer Frame -->
@@ -119,30 +132,30 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
       <!-- Referral Code Box -->
       <rect x="70" y="696" width="${width - 140}" height="70" rx="18" fill="#fffbeb" stroke="#fde68a" stroke-width="2.5" />
       <text x="${width / 2}" y="720" text-anchor="middle" class="m-bold" font-size="11" fill="#78350f" letter-spacing="1.5">KODE REFERRAL MITRA (PERMANEN):</text>
-      <text x="${width / 2}" y="752" text-anchor="middle" class="m-mono" font-size="28" fill="#b45309" letter-spacing="3">${mitra.referralCode}</text>
+      <text x="${width / 2}" y="752" text-anchor="middle" class="m-mono" font-size="28" fill="#b45309" letter-spacing="3">${escapeXml(mitra.referralCode)}</text>
 
       <!-- Mitra Info Box (Siap diisi nama pemilik) -->
       <rect x="70" y="776" width="${width - 140}" height="56" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
       <text x="95" y="800" class="m-bold" font-size="11" fill="#64748b">PEMILIK / MITRA:</text>
-      <text x="95" y="820" class="m-med" font-size="12" fill="#334155">${cleanName ? `${cleanName} ${cleanPhone ? `(${cleanPhone})` : ''}` : '_______________________________________'}</text>
-      <text x="${width - 95}" y="808" text-anchor="end" class="m-mono" font-size="11" fill="#64748b">ID: ${mitra.id}</text>
+      <text x="95" y="820" class="m-med" font-size="12" fill="#334155">${cleanName ? `${escapeXml(cleanName)} ${cleanPhone ? `(${escapeXml(cleanPhone)})` : ''}` : '_______________________________________'}</text>
+      <text x="${width - 95}" y="808" text-anchor="end" class="m-mono" font-size="11" fill="#64748b">ID: ${escapeXml(mitra.id)}</text>
 
       <!-- How to Scan -->
       <text x="${width / 2}" y="856" text-anchor="middle" class="m-med" font-size="11.5" fill="#475569">
         Arahkan kamera HP / Google Lens ke QR Code untuk reservasi otomatis
       </text>
       <text x="${width / 2}" y="876" text-anchor="middle" class="m-mono" font-size="11" fill="#64748b">
-        ${url}
+        ${escapeXml(url)}
       </text>
 
       <!-- Bottom Footer -->
       <line x1="44" y1="900" x2="${width - 44}" y2="900" stroke="#e2e8f0" stroke-width="1.5" />
       
       <text x="44" y="928" class="m-bold" font-size="11" fill="#0f172a">NGALAM FIX PRO</text>
-      <text x="44" y="946" class="m-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis • Transparan Bisa Ditunggu</text>
+      <text x="44" y="946" class="m-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis &#8226; Transparan Bisa Ditunggu</text>
 
       <text x="${width - 44}" y="928" text-anchor="end" class="m-bold" font-size="11" fill="#0f172a">Hotline WA: 0811-318-5858</text>
-      <text x="${width - 44}" y="946" text-anchor="end" class="m-bold" font-size="10.5" fill="#d97706">NOMOR MITRA #${numStr} DARI 100</text>
+      <text x="${width - 44}" y="946" text-anchor="end" class="m-bold" font-size="10.5" fill="#d97706">NOMOR MITRA #${escapeXml(numStr)} DARI 100</text>
     </svg>
   `;
 }
@@ -153,11 +166,14 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
 export async function generateMemberSvg(member: CardMemberData): Promise<string> {
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ngalamfixpro.com';
   const phone = member.whatsapp || member.phone || '';
-  const memberCode = `MBR-${String(member.id || '').replace(/^USR-|^CUST-/, '') || phone || '001'}`;
-  const url = `${origin}/lacak?search=${encodeURIComponent(phone || member.id)}&member=${encodeURIComponent(member.id)}`;
+  const numStr = member.index 
+    ? String(member.index).padStart(3, '0') 
+    : String(member.id || '').replace(/\D/g, '').slice(-3).padStart(3, '0') || '001';
+  const memberCode = member.code || member.memberCode || `MBR-${numStr}`;
+  const url = `${origin}/lacak?search=${encodeURIComponent(phone || member.id || memberCode)}&member=${encodeURIComponent(member.id || memberCode)}`;
   const width = 720;
   const height = 1000;
-  const numStr = member.index ? String(member.index).padStart(3, '0') : 'VIP';
+  const cleanName = member.name && !member.name.toLowerCase().includes('belum') && member.name !== '-' ? member.name : '';
 
   const qrSvg = await QRCode.toString(url, {
     type: 'svg',
@@ -171,7 +187,7 @@ export async function generateMemberSvg(member: CardMemberData): Promise<string>
 
   const cleanQr = qrSvg.replace(/<\?xml.*?\?>/i, '').replace(/<!DOCTYPE.*?>/i, '');
 
-  return `
+  return `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="mbrHeaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -211,7 +227,7 @@ export async function generateMemberSvg(member: CardMemberData): Promise<string>
       
       <!-- Prominent Member Badge -->
       <rect x="${width / 2 - 150}" y="108" width="300" height="42" rx="21" fill="url(#mbrGoldGrad)" />
-      <text x="${width / 2}" y="135" text-anchor="middle" class="mbr-black" font-size="16" fill="#0f172a" letter-spacing="1.5">MEMBER PRIORITAS #${numStr}</text>
+      <text x="${width / 2}" y="135" text-anchor="middle" class="mbr-black" font-size="16" fill="#0f172a" letter-spacing="1.5">MEMBER PRIORITAS #${escapeXml(numStr)}</text>
 
       <!-- Benefit Ribbon -->
       <rect x="44" y="184" width="${width - 88}" height="48" rx="14" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2" />
@@ -223,7 +239,7 @@ export async function generateMemberSvg(member: CardMemberData): Promise<string>
       <rect x="80" y="233" width="160" height="18" rx="5" fill="#f59e0b" />
       <text x="160" y="246" text-anchor="middle" class="mbr-black" font-size="10.5" fill="#000000" letter-spacing="1">IDENTITAS RESMI MEMBER</text>
       <text x="${width / 2}" y="276" text-anchor="middle" class="mbr-mono" font-size="22" fill="#ffffff" letter-spacing="2">
-        ID QR: <tspan fill="#fbbf24">${memberCode}</tspan> • <tspan font-size="16" fill="#cbd5e1">${member.id}</tspan>
+        ID QR: <tspan fill="#fbbf24">${escapeXml(memberCode)}</tspan> &#8226; <tspan font-size="16" fill="#cbd5e1">${escapeXml(member.id)}</tspan>
       </text>
 
       <!-- QR Code Outer Frame -->
@@ -244,32 +260,32 @@ export async function generateMemberSvg(member: CardMemberData): Promise<string>
       <!-- Member Profile Box -->
       <rect x="70" y="696" width="${width - 140}" height="70" rx="18" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
       <text x="95" y="722" class="mbr-bold" font-size="12" fill="#64748b">NAMA MEMBER :</text>
-      <text x="210" y="722" class="mbr-black" font-size="15" fill="#0f172a">${member.name || '-'}</text>
+      <text x="210" y="722" class="mbr-black" font-size="15" fill="#0f172a">${cleanName ? escapeXml(cleanName) : '_______________________________________'}</text>
       <text x="95" y="748" class="mbr-bold" font-size="12" fill="#64748b">NO. WHATSAPP :</text>
-      <text x="210" y="748" class="mbr-mono" font-size="14" fill="#047857">${phone || '-'}</text>
-      <text x="${width - 95}" y="736" text-anchor="end" class="mbr-bold" font-size="11" fill="#475569">${member.district || 'Kota Malang'}</text>
+      <text x="210" y="748" class="mbr-mono" font-size="14" fill="#047857">${phone ? escapeXml(phone) : '_______________________'}</text>
+      <text x="${width - 95}" y="736" text-anchor="end" class="mbr-bold" font-size="11" fill="#475569">${escapeXml(member.district || 'Kota Malang')}</text>
 
       <!-- System ID Box -->
       <rect x="70" y="776" width="${width - 140}" height="56" rx="16" fill="#fffbeb" stroke="#fde68a" stroke-width="1.5" />
       <text x="${width / 2}" y="800" text-anchor="middle" class="mbr-bold" font-size="11" fill="#78350f" letter-spacing="1">KODE QR MEMBER RESMI:</text>
-      <text x="${width / 2}" y="822" text-anchor="middle" class="mbr-mono" font-size="18" fill="#b45309" letter-spacing="2">${memberCode}</text>
+      <text x="${width / 2}" y="822" text-anchor="middle" class="mbr-mono" font-size="18" fill="#b45309" letter-spacing="2">${escapeXml(memberCode)}</text>
 
       <!-- How to Scan -->
       <text x="${width / 2}" y="856" text-anchor="middle" class="mbr-med" font-size="11.5" fill="#475569">
         Arahkan kamera HP ke QR Code untuk cek riwayat servis &amp; klaim garansi otomatis
       </text>
       <text x="${width / 2}" y="876" text-anchor="middle" class="mbr-mono" font-size="11" fill="#64748b">
-        ${url}
+        ${escapeXml(url)}
       </text>
 
       <!-- Bottom Footer -->
       <line x1="44" y1="900" x2="${width - 44}" y2="900" stroke="#e2e8f0" stroke-width="1.5" />
       
       <text x="44" y="928" class="mbr-bold" font-size="11" fill="#0f172a">NGALAM FIX PRO</text>
-      <text x="44" y="946" class="mbr-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis • Transparan Bisa Ditunggu</text>
+      <text x="44" y="946" class="mbr-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis &#8226; Transparan Bisa Ditunggu</text>
 
       <text x="${width - 44}" y="928" text-anchor="end" class="mbr-bold" font-size="11" fill="#0f172a">Hotline WA: 0811-318-5858</text>
-      <text x="${width - 44}" y="946" text-anchor="end" class="mbr-bold" font-size="10.5" fill="#b45309">MEMBER RESMI #${numStr}</text>
+      <text x="${width - 44}" y="946" text-anchor="end" class="mbr-bold" font-size="10.5" fill="#b45309">MEMBER RESMI #${escapeXml(numStr)}</text>
     </svg>
   `;
 }
@@ -284,23 +300,30 @@ export function svgToPngBlob(svgString: string, width = 720, height = 1000): Pro
     }
 
     const img = new Image();
-    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
+    const cleanSvg = svgString.includes('<?xml') 
+      ? svgString.trim() 
+      : '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString.trim();
+    
+    // Gunakan data URI utf-8 agar 100% aman dan tidak bergantung pada ObjectURL browser quirks
+    const encodedUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(cleanSvg);
+
+    const timer = setTimeout(() => {
+      reject(new Error('Timeout render canvas SVG'));
+    }, 5000);
 
     img.onload = () => {
+      clearTimeout(timer);
       try {
         const canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          URL.revokeObjectURL(url);
           return reject(new Error('Canvas context not available'));
         }
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0);
-        URL.revokeObjectURL(url);
 
         canvas.toBlob((blob) => {
           if (blob) {
@@ -310,17 +333,16 @@ export function svgToPngBlob(svgString: string, width = 720, height = 1000): Pro
           }
         }, 'image/png', 0.95);
       } catch (err) {
-        URL.revokeObjectURL(url);
         reject(err);
       }
     };
 
     img.onerror = (e) => {
-      URL.revokeObjectURL(url);
-      reject(e);
+      clearTimeout(timer);
+      reject(new Error('Gagal memuat gambar SVG ke canvas'));
     };
 
-    img.src = url;
+    img.src = encodedUri;
   });
 }
 
@@ -335,7 +357,7 @@ export function downloadBlob(blob: Blob, filename: string) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
 /**
@@ -350,17 +372,20 @@ export async function downloadSingleMitraCard(mitra: CardMitraData) {
 export async function downloadSingleMemberCard(member: CardMemberData) {
   const svg = await generateMemberSvg(member);
   const blob = await svgToPngBlob(svg);
-  const safeName = (member.name || 'Member').replace(/[^a-zA-Z0-9_-]/g, '_');
-  downloadBlob(blob, `QR_MEMBER_${member.id}_${safeName}.png`);
+  const numStr = member.index ? String(member.index).padStart(3, '0') : '001';
+  const code = member.code || member.memberCode || `MBR-${numStr}`;
+  const safeName = (member.name && !member.name.toLowerCase().includes('belum') ? member.name : 'Member')
+    .replace(/[^a-zA-Z0-9_-]/g, '_');
+  downloadBlob(blob, `QR_${code}_${safeName}.png`);
 }
 
 /**
  * Download Bulk ZIP secara in-memory menggunakan JSZip di browser
- * (0 file disimpan di disk lokal proyek!)
+ * (100% diproses di memory browser, 0 file disimpan di disk lokal proyek!)
  */
 export async function downloadBulkMitraZip(
   mitras: CardMitraData[],
-  zipFilename = 'Koleksi_QR_Mitra_NgalamFixPro.zip',
+  zipFilename = '100_QR_Code_Mitra_NgalamFixPro.zip',
   onProgress?: (current: number, total: number) => void
 ) {
   const zip = new JSZip();
@@ -368,19 +393,51 @@ export async function downloadBulkMitraZip(
 
   for (let i = 0; i < mitras.length; i++) {
     const m = mitras[i];
-    const svg = await generateMitraSvg(m);
-    const blob = await svgToPngBlob(svg);
-    folder.file(`QR_${m.referralCode}.png`, blob);
+    const numStr = m.index 
+      ? String(m.index).padStart(3, '0') 
+      : String(m.referralCode || '').replace(/\D/g, '').padStart(3, '0') || String(i + 1).padStart(3, '0');
+    try {
+      const svg = await generateMitraSvg(m);
+      const blob = await svgToPngBlob(svg);
+      folder.file(`${m.referralCode || `MITRA-${numStr}`}.png`, blob);
+    } catch (e) {
+      // Fallback: Jika canvas browser lambat/timeout, simpan vector SVG
+      const svg = await generateMitraSvg(m);
+      folder.file(`${m.referralCode || `MITRA-${numStr}`}.svg`, svg);
+    }
     if (onProgress) onProgress(i + 1, mitras.length);
   }
 
-  const content = await zip.generateAsync({ type: 'blob' });
+  const manifest = mitras.map((m, idx) => {
+    const numStr = m.index ? String(m.index).padStart(3, '0') : String(idx + 1).padStart(3, '0');
+    return `${numStr}. ${m.referralCode} | Pemilik: ${m.name || '(Belum Terisi)'} | WA: ${m.phone || '-'} | ID: ${m.id}`;
+  }).join('\n');
+
+  const readme = `========================================================================\n` +
+    `NGALAM FIX PRO - KOLEKSI STIKER QR CODE REFERRAL MITRA REKANAN\n` +
+    `========================================================================\n` +
+    `Total QR Stiker  : ${mitras.length} File PNG Desain Lengkap Siap Cetak\n` +
+    `Resolusi         : 720 x 1000 Pixel (High Resolution Siap Cetak Stiker A4 / Meja Kasir)\n` +
+    `Komisi Mitra     : 5% Tunai per transaksi servis berhasil\n` +
+    `Diskon Pelanggan : 5% Potongan Otomatis saat scan QR\n\n` +
+    `PETUNJUK PENGGUNAAN:\n` +
+    `1. Cetak gambar kartu QR pada kertas stiker / label untuk ditempel pada motor driver atau meja toko.\n` +
+    `2. Bagikan QR ini ke mitra driver atau toko rekanan.\n` +
+    `3. Tulis nama pemilik pada kartu atau perbarui namanya di Admin Dashboard menu Mitra & Komisi Driver.\n\n` +
+    `DAFTAR KODE MITRA:\n` + manifest;
+
+  folder.file('README_DAFTAR_MITRA.txt', readme);
+
+  const content = await zip.generateAsync({
+    type: 'blob',
+    compression: 'STORE'
+  });
   downloadBlob(content, zipFilename);
 }
 
 export async function downloadBulkMemberZip(
   members: CardMemberData[],
-  zipFilename = 'Koleksi_QR_Member_NgalamFixPro.zip',
+  zipFilename = '100_QR_Code_Member_NgalamFixPro.zip',
   onProgress?: (current: number, total: number) => void
 ) {
   const zip = new JSZip();
@@ -388,13 +445,48 @@ export async function downloadBulkMemberZip(
 
   for (let i = 0; i < members.length; i++) {
     const m = members[i];
-    const svg = await generateMemberSvg(m);
-    const blob = await svgToPngBlob(svg);
-    const safeName = (m.name || 'Member').replace(/[^a-zA-Z0-9_-]/g, '_');
-    folder.file(`QR_MEMBER_${m.id}_${safeName}.png`, blob);
+    const numStr = m.index 
+      ? String(m.index).padStart(3, '0') 
+      : String(i + 1).padStart(3, '0');
+    const code = m.code || m.memberCode || `MBR-${numStr}`;
+    const safeName = (m.name && !m.name.toLowerCase().includes('belum') ? m.name : 'SiapPakai')
+      .replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    try {
+      const svg = await generateMemberSvg(m);
+      const blob = await svgToPngBlob(svg);
+      folder.file(`QR_${code}_${safeName}.png`, blob);
+    } catch (e) {
+      // Fallback: Jika canvas browser lambat/timeout, simpan vector SVG
+      const svg = await generateMemberSvg(m);
+      folder.file(`QR_${code}_${safeName}.svg`, svg);
+    }
     if (onProgress) onProgress(i + 1, members.length);
   }
 
-  const content = await zip.generateAsync({ type: 'blob' });
+  const manifest = members.map((m, idx) => {
+    const numStr = m.index ? String(m.index).padStart(3, '0') : String(idx + 1).padStart(3, '0');
+    const code = m.code || m.memberCode || `MBR-${numStr}`;
+    return `${numStr}. Kode: ${code} | Nama: ${m.name || '(Belum Terisi)'} | WA: ${m.whatsapp || m.phone || '-'} | ID: ${m.id}`;
+  }).join('\n');
+
+  const readme = `========================================================================\n` +
+    `NGALAM FIX PRO - KOLEKSI 100 KARTU QR CODE MEMBER PRIORITAS RESMI\n` +
+    `========================================================================\n` +
+    `Total Kartu    : ${members.length} File PNG High-Resolution Siap Cetak\n` +
+    `Resolusi         : 720 x 1000 Pixel (Format Stiker / Kartu Member VIP)\n` +
+    `Hak Member     : Diskon Servis 5% & Integrasi Garansi Otomatis\n\n` +
+    `PETUNJUK PENGGUNAAN:\n` +
+    `1. Cetak gambar kartu QR pada kertas tebal / stiker laminasi untuk kartu member pelanggan.\n` +
+    `2. Bagikan kartu member ini ke pelanggan walk-in atau pembeli unit servis.\n` +
+    `3. Pelanggan cukup scan QR Code untuk langsung melihat status servis dan garansi aktif tanpa repot ketik link.\n\n` +
+    `DAFTAR KODE MEMBER:\n` + manifest;
+
+  folder.file('README_DAFTAR_MEMBER.txt', readme);
+
+  const content = await zip.generateAsync({
+    type: 'blob',
+    compression: 'STORE'
+  });
   downloadBlob(content, zipFilename);
 }

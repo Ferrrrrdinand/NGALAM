@@ -38,6 +38,7 @@ export default function MitraTab({
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
   const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
   const [downloadingZip, setDownloadingZip] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState<string | null>(null);
 
   const togglePasswordVisibility = (id: string) => {
     setRevealedPasswords((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -103,6 +104,7 @@ export default function MitraTab({
 
   const handleDownloadAllZip = async () => {
     setDownloadingZip(true);
+    setDownloadProgress('Menyiapkan (0/100)...');
     try {
       const allMitras = preGeneratedList.map((m, idx) => ({
         index: idx + 1,
@@ -111,12 +113,18 @@ export default function MitraTab({
         name: m.name,
         phone: m.phone
       }));
-      await downloadBulkMitraZip(allMitras, '100_QR_Code_Mitra_NgalamFixPro.zip');
+      await downloadBulkMitraZip(
+        allMitras, 
+        '100_QR_Code_Mitra_NgalamFixPro.zip',
+        (curr, total) => setDownloadProgress(`Memproses ${curr}/${total}...`)
+      );
     } catch (err: any) {
-      console.error(err);
-      alert('Gagal membuat file ZIP: ' + (err.message || 'Coba lagi.'));
+      console.warn('Client-side ZIP failed, falling back to server-side ZIP generator...', err);
+      setDownloadProgress('Mengunduh dari server...');
+      window.location.href = '/api/mitra/download-qr-zip';
     } finally {
       setDownloadingZip(false);
+      setDownloadProgress(null);
     }
   };
 
@@ -127,22 +135,29 @@ export default function MitraTab({
     }
 
     setDownloadingZip(true);
+    const selectedList = preGeneratedList
+      .filter((m) => selectedCodes.includes(m.referralCode))
+      .map((m, idx) => ({
+        index: idx + 1,
+        referralCode: m.referralCode,
+        id: m.id,
+        name: m.name,
+        phone: m.phone
+      }));
+    setDownloadProgress(`Menyiapkan (0/${selectedList.length})...`);
     try {
-      const selectedList = preGeneratedList
-        .filter((m) => selectedCodes.includes(m.referralCode))
-        .map((m, idx) => ({
-          index: idx + 1,
-          referralCode: m.referralCode,
-          id: m.id,
-          name: m.name,
-          phone: m.phone
-        }));
-      await downloadBulkMitraZip(selectedList, `QR_Code_Mitra_${selectedList.length}_Pilihan.zip`);
+      await downloadBulkMitraZip(
+        selectedList, 
+        `QR_Code_Mitra_${selectedList.length}_Pilihan.zip`,
+        (curr, total) => setDownloadProgress(`Memproses ${curr}/${total}...`)
+      );
     } catch (err: any) {
-      console.error(err);
-      alert('Terjadi kendala saat membuat file ZIP: ' + (err.message || 'Silakan coba lagi.'));
+      console.warn('Client-side ZIP failed, falling back to server-side ZIP generator...', err);
+      setDownloadProgress('Mengunduh dari server...');
+      window.location.href = `/api/mitra/download-qr-zip?codes=${encodeURIComponent(selectedCodes.join(','))}`;
     } finally {
       setDownloadingZip(false);
+      setDownloadProgress(null);
     }
   };
 
@@ -759,11 +774,12 @@ export default function MitraTab({
                 <button
                   type="button"
                   onClick={handleDownloadAllZip}
+                  disabled={downloadingZip}
                   className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer transition-all"
                   title="Unduh seluruh 100 file QR code mitra sekaligus (.zip)"
                 >
                   <FolderArchive className="w-4 h-4" />
-                  <span>Unduh Semua 100 (.ZIP)</span>
+                  <span>{downloadProgress || (downloadingZip ? 'Menyiapkan ZIP...' : 'Unduh Semua 100 (.ZIP)')}</span>
                 </button>
 
                 {/* Download Selected as ZIP */}
@@ -779,7 +795,7 @@ export default function MitraTab({
                   title={selectedCodes.length > 0 ? `Unduh ${selectedCodes.length} file QR terpilih dalam file ZIP` : 'Pilih minimal 1 QR untuk mengunduh ZIP'}
                 >
                   <DownloadCloud className={`w-4 h-4 ${downloadingZip ? 'animate-bounce' : ''}`} />
-                  <span>{downloadingZip ? 'Menyiapkan ZIP...' : `Unduh ZIP Terpilih (${selectedCodes.length})`}</span>
+                  <span>{downloadProgress || `Unduh ZIP Terpilih (${selectedCodes.length})`}</span>
                 </button>
 
                 {/* Print Sheet */}
