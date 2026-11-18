@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Banknote, X, Users, Wallet, ArrowDownRight, 
   Edit3, Key, Phone, Eye, EyeOff, Search,
@@ -72,25 +72,63 @@ export default function MitraTab({
   const isAssigned = (m: any) => 
     Boolean(m.phone && String(m.phone).trim() && !String(m.name || '').startsWith('Mitra Rekanan '));
 
-  const preGeneratedList = mitras
-    .filter(isPreGenerated)
-    .sort((a, b) => String(a.referralCode || '').localeCompare(String(b.referralCode || '')));
+  const preGeneratedList = useMemo(() => {
+    return mitras
+      .filter(isPreGenerated)
+      .sort((a, b) => {
+        const numA = parseInt(String(a.referralCode || a.id || '').replace(/\D/g, ''), 10) || 0;
+        const numB = parseInt(String(b.referralCode || b.id || '').replace(/\D/g, ''), 10) || 0;
+        return numA - numB;
+      });
+  }, [mitras]);
 
   const unassignedCount = preGeneratedList.filter((m) => !isAssigned(m)).length;
 
-  const filteredMitras = mitras.filter((m) => {
-    if (!searchTerm) return true;
-    const s = searchTerm.toLowerCase();
-    return (
-      (m.name && m.name.toLowerCase().includes(s)) ||
-      (m.username && m.username.toLowerCase().includes(s)) ||
-      (m.phone && m.phone.includes(s)) ||
-      (m.referralCode && m.referralCode.toLowerCase().includes(s)) ||
-      (m.plateNumber && m.plateNumber.toLowerCase().includes(s)) ||
-      (s === 'unassigned' && isPreGenerated(m) && !isAssigned(m)) ||
-      (s === 'pre' && isPreGenerated(m))
-    );
-  });
+  const getMitraSortKey = (m: any): { isPre: boolean; num: number; code: string } => {
+    const ref = String(m.referralCode || m.referral_code || '').toUpperCase().trim();
+    const id = String(m.id || '').toUpperCase().trim();
+    const username = String(m.username || '').toUpperCase().trim();
+    const name = String(m.name || '').toUpperCase().trim();
+
+    // Cek pola MITRA-001 s/d MITRA-999...
+    const match = ref.match(/MITRA-(\d+)/) || id.match(/MITRA-PRE-(\d+)/) || username.match(/MITRA_PRE_(\d+)/) || name.match(/MITRA REKANAN (\d+)/);
+    if (match) {
+      return { isPre: true, num: parseInt(match[1], 10), code: ref };
+    }
+    return { isPre: false, num: 999999, code: ref || id };
+  };
+
+  const filteredMitras = useMemo(() => {
+    return mitras
+      .filter((m) => {
+        if (!searchTerm) return true;
+        const s = searchTerm.toLowerCase();
+        return (
+          (m.name && m.name.toLowerCase().includes(s)) ||
+          (m.username && m.username.toLowerCase().includes(s)) ||
+          (m.phone && m.phone.includes(s)) ||
+          (m.referralCode && m.referralCode.toLowerCase().includes(s)) ||
+          (m.plateNumber && m.plateNumber.toLowerCase().includes(s)) ||
+          (s === 'unassigned' && isPreGenerated(m) && !isAssigned(m)) ||
+          (s === 'pre' && isPreGenerated(m))
+        );
+      })
+      .sort((a, b) => {
+        const keyA = getMitraSortKey(a);
+        const keyB = getMitraSortKey(b);
+
+        // Jika keduanya adalah mitra berurutan MITRA-001 s/d MITRA-100+
+        if (keyA.isPre && keyB.isPre) {
+          return keyA.num - keyB.num;
+        }
+        // Jika salah satu mitra berurutan MITRA-..., prioritaskan MITRA-001 dst di atas
+        if (keyA.isPre && !keyB.isPre) return -1;
+        if (!keyA.isPre && keyB.isPre) return 1;
+
+        // Fallback untuk custom mitra lainnya
+        return String(a.name || '').localeCompare(String(b.name || ''));
+      });
+  }, [mitras, searchTerm]);
 
   const getBatchItems = () => {
     if (batchFilter === 'unassigned') {
