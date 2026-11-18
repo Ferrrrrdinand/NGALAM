@@ -1,6 +1,46 @@
-import React from 'react';
-import { Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag, ShieldCheck, Printer, Wrench } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  Search, AlertCircle, Users, CheckCircle, CreditCard, ArrowLeft, Tag, 
+  ShieldCheck, Printer, Wrench, Banknote, QrCode, Building2, Smartphone 
+} from 'lucide-react';
 import { formatRp } from '../../utils/api';
+
+const PAYMENT_CATEGORIES = [
+  {
+    category: 'Tunai & Instan',
+    methods: [
+      { id: 'Tunai (Cash)', label: 'Tunai / Cash Counter', sublabel: 'Bayar tunai di meja kasir workshop', icon: Banknote, color: 'text-emerald-600', badge: 'Cash' },
+      { id: 'QRIS / Statis Workshop', label: 'QRIS Workshop', sublabel: 'BCA, Mandiri, GoPay, OVO, ShopeePay, Dana', icon: QrCode, color: 'text-blue-600', badge: 'Instan Bebas Biaya' },
+    ]
+  },
+  {
+    category: 'Transfer Bank (Virtual Account / Rekening)',
+    methods: [
+      { id: 'Transfer Bank BCA', label: 'Bank Central Asia (BCA)', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-indigo-600', badge: 'BCA' },
+      { id: 'Transfer Bank BRI', label: 'Bank Rakyat Indonesia (BRI)', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-blue-700', badge: 'BRI' },
+      { id: 'Transfer Bank Mandiri', label: 'Bank Mandiri', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-amber-700', badge: 'Mandiri' },
+      { id: 'Transfer Bank BNI', label: 'Bank Negara Indonesia (BNI)', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-teal-700', badge: 'BNI' },
+      { id: 'Transfer Bank Lainnya', label: 'Transfer Antar Bank / BI-FAST', sublabel: 'Permata, CIMB, Danamon, BSI, Jatim', icon: Building2, color: 'text-slate-600', badge: 'BI-FAST' },
+    ]
+  },
+  {
+    category: 'E-Wallet & Dompet Digital',
+    methods: [
+      { id: 'E-Wallet GoPay / GoTo', label: 'GoPay / GoPay Later', sublabel: 'Transfer akun bisnis atau scan QR', icon: Smartphone, color: 'text-sky-600', badge: 'GoPay' },
+      { id: 'E-Wallet OVO', label: 'OVO Premier', sublabel: 'Kirim nomor ponsel akun workshop', icon: Smartphone, color: 'text-purple-600', badge: 'OVO' },
+      { id: 'E-Wallet DANA', label: 'DANA Bisnis', sublabel: 'Kirim nomor ponsel akun workshop', icon: Smartphone, color: 'text-blue-500', badge: 'DANA' },
+      { id: 'E-Wallet ShopeePay', label: 'ShopeePay', sublabel: 'Transfer saldo ShopeePay workshop', icon: Smartphone, color: 'text-orange-500', badge: 'ShopeePay' },
+    ]
+  },
+  {
+    category: 'Mesin EDC & Kartu',
+    methods: [
+      { id: 'Debit Card EDC BCA/Mandiri', label: 'Kartu Debit (EDC)', sublabel: 'GPN, Chip BCA, Mandiri, BRI, BNI', icon: CreditCard, color: 'text-slate-700', badge: 'EDC Mesin' },
+      { id: 'Credit Card (Kartu Kredit)', label: 'Kartu Kredit (Visa / Mastercard)', sublabel: 'Swipe / Dip Mesin EDC Workshop', icon: CreditCard, color: 'text-rose-600', badge: 'Visa/MC' },
+      { id: 'Split Payment (Sebagian Tunai + Transfer)', label: 'Split Payment (Campuran)', sublabel: 'Sebagian tunai + sebagian transfer/QRIS', icon: Banknote, color: 'text-purple-700', badge: 'Kombinasi' },
+    ]
+  }
+];
 
 export default function CashierTab({
   bookingSearchInput,
@@ -302,21 +342,87 @@ export default function CashierTab({
               </div>
             </div>
 
-            {/* Metode Pembayaran Kasir */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Metode Pembayaran Kasir
-              </label>
-              <select
-                value={paymentForm.paymentMethod}
-                onChange={(e) => setPaymentForm({ ...paymentForm, paymentMethod: e.target.value })}
-                className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all cursor-pointer text-slate-800"
-              >
-                <option value="Tunai (Cash)">Tunai / Cash Counter</option>
-                <option value="QRIS / Statis Workshop">QRIS Standar Workshop</option>
-                <option value="Transfer Bank BCA/BRI">Transfer Bank BCA / BRI</option>
-                <option value="Debit Card EDC">Kartu Debit / EDC</option>
-              </select>
+            {/* Metode Pembayaran Kasir Interaktif & Komprehensif */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <CreditCard className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Pilih Opsi Metode Transaksi Pelunasan:</span>
+                </label>
+                <span className="text-[10.5px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+                  Terpilih: <strong className="text-slate-900">{paymentForm.paymentMethod || 'Tunai (Cash)'}</strong>
+                </span>
+              </div>
+
+              {/* Grid Pilihan Kartu Metode Transaksi Berdasarkan Kategori */}
+              <div className="space-y-3">
+                {PAYMENT_CATEGORIES.map((cat, cIdx) => (
+                  <div key={cIdx} className="space-y-1.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">
+                      {cat.category}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {cat.methods.map((m) => {
+                        const Icon = m.icon;
+                        const isSelected = paymentForm.paymentMethod === m.id;
+                        return (
+                          <button
+                            key={m.id}
+                            type="button"
+                            onClick={() => setPaymentForm({ ...paymentForm, paymentMethod: m.id })}
+                            className={`flex items-start gap-3 p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-amber-500/10 border-amber-500 ring-2 ring-amber-500/30 shadow-xs'
+                                : 'bg-white hover:bg-slate-50/80 border-slate-200 hover:border-slate-300'
+                            }`}
+                          >
+                            <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                              isSelected ? 'bg-amber-500 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
+                            }`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className={`text-xs font-bold truncate ${
+                                  isSelected ? 'text-amber-950 font-black' : 'text-slate-800'
+                                }`}>
+                                  {m.label}
+                                </span>
+                                <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${
+                                  isSelected ? 'bg-amber-200 text-amber-900' : 'bg-slate-100 text-slate-500'
+                                }`}>
+                                  {m.badge}
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                                {m.sublabel}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Cadangan Dropdown Select Native agar fleksibel atau jika kasir ingin memilih cepat */}
+              <div className="pt-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-slate-400">Atau pilih dari daftar lengkap:</span>
+                  <select
+                    value={paymentForm.paymentMethod}
+                    onChange={(e) => setPaymentForm({ ...paymentForm, paymentMethod: e.target.value })}
+                    className="flex-1 text-[11px] px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer"
+                  >
+                    {PAYMENT_CATEGORIES.flatMap((c) => c.methods).map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.label} ({m.badge})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
 
             {/* Rincian Potongan Diskon & Pelunasan Akhir */}

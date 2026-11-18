@@ -518,7 +518,17 @@ export default function TransactionsTab({
 
                       {/* Metode Bayar */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${
+                          /qris/i.test(tx.paymentMethod || '')
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : /transfer|bca|bri|mandiri|bni/i.test(tx.paymentMethod || '')
+                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                            : /debit|kredit|edc|card/i.test(tx.paymentMethod || '')
+                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : /gopay|ovo|dana|shopeepay/i.test(tx.paymentMethod || '')
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        }`}>
                           {tx.paymentMethod || 'Tunai'}
                         </span>
                       </td>
