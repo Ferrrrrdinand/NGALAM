@@ -57,7 +57,14 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
     }
   });
 
-  const cleanQr = qrSvg.replace(/<\?xml.*?\?>/i, '').replace(/<!DOCTYPE.*?>/i, '');
+  const vbMatch = qrSvg.match(/viewBox=["']([^"']+)["']/i);
+  const qrViewBox = vbMatch ? vbMatch[1] : '0 0 33 33';
+  const qrInnerContent = qrSvg
+    .replace(/<\?xml.*?\?>/i, '')
+    .replace(/<!DOCTYPE.*?>/i, '')
+    .replace(/<svg[^>]*>/i, '')
+    .replace(/<\/svg>/i, '')
+    .trim();
 
   return `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -114,17 +121,15 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
         ID QR: <tspan fill="#fbbf24">${escapeXml(mitra.referralCode)}</tspan> &#8226; <tspan font-size="16" fill="#cbd5e1">${escapeXml(mitra.id)}</tspan>
       </text>
 
-      <!-- QR Code Outer Frame -->
+      <!-- QR Code Outer Frame (Centering: Frame x=170..550, Center=360, y=306..686, Center=496) -->
       <rect x="${width / 2 - 190}" y="306" width="380" height="380" rx="28" fill="#ffffff" stroke="#0f172a" stroke-width="3.5" stroke-dasharray="10 6" />
       
-      <!-- Embedded QR SVG Vector -->
-      <g transform="translate(${width / 2 - 165}, 331)">
-        <svg width="330" height="330" viewBox="0 0 100 100">
-          ${cleanQr.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
-        </svg>
-      </g>
+      <!-- Embedded QR SVG Vector (Perfect 330x330 Box centered at x=195, y=331) -->
+      <svg x="${width / 2 - 165}" y="331" width="330" height="330" viewBox="${qrViewBox}">
+        ${qrInnerContent}
+      </svg>
 
-      <!-- Center Branded Shield over QR -->
+      <!-- Center Branded Shield over QR (Center exactly at cx=360, cy=496) -->
       <circle cx="${width / 2}" cy="496" r="28" fill="#ffffff" stroke="#d97706" stroke-width="3.5" />
       <circle cx="${width / 2}" cy="496" r="23" fill="#0f172a" />
       <text x="${width / 2}" y="502" text-anchor="middle" class="m-black" font-size="14" fill="#fbbf24">NFP</text>
@@ -185,7 +190,14 @@ export async function generateMemberSvg(member: CardMemberData): Promise<string>
     }
   });
 
-  const cleanQr = qrSvg.replace(/<\?xml.*?\?>/i, '').replace(/<!DOCTYPE.*?>/i, '');
+  const vbMatch = qrSvg.match(/viewBox=["']([^"']+)["']/i);
+  const qrViewBox = vbMatch ? vbMatch[1] : '0 0 33 33';
+  const qrInnerContent = qrSvg
+    .replace(/<\?xml.*?\?>/i, '')
+    .replace(/<!DOCTYPE.*?>/i, '')
+    .replace(/<svg[^>]*>/i, '')
+    .replace(/<\/svg>/i, '')
+    .trim();
 
   return `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -242,17 +254,15 @@ export async function generateMemberSvg(member: CardMemberData): Promise<string>
         ID QR: <tspan fill="#fbbf24">${escapeXml(memberCode)}</tspan> &#8226; <tspan font-size="16" fill="#cbd5e1">${escapeXml(member.id)}</tspan>
       </text>
 
-      <!-- QR Code Outer Frame -->
+      <!-- QR Code Outer Frame (Centering: Frame x=170..550, Center=360, y=306..686, Center=496) -->
       <rect x="${width / 2 - 190}" y="306" width="380" height="380" rx="28" fill="#ffffff" stroke="#000000" stroke-width="3.5" stroke-dasharray="10 6" />
       
-      <!-- Embedded QR SVG Vector -->
-      <g transform="translate(${width / 2 - 165}, 331)">
-        <svg width="330" height="330" viewBox="0 0 100 100">
-          ${cleanQr.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
-        </svg>
-      </g>
+      <!-- Embedded QR SVG Vector (Perfect 330x330 Box centered at x=195, y=331) -->
+      <svg x="${width / 2 - 165}" y="331" width="330" height="330" viewBox="${qrViewBox}">
+        ${qrInnerContent}
+      </svg>
 
-      <!-- Center Branded Shield over QR -->
+      <!-- Center Branded Shield over QR (Center exactly at cx=360, cy=496) -->
       <circle cx="${width / 2}" cy="496" r="28" fill="#ffffff" stroke="#f59e0b" stroke-width="3.5" />
       <circle cx="${width / 2}" cy="496" r="23" fill="#000000" />
       <text x="${width / 2}" y="502" text-anchor="middle" class="mbr-black" font-size="14" fill="#fbbf24">NFP</text>
