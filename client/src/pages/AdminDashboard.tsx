@@ -686,7 +686,7 @@ export default function AdminDashboard() {
                   : "bg-amber-50 text-amber-700 border border-amber-200"
               }`}>
                 <Database className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">{dbStatus.connected ? "PostgreSQL Neon Online" : "Local Storage Mode"}</span>
+                <span className="hidden md:inline">{dbStatus.connected ? "Database Terhubung" : "Mode Penyimpanan Lokal"}</span>
               </div>
             )}
 
