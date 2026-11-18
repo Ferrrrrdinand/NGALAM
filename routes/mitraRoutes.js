@@ -602,6 +602,81 @@ router.get('/list', (req, res) => {
   }
 });
 
+// POST /api/mitra/generate-batch - Buat 100 akun slot mitra pre-registered berikutnya
+router.post('/generate-batch', async (req, res) => {
+  try {
+    const { hashPassword } = require('../src/utils/security');
+    const crypto = require('crypto');
+    await userService.refreshUsersFromDb();
+    const users = readUsers();
+
+    // Temukan nomor slot tertinggi saat ini (mis. MITRA-100 -> 100)
+    let maxNum = 0;
+    users.forEach(u => {
+      const code = String(u.referralCode || u.referral_code || u.id || '').toUpperCase();
+      const match = code.match(/MITRA-(\d+)/);
+      if (match) {
+        const n = parseInt(match[1], 10);
+        if (n > maxNum) maxNum = n;
+      }
+    });
+
+    const startNum = maxNum + 1;
+    const endNum = maxNum + 100;
+    const newMitras = [];
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    for (let i = startNum; i <= endNum; i++) {
+      const num = String(i).padStart(3, '0');
+      const mitraId = `USR-MITRA-PRE-${num}`;
+      const username = `mitra_pre_${num}`;
+      const referralCode = `MITRA-${num}`;
+
+      newMitras.push({
+        id: mitraId,
+        username: username,
+        password: hashPassword(crypto.randomBytes(16).toString('hex')),
+        name: `Mitra Rekanan ${num}`,
+        role: 'mitra',
+        category: 'Mitra Pre-Registered',
+        avatar: '🤝',
+        phone: null,
+        email: `pre.mitra.${num}@placeholder.ngalamfixpro.local`,
+        referralCode: referralCode,
+        commissionRate: 5,
+        totalCommission: 0,
+        balance: 0,
+        withdrawnCommission: 0,
+        status: 'Menunggu Aktivasi',
+        lastActive: `${dateStr}, Belum Diklaim`,
+        desk: null,
+        specialty: 'Mitra Rekanan Kurir & Bengkel',
+        rawData: {
+          preCreatedAt: now.toISOString(),
+          batchGroup: Math.ceil(i / 100)
+        }
+      });
+    }
+
+    // Gabungkan dan simpan ke database PostgreSQL & memory
+    const updatedUsers = [...users, ...newMitras];
+    await saveUsers(updatedUsers);
+
+    return res.json({
+      success: true,
+      message: `Berhasil menambahkan 100 slot akun mitra baru (${startNum} - ${endNum})`,
+      startNum,
+      endNum,
+      count: newMitras.length,
+      totalMitras: updatedUsers.length
+    });
+  } catch (err) {
+    console.error('[Generate 100 Mitra Batch Error]', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/mitra/download-qr-zip - Unduh file ZIP berisi QR Code mitra (In-Memory, tanpa simpan ke disk)
 router.get('/download-qr-zip', async (req, res) => {
   try {
@@ -621,7 +696,16 @@ router.get('/download-qr-zip', async (req, res) => {
     } else if (batch === '4') {
       for (let i = 76; i <= 100; i++) targetCodes.push(`MITRA-${String(i).padStart(3, '0')}`);
     } else {
-      for (let i = 1; i <= 100; i++) targetCodes.push(`MITRA-${String(i).padStart(3, '0')}`);
+      // Ambil seluruh mitra pre-registered yang ada
+      const users = readUsers();
+      targetCodes = users
+        .filter(u => String(u.id || '').startsWith('USR-MITRA-PRE-') || String(u.referralCode || '').startsWith('MITRA-'))
+        .map(u => u.referralCode || u.referral_code || `MITRA-${String(u.id).replace(/\D/g, '')}`)
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      
+      if (targetCodes.length === 0) {
+        for (let i = 1; i <= 100; i++) targetCodes.push(`MITRA-${String(i).padStart(3, '0')}`);
+      }
     }
 
     if (targetCodes.length === 0) {

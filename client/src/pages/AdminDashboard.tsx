@@ -824,6 +824,7 @@ export default function AdminDashboard() {
               setPayoutAmount={setPayoutAmount}
               handlePayoutSubmit={handlePayoutSubmit}
               onMitraUpdated={handleMitraUpdated}
+              onRefresh={loadData}
             />
           )}
 

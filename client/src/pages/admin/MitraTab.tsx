@@ -3,9 +3,9 @@ import {
   Banknote, X, Users, Wallet, ArrowDownRight, 
   Edit3, Key, Phone, Eye, EyeOff, Search,
   QrCode, Printer, Download, Copy, Check, ExternalLink, ShieldCheck, Tag, Sparkles,
-  FolderArchive, CheckSquare, Square, DownloadCloud
+  FolderArchive, CheckSquare, Square, DownloadCloud, PlusCircle
 } from 'lucide-react';
-import { formatRp } from '../../utils/api';
+import { formatRp, fetchApi } from '../../utils/api';
 import EditMitraModal from './EditMitraModal';
 import QrStickerCard from '../../components/QrStickerCard';
 import { downloadSingleMitraCard, downloadBulkMitraZip } from '../../utils/qrCardGenerator';
@@ -18,7 +18,8 @@ export default function MitraTab({
   payoutAmount,
   setPayoutAmount,
   handlePayoutSubmit,
-  onMitraUpdated
+  onMitraUpdated,
+  onRefresh
 }: {
   mitras: any[];
   loading?: boolean;
@@ -28,17 +29,38 @@ export default function MitraTab({
   setPayoutAmount?: (amt: string) => void;
   handlePayoutSubmit?: (e: React.FormEvent) => void;
   onMitraUpdated?: (updated: any) => void;
+  onRefresh?: () => void;
 }) {
   const [editingMitra, setEditingMitra] = useState<any>(null);
   const [selectedQrMitra, setSelectedQrMitra] = useState<any>(null);
   const [showBatchPrintModal, setShowBatchPrintModal] = useState(false);
-  const [batchFilter, setBatchFilter] = useState<'all' | 'unassigned' | 'batch1' | 'batch2' | 'batch3' | 'batch4'>('all');
+  const [batchFilter, setBatchFilter] = useState<string>('all');
   const [copiedLink, setCopiedLink] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
   const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
   const [downloadingZip, setDownloadingZip] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState<string | null>(null);
+  const [generatingBatch, setGeneratingBatch] = useState(false);
+
+  const handleGenerateNext100Mitra = async () => {
+    if (!confirm('Buat 100 slot akun Mitra Pre-Registered berikutnya ke database?')) return;
+    setGeneratingBatch(true);
+    try {
+      const res = await fetchApi('/api/mitra/generate-batch', { method: 'POST' });
+      if (res.ok && res.data && res.data.success) {
+        alert(res.data.message || 'Berhasil menambahkan 100 slot mitra baru.');
+        if (onRefresh) onRefresh();
+      } else {
+        alert('Gagal menambahkan slot mitra: ' + (res.data?.error || res.statusText || 'Terjadi kesalahan.'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Terjadi kesalahan: ' + (err.message || 'Koneksi gagal.'));
+    } finally {
+      setGeneratingBatch(false);
+    }
+  };
 
   const togglePasswordVisibility = (id: string) => {
     setRevealedPasswords((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -74,18 +96,16 @@ export default function MitraTab({
     if (batchFilter === 'unassigned') {
       return preGeneratedList.filter((m) => !isAssigned(m));
     }
-    if (batchFilter === 'batch1') {
-      return preGeneratedList.slice(0, 25);
+    if (batchFilter.startsWith('batch_')) {
+      const idx = parseInt(batchFilter.replace('batch_', ''), 10);
+      if (!isNaN(idx)) {
+        return preGeneratedList.slice(idx * 25, (idx + 1) * 25);
+      }
     }
-    if (batchFilter === 'batch2') {
-      return preGeneratedList.slice(25, 50);
-    }
-    if (batchFilter === 'batch3') {
-      return preGeneratedList.slice(50, 75);
-    }
-    if (batchFilter === 'batch4') {
-      return preGeneratedList.slice(75, 100);
-    }
+    if (batchFilter === 'batch1') return preGeneratedList.slice(0, 25);
+    if (batchFilter === 'batch2') return preGeneratedList.slice(25, 50);
+    if (batchFilter === 'batch3') return preGeneratedList.slice(50, 75);
+    if (batchFilter === 'batch4') return preGeneratedList.slice(75, 100);
     return preGeneratedList;
   };
 
@@ -104,7 +124,7 @@ export default function MitraTab({
 
   const handleDownloadAllZip = async () => {
     setDownloadingZip(true);
-    setDownloadProgress('Menyiapkan (0/100)...');
+    setDownloadProgress(`Menyiapkan (0/${preGeneratedList.length})...`);
     try {
       const allMitras = preGeneratedList.map((m, idx) => ({
         index: idx + 1,
@@ -115,7 +135,7 @@ export default function MitraTab({
       }));
       await downloadBulkMitraZip(
         allMitras, 
-        '100_QR_Code_Mitra_NgalamFixPro.zip',
+        `Koleksi_${preGeneratedList.length}_QR_Code_Mitra.zip`,
         (curr, total) => setDownloadProgress(`Memproses ${curr}/${total}...`)
       );
     } catch (err: any) {
@@ -271,10 +291,10 @@ export default function MitraTab({
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
               <Sparkles className="w-3 h-3" />
-              100 QR Code Siap Pakai
+              {preGeneratedList.length} QR Code Siap Pakai
             </span>
             <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
-              MITRA-001 s/d MITRA-100
+              {preGeneratedList.length > 0 ? `${preGeneratedList[0].referralCode} s/d ${preGeneratedList[preGeneratedList.length - 1].referralCode}` : 'MITRA-001 s/d MITRA-100'}
             </span>
             {unassignedCount > 0 && (
               <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-200">
@@ -283,22 +303,34 @@ export default function MitraTab({
             )}
           </div>
           <h3 className="text-sm sm:text-base font-black text-slate-900">
-            Koleksi Stiker QR Code Referral 100 Mitra Workshop
+            Koleksi Stiker QR Code Referral {preGeneratedList.length} Mitra Workshop
           </h3>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Kode referral (<code>MITRA-001</code> s/d <code>MITRA-100</code>) dan ID mitra terkunci permanen. Anda bisa langsung mencetak lembar stiker QR untuk dibagikan ke driver ojol atau toko rekanan, lalu input nama pemiliknya kapan saja saat mitra aktif.
+            Kode referral (<code>MITRA-...</code>) dan ID mitra terkunci permanen. Anda bisa langsung mencetak lembar stiker QR untuk dibagikan ke driver ojol atau toko rekanan, lalu input nama pemiliknya kapan saja saat mitra aktif.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto">
           <button
             type="button"
+            onClick={handleGenerateNext100Mitra}
+            disabled={generatingBatch}
+            className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-md shadow-slate-900/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            title="Buat 100 slot akun mitra pre-registered baru ke database"
+          >
+            <PlusCircle className={`w-4 h-4 text-amber-400 ${generatingBatch ? 'animate-spin' : ''}`} />
+            <span>{generatingBatch ? 'Membuat 100 Mitra...' : '+ Tambah 100 Mitra'}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleDownloadAllZip}
+            disabled={downloadingZip}
             className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            title="Download seluruh 100 file QR code dalam 1 arsip ZIP"
+            title="Download seluruh file QR code dalam 1 arsip ZIP"
           >
             <FolderArchive className="w-4 h-4" />
-            <span>Unduh 100 QR (.ZIP)</span>
+            <span>{downloadProgress || (downloadingZip ? 'Menyiapkan...' : `Unduh Semua (${preGeneratedList.length}) ZIP`)}</span>
           </button>
           <button
             type="button"
@@ -839,42 +871,24 @@ export default function MitraTab({
                 >
                   Belum Terisi ({unassignedCount})
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setBatchFilter('batch1')}
-                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    batchFilter === 'batch1' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  001 - 025
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBatchFilter('batch2')}
-                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    batchFilter === 'batch2' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  026 - 050
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBatchFilter('batch3')}
-                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    batchFilter === 'batch3' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  051 - 075
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBatchFilter('batch4')}
-                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    batchFilter === 'batch4' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  076 - 100
-                </button>
+                {Array.from({ length: Math.ceil(preGeneratedList.length / 25) }).map((_, bIdx) => {
+                  const bKey = `batch_${bIdx}`;
+                  const fromNum = String(bIdx * 25 + 1).padStart(3, '0');
+                  const toNum = String(Math.min((bIdx + 1) * 25, preGeneratedList.length)).padStart(3, '0');
+                  const isCur = batchFilter === bKey || (bIdx === 0 && batchFilter === 'batch1') || (bIdx === 1 && batchFilter === 'batch2') || (bIdx === 2 && batchFilter === 'batch3') || (bIdx === 3 && batchFilter === 'batch4');
+                  return (
+                    <button
+                      key={bKey}
+                      type="button"
+                      onClick={() => setBatchFilter(bKey)}
+                      className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                        isCur ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {fromNum} - {toNum}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Selection Controls Toolbar */}
@@ -892,7 +906,7 @@ export default function MitraTab({
                   onClick={selectAll100}
                   className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all cursor-pointer"
                 >
-                  Pilih Semua 100
+                  Pilih Semua ({preGeneratedList.length})
                 </button>
                 {selectedCodes.length > 0 && (
                   <button
