@@ -376,17 +376,17 @@ export default function TransactionsTab({
         {/* Table Section */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50/80 text-slate-700 font-semibold border-b border-slate-200/80 text-[11px] uppercase tracking-wider">
+            <thead className="bg-slate-50/90 text-slate-700 font-bold border-b border-slate-200/80 text-[11px] uppercase tracking-wider">
               <tr>
-                <th className="py-3.5 px-4">No. Faktur</th>
-                <th className="py-3.5 px-4">Tiket</th>
-                <th className="py-3.5 px-4">Pelanggan</th>
-                <th className="py-3.5 px-4">Perangkat</th>
-                <th className="py-3.5 px-4">Layanan &amp; Garansi Servis</th>
-                <th className="py-3.5 px-4">Total Bayar</th>
-                <th className="py-3.5 px-4">Metode</th>
-                <th className="py-3.5 px-4 text-center">Status Klaim Garansi</th>
-                <th className="py-3.5 px-4 text-right">Aksi</th>
+                <th className="py-3.5 px-4 whitespace-nowrap">No. Faktur</th>
+                <th className="py-3.5 px-4 whitespace-nowrap">Tiket</th>
+                <th className="py-3.5 px-4 whitespace-nowrap min-w-[130px]">Pelanggan</th>
+                <th className="py-3.5 px-4 whitespace-nowrap min-w-[130px]">Perangkat</th>
+                <th className="py-3.5 px-4 min-w-[220px]">Layanan &amp; Garansi Servis</th>
+                <th className="py-3.5 px-4 whitespace-nowrap">Total Bayar</th>
+                <th className="py-3.5 px-4 whitespace-nowrap">Metode</th>
+                <th className="py-3.5 px-4 text-center whitespace-nowrap min-w-[170px]">Status Klaim Garansi</th>
+                <th className="py-3.5 px-4 text-right whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-normal">
@@ -425,10 +425,10 @@ export default function TransactionsTab({
                       </td>
 
                       {/* Pelanggan */}
-                      <td className="py-3.5 px-4 font-medium text-slate-900">
-                        <div>{tx.customerName || '-'}</div>
+                      <td className="py-3.5 px-4 font-medium text-slate-900 whitespace-nowrap">
+                        <div className="font-bold text-slate-900">{tx.customerName || '-'}</div>
                         {(tx.customerPhone || tx.whatsapp) && (
-                          <div className="text-[10px] text-slate-400 font-mono">
+                          <div className="text-[10.5px] text-slate-500 font-mono mt-0.5">
                             {tx.customerPhone || tx.whatsapp}
                           </div>
                         )}
@@ -538,7 +538,7 @@ export default function TransactionsTab({
                         <button
                           type="button"
                           onClick={() => handleOpenWarrantyModal(tx)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all border cursor-pointer shadow-2xs hover:scale-102 ${
+                          className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all border cursor-pointer shadow-xs hover:shadow-sm whitespace-nowrap ${
                             isClaimed
                               ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                               : isResolved
@@ -549,21 +549,21 @@ export default function TransactionsTab({
                         >
                           {isClaimed ? (
                             <>
-                              <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                              <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                               <span>⚠️ Sudah Klaim</span>
                             </>
                           ) : isResolved ? (
                             <>
-                              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                               <span>✅ Klaim Selesai Diganti</span>
                             </>
                           ) : (
                             <>
-                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                               <span>🛡️ Belum Klaim (Aktif)</span>
                             </>
                           )}
-                          <Edit3 className="w-3 h-3 text-slate-400 ml-0.5" />
+                          <Edit3 className="w-3 h-3 text-slate-400 ml-0.5 shrink-0" />
                         </button>
 
                         {isClaimed && tx.warrantyClaimDate && (
