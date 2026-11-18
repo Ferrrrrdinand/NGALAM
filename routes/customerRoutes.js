@@ -1594,6 +1594,8 @@ router.get('/download-qr-zip', async (req, res) => {
     const folder = zip.folder('QR_Member_NgalamFixPro') || zip;
     let addedCount = 0;
 
+    const { getOrSaveQrAsset } = require('../services/qrAssetService');
+
     for (const m of targetItems) {
       const pngBuffer = await QRCode.toBuffer(m.url, {
         width: 500,
@@ -1604,6 +1606,15 @@ router.get('/download-qr-zip', async (req, res) => {
       const safeName = (m.name || 'SiapPakai').replace(/[^a-zA-Z0-9_-]/g, '_');
       folder.file(`QR_${m.code}_${safeName}.png`, pngBuffer);
       addedCount++;
+
+      // Simpan aset QR Member langsung ke PostgreSQL
+      getOrSaveQrAsset({
+        type: 'member',
+        code: m.code,
+        targetUrl: m.url,
+        name: m.name,
+        metadata: { id: m.id, phone: m.phone, downloadedAt: new Date().toISOString() }
+      }).catch(() => {});
     }
 
     const manifest = targetItems.map((m, idx) => 

@@ -720,6 +720,8 @@ router.get('/download-qr-zip', async (req, res) => {
     const folder = zip.folder('QR_Mitra_NgalamFixPro') || zip;
     let addedCount = 0;
 
+    const { getOrSaveQrAsset } = require('../services/qrAssetService');
+
     for (const code of targetCodes) {
       const bookingUrl = `${baseUrl}/pesan-servis?ref=${encodeURIComponent(code)}`;
       const pngBuffer = await QRCode.toBuffer(bookingUrl, {
@@ -730,6 +732,14 @@ router.get('/download-qr-zip', async (req, res) => {
       });
       folder.file(`${code}.png`, pngBuffer);
       addedCount++;
+
+      // Simpan aset QR langsung ke PostgreSQL agar tersimpan permanen di database
+      getOrSaveQrAsset({
+        type: 'mitra',
+        code,
+        targetUrl: bookingUrl,
+        metadata: { downloadedAt: new Date().toISOString() }
+      }).catch(() => {});
     }
 
     const readme = `========================================================================\n` +

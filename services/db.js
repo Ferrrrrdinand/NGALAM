@@ -356,10 +356,26 @@ async function runInitDb() {
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS image_url TEXT;
           ALTER TABLE banners ADD COLUMN IF NOT EXISTS raw_data JSONB;
 
+          -- Tabel Khusus Cache Asset QR Code (Agar asset berat tidak membebani filesystem lokal)
+          CREATE TABLE IF NOT EXISTS qr_assets (
+            id VARCHAR(100) PRIMARY KEY,
+            type VARCHAR(50) NOT NULL,
+            code VARCHAR(100) NOT NULL,
+            target_url TEXT NOT NULL,
+            svg_content TEXT,
+            data_url TEXT,
+            metadata JSONB DEFAULT '{}'::jsonb,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+
+          CREATE INDEX IF NOT EXISTS idx_qr_assets_type ON qr_assets(type);
+          CREATE INDEX IF NOT EXISTS idx_qr_assets_code ON qr_assets(code);
+
           -- Pastikan seluruh mitra diselaraskan ke komisi 5%
           UPDATE users SET commission_rate = 5 WHERE role IN ('mitra', 'ojol', 'kurir') AND (commission_rate = 10 OR commission_rate IS NULL);
         `);
-        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners, commissions, ads, warranties) siap.');
+        console.log('[PostgreSQL] Skema seluruh tabel (users, customers, orders, transactions, finances, technician_logs, sessions, activity_logs, promo_codes, banners, commissions, ads, warranties, qr_assets) siap.');
     } finally {
       client.release();
     }
