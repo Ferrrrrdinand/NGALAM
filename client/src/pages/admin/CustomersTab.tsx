@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { UserCheck, Search, Phone, Mail, Key, Eye, EyeOff, Edit3, ShieldCheck, ShoppingBag, MapPin, Tag } from 'lucide-react';
+import { UserCheck, Search, Phone, Mail, Key, Eye, EyeOff, Edit3, ShieldCheck, ShoppingBag, MapPin, Tag, QrCode } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditCustomerModal from './EditCustomerModal';
+import MemberQrCardModal from '../../components/MemberQrCardModal';
 
 interface CustomersTabProps {
   customers: any[];
@@ -16,6 +17,7 @@ export default function CustomersTab({
 }: CustomersTabProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingCustomer, setEditingCustomer] = useState<any>(null);
+  const [selectedCustomerQr, setSelectedCustomerQr] = useState<any>(null);
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
 
   const togglePasswordVisibility = (id: string) => {
@@ -274,6 +276,15 @@ export default function CustomersTab({
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
+                            onClick={() => setSelectedCustomerQr(c)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs cursor-pointer shadow-2xs transition-all"
+                            title="Lihat & Cetak Kartu QR Code Member"
+                          >
+                            <QrCode className="w-3.5 h-3.5 text-amber-600" />
+                            <span>QR Member</span>
+                          </button>
+
+                          <button
                             onClick={() => setEditingCustomer(c)}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-amber-300 bg-amber-50/80 hover:bg-amber-100 text-amber-900 font-bold text-xs cursor-pointer shadow-2xs transition-all"
                             title="Edit data & kata sandi pelanggan"
@@ -302,6 +313,14 @@ export default function CustomersTab({
               onCustomerUpdated(updated);
             }
           }}
+        />
+      )}
+
+      {/* Modal Kartu QR Code Member */}
+      {selectedCustomerQr && (
+        <MemberQrCardModal
+          customer={selectedCustomerQr}
+          onClose={() => setSelectedCustomerQr(null)}
         />
       )}
     </div>

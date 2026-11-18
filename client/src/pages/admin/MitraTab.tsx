@@ -643,7 +643,11 @@ export default function MitraTab({
                 </span>
               </div>
 
-              <div className="bg-white p-2 rounded-2xl inline-block shadow-md mx-auto max-w-[280px]">
+              <div className="bg-white p-2.5 rounded-2xl inline-block shadow-md mx-auto max-w-[280px]">
+                {/* ID QR TEGAS DI ATAS GAMBAR STIKER (SANGAT JELAS SAAT DIPRINT) */}
+                <div className="w-full bg-slate-900 text-amber-300 font-mono font-black text-xs py-1.5 px-2 rounded-lg border-2 border-slate-900 text-center uppercase tracking-wider mb-2 print:bg-black print:text-white print:border-black">
+                  ID QR: {selectedQrMitra.referralCode} • {selectedQrMitra.id}
+                </div>
                 <img
                   src={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
                   alt={`QR Code ${selectedQrMitra.referralCode}`}
@@ -687,15 +691,24 @@ export default function MitraTab({
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-2 pt-1">
+            <div className="grid grid-cols-3 gap-2 pt-1">
               <a
                 href={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
                 download={`QR_Mitra_${selectedQrMitra.referralCode}.png`}
-                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer text-center"
+                className="py-2.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1 shadow-xs cursor-pointer text-center"
               >
-                <Download className="w-4 h-4" />
-                <span>Unduh PNG</span>
+                <Download className="w-3.5 h-3.5" />
+                <span>Unduh</span>
               </a>
+
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1 shadow-xs cursor-pointer text-center"
+              >
+                <Printer className="w-3.5 h-3.5 text-amber-400" />
+                <span>Cetak</span>
+              </button>
 
               <button
                 type="button"
@@ -704,10 +717,10 @@ export default function MitraTab({
                   setSelectedQrMitra(null);
                   setEditingMitra(m);
                 }}
-                className="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                className="py-2.5 px-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold flex items-center justify-center gap-1 shadow-xs cursor-pointer"
               >
-                <Edit3 className="w-4 h-4" />
-                <span>{isAssigned(selectedQrMitra) ? 'Edit Profil' : 'Input Pemilik'}</span>
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>{isAssigned(selectedQrMitra) ? 'Edit' : 'Pemilik'}</span>
               </button>
             </div>
           </div>
@@ -956,6 +969,10 @@ export default function MitraTab({
 
                       {/* Branded Card Image Preview */}
                       <div className="w-full bg-slate-50 p-1.5 rounded-xl border border-slate-200/80 my-0.5">
+                        {/* ID QR TEGAS DI ATAS QR CODE (SANGAT JELAS SAAT CETAK / PRINT) */}
+                        <div className="w-full bg-slate-900 text-amber-300 font-mono font-black text-[11px] py-1 px-2 rounded-md border-2 border-slate-900 uppercase tracking-wider mb-1.5 print:bg-black print:text-white print:border-black print:text-xs print:py-2">
+                          ID QR: {m.referralCode} • #{numStr}
+                        </div>
                         <img
                           src={`/qrcodes/mitra/${m.referralCode}.png`}
                           alt={`QR Desain ${m.referralCode}`}

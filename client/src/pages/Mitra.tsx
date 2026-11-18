@@ -3,7 +3,8 @@ import QRCode from 'qrcode';
 import { 
   Bike, Store, Sparkles, CheckCircle2, 
   AlertCircle, Download, Copy, Check, LogOut,
-  Smartphone, Wrench, Coins, ExternalLink, Lightbulb
+  Smartphone, Wrench, Coins, ExternalLink, Lightbulb,
+  Printer
 } from 'lucide-react';
 import { fetchApi, formatRp } from '../utils/api';
 import './Mitra.css';
@@ -635,6 +636,11 @@ export default function Mitra() {
                 Tunjukkan QR Code ini kepada pelanggan Anda atau tempel di motor/helm/toko Anda. Pelanggan cukup scan untuk masuk ke web Ngalam Fix Pro, dan saat memesan servis kode referral Anda otomatis terpasang!
               </p>
 
+              {/* ID QR TEGAS & KONTRAS TINGGI DI ATAS QR CODE (TERLIHAT SANGAT JELAS SAAT DIPRINT) */}
+              <div className="w-full bg-slate-900 text-amber-300 font-mono font-black text-xs sm:text-sm py-2 px-3 rounded-xl border-2 border-slate-900 text-center uppercase tracking-wider mb-2.5 shadow-sm print:bg-black print:text-white print:border-black print:text-base print:py-2.5">
+                ID QR: <span className="text-white">{mitraSession.referralCode}</span> {mitraSession.id ? `• ${mitraSession.id}` : ''}
+              </div>
+
               <div className="qr-image-wrapper">
                 {qrDataUrl ? (
                   <img src={qrDataUrl} alt="QR Code Afiliasi Mitra" />
@@ -653,7 +659,7 @@ export default function Mitra() {
               </div>
 
               {/* ACTIONS */}
-              <div className="mitra-qr-actions w-full">
+              <div className="mitra-qr-actions w-full flex flex-col gap-2">
                 <div className="mitra-qr-input-row w-full">
                   <input
                     type="text"
@@ -669,15 +675,25 @@ export default function Mitra() {
                     {copied ? 'Tersalin!' : 'Salin Link'}
                   </button>
                 </div>
-                {qrDataUrl && (
-                  <a
-                    href={qrDataUrl}
-                    download={`QR_Afiliasi_${mitraSession.referralCode}.png`}
-                    className="mitra-qr-download-btn w-full"
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-all text-center"
                   >
-                    <Download className="w-4 h-4 text-white" /> Unduh Gambar QR Code (PNG)
-                  </a>
-                )}
+                    <Printer className="w-4 h-4 text-amber-400" /> Cetak QR Stiker
+                  </button>
+                  {qrDataUrl && (
+                    <a
+                      href={qrDataUrl}
+                      download={`QR_Afiliasi_${mitraSession.referralCode}.png`}
+                      className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-all text-center"
+                    >
+                      <Download className="w-4 h-4 text-white" /> Unduh PNG
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
 

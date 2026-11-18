@@ -4,8 +4,9 @@ import {
   User, AlertCircle, Phone, Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2,
   Smartphone, Search, RefreshCw, Calendar, Tag, FileText, ExternalLink, ChevronRight, 
   X, AlertTriangle, Sparkles, Send, MapPin, Copy, Check, Printer, Clock, Info,
-  Wrench, CheckCircle, HelpCircle, LogOut, Star
+  Wrench, CheckCircle, HelpCircle, LogOut, Star, QrCode, Download
 } from 'lucide-react';
+import MemberQrCardModal from '../components/MemberQrCardModal';
 import { fetchApi, formatRp, formatDateId } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { maskCustomerName } from '../utils/maskHelper';
@@ -607,6 +608,7 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
   const [reviewTargetOrder, setReviewTargetOrder] = useState<any | null>(null);
   const [viewReceiptOrder, setViewReceiptOrder] = useState<any | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showMemberQr, setShowMemberQr] = useState<boolean>(false);
 
   const customerIdentifier = customer?.whatsapp || customer?.phone || customer?.email || customer?.username || '';
 
@@ -761,7 +763,17 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 w-full md:w-auto">
+          <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap">
+            <button
+              type="button"
+              onClick={() => setShowMemberQr(true)}
+              className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+              title="Buka & Cetak Kartu QR Code Member Resmi Anda"
+            >
+              <QrCode className="w-3.5 h-3.5 text-amber-400" />
+              <span>Kartu QR Member</span>
+            </button>
+
             <Link
               to="/pesan-servis"
               className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
@@ -1268,6 +1280,14 @@ function CustomerAccountDashboard({ customer, logoutCustomer }: { customer: any;
           onSuccess={() => {
             loadCustomerOrders();
           }}
+        />
+      )}
+
+      {/* Modal Kartu QR Code Member Prioritas */}
+      {showMemberQr && (
+        <MemberQrCardModal
+          customer={customer}
+          onClose={() => setShowMemberQr(false)}
         />
       )}
 

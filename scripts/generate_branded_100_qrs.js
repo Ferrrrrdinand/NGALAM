@@ -80,35 +80,43 @@ function getCardSvg({ num, code, id }) {
       <text x="${width / 2}" y="135" text-anchor="middle" class="font-black" font-size="16" fill="#0f172a" letter-spacing="1.5">MITRA RESMI #${numStr} DARI 100</text>
 
       <!-- Discount Ribbon -->
-      <rect x="44" y="196" width="${width - 88}" height="58" rx="18" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2" />
-      <text x="${width / 2}" y="223" text-anchor="middle" class="font-black" font-size="16" fill="#065f46" letter-spacing="0.8">SCAN UNTUK DISKON SERVIS 5%</text>
-      <text x="${width / 2}" y="242" text-anchor="middle" class="font-med" font-size="12" fill="#047857">Tunjukkan QR code ini ke kasir atau buka saat pesan servis online</text>
+      <rect x="44" y="184" width="${width - 88}" height="48" rx="14" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2" />
+      <text x="${width / 2}" y="206" text-anchor="middle" class="font-black" font-size="15" fill="#065f46" letter-spacing="0.8">SCAN UNTUK DISKON SERVIS 5%</text>
+      <text x="${width / 2}" y="222" text-anchor="middle" class="font-med" font-size="11.5" fill="#047857">Tunjukkan QR code ini ke kasir atau buka saat pesan servis online</text>
+
+      <!-- PROMINENT HIGH-CONTRAST ID QR BOX (TEPAT DI ATAS KOTAK QR CODE - SANGAT JELAS SAAT DIPRINT) -->
+      <rect x="60" y="242" width="${width - 120}" height="54" rx="14" fill="#0f172a" stroke="#d97706" stroke-width="3" />
+      <rect x="80" y="233" width="140" height="18" rx="5" fill="#d97706" />
+      <text x="150" y="246" text-anchor="middle" class="font-black" font-size="10.5" fill="#ffffff" letter-spacing="1">IDENTITAS RESMI</text>
+      <text x="${width / 2}" y="276" text-anchor="middle" class="font-mono" font-size="22" fill="#ffffff" letter-spacing="2">
+        ID QR: <tspan fill="#fbbf24">${code}</tspan> • <tspan font-size="16" fill="#cbd5e1">${id}</tspan>
+      </text>
 
       <!-- QR Code Outer Frame -->
-      <rect x="${width / 2 - 195}" y="274" width="390" height="390" rx="30" fill="#ffffff" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 6" />
+      <rect x="${width / 2 - 190}" y="306" width="380" height="380" rx="28" fill="#ffffff" stroke="#0f172a" stroke-width="3.5" stroke-dasharray="10 6" />
       
       <!-- Embedded QR SVG Vector -->
-      <g transform="translate(${width / 2 - 170}, 299)">
-        <svg width="340" height="340" viewBox="0 0 100 100">
+      <g transform="translate(${width / 2 - 165}, 331)">
+        <svg width="330" height="330" viewBox="0 0 100 100">
           ${cleanQrSvg.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
         </svg>
       </g>
 
       <!-- Center Branded Shield over QR -->
-      <circle cx="${width / 2}" cy="469" r="28" fill="#ffffff" stroke="#d97706" stroke-width="3.5" />
-      <circle cx="${width / 2}" cy="469" r="23" fill="#0f172a" />
-      <text x="${width / 2}" y="475" text-anchor="middle" class="font-black" font-size="14" fill="#fbbf24">NFP</text>
+      <circle cx="${width / 2}" cy="496" r="28" fill="#ffffff" stroke="#d97706" stroke-width="3.5" />
+      <circle cx="${width / 2}" cy="496" r="23" fill="#0f172a" />
+      <text x="${width / 2}" y="502" text-anchor="middle" class="font-black" font-size="14" fill="#fbbf24">NFP</text>
 
       <!-- Referral Code Box -->
-      <rect x="70" y="680" width="${width - 140}" height="76" rx="20" fill="#fffbeb" stroke="#fde68a" stroke-width="2.5" />
-      <text x="${width / 2}" y="707" text-anchor="middle" class="font-bold" font-size="11.5" fill="#78350f" letter-spacing="1.5">KODE REFERRAL MITRA (PERMANEN):</text>
-      <text x="${width / 2}" y="742" text-anchor="middle" class="font-mono" font-size="30" fill="#b45309" letter-spacing="3">${code}</text>
+      <rect x="70" y="696" width="${width - 140}" height="70" rx="18" fill="#fffbeb" stroke="#fde68a" stroke-width="2.5" />
+      <text x="${width / 2}" y="720" text-anchor="middle" class="font-bold" font-size="11" fill="#78350f" letter-spacing="1.5">KODE REFERRAL MITRA (PERMANEN):</text>
+      <text x="${width / 2}" y="752" text-anchor="middle" class="font-mono" font-size="28" fill="#b45309" letter-spacing="3">${code}</text>
 
       <!-- Mitra Info Box (Siap diisi nama pemilik) -->
-      <rect x="70" y="770" width="${width - 140}" height="56" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
-      <text x="95" y="794" class="font-bold" font-size="11" fill="#64748b">PEMILIK / MITRA:</text>
-      <text x="95" y="814" class="font-med" font-size="12" fill="#334155">_______________________________________</text>
-      <text x="${width - 95}" y="802" text-anchor="end" class="font-mono" font-size="11" fill="#64748b">ID: ${id}</text>
+      <rect x="70" y="776" width="${width - 140}" height="56" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
+      <text x="95" y="800" class="font-bold" font-size="11" fill="#64748b">PEMILIK / MITRA:</text>
+      <text x="95" y="820" class="font-med" font-size="12" fill="#334155">_______________________________________</text>
+      <text x="${width - 95}" y="808" text-anchor="end" class="font-mono" font-size="11" fill="#64748b">ID: ${id}</text>
 
       <!-- How to Scan -->
       <text x="${width / 2}" y="856" text-anchor="middle" class="font-med" font-size="11.5" fill="#475569">
@@ -119,13 +127,13 @@ function getCardSvg({ num, code, id }) {
       </text>
 
       <!-- Bottom Footer -->
-      <line x1="44" y1="906" x2="${width - 44}" y2="906" stroke="#e2e8f0" stroke-width="1.5" />
+      <line x1="44" y1="900" x2="${width - 44}" y2="900" stroke="#e2e8f0" stroke-width="1.5" />
       
-      <text x="44" y="934" class="font-bold" font-size="11" fill="#0f172a">NGALAM FIX PRO</text>
-      <text x="44" y="952" class="font-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis • Transparan Bisa Ditunggu</text>
+      <text x="44" y="928" class="font-bold" font-size="11" fill="#0f172a">NGALAM FIX PRO</text>
+      <text x="44" y="946" class="font-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis • Transparan Bisa Ditunggu</text>
 
-      <text x="${width - 44}" y="934" text-anchor="end" class="font-bold" font-size="11" fill="#0f172a">Hotline WA: 0811-318-5858</text>
-      <text x="${width - 44}" y="952" text-anchor="end" class="font-bold" font-size="10.5" fill="#d97706">NOMOR MITRA #${numStr} DARI 100</text>
+      <text x="${width - 44}" y="928" text-anchor="end" class="font-bold" font-size="11" fill="#0f172a">Hotline WA: 0811-318-5858</text>
+      <text x="${width - 44}" y="946" text-anchor="end" class="font-bold" font-size="10.5" fill="#d97706">NOMOR MITRA #${numStr} DARI 100</text>
     </svg>
     `;
   });
