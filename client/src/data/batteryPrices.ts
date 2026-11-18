@@ -2,12 +2,10 @@
  * BATTERY PRICING DATABASE & ESTIMATOR (NGALAM FIX PRO)
  * Sistem perhitungan harga baterai presisi mirip LCD:
  * - Multiplier Part Baterai: Harga Pokok x 1.20 (20% margin part)
- * - Jasa Pemasangan Spreadsheet Baterai: Rp 100.000 (Flat dalam sheet)
+ * - Jasa Pemasangan Seluruh Baterai: Rp 150.000 FLAT untuk SEMUA TIPE (iPhone & Android)
  * - Subtotal = Part + Jasa
  * - Affiliate 5% = Subtotal x 5%
- * - Harga Akhir Konsumen = Subtotal + Affiliate 5%
- * - JIKA TIDAK ADA DI SPREADSHEET (Fallback Android / Tipe Lain):
- *   Jasa mulai dari Rp 150.000 (Khusus Baterai: Start from Rp 150.000)
+ * - Total Konsumen (Harga Akhir) = Subtotal + Affiliate 5%
  */
 
 export interface BatteryItem {
@@ -46,10 +44,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 170000,
     "partPrice": 204000,
-    "serviceFee": 100000,
-    "subtotal": 304000,
-    "affiliateFee": 15200,
-    "totalPrice": 319200,
+    "serviceFee": 150000,
+    "subtotal": 354000,
+    "affiliateFee": 17700,
+    "totalPrice": 371700,
     "type": "standard",
     "models": [
       "iphone 11"
@@ -61,10 +59,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 229000,
     "partPrice": 274800,
-    "serviceFee": 100000,
-    "subtotal": 374800,
-    "affiliateFee": 18740,
-    "totalPrice": 393540,
+    "serviceFee": 150000,
+    "subtotal": 424800,
+    "affiliateFee": 21240,
+    "totalPrice": 446040,
     "type": "standard",
     "models": [
       "iphone 13 pro"
@@ -76,10 +74,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 84000,
     "partPrice": 100800,
-    "serviceFee": 100000,
-    "subtotal": 200800,
-    "affiliateFee": 10040,
-    "totalPrice": 210840,
+    "serviceFee": 150000,
+    "subtotal": 250800,
+    "affiliateFee": 12540,
+    "totalPrice": 263340,
     "type": "cell_only",
     "models": [
       "iphone xr"
@@ -91,10 +89,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 88000,
     "partPrice": 105600,
-    "serviceFee": 100000,
-    "subtotal": 205600,
-    "affiliateFee": 10280,
-    "totalPrice": 215880,
+    "serviceFee": 150000,
+    "subtotal": 255600,
+    "affiliateFee": 12780,
+    "totalPrice": 268380,
     "type": "cell_only",
     "models": [
       "iphone 11"
@@ -106,10 +104,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 99000,
     "partPrice": 118800,
-    "serviceFee": 100000,
-    "subtotal": 218800,
-    "affiliateFee": 10940,
-    "totalPrice": 229740,
+    "serviceFee": 150000,
+    "subtotal": 268800,
+    "affiliateFee": 13440,
+    "totalPrice": 282240,
     "type": "standard",
     "models": [
       "iphone 7"
@@ -121,10 +119,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 175000,
     "partPrice": 210000,
-    "serviceFee": 100000,
-    "subtotal": 310000,
-    "affiliateFee": 15500,
-    "totalPrice": 325500,
+    "serviceFee": 150000,
+    "subtotal": 360000,
+    "affiliateFee": 18000,
+    "totalPrice": 378000,
     "type": "standard",
     "models": [
       "iphone xs"
@@ -136,10 +134,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 234000,
     "partPrice": 280800,
-    "serviceFee": 100000,
-    "subtotal": 380800,
-    "affiliateFee": 19040,
-    "totalPrice": 399840,
+    "serviceFee": 150000,
+    "subtotal": 430800,
+    "affiliateFee": 21540,
+    "totalPrice": 452340,
     "type": "standard",
     "models": [
       "iphone 11 pro"
@@ -151,10 +149,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 121000,
     "partPrice": 145200,
-    "serviceFee": 100000,
-    "subtotal": 245200,
-    "affiliateFee": 12260,
-    "totalPrice": 257460,
+    "serviceFee": 150000,
+    "subtotal": 295200,
+    "affiliateFee": 14760,
+    "totalPrice": 309960,
     "type": "standard",
     "models": [
       "iphone 7 plus"
@@ -166,10 +164,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 192000,
     "partPrice": 230400,
-    "serviceFee": 100000,
-    "subtotal": 330400,
-    "affiliateFee": 16520,
-    "totalPrice": 346920,
+    "serviceFee": 150000,
+    "subtotal": 380400,
+    "affiliateFee": 19020,
+    "totalPrice": 399420,
     "type": "standard",
     "models": [
       "iphone xs max"
@@ -181,10 +179,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 246000,
     "partPrice": 295200,
-    "serviceFee": 100000,
-    "subtotal": 395200,
-    "affiliateFee": 19760,
-    "totalPrice": 414960,
+    "serviceFee": 150000,
+    "subtotal": 445200,
+    "affiliateFee": 22260,
+    "totalPrice": 467460,
     "type": "standard",
     "models": [
       "iphone 11 pro max"
@@ -196,10 +194,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 109000,
     "partPrice": 130800,
-    "serviceFee": 100000,
-    "subtotal": 230800,
-    "affiliateFee": 11540,
-    "totalPrice": 242340,
+    "serviceFee": 150000,
+    "subtotal": 280800,
+    "affiliateFee": 14040,
+    "totalPrice": 294840,
     "type": "standard",
     "models": [
       "iphone 8"
@@ -211,10 +209,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 170000,
     "partPrice": 204000,
-    "serviceFee": 100000,
-    "subtotal": 304000,
-    "affiliateFee": 15200,
-    "totalPrice": 319200,
+    "serviceFee": 150000,
+    "subtotal": 354000,
+    "affiliateFee": 17700,
+    "totalPrice": 371700,
     "type": "standard",
     "models": [
       "iphone 12",
@@ -227,10 +225,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 134000,
     "partPrice": 160800,
-    "serviceFee": 100000,
-    "subtotal": 260800,
-    "affiliateFee": 13040,
-    "totalPrice": 273840,
+    "serviceFee": 150000,
+    "subtotal": 310800,
+    "affiliateFee": 15540,
+    "totalPrice": 326340,
     "type": "standard",
     "models": [
       "iphone 8 plus"
@@ -242,10 +240,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 239000,
     "partPrice": 286800,
-    "serviceFee": 100000,
-    "subtotal": 386800,
-    "affiliateFee": 19340,
-    "totalPrice": 406140,
+    "serviceFee": 150000,
+    "subtotal": 436800,
+    "affiliateFee": 21840,
+    "totalPrice": 458640,
     "type": "standard",
     "models": [
       "iphone 12 pro max"
@@ -257,10 +255,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 173000,
     "partPrice": 207600,
-    "serviceFee": 100000,
-    "subtotal": 307600,
-    "affiliateFee": 15380,
-    "totalPrice": 322980,
+    "serviceFee": 150000,
+    "subtotal": 357600,
+    "affiliateFee": 17880,
+    "totalPrice": 375480,
     "type": "standard",
     "models": [
       "iphone x"
@@ -272,10 +270,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 182000,
     "partPrice": 218400,
-    "serviceFee": 100000,
-    "subtotal": 318400,
-    "affiliateFee": 15920,
-    "totalPrice": 334320,
+    "serviceFee": 150000,
+    "subtotal": 368400,
+    "affiliateFee": 18420,
+    "totalPrice": 386820,
     "type": "standard",
     "models": [
       "iphone 13"
@@ -287,10 +285,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 137000,
     "partPrice": 164400,
-    "serviceFee": 100000,
-    "subtotal": 264400,
-    "affiliateFee": 13220,
-    "totalPrice": 277620,
+    "serviceFee": 150000,
+    "subtotal": 314400,
+    "affiliateFee": 15720,
+    "totalPrice": 330120,
     "type": "standard",
     "models": [
       "iphone xr"
@@ -302,10 +300,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 297000,
     "partPrice": 356400,
-    "serviceFee": 100000,
-    "subtotal": 456400,
-    "affiliateFee": 22820,
-    "totalPrice": 479220,
+    "serviceFee": 150000,
+    "subtotal": 506400,
+    "affiliateFee": 25320,
+    "totalPrice": 531720,
     "type": "standard",
     "models": [
       "iphone 14 pro max"
@@ -317,10 +315,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 200000,
     "partPrice": 240000,
-    "serviceFee": 100000,
-    "subtotal": 340000,
-    "affiliateFee": 17000,
-    "totalPrice": 357000,
+    "serviceFee": 150000,
+    "subtotal": 390000,
+    "affiliateFee": 19500,
+    "totalPrice": 409500,
     "type": "standard",
     "models": [
       "iphone 14"
@@ -332,10 +330,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 272000,
     "partPrice": 326400,
-    "serviceFee": 100000,
-    "subtotal": 426400,
-    "affiliateFee": 21320,
-    "totalPrice": 447720,
+    "serviceFee": 150000,
+    "subtotal": 476400,
+    "affiliateFee": 23820,
+    "totalPrice": 500220,
     "type": "standard",
     "models": [
       "iphone 14 pro"
@@ -347,10 +345,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 262000,
     "partPrice": 314400,
-    "serviceFee": 100000,
-    "subtotal": 414400,
-    "affiliateFee": 20720,
-    "totalPrice": 435120,
+    "serviceFee": 150000,
+    "subtotal": 464400,
+    "affiliateFee": 23220,
+    "totalPrice": 487620,
     "type": "standard",
     "models": [
       "iphone 13 pro max"
@@ -362,10 +360,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 218000,
     "partPrice": 261600,
-    "serviceFee": 100000,
-    "subtotal": 361600,
-    "affiliateFee": 18080,
-    "totalPrice": 379680,
+    "serviceFee": 150000,
+    "subtotal": 411600,
+    "affiliateFee": 20580,
+    "totalPrice": 432180,
     "type": "standard",
     "models": [
       "iphone 14 plus"
@@ -377,10 +375,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 158000,
     "partPrice": 189600,
-    "serviceFee": 100000,
-    "subtotal": 289600,
-    "affiliateFee": 14480,
-    "totalPrice": 304080,
+    "serviceFee": 150000,
+    "subtotal": 339600,
+    "affiliateFee": 16980,
+    "totalPrice": 356580,
     "type": "standard",
     "models": [
       "iphone 12 mini"
@@ -392,10 +390,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 120000,
     "partPrice": 144000,
-    "serviceFee": 100000,
-    "subtotal": 244000,
-    "affiliateFee": 12200,
-    "totalPrice": 256200,
+    "serviceFee": 150000,
+    "subtotal": 294000,
+    "affiliateFee": 14700,
+    "totalPrice": 308700,
     "type": "standard",
     "models": [
       "iphone se 2020"
@@ -407,10 +405,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 99000,
     "partPrice": 118800,
-    "serviceFee": 100000,
-    "subtotal": 218800,
-    "affiliateFee": 10940,
-    "totalPrice": 229740,
+    "serviceFee": 150000,
+    "subtotal": 268800,
+    "affiliateFee": 13440,
+    "totalPrice": 282240,
     "type": "standard",
     "models": [
       "iphone 6s plus"
@@ -422,10 +420,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 101000,
     "partPrice": 121200,
-    "serviceFee": 100000,
-    "subtotal": 221200,
-    "affiliateFee": 11060,
-    "totalPrice": 232260,
+    "serviceFee": 150000,
+    "subtotal": 271200,
+    "affiliateFee": 13560,
+    "totalPrice": 284760,
     "type": "standard",
     "models": [
       "iphone 6s"
@@ -437,10 +435,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 94000,
     "partPrice": 112800,
-    "serviceFee": 100000,
-    "subtotal": 212800,
-    "affiliateFee": 10640,
-    "totalPrice": 223440,
+    "serviceFee": 150000,
+    "subtotal": 262800,
+    "affiliateFee": 13140,
+    "totalPrice": 275940,
     "type": "standard",
     "models": [
       "iphone 6 plus"
@@ -452,10 +450,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 79000,
     "partPrice": 94800,
-    "serviceFee": 100000,
-    "subtotal": 194800,
-    "affiliateFee": 9740,
-    "totalPrice": 204540,
+    "serviceFee": 150000,
+    "subtotal": 244800,
+    "affiliateFee": 12240,
+    "totalPrice": 257040,
     "type": "standard",
     "models": [
       "iphone 6"
@@ -467,10 +465,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 259000,
     "partPrice": 310800,
-    "serviceFee": 100000,
-    "subtotal": 410800,
-    "affiliateFee": 20540,
-    "totalPrice": 431340,
+    "serviceFee": 150000,
+    "subtotal": 460800,
+    "affiliateFee": 23040,
+    "totalPrice": 483840,
     "type": "standard",
     "models": [
       "iphone 15 pro"
@@ -482,10 +480,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 214000,
     "partPrice": 256800,
-    "serviceFee": 100000,
-    "subtotal": 356800,
-    "affiliateFee": 17840,
-    "totalPrice": 374640,
+    "serviceFee": 150000,
+    "subtotal": 406800,
+    "affiliateFee": 20340,
+    "totalPrice": 427140,
     "type": "cell_only",
     "models": [
       "iphone 14 pro max"
@@ -497,10 +495,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 155000,
     "partPrice": 186000,
-    "serviceFee": 100000,
-    "subtotal": 286000,
-    "affiliateFee": 14300,
-    "totalPrice": 300300,
+    "serviceFee": 150000,
+    "subtotal": 336000,
+    "affiliateFee": 16800,
+    "totalPrice": 352800,
     "type": "cell_only",
     "models": [
       "iphone 14 pro"
@@ -512,10 +510,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 95000,
     "partPrice": 114000,
-    "serviceFee": 100000,
-    "subtotal": 214000,
-    "affiliateFee": 10700,
-    "totalPrice": 224700,
+    "serviceFee": 150000,
+    "subtotal": 264000,
+    "affiliateFee": 13200,
+    "totalPrice": 277200,
     "type": "cell_only",
     "models": [
       "iphone 14"
@@ -527,10 +525,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 189000,
     "partPrice": 226800,
-    "serviceFee": 100000,
-    "subtotal": 326800,
-    "affiliateFee": 16340,
-    "totalPrice": 343140,
+    "serviceFee": 150000,
+    "subtotal": 376800,
+    "affiliateFee": 18840,
+    "totalPrice": 395640,
     "type": "cell_only",
     "models": [
       "iphone 13 pro max"
@@ -542,10 +540,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 403000,
     "partPrice": 483600,
-    "serviceFee": 100000,
-    "subtotal": 583600,
-    "affiliateFee": 29180,
-    "totalPrice": 612780,
+    "serviceFee": 150000,
+    "subtotal": 633600,
+    "affiliateFee": 31680,
+    "totalPrice": 665280,
     "type": "standard",
     "models": [
       "iphone 17 pro max"
@@ -557,10 +555,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 390000,
     "partPrice": 468000,
-    "serviceFee": 100000,
-    "subtotal": 568000,
-    "affiliateFee": 28400,
-    "totalPrice": 596400,
+    "serviceFee": 150000,
+    "subtotal": 618000,
+    "affiliateFee": 30900,
+    "totalPrice": 648900,
     "type": "standard",
     "models": [
       "iphone 17 pro"
@@ -572,10 +570,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 309000,
     "partPrice": 370800,
-    "serviceFee": 100000,
-    "subtotal": 470800,
-    "affiliateFee": 23540,
-    "totalPrice": 494340,
+    "serviceFee": 150000,
+    "subtotal": 520800,
+    "affiliateFee": 26040,
+    "totalPrice": 546840,
     "type": "standard",
     "models": [
       "iphone 17"
@@ -587,10 +585,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 119000,
     "partPrice": 142800,
-    "serviceFee": 100000,
-    "subtotal": 242800,
-    "affiliateFee": 12140,
-    "totalPrice": 254940,
+    "serviceFee": 150000,
+    "subtotal": 292800,
+    "affiliateFee": 14640,
+    "totalPrice": 307440,
     "type": "cell_only",
     "models": [
       "iphone 14 plus"
@@ -602,10 +600,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 142000,
     "partPrice": 170400,
-    "serviceFee": 100000,
-    "subtotal": 270400,
-    "affiliateFee": 13520,
-    "totalPrice": 283920,
+    "serviceFee": 150000,
+    "subtotal": 320400,
+    "affiliateFee": 16020,
+    "totalPrice": 336420,
     "type": "cell_only",
     "models": [
       "iphone 15 plus"
@@ -617,10 +615,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 83000,
     "partPrice": 99600,
-    "serviceFee": 100000,
-    "subtotal": 199600,
-    "affiliateFee": 9980,
-    "totalPrice": 209580,
+    "serviceFee": 150000,
+    "subtotal": 249600,
+    "affiliateFee": 12480,
+    "totalPrice": 262080,
     "type": "cell_only",
     "models": [
       "iphone 13 mini"
@@ -632,10 +630,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 152000,
     "partPrice": 182400,
-    "serviceFee": 100000,
-    "subtotal": 282400,
-    "affiliateFee": 14120,
-    "totalPrice": 296520,
+    "serviceFee": 150000,
+    "subtotal": 332400,
+    "affiliateFee": 16620,
+    "totalPrice": 349020,
     "type": "cell_only",
     "models": [
       "iphone 13 pro"
@@ -647,10 +645,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 101000,
     "partPrice": 121200,
-    "serviceFee": 100000,
-    "subtotal": 221200,
-    "affiliateFee": 11060,
-    "totalPrice": 232260,
+    "serviceFee": 150000,
+    "subtotal": 271200,
+    "affiliateFee": 13560,
+    "totalPrice": 284760,
     "type": "cell_only",
     "models": [
       "iphone x"
@@ -662,10 +660,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 107000,
     "partPrice": 128400,
-    "serviceFee": 100000,
-    "subtotal": 228400,
-    "affiliateFee": 11420,
-    "totalPrice": 239820,
+    "serviceFee": 150000,
+    "subtotal": 278400,
+    "affiliateFee": 13920,
+    "totalPrice": 292320,
     "type": "cell_only",
     "models": [
       "iphone xs max"
@@ -677,10 +675,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 115000,
     "partPrice": 138000,
-    "serviceFee": 100000,
-    "subtotal": 238000,
-    "affiliateFee": 11900,
-    "totalPrice": 249900,
+    "serviceFee": 150000,
+    "subtotal": 288000,
+    "affiliateFee": 14400,
+    "totalPrice": 302400,
     "type": "cell_only",
     "models": [
       "iphone xs"
@@ -692,10 +690,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 157000,
     "partPrice": 188400,
-    "serviceFee": 100000,
-    "subtotal": 288400,
-    "affiliateFee": 14420,
-    "totalPrice": 302820,
+    "serviceFee": 150000,
+    "subtotal": 338400,
+    "affiliateFee": 16920,
+    "totalPrice": 355320,
     "type": "high_capacity",
     "models": [
       "iphone 7"
@@ -707,10 +705,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 160000,
     "partPrice": 192000,
-    "serviceFee": 100000,
-    "subtotal": 292000,
-    "affiliateFee": 14600,
-    "totalPrice": 306600,
+    "serviceFee": 150000,
+    "subtotal": 342000,
+    "affiliateFee": 17100,
+    "totalPrice": 359100,
     "type": "high_capacity",
     "models": [
       "iphone 7 plus"
@@ -722,10 +720,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 188000,
     "partPrice": 225600,
-    "serviceFee": 100000,
-    "subtotal": 325600,
-    "affiliateFee": 16280,
-    "totalPrice": 341880,
+    "serviceFee": 150000,
+    "subtotal": 375600,
+    "affiliateFee": 18780,
+    "totalPrice": 394380,
     "type": "high_capacity",
     "models": [
       "iphone 8"
@@ -737,10 +735,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 212000,
     "partPrice": 254400,
-    "serviceFee": 100000,
-    "subtotal": 354400,
-    "affiliateFee": 17720,
-    "totalPrice": 372120,
+    "serviceFee": 150000,
+    "subtotal": 404400,
+    "affiliateFee": 20220,
+    "totalPrice": 424620,
     "type": "high_capacity",
     "models": [
       "iphone 8 plus"
@@ -752,10 +750,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 268000,
     "partPrice": 321600,
-    "serviceFee": 100000,
-    "subtotal": 421600,
-    "affiliateFee": 21080,
-    "totalPrice": 442680,
+    "serviceFee": 150000,
+    "subtotal": 471600,
+    "affiliateFee": 23580,
+    "totalPrice": 495180,
     "type": "high_capacity",
     "models": [
       "iphone x"
@@ -767,10 +765,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 268000,
     "partPrice": 321600,
-    "serviceFee": 100000,
-    "subtotal": 421600,
-    "affiliateFee": 21080,
-    "totalPrice": 442680,
+    "serviceFee": 150000,
+    "subtotal": 471600,
+    "affiliateFee": 23580,
+    "totalPrice": 495180,
     "type": "high_capacity",
     "models": [
       "iphone xr"
@@ -782,10 +780,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 282000,
     "partPrice": 338400,
-    "serviceFee": 100000,
-    "subtotal": 438400,
-    "affiliateFee": 21920,
-    "totalPrice": 460320,
+    "serviceFee": 150000,
+    "subtotal": 488400,
+    "affiliateFee": 24420,
+    "totalPrice": 512820,
     "type": "high_capacity",
     "models": [
       "iphone xs"
@@ -797,10 +795,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 282000,
     "partPrice": 338400,
-    "serviceFee": 100000,
-    "subtotal": 438400,
-    "affiliateFee": 21920,
-    "totalPrice": 460320,
+    "serviceFee": 150000,
+    "subtotal": 488400,
+    "affiliateFee": 24420,
+    "totalPrice": 512820,
     "type": "high_capacity",
     "models": [
       "iphone xs max"
@@ -812,10 +810,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 230000,
     "partPrice": 276000,
-    "serviceFee": 100000,
-    "subtotal": 376000,
-    "affiliateFee": 18800,
-    "totalPrice": 394800,
+    "serviceFee": 150000,
+    "subtotal": 426000,
+    "affiliateFee": 21300,
+    "totalPrice": 447300,
     "type": "high_capacity",
     "models": [
       "iphone 11"
@@ -827,10 +825,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 313000,
     "partPrice": 375600,
-    "serviceFee": 100000,
-    "subtotal": 475600,
-    "affiliateFee": 23780,
-    "totalPrice": 499380,
+    "serviceFee": 150000,
+    "subtotal": 525600,
+    "affiliateFee": 26280,
+    "totalPrice": 551880,
     "type": "high_capacity",
     "models": [
       "iphone 11 pro"
@@ -842,10 +840,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 348000,
     "partPrice": 417600,
-    "serviceFee": 100000,
-    "subtotal": 517600,
-    "affiliateFee": 25880,
-    "totalPrice": 543480,
+    "serviceFee": 150000,
+    "subtotal": 567600,
+    "affiliateFee": 28380,
+    "totalPrice": 595980,
     "type": "high_capacity",
     "models": [
       "iphone 11 pro max"
@@ -857,10 +855,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 343000,
     "partPrice": 411600,
-    "serviceFee": 100000,
-    "subtotal": 511600,
-    "affiliateFee": 25580,
-    "totalPrice": 537180,
+    "serviceFee": 150000,
+    "subtotal": 561600,
+    "affiliateFee": 28080,
+    "totalPrice": 589680,
     "type": "used_original",
     "models": [
       "iphone 12",
@@ -873,10 +871,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 362000,
     "partPrice": 434400,
-    "serviceFee": 100000,
-    "subtotal": 534400,
-    "affiliateFee": 26720,
-    "totalPrice": 561120,
+    "serviceFee": 150000,
+    "subtotal": 584400,
+    "affiliateFee": 29220,
+    "totalPrice": 613620,
     "type": "used_original",
     "models": [
       "iphone 12 pro max"
@@ -888,10 +886,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 605000,
     "partPrice": 726000,
-    "serviceFee": 100000,
-    "subtotal": 826000,
-    "affiliateFee": 41300,
-    "totalPrice": 867300,
+    "serviceFee": 150000,
+    "subtotal": 876000,
+    "affiliateFee": 43800,
+    "totalPrice": 919800,
     "type": "genuine",
     "models": [
       "iphone 12 pro max"
@@ -903,10 +901,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 292000,
     "partPrice": 350400,
-    "serviceFee": 100000,
-    "subtotal": 450400,
-    "affiliateFee": 22520,
-    "totalPrice": 472920,
+    "serviceFee": 150000,
+    "subtotal": 500400,
+    "affiliateFee": 25020,
+    "totalPrice": 525420,
     "type": "used_original",
     "models": [
       "iphone 13"
@@ -918,10 +916,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 357000,
     "partPrice": 428400,
-    "serviceFee": 100000,
-    "subtotal": 528400,
-    "affiliateFee": 26420,
-    "totalPrice": 554820,
+    "serviceFee": 150000,
+    "subtotal": 578400,
+    "affiliateFee": 28920,
+    "totalPrice": 607320,
     "type": "used_original",
     "models": [
       "iphone 13 pro"
@@ -933,10 +931,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 395000,
     "partPrice": 474000,
-    "serviceFee": 100000,
-    "subtotal": 574000,
-    "affiliateFee": 28700,
-    "totalPrice": 602700,
+    "serviceFee": 150000,
+    "subtotal": 624000,
+    "affiliateFee": 31200,
+    "totalPrice": 655200,
     "type": "used_original",
     "models": [
       "iphone 13 pro max"
@@ -948,10 +946,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 292000,
     "partPrice": 350400,
-    "serviceFee": 100000,
-    "subtotal": 450400,
-    "affiliateFee": 22520,
-    "totalPrice": 472920,
+    "serviceFee": 150000,
+    "subtotal": 500400,
+    "affiliateFee": 25020,
+    "totalPrice": 525420,
     "type": "used_original",
     "models": [
       "iphone 14"
@@ -963,10 +961,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 327000,
     "partPrice": 392400,
-    "serviceFee": 100000,
-    "subtotal": 492400,
-    "affiliateFee": 24620,
-    "totalPrice": 517020,
+    "serviceFee": 150000,
+    "subtotal": 542400,
+    "affiliateFee": 27120,
+    "totalPrice": 569520,
     "type": "used_original",
     "models": [
       "iphone 14 plus"
@@ -978,10 +976,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 372000,
     "partPrice": 446400,
-    "serviceFee": 100000,
-    "subtotal": 546400,
-    "affiliateFee": 27320,
-    "totalPrice": 573720,
+    "serviceFee": 150000,
+    "subtotal": 596400,
+    "affiliateFee": 29820,
+    "totalPrice": 626220,
     "type": "used_original",
     "models": [
       "iphone 14 pro"
@@ -993,10 +991,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 421000,
     "partPrice": 505200,
-    "serviceFee": 100000,
-    "subtotal": 605200,
-    "affiliateFee": 30260,
-    "totalPrice": 635460,
+    "serviceFee": 150000,
+    "subtotal": 655200,
+    "affiliateFee": 32760,
+    "totalPrice": 687960,
     "type": "used_original",
     "models": [
       "iphone 14 pro max"
@@ -1008,10 +1006,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 299000,
     "partPrice": 358800,
-    "serviceFee": 100000,
-    "subtotal": 458800,
-    "affiliateFee": 22940,
-    "totalPrice": 481740,
+    "serviceFee": 150000,
+    "subtotal": 508800,
+    "affiliateFee": 25440,
+    "totalPrice": 534240,
     "type": "used_original",
     "models": [
       "iphone 15"
@@ -1023,10 +1021,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 327000,
     "partPrice": 392400,
-    "serviceFee": 100000,
-    "subtotal": 492400,
-    "affiliateFee": 24620,
-    "totalPrice": 517020,
+    "serviceFee": 150000,
+    "subtotal": 542400,
+    "affiliateFee": 27120,
+    "totalPrice": 569520,
     "type": "used_original",
     "models": [
       "iphone 15 plus"
@@ -1038,10 +1036,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 383000,
     "partPrice": 459600,
-    "serviceFee": 100000,
-    "subtotal": 559600,
-    "affiliateFee": 27980,
-    "totalPrice": 587580,
+    "serviceFee": 150000,
+    "subtotal": 609600,
+    "affiliateFee": 30480,
+    "totalPrice": 640080,
     "type": "used_original",
     "models": [
       "iphone 15 pro"
@@ -1053,10 +1051,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 432000,
     "partPrice": 518400,
-    "serviceFee": 100000,
-    "subtotal": 618400,
-    "affiliateFee": 30920,
-    "totalPrice": 649320,
+    "serviceFee": 150000,
+    "subtotal": 668400,
+    "affiliateFee": 33420,
+    "totalPrice": 701820,
     "type": "used_original",
     "models": [
       "iphone 15 pro max"
@@ -1068,10 +1066,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 265000,
     "partPrice": 318000,
-    "serviceFee": 100000,
-    "subtotal": 418000,
-    "affiliateFee": 20900,
-    "totalPrice": 438900,
+    "serviceFee": 150000,
+    "subtotal": 468000,
+    "affiliateFee": 23400,
+    "totalPrice": 491400,
     "type": "used_original",
     "models": [
       "iphone 12 mini"
@@ -1083,10 +1081,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 268000,
     "partPrice": 321600,
-    "serviceFee": 100000,
-    "subtotal": 421600,
-    "affiliateFee": 21080,
-    "totalPrice": 442680,
+    "serviceFee": 150000,
+    "subtotal": 471600,
+    "affiliateFee": 23580,
+    "totalPrice": 495180,
     "type": "used_original",
     "models": [
       "iphone 13 mini"
@@ -1098,10 +1096,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 171000,
     "partPrice": 205200,
-    "serviceFee": 100000,
-    "subtotal": 305200,
-    "affiliateFee": 15260,
-    "totalPrice": 320460,
+    "serviceFee": 150000,
+    "subtotal": 355200,
+    "affiliateFee": 17760,
+    "totalPrice": 372960,
     "type": "high_capacity",
     "models": [
       "iphone se 2020"
@@ -1113,10 +1111,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 520000,
     "partPrice": 624000,
-    "serviceFee": 100000,
-    "subtotal": 724000,
-    "affiliateFee": 36200,
-    "totalPrice": 760200,
+    "serviceFee": 150000,
+    "subtotal": 774000,
+    "affiliateFee": 38700,
+    "totalPrice": 812700,
     "type": "genuine",
     "models": [
       "iphone 12",
@@ -1129,10 +1127,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 505000,
     "partPrice": 606000,
-    "serviceFee": 100000,
-    "subtotal": 706000,
-    "affiliateFee": 35300,
-    "totalPrice": 741300,
+    "serviceFee": 150000,
+    "subtotal": 756000,
+    "affiliateFee": 37800,
+    "totalPrice": 793800,
     "type": "genuine",
     "models": [
       "iphone 12 mini"
@@ -1144,10 +1142,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 535000,
     "partPrice": 642000,
-    "serviceFee": 100000,
-    "subtotal": 742000,
-    "affiliateFee": 37100,
-    "totalPrice": 779100,
+    "serviceFee": 150000,
+    "subtotal": 792000,
+    "affiliateFee": 39600,
+    "totalPrice": 831600,
     "type": "genuine",
     "models": [
       "iphone 13"
@@ -1159,10 +1157,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 694000,
     "partPrice": 832800,
-    "serviceFee": 100000,
-    "subtotal": 932800,
-    "affiliateFee": 46640,
-    "totalPrice": 979440,
+    "serviceFee": 150000,
+    "subtotal": 982800,
+    "affiliateFee": 49140,
+    "totalPrice": 1031940,
     "type": "genuine",
     "models": [
       "iphone 14 pro"
@@ -1174,10 +1172,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 572000,
     "partPrice": 686400,
-    "serviceFee": 100000,
-    "subtotal": 786400,
-    "affiliateFee": 39320,
-    "totalPrice": 825720,
+    "serviceFee": 150000,
+    "subtotal": 836400,
+    "affiliateFee": 41820,
+    "totalPrice": 878220,
     "type": "genuine",
     "models": [
       "iphone 14 pro max"
@@ -1189,10 +1187,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 699000,
     "partPrice": 838800,
-    "serviceFee": 100000,
-    "subtotal": 938800,
-    "affiliateFee": 46940,
-    "totalPrice": 985740,
+    "serviceFee": 150000,
+    "subtotal": 988800,
+    "affiliateFee": 49440,
+    "totalPrice": 1038240,
     "type": "genuine",
     "models": [
       "iphone 15 pro max"
@@ -1204,10 +1202,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 547000,
     "partPrice": 656400,
-    "serviceFee": 100000,
-    "subtotal": 756400,
-    "affiliateFee": 37820,
-    "totalPrice": 794220,
+    "serviceFee": 150000,
+    "subtotal": 806400,
+    "affiliateFee": 40320,
+    "totalPrice": 846720,
     "type": "genuine",
     "models": [
       "iphone 15"
@@ -1219,10 +1217,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 637000,
     "partPrice": 764400,
-    "serviceFee": 100000,
-    "subtotal": 864400,
-    "affiliateFee": 43220,
-    "totalPrice": 907620,
+    "serviceFee": 150000,
+    "subtotal": 914400,
+    "affiliateFee": 45720,
+    "totalPrice": 960120,
     "type": "genuine",
     "models": [
       "iphone 14 plus"
@@ -1234,10 +1232,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 81000,
     "partPrice": 97200,
-    "serviceFee": 100000,
-    "subtotal": 197200,
-    "affiliateFee": 9860,
-    "totalPrice": 207060,
+    "serviceFee": 150000,
+    "subtotal": 247200,
+    "affiliateFee": 12360,
+    "totalPrice": 259560,
     "type": "cell_only",
     "models": [
       "iphone 12",
@@ -1250,10 +1248,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 163000,
     "partPrice": 195600,
-    "serviceFee": 100000,
-    "subtotal": 295600,
-    "affiliateFee": 14780,
-    "totalPrice": 310380,
+    "serviceFee": 150000,
+    "subtotal": 345600,
+    "affiliateFee": 17280,
+    "totalPrice": 362880,
     "type": "cell_only",
     "models": [
       "iphone 12 pro max"
@@ -1265,10 +1263,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 157000,
     "partPrice": 188400,
-    "serviceFee": 100000,
-    "subtotal": 288400,
-    "affiliateFee": 14420,
-    "totalPrice": 302820,
+    "serviceFee": 150000,
+    "subtotal": 338400,
+    "affiliateFee": 16920,
+    "totalPrice": 355320,
     "type": "cell_only",
     "models": [
       "iphone 15 pro"
@@ -1280,10 +1278,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 150000,
     "partPrice": 180000,
-    "serviceFee": 100000,
-    "subtotal": 280000,
-    "affiliateFee": 14000,
-    "totalPrice": 294000,
+    "serviceFee": 150000,
+    "subtotal": 330000,
+    "affiliateFee": 16500,
+    "totalPrice": 346500,
     "type": "cell_only",
     "models": [
       "iphone 11 pro"
@@ -1295,10 +1293,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 508000,
     "partPrice": 609600,
-    "serviceFee": 100000,
-    "subtotal": 709600,
-    "affiliateFee": 35480,
-    "totalPrice": 745080,
+    "serviceFee": 150000,
+    "subtotal": 759600,
+    "affiliateFee": 37980,
+    "totalPrice": 797580,
     "type": "genuine",
     "models": [
       "iphone 13 mini"
@@ -1310,10 +1308,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 678000,
     "partPrice": 813600,
-    "serviceFee": 100000,
-    "subtotal": 913600,
-    "affiliateFee": 45680,
-    "totalPrice": 959280,
+    "serviceFee": 150000,
+    "subtotal": 963600,
+    "affiliateFee": 48180,
+    "totalPrice": 1011780,
     "type": "genuine",
     "models": [
       "iphone 15 plus"
@@ -1325,10 +1323,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 661000,
     "partPrice": 793200,
-    "serviceFee": 100000,
-    "subtotal": 893200,
-    "affiliateFee": 44660,
-    "totalPrice": 937860,
+    "serviceFee": 150000,
+    "subtotal": 943200,
+    "affiliateFee": 47160,
+    "totalPrice": 990360,
     "type": "genuine",
     "models": [
       "iphone 15 pro"
@@ -1340,10 +1338,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 622000,
     "partPrice": 746400,
-    "serviceFee": 100000,
-    "subtotal": 846400,
-    "affiliateFee": 42320,
-    "totalPrice": 888720,
+    "serviceFee": 150000,
+    "subtotal": 896400,
+    "affiliateFee": 44820,
+    "totalPrice": 941220,
     "type": "genuine",
     "models": [
       "iphone 13 pro"
@@ -1355,10 +1353,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 660000,
     "partPrice": 792000,
-    "serviceFee": 100000,
-    "subtotal": 892000,
-    "affiliateFee": 44600,
-    "totalPrice": 936600,
+    "serviceFee": 150000,
+    "subtotal": 942000,
+    "affiliateFee": 47100,
+    "totalPrice": 989100,
     "type": "genuine",
     "models": [
       "iphone 13 pro max"
@@ -1370,10 +1368,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 562000,
     "partPrice": 674400,
-    "serviceFee": 100000,
-    "subtotal": 774400,
-    "affiliateFee": 38720,
-    "totalPrice": 813120,
+    "serviceFee": 150000,
+    "subtotal": 824400,
+    "affiliateFee": 41220,
+    "totalPrice": 865620,
     "type": "genuine",
     "models": [
       "iphone 14"
@@ -1385,10 +1383,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 164000,
     "partPrice": 196800,
-    "serviceFee": 100000,
-    "subtotal": 296800,
-    "affiliateFee": 14840,
-    "totalPrice": 311640,
+    "serviceFee": 150000,
+    "subtotal": 346800,
+    "affiliateFee": 17340,
+    "totalPrice": 364140,
     "type": "standard",
     "models": [
       "iphone 13 mini"
@@ -1400,10 +1398,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 241000,
     "partPrice": 289200,
-    "serviceFee": 100000,
-    "subtotal": 389200,
-    "affiliateFee": 19460,
-    "totalPrice": 408660,
+    "serviceFee": 150000,
+    "subtotal": 439200,
+    "affiliateFee": 21960,
+    "totalPrice": 461160,
     "type": "standard",
     "models": [
       "iphone 15 plus"
@@ -1415,10 +1413,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 188000,
     "partPrice": 225600,
-    "serviceFee": 100000,
-    "subtotal": 325600,
-    "affiliateFee": 16280,
-    "totalPrice": 341880,
+    "serviceFee": 150000,
+    "subtotal": 375600,
+    "affiliateFee": 18780,
+    "totalPrice": 394380,
     "type": "cell_only",
     "models": [
       "iphone 11 pro max"
@@ -1430,10 +1428,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 287000,
     "partPrice": 344400,
-    "serviceFee": 100000,
-    "subtotal": 444400,
-    "affiliateFee": 22220,
-    "totalPrice": 466620,
+    "serviceFee": 150000,
+    "subtotal": 494400,
+    "affiliateFee": 24720,
+    "totalPrice": 519120,
     "type": "standard",
     "models": [
       "iphone 15 pro max"
@@ -1445,10 +1443,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 93000,
     "partPrice": 111600,
-    "serviceFee": 100000,
-    "subtotal": 211600,
-    "affiliateFee": 10580,
-    "totalPrice": 222180,
+    "serviceFee": 150000,
+    "subtotal": 261600,
+    "affiliateFee": 13080,
+    "totalPrice": 274680,
     "type": "cell_only",
     "models": [
       "iphone 13"
@@ -1460,10 +1458,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 96000,
     "partPrice": 115200,
-    "serviceFee": 100000,
-    "subtotal": 215200,
-    "affiliateFee": 10760,
-    "totalPrice": 225960,
+    "serviceFee": 150000,
+    "subtotal": 265200,
+    "affiliateFee": 13260,
+    "totalPrice": 278460,
     "type": "cell_only",
     "models": [
       "iphone 15"
@@ -1475,10 +1473,10 @@ export const BATTERY_ITEMS: BatteryItem[] = [
     "brand": "apple",
     "basePrice": 88000,
     "partPrice": 105600,
-    "serviceFee": 100000,
-    "subtotal": 205600,
-    "affiliateFee": 10280,
-    "totalPrice": 215880,
+    "serviceFee": 150000,
+    "subtotal": 255600,
+    "affiliateFee": 12780,
+    "totalPrice": 268380,
     "type": "cell_only",
     "models": [
       "iphone 12 mini"
@@ -1496,7 +1494,7 @@ export function formatRupiah(num: number): string {
 function normalizeModel(str: string): string {
   return str
     .toLowerCase()
-    .replace(/^apples+/i, '')
+    .replace(/^apple\s+/i, '')
     .replace(/[^a-z0-9]/g, '');
 }
 
@@ -1524,10 +1522,12 @@ BATTERY_ITEMS.forEach((item) => {
 
 /**
  * Mendapatkan estimasi harga servis baterai
- * Jika ada di spreadsheet: Part x 1.20 + Jasa Rp 100.000 + 5%
- * Jika TIDAK ada di spreadsheet: Jasa Mulai Rp 150.000 (khusus baterai)
+ * JASA GANTI BATERAI: Rp 150.000 FLAT UNTUK SEMUANYA
+ * Jika ada di katalog: Part x 1.20 + Jasa Rp 150.000 + Affiliate 5%
+ * Jika TIDAK ada di katalog (Android / model lain): Part konsul WA + Jasa Rp 150.000
  */
 export function getBatteryEstimate(brand: string, modelName: string): BatteryEstimateResult {
+  const defaultJasa = 150000;
   const cleanBrand = (brand || '').toLowerCase().trim();
   const cleanModel = (modelName || '').toLowerCase().trim();
   const norm = normalizeModel(cleanModel);
@@ -1535,10 +1535,8 @@ export function getBatteryEstimate(brand: string, modelName: string): BatteryEst
   let matched: BatteryItem | undefined = undefined;
 
   if (cleanBrand === 'apple' || norm.startsWith('iphone') || norm.startsWith('ip')) {
-    // Coba exact normalized lookup
     matched = BATTERY_LOOKUP[norm];
 
-    // Jika belum ketemu, coba cari substring / fuzzy
     if (!matched) {
       for (const [key, item] of Object.entries(BATTERY_LOOKUP)) {
         if (norm.length >= 4 && (norm.includes(key) || key.includes(norm))) {
@@ -1548,7 +1546,6 @@ export function getBatteryEstimate(brand: string, modelName: string): BatteryEst
       }
     }
 
-    // Jika model gabungan (misal 'iPhone 15 / 15 Plus')
     if (!matched && cleanModel.includes('/')) {
       const parts = cleanModel.split('/');
       for (const p of parts) {
@@ -1566,31 +1563,30 @@ export function getBatteryEstimate(brand: string, modelName: string): BatteryEst
       found: true,
       item: matched,
       partPrice: matched.partPrice,
-      serviceFee: matched.serviceFee,
+      serviceFee: 150000,
       totalPrice: matched.totalPrice,
       formattedPartPrice: formatRupiah(matched.partPrice),
-      formattedServiceFee: formatRupiah(matched.serviceFee),
+      formattedServiceFee: 'Rp 150.000',
       formattedTotalPrice: formatRupiah(matched.totalPrice),
       partTitle: matched.title + ' (Grade Original)',
       warranty: 'Garansi 90 Hari',
-      warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Pemasangan Meja Transparan',
+      warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Flat Rp 150.000',
       time: '30 - 45 Menit'
     };
   }
 
-  // Fallback untuk model yang belum ada di spreadsheet (Android atau model iPhone lainnya)
-  // Aturan user: "jika tidak ada di spreadsheet buatkan seperti biasa dan untuk jasanya untuk baterai mulai dari 150 hanya untuk baterai"
+  // Fallback untuk model Android atau tipe lain yang belum ada di katalog
   return {
     found: false,
     partPrice: 0,
-    serviceFee: 150000,
-    totalPrice: 150000,
+    serviceFee: defaultJasa,
+    totalPrice: defaultJasa,
     formattedPartPrice: 'Konsul via WhatsApp',
-    formattedServiceFee: 'Start from Rp 150.000',
+    formattedServiceFee: 'Rp 150.000',
     formattedTotalPrice: 'Mulai Rp 150.000 + Part',
     partTitle: 'Baterai Original Grade Presisi',
     warranty: 'Garansi 90 Hari',
-    warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Mulai Rp 150.000',
+    warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Flat Rp 150.000',
     time: '30 - 45 Menit'
   };
 }

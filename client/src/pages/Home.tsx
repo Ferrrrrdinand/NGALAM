@@ -139,7 +139,7 @@ export default function Home() {
   const servicePriceDisplay = isLcd
     ? (lcdEstimate.found ? 'Rp 100.000' : 'Start from Rp 100.000')
     : isBattery
-    ? (batteryEstimate.found ? 'Rp 100.000' : 'Start from Rp 150.000')
+    ? 'Rp 150.000'
     : 'Start from Rp 100.000';
 
   const totalPriceDisplay = isLcd && lcdEstimate.found
@@ -971,9 +971,9 @@ export default function Home() {
                         {isLcd && lcdEstimate.found
                           ? '*Estimasi resmi part LCD + jasa pasang flat Rp 100.000.'
                           : isBattery && batteryEstimate.found
-                          ? '*Estimasi resmi part baterai original + jasa pasang flat Rp 100.000.'
+                          ? '*Estimasi resmi part baterai original + jasa pasang flat Rp 150.000.'
                           : isBattery
-                          ? '*Harga part dikonsultasikan via WhatsApp. Biaya jasa baterai start from Rp 150.000.'
+                          ? '*Harga part dikonsultasikan via WhatsApp. Biaya jasa pasang baterai Rp 150.000.'
                           : '*Harga part dikonsultasikan via WhatsApp. Biaya jasa pengerjaan start from Rp 100.000.'}
                       </div>
                     </div>
