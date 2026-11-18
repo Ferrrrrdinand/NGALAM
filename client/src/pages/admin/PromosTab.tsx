@@ -18,7 +18,12 @@ import {
   X,
   Sparkles,
   Upload,
-  AlertCircle
+  AlertCircle,
+  Video,
+  UserCheck,
+  ShoppingBag,
+  MessageCircle,
+  Link as LinkIcon
 } from 'lucide-react';
 import { fetchApi, formatRp, formatDateId } from '../../utils/api';
 import AdsSubTab from './AdsSubTab';
@@ -1096,47 +1101,167 @@ export default function PromosTab({ promos = [], onRefresh, setPromos }: PromosT
                 </div>
               </div>
 
-              {/* Promo Code & Button Config */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    Kode Kupon (Opsional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="NGALAMPROMO30"
-                    value={bannerForm.promoCode}
-                    onChange={(e) =>
-                      setBannerForm({ ...bannerForm, promoCode: e.target.value.toUpperCase() })
-                    }
-                    className="w-full px-3.5 py-2 text-xs bg-slate-50/70 border border-slate-200 rounded-xl uppercase font-mono font-bold text-slate-900"
-                  />
+              {/* Promo Code & Button Config with Destination Presets */}
+              <div className="space-y-3 p-3.5 bg-slate-50/70 rounded-2xl border border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Kode Kupon (Opsional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="NGALAMPROMO30"
+                      value={bannerForm.promoCode}
+                      onChange={(e) =>
+                        setBannerForm({ ...bannerForm, promoCode: e.target.value.toUpperCase() })
+                      }
+                      className="w-full px-3.5 py-2 text-xs bg-white border border-slate-200 rounded-xl uppercase font-mono font-bold text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Teks Tombol CTA
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Klaim Promo Servis ↗"
+                      value={bannerForm.buttonText}
+                      onChange={(e) => setBannerForm({ ...bannerForm, buttonText: e.target.value })}
+                      className="w-full px-3.5 py-2 text-xs bg-white border border-slate-200 rounded-xl text-slate-900 font-semibold"
+                    />
+                  </div>
                 </div>
 
+                {/* Tujuan Tombol Banner (Pilihan Cepat Opsi / Preset Interaktif) */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    Teks Tombol CTA
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Klaim Promo Servis ↗"
-                    value={bannerForm.buttonText}
-                    onChange={(e) => setBannerForm({ ...bannerForm, buttonText: e.target.value })}
-                    className="w-full px-3.5 py-2 text-xs bg-slate-50/70 border border-slate-200 rounded-xl text-slate-900"
-                  />
-                </div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <LinkIcon className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Pilih Opsi Tujuan Saat Banner Diklik:</span>
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-medium">
+                      Pilih preset opsi atau ketik link YouTube / URL kustom
+                    </span>
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    Link Tujuan Tombol
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="/pesan-servis atau Link WA"
-                    value={bannerForm.buttonLink}
-                    onChange={(e) => setBannerForm({ ...bannerForm, buttonLink: e.target.value })}
-                    className="w-full px-3.5 py-2 text-xs bg-slate-50/70 border border-slate-200 rounded-xl text-slate-900 font-mono text-[11px]"
-                  />
+                  {/* Tombol Opsi Preset Siap Pakai */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
+                    {[
+                      {
+                        id: 'book-order',
+                        label: 'Pesan Servis (Book Order)',
+                        desc: 'Halaman booking walk-in & online',
+                        path: '/pesan-servis',
+                        cta: 'Booking Jadwal Servis ↗',
+                        icon: ShoppingBag,
+                        color: 'hover:border-amber-400 bg-amber-50/50'
+                      },
+                      {
+                        id: 'member',
+                        label: 'Daftar Member VIP',
+                        desc: 'Diskon 5% & Cek Garansi',
+                        path: '/daftar-member',
+                        cta: 'Daftar Member Prioritas ↗',
+                        icon: UserCheck,
+                        color: 'hover:border-blue-400 bg-blue-50/50'
+                      },
+                      {
+                        id: 'mitra',
+                        label: 'Daftar Mitra Driver',
+                        desc: 'Komisi 5% referral seumur hidup',
+                        path: '/mitra',
+                        cta: 'Gabung Mitra Driver ↗',
+                        icon: Users,
+                        color: 'hover:border-emerald-400 bg-emerald-50/50'
+                      },
+                      {
+                        id: 'whatsapp',
+                        label: 'Konsul WhatsApp Lab',
+                        desc: 'Hubungi teknisi meja transparan',
+                        path: 'https://wa.me/628113185858?text=Halo%20Admin%20Ngalam%20Fix%20Pro,%20saya%20tertarik%20dengan%20promo%20banner%20ini',
+                        cta: 'Konsultasi WhatsApp ↗',
+                        icon: MessageCircle,
+                        color: 'hover:border-teal-400 bg-teal-50/50'
+                      }
+                    ].map((opt) => {
+                      const Icon = opt.icon;
+                      const isMatch = bannerForm.buttonLink === opt.path;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => {
+                            setBannerForm((prev) => ({
+                              ...prev,
+                              buttonLink: opt.path,
+                              buttonText: prev.buttonText && prev.buttonText !== 'Klaim Promo Servis ↗' ? prev.buttonText : opt.cta
+                            }));
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                            isMatch
+                              ? 'bg-amber-100/80 border-amber-500 ring-2 ring-amber-500/20 shadow-xs'
+                              : `bg-white hover:bg-slate-50 border-slate-200`
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800">
+                            <Icon className={`w-3.5 h-3.5 ${isMatch ? 'text-amber-700' : 'text-slate-500'}`} />
+                            <span className="truncate">{opt.label}</span>
+                          </div>
+                          <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">{opt.desc}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Input Manual / Link YouTube / Kustom */}
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-slate-400">
+                      {/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)/i.test(bannerForm.buttonLink) ? (
+                        <Video className="w-4 h-4 text-red-500" />
+                      ) : (
+                        <LinkIcon className="w-4 h-4" />
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Masukkan URL /pesan-servis, /daftar-member, /mitra, atau link YouTube (https://youtu.be/...)"
+                      value={bannerForm.buttonLink}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const isYt = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)/i.test(val);
+                        setBannerForm((prev) => ({
+                          ...prev,
+                          buttonLink: val,
+                          buttonText: isYt && (!prev.buttonText || prev.buttonText === 'Klaim Promo Servis ↗') ? 'Tonton Video Resmi ↗' : prev.buttonText
+                        }));
+                      }}
+                      className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-white border border-slate-200 rounded-xl text-slate-900 font-mono text-[11px] focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+
+                  {/* Keterangan Deteksi Cerdas */}
+                  {/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)/i.test(bannerForm.buttonLink) ? (
+                    <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-rose-600 font-bold">
+                      <Video className="w-3.5 h-3.5 shrink-0" />
+                      <span>Link YouTube terdeteksi! Pengunjung akan langsung diarahkan menonton video review/tutorial pengerjaan lab saat banner diklik.</span>
+                    </div>
+                  ) : bannerForm.buttonLink === '/pesan-servis' ? (
+                    <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-amber-700 font-semibold">
+                      <Check className="w-3.5 h-3.5 shrink-0 text-amber-600" />
+                      <span>Banner mengarah langsung ke Form Booking &amp; Estimasi Servis (/pesan-servis).</span>
+                    </div>
+                  ) : bannerForm.buttonLink === '/daftar-member' ? (
+                    <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-blue-700 font-semibold">
+                      <Check className="w-3.5 h-3.5 shrink-0 text-blue-600" />
+                      <span>Banner mengarah langsung ke Pendaftaran Kartu Member Prioritas Diskon 5% (/daftar-member).</span>
+                    </div>
+                  ) : bannerForm.buttonLink === '/mitra' ? (
+                    <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-emerald-700 font-semibold">
+                      <Check className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                      <span>Banner mengarah ke Portal Pendaftaran Mitra Driver / Rekanan (/mitra).</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
