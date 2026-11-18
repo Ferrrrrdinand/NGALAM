@@ -1566,11 +1566,11 @@ export function getBatteryEstimate(brand: string, modelName: string): BatteryEst
       serviceFee: 150000,
       totalPrice: matched.totalPrice,
       formattedPartPrice: formatRupiah(matched.partPrice),
-      formattedServiceFee: 'Rp 150.000',
+      formattedServiceFee: 'Start from Rp 150.000',
       formattedTotalPrice: formatRupiah(matched.totalPrice),
       partTitle: matched.title + ' (Grade Original)',
       warranty: 'Garansi 90 Hari',
-      warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Flat Rp 150.000',
+      warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Start from Rp 150.000',
       time: '30 - 45 Menit'
     };
   }
@@ -1582,11 +1582,11 @@ export function getBatteryEstimate(brand: string, modelName: string): BatteryEst
     serviceFee: defaultJasa,
     totalPrice: defaultJasa,
     formattedPartPrice: 'Konsul via WhatsApp',
-    formattedServiceFee: 'Rp 150.000',
-    formattedTotalPrice: 'Mulai Rp 150.000 + Part',
+    formattedServiceFee: 'Start from Rp 150.000',
+    formattedTotalPrice: 'Start from Rp 150.000 + Part',
     partTitle: 'Baterai Original Grade Presisi',
     warranty: 'Garansi 90 Hari',
-    warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Flat Rp 150.000',
+    warrantyNote: 'Garansi Baterai Original (3 Bulan Penuh) • Jasa Pasang Start from Rp 150.000',
     time: '30 - 45 Menit'
   };
 }

@@ -156,7 +156,7 @@ export default function WalkinTab({
     { 
       id: 'baterai', 
       label: 'Ganti Baterai Original', 
-      desc: 'Baterai drop, kembung, boros (Jasa pasang flat Rp 150.000 seluruh tipe HP)',
+      desc: 'Baterai drop, kembung, boros (Jasa pasang start from Rp 150.000 seluruh tipe HP)',
       defaultCost: 150000, 
       warrantyDays: 90,
       icon: <Battery className="w-4 h-4 text-emerald-500" />
@@ -889,7 +889,7 @@ export default function WalkinTab({
                           </p>
                         ) : isBattery && battEst && battEst.found ? (
                           <p className="text-[10px] text-emerald-700 font-semibold mt-0.5 truncate">
-                            Part: {battEst.formattedPartPrice} + Jasa Flat 150k (Original)
+                            Part: {battEst.formattedPartPrice} + Jasa Start from 150k (Original)
                           </p>
                         ) : (
                           <p className="text-[10px] text-slate-500 mt-0.5 truncate">
