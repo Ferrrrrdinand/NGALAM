@@ -680,13 +680,18 @@ export default function AdminDashboard() {
             </button>
 
             {dbStatus && (
-              <div className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs ${
-                dbStatus.connected 
-                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
-                  : "bg-amber-50 text-amber-700 border border-amber-200"
-              }`}>
-                <Database className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">{dbStatus.connected ? "Database Terhubung" : "Mode Penyimpanan Lokal"}</span>
+              <div 
+                title={dbStatus.connected ? "Database PostgreSQL Terhubung & Siap Digunakan" : "Mode Penyimpanan Lokal"}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs ${
+                  dbStatus.connected 
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                    : "bg-amber-50 text-amber-700 border border-amber-200"
+                }`}
+              >
+                <Database className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="inline">
+                  {dbStatus.connected ? "Terhubung Database" : "Mode Penyimpanan Lokal"}
+                </span>
               </div>
             )}
 
