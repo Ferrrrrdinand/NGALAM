@@ -63,7 +63,7 @@ if (databaseUrl) {
     pool: commonPool
   });
 } else if (isMySql) {
-  // Rumahweb cPanel MySQL Connection
+  // MySQL Database Connection
   sequelize = new Sequelize({
     database: process.env.DB_NAME || process.env.MYSQL_DATABASE || 'ngalam_fix_pro',
     username: process.env.DB_USER || process.env.MYSQL_USER || 'root',

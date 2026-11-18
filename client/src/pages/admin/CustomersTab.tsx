@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { UserCheck, Search, Phone, Mail, Key, Eye, EyeOff, Edit3, ShieldCheck, ShoppingBag, MapPin, Tag, QrCode } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { 
+  UserCheck, Search, Phone, Mail, Key, Eye, EyeOff, Edit3, ShieldCheck, 
+  ShoppingBag, MapPin, Tag, QrCode, Printer, FolderArchive, DownloadCloud, 
+  X, CheckSquare, Square
+} from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditCustomerModal from './EditCustomerModal';
 import MemberQrCardModal from '../../components/MemberQrCardModal';
+import QrStickerCard from '../../components/QrStickerCard';
+import { downloadSingleMemberCard, downloadBulkMemberZip } from '../../utils/qrCardGenerator';
 
 interface CustomersTabProps {
   customers: any[];
@@ -19,6 +25,128 @@ export default function CustomersTab({
   const [editingCustomer, setEditingCustomer] = useState<any>(null);
   const [selectedCustomerQr, setSelectedCustomerQr] = useState<any>(null);
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
+
+  // Batch Print & ZIP 100 Member state
+  const [showBatchPrintModal, setShowBatchPrintModal] = useState(false);
+  const [batchFilter, setBatchFilter] = useState<'all' | 'registered' | 'batch1' | 'batch2' | 'batch3' | 'batch4'>('all');
+  const [selectedMemberCodes, setSelectedMemberCodes] = useState<string[]>([]);
+  const [downloadingZip, setDownloadingZip] = useState(false);
+
+  // Koleksi 100 Slot Member QR (Pelanggan Terdaftar + Slot VIP Siaga)
+  const memberList100 = useMemo(() => {
+    const list = [];
+    for (let i = 1; i <= 100; i++) {
+      const numStr = String(i).padStart(3, '0');
+      const existing = customers[i - 1];
+      const memberCode = `MBR-${numStr}`;
+      if (existing) {
+        list.push({
+          index: i,
+          numStr,
+          id: existing.id || `USR-CUST-PRE-${numStr}`,
+          code: memberCode,
+          name: existing.name || `Member Prioritas #${numStr}`,
+          whatsapp: existing.whatsapp || existing.phone || '',
+          phone: existing.phone || existing.whatsapp || '',
+          district: existing.district || 'Kota Malang',
+          status: existing.status || 'Aktif',
+          isRegistered: true,
+          original: existing
+        });
+      } else {
+        list.push({
+          index: i,
+          numStr,
+          id: `USR-MBR-PRE-${numStr}`,
+          code: memberCode,
+          name: `Member Baru #${numStr}`,
+          whatsapp: '',
+          phone: '',
+          district: 'Kota Malang',
+          status: 'Siap Digunakan',
+          isRegistered: false,
+          original: null
+        });
+      }
+    }
+    return list;
+  }, [customers]);
+
+  const toggleSelectMemberCode = (code: string) => {
+    setSelectedMemberCodes((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+    );
+  };
+
+  const getBatchMembers = () => {
+    if (batchFilter === 'registered') return memberList100.filter((m) => m.isRegistered);
+    if (batchFilter === 'batch1') return memberList100.slice(0, 25);
+    if (batchFilter === 'batch2') return memberList100.slice(25, 50);
+    if (batchFilter === 'batch3') return memberList100.slice(50, 75);
+    if (batchFilter === 'batch4') return memberList100.slice(75, 100);
+    return memberList100;
+  };
+
+  const handleDownloadAllMembersZip = async () => {
+    setDownloadingZip(true);
+    try {
+      await downloadBulkMemberZip(
+        memberList100.map((m) => ({
+          index: m.index,
+          id: m.id,
+          name: m.name,
+          whatsapp: m.whatsapp,
+          phone: m.phone,
+          district: m.district,
+          status: m.status
+        })),
+        '100_QR_Code_Member_NgalamFixPro.zip'
+      );
+    } catch (err: any) {
+      console.error(err);
+      alert('Gagal membuat file ZIP member: ' + (err.message || 'Silakan coba lagi.'));
+    } finally {
+      setDownloadingZip(false);
+    }
+  };
+
+  const handleDownloadSelectedMembersZip = async () => {
+    if (selectedMemberCodes.length === 0) {
+      alert('Pilih minimal 1 QR member untuk diunduh.');
+      return;
+    }
+    const selected = memberList100
+      .filter((m) => selectedMemberCodes.includes(m.code))
+      .map((m) => ({
+        index: m.index,
+        id: m.id,
+        name: m.name,
+        whatsapp: m.whatsapp,
+        phone: m.phone,
+        district: m.district,
+        status: m.status
+      }));
+
+    setDownloadingZip(true);
+    try {
+      await downloadBulkMemberZip(selected, `QR_Member_${selected.length}_Pilihan.zip`);
+    } catch (err: any) {
+      console.error(err);
+      alert('Gagal membuat file ZIP member: ' + (err.message || 'Silakan coba lagi.'));
+    } finally {
+      setDownloadingZip(false);
+    }
+  };
+
+  const handleSelectAllInBatch = () => {
+    const currentCodes = getBatchMembers().map((m) => m.code);
+    const allSelected = currentCodes.every((c) => selectedMemberCodes.includes(c));
+    if (allSelected) {
+      setSelectedMemberCodes((prev) => prev.filter((c) => !currentCodes.includes(c)));
+    } else {
+      setSelectedMemberCodes((prev) => Array.from(new Set([...prev, ...currentCodes])));
+    }
+  };
 
   const togglePasswordVisibility = (id: string) => {
     setRevealedPasswords((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -44,27 +172,40 @@ export default function CustomersTab({
     <div className="space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <UserCheck className="w-5 h-5 text-amber-600" />
             <span>Manajemen Akun &amp; Kredensial Pelanggan (Customers)</span>
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Pantau akun pelanggan terdaftar, lihat kata sandi login, riwayat klaim garansi, serta ubah data akun secara langsung.
+            Pantau akun pelanggan terdaftar, lihat kata sandi login, riwayat klaim garansi, serta cetak kartu QR Code Member.
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative min-w-[280px]">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Cari nama, WhatsApp, email, wilayah..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full text-xs pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
-          />
+        {/* Action Controls: Search & Bulk Print Button */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setShowBatchPrintModal(true)}
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-slate-900/20 cursor-pointer transition-all whitespace-nowrap"
+            title="Buka jendela cetak stiker & download 100 QR Code Member sekaligus"
+          >
+            <Printer className="w-4 h-4 text-amber-400" />
+            <span>Batch Cetak &amp; ZIP 100 QR Member</span>
+          </button>
+
+          {/* Search Bar */}
+          <div className="relative min-w-[260px]">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Cari nama, WhatsApp, email, wilayah..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full text-xs pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+            />
+          </div>
         </div>
       </div>
 
@@ -322,6 +463,205 @@ export default function CustomersTab({
           customer={selectedCustomerQr}
           onClose={() => setSelectedCustomerQr(null)}
         />
+      )}
+
+      {/* Modal Batch Cetak & Unduh 100 QR Code Member */}
+      {showBatchPrintModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-5xl w-full p-6 shadow-2xl space-y-5 my-6 animate-in fade-in duration-200">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4 no-print">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                    <Printer className="w-4 h-4" />
+                  </span>
+                  <h3 className="text-base font-black text-slate-900">
+                    Cetak &amp; Unduh Koleksi QR Code 100 Member Prioritas
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Pilih kartu QR Member mana saja yang ingin diunduh (.ZIP) secara in-memory, atau gunakan 1 tombol cepat untuk mendownload seluruh 100 file QR Member tanpa simpan lokal.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleDownloadAllMembersZip}
+                  disabled={downloadingZip}
+                  className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer transition-all"
+                  title="Unduh seluruh 100 kartu QR Member dalam file ZIP (In-Memory)"
+                >
+                  <FolderArchive className="w-4 h-4" />
+                  <span>{downloadingZip ? 'Menyiapkan ZIP...' : 'Unduh Semua 100 (.ZIP)'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDownloadSelectedMembersZip}
+                  disabled={selectedMemberCodes.length === 0 || downloadingZip}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer ${
+                    selectedMemberCodes.length > 0 && !downloadingZip
+                      ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/20'
+                      : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                  }`}
+                  title={selectedMemberCodes.length > 0 ? `Unduh ${selectedMemberCodes.length} QR terpilih` : 'Pilih minimal 1 QR'}
+                >
+                  <DownloadCloud className={`w-4 h-4 ${downloadingZip ? 'animate-bounce' : ''}`} />
+                  <span>{`Unduh ZIP Terpilih (${selectedMemberCodes.length})`}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-slate-900/20 cursor-pointer transition-all"
+                >
+                  <Printer className="w-4 h-4 text-amber-400" />
+                  <span>Cetak Stiker ({getBatchMembers().length})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowBatchPrintModal(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-between gap-2 no-print">
+              <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-2xl text-xs">
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('all')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Semua (100)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('registered')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'registered' ? 'bg-white text-amber-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Terdaftar ({customers.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch1')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch1' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  001 - 025
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch2')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch2' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  026 - 050
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch3')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch3' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  051 - 075
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBatchFilter('batch4')}
+                  className={`px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
+                    batchFilter === 'batch4' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  076 - 100
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleSelectAllInBatch}
+                  className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 cursor-pointer bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200"
+                >
+                  <CheckSquare className="w-3.5 h-3.5" />
+                  <span>Pilih Semua di Tab Ini</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Grid Area */}
+            <div id="member-batch-print-area" className="max-h-[60vh] overflow-y-auto p-1">
+              <style>{`
+                @media print {
+                  body * {
+                    visibility: hidden !important;
+                  }
+                  #member-batch-print-area, #member-batch-print-area * {
+                    visibility: visible !important;
+                  }
+                  #member-batch-print-area {
+                    position: absolute !important;
+                    left: 0 !important;
+                    top: 0 !important;
+                    width: 100% !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                  }
+                  .no-print {
+                    display: none !important;
+                  }
+                  .qr-sticker-card {
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                    border: 1.5px dashed #000000 !important;
+                  }
+                }
+              `}</style>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {getBatchMembers().map((m) => {
+                  const isSelected = selectedMemberCodes.includes(m.code);
+                  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ngalamfixpro.com';
+                  const targetUrl = `${origin}/lacak?search=${encodeURIComponent(m.whatsapp || m.phone || m.id)}&member=${encodeURIComponent(m.id)}`;
+
+                  return (
+                    <QrStickerCard
+                      key={m.id}
+                      type="member"
+                      numStr={m.numStr}
+                      qrId={m.code}
+                      systemId={m.id}
+                      code={m.code}
+                      targetUrl={targetUrl}
+                      name={m.name}
+                      phone={m.whatsapp || m.phone}
+                      district={m.district}
+                      isSelected={isSelected}
+                      onToggleSelect={() => toggleSelectMemberCode(m.code)}
+                      onDownloadSingle={() => downloadSingleMemberCard(m)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import { X, Printer, Download, ShieldCheck, User, Phone, MapPin, Sparkles } from 'lucide-react';
+import { downloadSingleMemberCard } from '../utils/qrCardGenerator';
 
 interface MemberQrCardModalProps {
   customer: {
@@ -195,25 +196,17 @@ export default function MemberQrCardModal({ customer, onClose }: MemberQrCardMod
             <span>Cetak Kartu Member</span>
           </button>
 
-          {qrDataUrl ? (
-            <a
-              href={qrDataUrl}
-              download={`QR_MEMBER_${memberCode}_${customer.name.replace(/\s+/g, '_')}.png`}
-              className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer text-center transition-all"
-            >
-              <Download className="w-4 h-4" />
-              <span>Unduh PNG</span>
-            </a>
-          ) : (
-            <button
-              disabled
-              className="py-2.5 px-3 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed"
-            >
-              Menyiapkan...
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => downloadSingleMemberCard(customer)}
+            className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer text-center transition-all"
+          >
+            <Download className="w-4 h-4" />
+            <span>Unduh PNG Kartu</span>
+          </button>
         </div>
       </div>
     </div>
   );
 }
+

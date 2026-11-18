@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { formatRp } from '../../utils/api';
 import EditMitraModal from './EditMitraModal';
+import QrStickerCard from '../../components/QrStickerCard';
+import { downloadSingleMitraCard, downloadBulkMitraZip } from '../../utils/qrCardGenerator';
 
 export default function MitraTab({
   mitras,
@@ -99,13 +101,23 @@ export default function MitraTab({
     }
   };
 
-  const handleDownloadAllZip = () => {
-    const link = document.createElement('a');
-    link.href = '/qrcodes/mitra/100_QR_Code_Mitra_NgalamFixPro.zip';
-    link.download = '100_QR_Code_Mitra_NgalamFixPro.zip';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownloadAllZip = async () => {
+    setDownloadingZip(true);
+    try {
+      const allMitras = preGeneratedList.map((m, idx) => ({
+        index: idx + 1,
+        referralCode: m.referralCode,
+        id: m.id,
+        name: m.name,
+        phone: m.phone
+      }));
+      await downloadBulkMitraZip(allMitras, '100_QR_Code_Mitra_NgalamFixPro.zip');
+    } catch (err: any) {
+      console.error(err);
+      alert('Gagal membuat file ZIP: ' + (err.message || 'Coba lagi.'));
+    } finally {
+      setDownloadingZip(false);
+    }
   };
 
   const handleDownloadSelectedZip = async () => {
@@ -113,25 +125,19 @@ export default function MitraTab({
       alert('Pilih minimal 1 QR code untuk diunduh dalam format ZIP.');
       return;
     }
-    if (selectedCodes.length >= 100 || (preGeneratedList.length > 0 && selectedCodes.length === preGeneratedList.length)) {
-      handleDownloadAllZip();
-      return;
-    }
 
     setDownloadingZip(true);
     try {
-      const url = `/api/mitra/download-qr-zip?codes=${encodeURIComponent(selectedCodes.join(','))}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Gagal mengunduh file ZIP');
-      const blob = await res.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = `QR_Code_Mitra_${selectedCodes.length}_Pilihan.zip`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(blobUrl);
+      const selectedList = preGeneratedList
+        .filter((m) => selectedCodes.includes(m.referralCode))
+        .map((m, idx) => ({
+          index: idx + 1,
+          referralCode: m.referralCode,
+          id: m.id,
+          name: m.name,
+          phone: m.phone
+        }));
+      await downloadBulkMitraZip(selectedList, `QR_Code_Mitra_${selectedList.length}_Pilihan.zip`);
     } catch (err: any) {
       console.error(err);
       alert('Terjadi kendala saat membuat file ZIP: ' + (err.message || 'Silakan coba lagi.'));
@@ -643,18 +649,18 @@ export default function MitraTab({
                 </span>
               </div>
 
-              <div className="bg-white p-2.5 rounded-2xl inline-block shadow-md mx-auto max-w-[280px]">
-                {/* ID QR TEGAS DI ATAS GAMBAR STIKER (SANGAT JELAS SAAT DIPRINT) */}
-                <div className="w-full bg-slate-900 text-amber-300 font-mono font-black text-xs py-1.5 px-2 rounded-lg border-2 border-slate-900 text-center uppercase tracking-wider mb-2 print:bg-black print:text-white print:border-black">
-                  ID QR: {selectedQrMitra.referralCode} • {selectedQrMitra.id}
-                </div>
-                <img
-                  src={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
-                  alt={`QR Code ${selectedQrMitra.referralCode}`}
-                  className="w-full max-h-80 object-contain mx-auto rounded-xl shadow-xs"
-                  onError={(e: any) => {
-                    e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(getBookingUrl(selectedQrMitra.referralCode))}`;
-                  }}
+              <div className="mx-auto max-w-[280px]">
+                <QrStickerCard
+                  type="mitra"
+                  numStr={String(selectedQrMitra.referralCode || '').replace(/\D/g, '').padStart(3, '0')}
+                  qrId={selectedQrMitra.referralCode}
+                  systemId={selectedQrMitra.id}
+                  code={selectedQrMitra.referralCode}
+                  targetUrl={getBookingUrl(selectedQrMitra.referralCode)}
+                  name={selectedQrMitra.name}
+                  phone={selectedQrMitra.phone}
+                  showCheckbox={false}
+                  onDownloadSingle={() => downloadSingleMitraCard(selectedQrMitra)}
                 />
               </div>
 
@@ -692,14 +698,14 @@ export default function MitraTab({
 
             {/* Action Buttons */}
             <div className="grid grid-cols-3 gap-2 pt-1">
-              <a
-                href={`/qrcodes/mitra/${selectedQrMitra.referralCode}.png`}
-                download={`QR_Mitra_${selectedQrMitra.referralCode}.png`}
+              <button
+                type="button"
+                onClick={() => downloadSingleMitraCard(selectedQrMitra)}
                 className="py-2.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1 shadow-xs cursor-pointer text-center"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Unduh</span>
-              </a>
+                <span>Unduh PNG</span>
+              </button>
 
               <button
                 type="button"
@@ -920,84 +926,24 @@ export default function MitraTab({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {getBatchItems().map((m) => {
-                  const assigned = isAssigned(m);
                   const isSelected = selectedCodes.includes(m.referralCode);
                   const numStr = String(m.referralCode || '').replace(/\D/g, '').padStart(3, '0') || '001';
 
                   return (
-                    <div
+                    <QrStickerCard
                       key={m.id}
-                      onClick={() => toggleSelectCode(m.referralCode)}
-                      className={`qr-sticker-card p-2.5 rounded-2xl border-2 transition-all relative flex flex-col items-center justify-between text-center space-y-2 cursor-pointer ${
-                        isSelected
-                          ? 'border-amber-500 bg-amber-50/50 ring-2 ring-amber-400 shadow-lg'
-                          : 'border-slate-200 bg-white shadow-xs hover:shadow-md hover:border-amber-400'
-                      }`}
-                    >
-                      {/* Top Bar inside Card: Selection Checkbox & Single Download */}
-                      <div className="w-full flex items-center justify-between text-[10px] font-black uppercase text-amber-700 tracking-wider border-b border-amber-100 pb-1.5 no-print">
-                        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            type="button"
-                            onClick={() => toggleSelectCode(m.referralCode)}
-                            className="text-amber-600 hover:text-amber-700 cursor-pointer"
-                            title={isSelected ? 'Hapus pilihan' : 'Pilih untuk download ZIP'}
-                          >
-                            {isSelected ? (
-                              <CheckSquare className="w-4 h-4 fill-amber-500 text-white" />
-                            ) : (
-                              <Square className="w-4 h-4 text-slate-300 hover:text-amber-500" />
-                            )}
-                          </button>
-                          <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-mono text-[9px] font-bold">
-                            #{numStr}
-                          </span>
-                        </div>
-                        <span className="font-mono text-slate-900 font-bold text-[11px]">{m.referralCode}</span>
-                        
-                        {/* Single Download button (No Print) */}
-                        <a
-                          href={`/qrcodes/mitra/${m.referralCode}.png`}
-                          download={`NGALAM_FIX_PRO_${m.referralCode}.png`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="p-1 text-slate-400 hover:text-amber-700 hover:bg-amber-100 rounded-md transition-colors"
-                          title="Download Desain Kartu QR Code ini (PNG)"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-
-                      {/* Branded Card Image Preview */}
-                      <div className="w-full bg-slate-50 p-1.5 rounded-xl border border-slate-200/80 my-0.5">
-                        {/* ID QR TEGAS DI ATAS QR CODE (SANGAT JELAS SAAT CETAK / PRINT) */}
-                        <div className="w-full bg-slate-900 text-amber-300 font-mono font-black text-[11px] py-1 px-2 rounded-md border-2 border-slate-900 uppercase tracking-wider mb-1.5 print:bg-black print:text-white print:border-black print:text-xs print:py-2">
-                          ID QR: {m.referralCode} • #{numStr}
-                        </div>
-                        <img
-                          src={`/qrcodes/mitra/${m.referralCode}.png`}
-                          alt={`QR Desain ${m.referralCode}`}
-                          className="w-full h-auto max-h-56 object-contain rounded-lg mx-auto shadow-2xs"
-                          onError={(e: any) => {
-                            e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(getBookingUrl(m.referralCode))}`;
-                          }}
-                        />
-                      </div>
-
-                      {/* Mitra Details Footer */}
-                      <div className="w-full space-y-0.5 no-print">
-                        <div className="text-[10px] truncate pt-0.5 text-slate-600">
-                          {assigned ? (
-                            <span className="font-bold text-emerald-700">👤 {m.name}</span>
-                          ) : (
-                            <span className="italic text-slate-400 font-medium">Belum terisi nama pemilik</span>
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between text-[8.5px] font-mono text-slate-400 pt-1 border-t border-slate-100">
-                          <span className="font-bold text-amber-700">Mitra #{numStr}</span>
-                          <span>ID: {m.id.replace('USR-MITRA-', '')}</span>
-                        </div>
-                      </div>
-                    </div>
+                      type="mitra"
+                      numStr={numStr}
+                      qrId={m.referralCode}
+                      systemId={m.id}
+                      code={m.referralCode}
+                      targetUrl={getBookingUrl(m.referralCode)}
+                      name={m.name}
+                      phone={m.phone}
+                      isSelected={isSelected}
+                      onToggleSelect={() => toggleSelectCode(m.referralCode)}
+                      onDownloadSingle={() => downloadSingleMitraCard(m)}
+                    />
                   );
                 })}
               </div>
