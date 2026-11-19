@@ -18,6 +18,30 @@ const SESSIONS_FILE = path.join(__dirname, '..', 'data', 'sessions.json');
 const SINGLE_ADMIN_USERNAME = String(process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
 const SINGLE_ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || 'fixprongalam2026');
 
+// Daftar kredensial admin resmi yang diizinkan masuk ke Workshop Console
+const OFFICIAL_ADMIN_ACCOUNTS = [
+  {
+    id: 'USR-ADMIN-01',
+    username: 'admin',
+    passwordPlain: SINGLE_ADMIN_PASSWORD,
+    name: 'Admin Super User',
+    role: 'admin',
+    category: 'Super Admin',
+    email: 'admin@ngalamfixpro.com',
+    specialty: 'Super User Kontrol Sistem & Keuangan'
+  },
+  {
+    id: 'USR-ADMIN-02',
+    username: 'ferdi',
+    passwordPlain: 'Ferdingalam2026',
+    name: 'Ferdi (Admin Super User)',
+    role: 'admin',
+    category: 'Super Admin',
+    email: 'ferdi@ngalamfixpro.com',
+    specialty: 'Super User Kontrol Sistem & Operasional Workshop'
+  }
+];
+
 // In-memory and persisted active tokens cache
 const activeSessions = new Map();
 
@@ -43,7 +67,7 @@ function loadPersistedSessions() {
 }
 loadPersistedSessions();
 
-async function ensureSingleAdminAccount() {
+async function ensureAdminAccounts() {
   const ready = await userService.refreshUsersFromDb(true);
   if (!ready) {
     throw new AuthError('Database akun admin belum dapat dihubungi. Coba beberapa saat lagi.', {
@@ -53,35 +77,41 @@ async function ensureSingleAdminAccount() {
   }
 
   const adminUsers = userService.getAdminUsers();
-  const target = adminUsers.find((user) => String(user.username || '').toLowerCase() === SINGLE_ADMIN_USERNAME);
-  const otherAdmins = adminUsers.filter((user) => String(user.username || '').toLowerCase() !== SINGLE_ADMIN_USERNAME);
-  const passwordMatches = target ? verifyPassword(SINGLE_ADMIN_PASSWORD, target.password) : false;
+  const validAdmins = [];
 
-  if (target && passwordMatches && otherAdmins.length === 0) {
-    return target;
+  for (const official of OFFICIAL_ADMIN_ACCOUNTS) {
+    const existing = adminUsers.find(
+      (u) => String(u.username || '').toLowerCase() === official.username.toLowerCase()
+    );
+    const passMatches = existing ? verifyPassword(official.passwordPlain, existing.password) : false;
+
+    if (existing && passMatches) {
+      validAdmins.push(existing);
+    } else {
+      const source = existing || {};
+      const newAdmin = {
+        ...source,
+        id: official.id,
+        username: official.username,
+        password: hashPassword(official.passwordPlain),
+        name: official.name,
+        role: 'admin',
+        category: official.category,
+        avatar: source.avatar || 'crown-shield',
+        phone: source.phone || '',
+        email: official.email,
+        desk: source.desk || 'Ruang Workshop Manager',
+        specialty: official.specialty,
+        referralCode: source.referralCode || `NGALAM-${official.username.toUpperCase()}-2026`,
+        status: 'Siaga / Aktif'
+      };
+      validAdmins.push(newAdmin);
+    }
   }
 
-  const source = target || adminUsers[0] || {};
-  const admin = {
-    ...source,
-    id: source.id || 'USR-ADMIN-01',
-    username: SINGLE_ADMIN_USERNAME,
-    password: hashPassword(SINGLE_ADMIN_PASSWORD),
-    name: source.name || 'Admin Super User',
-    role: 'admin',
-    category: source.category || 'Super Admin',
-    avatar: source.avatar || 'crown-shield',
-    phone: source.phone || '',
-    email: source.email || 'admin@ngalamfixpro.com',
-    desk: source.desk || 'Ruang Workshop Manager',
-    specialty: source.specialty || 'Super User Kontrol Sistem & Keuangan',
-    referralCode: source.referralCode || 'NGALAM-SUPER-2026',
-    status: 'Siaga / Aktif'
-  };
-
-  await userService.saveAdminUsers([admin]);
+  await userService.saveAdminUsers(validAdmins);
   await userService.refreshUsersFromDb(true);
-  return admin;
+  return validAdmins;
 }
 
 /**
@@ -161,33 +191,45 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
 
   let user = null;
 
-  if (role === 'admin' || role === 'owner' || cleanId === SINGLE_ADMIN_USERNAME) {
-    const admin = await ensureSingleAdminAccount();
+  const isAdminLoginAttempt = role === 'admin' || role === 'owner' || OFFICIAL_ADMIN_ACCOUNTS.some(a => a.username.toLowerCase() === cleanId);
+
+  if (isAdminLoginAttempt) {
+    const adminAccounts = await ensureAdminAccounts();
+    const matchedOfficial = OFFICIAL_ADMIN_ACCOUNTS.find(
+      (a) => a.username.toLowerCase() === cleanId
+    );
+
     if (role === 'admin' || role === 'owner') {
-      if (cleanId !== SINGLE_ADMIN_USERNAME) {
-        throw new AuthError('Portal admin hanya dapat diakses oleh akun admin.', {
+      if (!matchedOfficial) {
+        throw new AuthError('Portal admin hanya dapat diakses oleh akun admin terdaftar.', {
           status: 403,
           code: 'ADMIN_ACCOUNT_ONLY',
           field: 'identifier'
         });
       }
-      if (cleanPass !== SINGLE_ADMIN_PASSWORD) {
+      if (cleanPass !== matchedOfficial.passwordPlain) {
         throw new AuthError('Kata sandi admin salah.', {
           status: 401,
           code: 'INVALID_ADMIN_PASSWORD',
           field: 'password'
         });
       }
-      user = admin;
-    } else if (cleanId === SINGLE_ADMIN_USERNAME) {
-      if (cleanPass !== SINGLE_ADMIN_PASSWORD) {
+      user = adminAccounts.find((u) => u.username.toLowerCase() === matchedOfficial.username.toLowerCase()) || {
+        ...matchedOfficial,
+        password: hashPassword(matchedOfficial.passwordPlain)
+      };
+    } else if (matchedOfficial) {
+      if (cleanPass !== matchedOfficial.passwordPlain) {
         throw new AuthError('Kata sandi admin salah.', {
           status: 401,
           code: 'INVALID_ADMIN_PASSWORD',
           field: 'password'
         });
       }
-      user = admin;
+      user = adminAccounts.find((u) => u.username.toLowerCase() === matchedOfficial.username.toLowerCase()) || {
+        ...matchedOfficial,
+        password: hashPassword(matchedOfficial.passwordPlain)
+      };
     }
   }
 
@@ -379,7 +421,8 @@ async function loginUser({ identifier = '', password = '', role = '', referralCo
 function isAllowedAdminSession(session) {
   const role = String(session && session.role || '').toLowerCase();
   if (role !== 'admin' && role !== 'owner') return true;
-  return String(session.username || '').toLowerCase() === SINGLE_ADMIN_USERNAME;
+  const username = String(session.username || '').toLowerCase();
+  return OFFICIAL_ADMIN_ACCOUNTS.some(a => a.username.toLowerCase() === username);
 }
 
 function verifySession(token) {
@@ -487,6 +530,7 @@ module.exports = {
   verifySession,
   logoutUser,
   getAdminReferralCode,
+  ensureAdminAccounts,
 };
 
 

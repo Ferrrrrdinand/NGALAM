@@ -1,5 +1,83 @@
 [
   {
+    "id": "LOG-1795051425339-888",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-02",
+    "payload": {
+      "username": "ferdi",
+      "name": "Ferdi (Admin Super User)",
+      "role": "admin",
+      "loginAt": "2026-11-19T01:23:45.337Z"
+    },
+    "performed_at": "2026-11-19T01:23:45.339Z"
+  },
+  {
+    "id": "LOG-1795051423142-46",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-19T01:23:43.140Z"
+    },
+    "performed_at": "2026-11-19T01:23:43.142Z"
+  },
+  {
+    "id": "LOG-1795050970323-396",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-02",
+    "payload": {
+      "username": "ferdi",
+      "name": "Ferdi (Admin Super User)",
+      "role": "admin",
+      "loginAt": "2026-11-19T01:16:10.321Z"
+    },
+    "performed_at": "2026-11-19T01:16:10.323Z"
+  },
+  {
+    "id": "LOG-1795050968494-474",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-19T01:16:08.492Z"
+    },
+    "performed_at": "2026-11-19T01:16:08.494Z"
+  },
+  {
+    "id": "LOG-1795050547682-398",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-01",
+    "payload": {
+      "username": "admin",
+      "name": "Admin Super User",
+      "role": "admin",
+      "loginAt": "2026-11-19T01:09:07.679Z"
+    },
+    "performed_at": "2026-11-19T01:09:07.682Z"
+  },
+  {
+    "id": "LOG-1795050536233-571",
+    "action": "STAFF_LOGIN",
+    "table_name": "users",
+    "record_id": "USR-ADMIN-02",
+    "payload": {
+      "username": "ferdi",
+      "name": "Ferdi (Admin Super User)",
+      "role": "admin",
+      "loginAt": "2026-11-19T01:08:56.231Z"
+    },
+    "performed_at": "2026-11-19T01:08:56.233Z"
+  },
+  {
     "id": "LOG-1795049610090-276",
     "action": "SYSTEM_CLEANUP",
     "table_name": "system",

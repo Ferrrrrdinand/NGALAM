@@ -134,7 +134,7 @@ router.get('/battery-prices', (req, res) => {
 // ============================================================
 router.get('/admin/dashboard', async (req, res) => {
   const { getAllOrders } = require('../../services/orderService');
-  const { readTransactions, generateMitraCode } = require('../../services/financeService');
+  const { readTransactions, refreshTransactionsFromDb, generateMitraCode } = require('../../services/financeService');
   const { getAllPromos } = require('../../services/promoService');
   const userService = require('../../services/userService');
   const customerService = require('../../services/customerService');
@@ -152,7 +152,10 @@ router.get('/admin/dashboard', async (req, res) => {
 
   const [orders, transactions, promos, activityLogs, mitraUsers, customerList, adsList, prospectsList, warrantiesData] = await Promise.all([
     safe(() => getAllOrders(), []),
-    safe(async () => readTransactions(), []),
+    safe(async () => {
+      await refreshTransactionsFromDb();
+      return readTransactions();
+    }, []),
     safe(async () => getAllPromos(true), []),
     safe(async () => getSanitizedActivityLogs(), []),
     safe(async () => userService.getMitraUsers(), []),

@@ -10,8 +10,10 @@ const {
   saveConfig: saveFinanceConfig,
   getCredentialsInfo,
   readFinances,
+  refreshFinancesFromDb,
   addFinancialRecord,
   readTransactions,
+  refreshTransactionsFromDb,
   recordNewTransaction,
   getFinancialSummary,
   getWitMonthYearPeriod,
@@ -19,6 +21,16 @@ const {
   updateTransactionWarranty,
 } = require('../services/financeService');
 const userService = require('../services/userService');
+
+router.use(async (req, res, next) => {
+  try {
+    await Promise.all([
+      refreshTransactionsFromDb(),
+      refreshFinancesFromDb()
+    ]);
+  } catch (_) {}
+  next();
+});
 
 // GET /api/finance/status
 router.get('/status', async (req, res) => {
@@ -84,24 +96,26 @@ router.get('/status', async (req, res) => {
         },
         orders: {
           name: 'Tabel Antrian Tiket Servis (orders)',
-          file: 'data/orders.json',
+          table: 'orders',
           connected: true,
           mode: 'database',
-          message: 'Tersimpan aman di data/orders.json (Siap migrasi PostgreSQL)'
+          message: 'Tersimpan langsung di tabel orders PostgreSQL Database'
         },
         transactions: {
           name: 'Tabel Riwayat Transaksi (transactions)',
+          table: 'transactions',
           period: getWitMonthYearPeriod(),
           timezone: 'WIT (UTC+9)',
           connected: true,
           mode: 'database',
-          message: 'Tersimpan aman di data/transactions.json (Siap migrasi PostgreSQL)'
+          message: 'Tersimpan langsung di tabel transactions PostgreSQL Database'
         },
         finances: {
           name: 'Tabel Buku Kas & Keuangan (finances)',
+          table: 'finances',
           connected: true,
           mode: 'database',
-          message: 'Tersimpan aman di data/finances.json (Siap migrasi PostgreSQL)'
+          message: 'Tersimpan langsung di tabel finances PostgreSQL Database'
         }
       }
     });

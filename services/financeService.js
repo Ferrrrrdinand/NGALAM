@@ -78,14 +78,24 @@ function readOrders() {
   return [];
 }
 
+// Cache in-memory untuk transaksi dan keuangan agar performa instan dan selalu sinkron PostgreSQL
+let transactionsCache = null;
+let transactionsHydratedAt = 0;
+let financesCache = null;
+let financesHydratedAt = 0;
+
 /**
- * Baca Catatan Keuangan (Kas Masuk & Keluar)
+ * Baca Catatan Keuangan (Kas Masuk & Keluar) - Prioritas PostgreSQL
  */
 function readFinances() {
+  if (financesCache && Array.isArray(financesCache)) {
+    return financesCache;
+  }
   try {
     if (fs.existsSync(FINANCES_FILE)) {
       const raw = fs.readFileSync(FINANCES_FILE, 'utf-8');
-      return JSON.parse(raw.replace(/^\uFEFF/, ''));
+      financesCache = JSON.parse(raw.replace(/^\uFEFF/, ''));
+      return financesCache;
     }
   } catch (err) {
     console.error('[FinanceService] Error reading finances.json:', err.message);
@@ -93,10 +103,30 @@ function readFinances() {
   return [];
 }
 
+async function refreshFinancesFromDb(force = false) {
+  if (!force && financesCache && (Date.now() - financesHydratedAt < 5000)) {
+    return financesCache;
+  }
+  if (db.isDbConnected()) {
+    try {
+      const res = await db.query('SELECT raw_data FROM finances ORDER BY created_at ASC');
+      if (res && res.rows) {
+        financesCache = res.rows.map(r => r.raw_data || r);
+        financesHydratedAt = Date.now();
+        return financesCache;
+      }
+    } catch (e) {
+      console.warn('[FinanceService] Gagal refresh finances dari DB:', e.message);
+    }
+  }
+  return readFinances();
+}
+
 /**
  * Tulis Catatan Keuangan ke JSON
  */
 function writeFinances(list) {
+  financesCache = Array.isArray(list) ? list : [];
   try {
     fs.writeFileSync(FINANCES_FILE, JSON.stringify(list, null, 2), 'utf-8');
     return true;
@@ -107,18 +137,41 @@ function writeFinances(list) {
 }
 
 /**
- * Baca Riwayat Transaksi Faktur / Nota Kasir
+ * Baca Riwayat Transaksi Faktur / Nota Kasir - Prioritas PostgreSQL
  */
 function readTransactions() {
+  if (transactionsCache && Array.isArray(transactionsCache)) {
+    return transactionsCache;
+  }
   try {
     if (fs.existsSync(TRANSACTIONS_FILE)) {
       const raw = fs.readFileSync(TRANSACTIONS_FILE, 'utf-8');
-      return JSON.parse(raw.replace(/^\uFEFF/, ''));
+      transactionsCache = JSON.parse(raw.replace(/^\uFEFF/, ''));
+      return transactionsCache;
     }
   } catch (err) {
     console.error('[FinanceService] Error reading transactions.json:', err.message);
   }
   return [];
+}
+
+async function refreshTransactionsFromDb(force = false) {
+  if (!force && transactionsCache && (Date.now() - transactionsHydratedAt < 5000)) {
+    return transactionsCache;
+  }
+  if (db.isDbConnected()) {
+    try {
+      const res = await db.query('SELECT raw_data FROM transactions ORDER BY created_at DESC');
+      if (res && res.rows) {
+        transactionsCache = res.rows.map(r => r.raw_data || r);
+        transactionsHydratedAt = Date.now();
+        return transactionsCache;
+      }
+    } catch (e) {
+      console.warn('[FinanceService] Gagal refresh transactions dari DB:', e.message);
+    }
+  }
+  return readTransactions();
 }
 
 /**
@@ -810,5 +863,7 @@ module.exports = {
   payoutMitraCommission,
   enrichTransactionWarranty,
   getAllTransactionsWithWarranty,
-  updateTransactionWarranty
+  updateTransactionWarranty,
+  refreshTransactionsFromDb,
+  refreshFinancesFromDb
 };
