@@ -1,5 +1,16 @@
 [
   {
+    "id": "LOG-1795049610090-276",
+    "action": "SYSTEM_CLEANUP",
+    "table_name": "system",
+    "record_id": "ADMIN-READY",
+    "payload": {
+      "message": "Data demo & dummy berhasil dibersihkan total. Hanya akun admin aktif siap publikasi.",
+      "cleanedAt": "2026-11-19T00:53:30.088Z"
+    },
+    "performed_at": "2026-11-19T00:53:30.090Z"
+  },
+  {
     "id": "LOG-1794903865950-827",
     "action": "CUSTOMER_REGISTER",
     "table_name": "customers",
