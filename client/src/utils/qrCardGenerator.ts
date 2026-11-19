@@ -101,12 +101,8 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
       <rect x="14" y="171" width="${width - 28}" height="4" fill="url(#mGoldGrad)" />
 
       <!-- Brand Typography -->
-      <text x="${width / 2}" y="62" text-anchor="middle" class="m-black" font-size="28" fill="#ffffff" letter-spacing="2.5">NGALAM FIX PRO</text>
-      <text x="${width / 2}" y="88" text-anchor="middle" class="m-bold" font-size="12" fill="#fbbf24" letter-spacing="1.5">WORKSHOP &amp; LAB SPESIALIS SERVIS HP MALANG</text>
-      
-      <!-- Big Prominent Indicator: MITRA RESMI #XXX -->
-      <rect x="${width / 2 - 140}" y="108" width="280" height="42" rx="21" fill="url(#mGoldGrad)" />
-      <text x="${width / 2}" y="135" text-anchor="middle" class="m-black" font-size="16" fill="#0f172a" letter-spacing="1.5">MITRA RESMI #${escapeXml(numStr)} DARI 100</text>
+      <text x="${width / 2}" y="78" text-anchor="middle" class="m-black" font-size="28" fill="#ffffff" letter-spacing="2.5">NGALAM FIX PRO</text>
+      <text x="${width / 2}" y="108" text-anchor="middle" class="m-bold" font-size="12.5" fill="#fbbf24" letter-spacing="1.5">WORKSHOP &amp; LAB SPESIALIS SERVIS HP MALANG</text>
 
       <!-- Discount Ribbon -->
       <rect x="44" y="184" width="${width - 88}" height="48" rx="14" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2" />
@@ -135,32 +131,25 @@ export async function generateMitraSvg(mitra: CardMitraData): Promise<string> {
       <text x="${width / 2}" y="502" text-anchor="middle" class="m-black" font-size="14" fill="#fbbf24">NFP</text>
 
       <!-- Referral Code Box -->
-      <rect x="70" y="696" width="${width - 140}" height="70" rx="18" fill="#fffbeb" stroke="#fde68a" stroke-width="2.5" />
-      <text x="${width / 2}" y="720" text-anchor="middle" class="m-bold" font-size="11" fill="#78350f" letter-spacing="1.5">KODE REFERRAL MITRA (PERMANEN):</text>
-      <text x="${width / 2}" y="752" text-anchor="middle" class="m-mono" font-size="28" fill="#b45309" letter-spacing="3">${escapeXml(mitra.referralCode)}</text>
-
-      <!-- Mitra Info Box (Siap diisi nama pemilik) -->
-      <rect x="70" y="776" width="${width - 140}" height="56" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
-      <text x="95" y="800" class="m-bold" font-size="11" fill="#64748b">PEMILIK / MITRA:</text>
-      <text x="95" y="820" class="m-med" font-size="12" fill="#334155">${cleanName ? `${escapeXml(cleanName)} ${cleanPhone ? `(${escapeXml(cleanPhone)})` : ''}` : '_______________________________________'}</text>
-      <text x="${width - 95}" y="808" text-anchor="end" class="m-mono" font-size="11" fill="#64748b">ID: ${escapeXml(mitra.id)}</text>
+      <rect x="70" y="716" width="${width - 140}" height="84" rx="20" fill="#fffbeb" stroke="#fde68a" stroke-width="2.5" />
+      <text x="${width / 2}" y="746" text-anchor="middle" class="m-bold" font-size="12" fill="#78350f" letter-spacing="1.5">KODE REFERRAL MITRA (PERMANEN):</text>
+      <text x="${width / 2}" y="782" text-anchor="middle" class="m-mono" font-size="32" fill="#b45309" letter-spacing="3">${escapeXml(mitra.referralCode)}</text>
 
       <!-- How to Scan -->
-      <text x="${width / 2}" y="856" text-anchor="middle" class="m-med" font-size="11.5" fill="#475569">
+      <text x="${width / 2}" y="836" text-anchor="middle" class="m-med" font-size="12" fill="#475569">
         Arahkan kamera HP / Google Lens ke QR Code untuk reservasi otomatis
       </text>
-      <text x="${width / 2}" y="876" text-anchor="middle" class="m-mono" font-size="11" fill="#64748b">
+      <text x="${width / 2}" y="858" text-anchor="middle" class="m-mono" font-size="11.5" fill="#64748b">
         ${escapeXml(url)}
       </text>
 
       <!-- Bottom Footer -->
       <line x1="44" y1="900" x2="${width - 44}" y2="900" stroke="#e2e8f0" stroke-width="1.5" />
       
-      <text x="44" y="928" class="m-bold" font-size="11" fill="#0f172a">NGALAM FIX PRO</text>
-      <text x="44" y="946" class="m-med" font-size="10" fill="#64748b">Garansi Resmi Lab Servis &#8226; Transparan Bisa Ditunggu</text>
+      <text x="44" y="936" class="m-bold" font-size="11.5" fill="#0f172a">NGALAM FIX PRO</text>
+      <text x="44" y="954" class="m-med" font-size="10.5" fill="#64748b">Garansi Resmi Lab Servis &#8226; Transparan Bisa Ditunggu</text>
 
-      <text x="${width - 44}" y="928" text-anchor="end" class="m-bold" font-size="11" fill="#0f172a">Hotline WA: 0811-318-5858</text>
-      <text x="${width - 44}" y="946" text-anchor="end" class="m-bold" font-size="10.5" fill="#d97706">NOMOR MITRA #${escapeXml(numStr)} DARI 100</text>
+      <text x="${width - 44}" y="942" text-anchor="end" class="m-bold" font-size="12" fill="#0f172a">Hotline WA: 0811-318-5858</text>
     </svg>
   `;
 }

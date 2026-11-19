@@ -125,9 +125,11 @@ export default function QrStickerCard({
           <div className="text-[10.5px] font-black tracking-wide text-white">
             {isMitra ? 'MITRA RESMI SPESIALIS SERVIS HP' : 'KARTU MEMBER PRIORITAS LAB'}
           </div>
-          <span className="inline-block px-2 py-0.2 rounded-full bg-amber-500 text-slate-950 text-[8.5px] font-black uppercase tracking-wider">
-            {isMitra ? `MITRA RESMI #${numStr} DARI 100` : `MEMBER PRIORITAS #${numStr}`}
-          </span>
+          {!isMitra && (
+            <span className="inline-block px-2 py-0.2 rounded-full bg-amber-500 text-slate-950 text-[8.5px] font-black uppercase tracking-wider">
+              MEMBER PRIORITAS #{numStr}
+            </span>
+          )}
         </div>
 
         {/* Promo Ribbon */}
@@ -170,20 +172,22 @@ export default function QrStickerCard({
           )}
         </div>
 
-        {/* Info Box */}
-        <div className="p-1.5 rounded-md bg-slate-50 border border-slate-200 text-left text-[9px] space-y-0.5">
-          <div className="text-slate-500 font-bold uppercase text-[8px]">
-            {isMitra ? 'PEMILIK / MITRA:' : 'NAMA MEMBER:'}
-          </div>
-          <div className="font-bold text-slate-900 truncate">
-            {hasOwner ? name : isMitra ? '____________________' : 'Member Prioritas'}
-          </div>
-          {phone && phone !== '-' && (
-            <div className="font-mono text-emerald-700 font-bold text-[8.5px]">
-              WA: {phone}
+        {/* Info Box (Khusus Member) */}
+        {!isMitra && (
+          <div className="p-1.5 rounded-md bg-slate-50 border border-slate-200 text-left text-[9px] space-y-0.5">
+            <div className="text-slate-500 font-bold uppercase text-[8px]">
+              NAMA MEMBER:
             </div>
-          )}
-        </div>
+            <div className="font-bold text-slate-900 truncate">
+              {hasOwner ? name : 'Member Prioritas'}
+            </div>
+            {phone && phone !== '-' && (
+              <div className="font-mono text-emerald-700 font-bold text-[8.5px]">
+                WA: {phone}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Footer info */}
         <div className="text-[8px] text-slate-500 border-t border-slate-200 pt-1 flex items-center justify-between">
