@@ -108,12 +108,37 @@ function getCardSvg({ num, code, id }) {
       <text x="${width / 2}" y="746" text-anchor="middle" class="font-bold" font-size="12" fill="#78350f" letter-spacing="1.5">KODE REFERRAL MITRA (PERMANEN):</text>
       <text x="${width / 2}" y="782" text-anchor="middle" class="font-mono" font-size="32" fill="#b45309" letter-spacing="3">${code}</text>
 
-      <!-- How to Scan -->
-      <text x="${width / 2}" y="836" text-anchor="middle" class="font-med" font-size="12" fill="#475569">
-        Arahkan kamera HP / Google Lens ke QR Code untuk reservasi otomatis
+      <!-- Tutorial Cara Scan QR Code -->
+      <rect x="56" y="806" width="${width - 112}" height="76" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+      
+      <!-- Header Tutorial -->
+      <text x="${width / 2}" y="826" text-anchor="middle" class="font-black" font-size="11" fill="#0f172a" letter-spacing="1">
+        TUTORIAL CARA SCAN &amp; KLAIM DISKON:
       </text>
-      <text x="${width / 2}" y="858" text-anchor="middle" class="font-mono" font-size="11.5" fill="#64748b">
-        https://ngalam1-delta.vercel.app/pesan-servis?ref=${code}
+
+      <!-- Langkah 1 -->
+      <circle cx="82" cy="848" r="9" fill="#0f172a" />
+      <text x="82" y="852" text-anchor="middle" class="font-black" font-size="10" fill="#fbbf24">1</text>
+      <text x="98" y="852" class="font-bold" font-size="11" fill="#1e293b">Buka Kamera HP / Google Lens</text>
+
+      <!-- Panah Pemisah -->
+      <text x="282" y="852" text-anchor="middle" class="font-black" font-size="12" fill="#94a3b8">&#10140;</text>
+
+      <!-- Langkah 2 -->
+      <circle cx="310" cy="848" r="9" fill="#0f172a" />
+      <text x="310" y="852" text-anchor="middle" class="font-black" font-size="10" fill="#fbbf24">2</text>
+      <text x="326" y="852" class="font-bold" font-size="11" fill="#1e293b">Arahkan ke QR Code</text>
+
+      <!-- Panah Pemisah -->
+      <text x="472" y="852" text-anchor="middle" class="font-black" font-size="12" fill="#94a3b8">&#10140;</text>
+
+      <!-- Langkah 3 -->
+      <circle cx="500" cy="848" r="9" fill="#0f172a" />
+      <text x="500" y="852" text-anchor="middle" class="font-black" font-size="10" fill="#fbbf24">3</text>
+      <text x="516" y="852" class="font-bold" font-size="11" fill="#047857">Klik Link &amp; Diskon 5% Aktif</text>
+
+      <text x="${width / 2}" y="871" text-anchor="middle" class="font-med" font-size="10.5" fill="#64748b">
+        Atau tunjukkan kartu ini langsung ke kasir workshop saat intake servis
       </text>
 
       <!-- Bottom Footer -->

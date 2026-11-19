@@ -172,6 +172,31 @@ export default function QrStickerCard({
           )}
         </div>
 
+        {/* Tutorial Cara Scan (Khusus Mitra) */}
+        {isMitra && (
+          <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200 text-left text-[8.5px] space-y-1">
+            <div className="text-slate-800 font-black uppercase text-[7.5px] tracking-wider text-center border-b border-slate-200 pb-0.5">
+              TUTORIAL CARA SCAN &amp; KLAIM DISKON:
+            </div>
+            <div className="flex items-center justify-between text-[7.5px] font-bold text-slate-700 px-1">
+              <span className="flex items-center gap-0.5">
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-900 text-amber-400 inline-flex items-center justify-center font-black text-[7px]">1</span>
+                <span>Kamera HP</span>
+              </span>
+              <span className="text-slate-400">➔</span>
+              <span className="flex items-center gap-0.5">
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-900 text-amber-400 inline-flex items-center justify-center font-black text-[7px]">2</span>
+                <span>Arahkan QR</span>
+              </span>
+              <span className="text-slate-400">➔</span>
+              <span className="flex items-center gap-0.5">
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-900 text-amber-400 inline-flex items-center justify-center font-black text-[7px]">3</span>
+                <span className="text-emerald-700">Diskon 5%</span>
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Info Box (Khusus Member) */}
         {!isMitra && (
           <div className="p-1.5 rounded-md bg-slate-50 border border-slate-200 text-left text-[9px] space-y-0.5">
