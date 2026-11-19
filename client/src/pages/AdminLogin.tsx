@@ -202,13 +202,6 @@ export default function AdminLogin() {
             </p>
           </div>
 
-          <div style={{ background: '#f0f9ff', border: '1.5px solid #bae6fd', borderRadius: '12px', padding: '10px 14px', marginBottom: '18px', fontSize: '0.84rem', color: '#0369a1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-            <span style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <ShieldCheck className="w-4 h-4 text-sky-600" /> Akses Admin Tunggal
-            </span>
-            <span style={{ color: '#0284c7', fontWeight: 800, fontSize: '0.78rem' }}>1 Akun Admin</span>
-          </div>
-
           {errorMsg && (
             <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', marginBottom: '18px', fontSize: '0.86rem', color: '#991b1b', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
@@ -264,7 +257,7 @@ export default function AdminLogin() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', marginBottom: '22px', fontSize: '0.86rem', color: '#000000', flexWrap: 'wrap', gap: '10px', fontWeight: 600 }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginTop: '14px', marginBottom: '22px', fontSize: '0.86rem', color: '#000000', flexWrap: 'wrap', gap: '10px', fontWeight: 600 }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                   <input 
                     type="checkbox" 
@@ -273,10 +266,6 @@ export default function AdminLogin() {
                   />
                   <span>Ingat Sesi di Komputer Ini</span>
                 </label>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#b45309', fontSize: '0.8rem', fontWeight: 800 }}>
-                  <Lock className="w-3.5 h-3.5 text-amber-700" />
-                  <span>Akses Terenkripsi TLS 256-bit</span>
-                </span>
               </div>
 
               <button type="submit" disabled={loading} className="auth-submit-btn">

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 60" fill="none">
+  <rect width="68" height="60" rx="14" fill="#0066FF"/>
+  <rect x="72" width="68" height="60" rx="14" fill="#E60012"/>
+  <text x="34" y="38" fill="#FFFFFF" font-family="'Inter', sans-serif" font-weight="900" font-size="20" text-anchor="middle">TECNO</text>
+  <text x="106" y="39" fill="#FFFFFF" font-family="'Inter', sans-serif" font-weight="900" font-size="22" font-style="italic" text-anchor="middle">itel</text>
+</svg>

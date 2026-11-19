@@ -61,7 +61,7 @@ process.on('unhandledRejection', (reason) => {
 async function bootDatabase() {
   try {
     await db.sequelize.authenticate();
-    console.log('✅ [Sequelize] Terhubung ke PostgreSQL Database.');
+    console.log(`✅ [Sequelize] Terhubung ke Database (${db.sequelize.getDialect()}).`);
   } catch (err) {
     console.warn('⚠️ [Sequelize Warning] Database belum terhubung:', err.message);
   }
