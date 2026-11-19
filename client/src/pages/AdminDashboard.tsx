@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { 
   ShieldCheck, ShieldAlert, Wrench, RefreshCw, 
   LogOut, Plus, 
@@ -28,7 +28,43 @@ export default function AdminDashboard() {
   const { user, loading: authLoading, logoutStaff } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'technician' | 'walkin' | 'cashier' | 'transactions' | 'promos' | 'logs' | 'mitra' | 'customers'
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Tab persistence: URL query param (?tab=...) -> localStorage -> default 'orders'
+  const initialTab = () => {
+    const fromUrl = searchParams.get('tab');
+    if (fromUrl) return fromUrl;
+    try {
+      const fromStorage = localStorage.getItem('ngalam_admin_active_tab');
+      if (fromStorage) return fromStorage;
+    } catch (_) {}
+    return 'orders';
+  };
+
+  const [activeTab, setActiveTabState] = useState(initialTab);
+
+  const setActiveTab = (tabId: string) => {
+    setActiveTabState(tabId);
+    try {
+      localStorage.setItem('ngalam_admin_active_tab', tabId);
+    } catch (_) {}
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('tab', tabId);
+      return next;
+    }, { replace: true });
+  };
+
+  // Sync tab if user navigates back/forward or URL changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTabState(tabFromUrl);
+      try {
+        localStorage.setItem('ngalam_admin_active_tab', tabFromUrl);
+      } catch (_) {}
+    }
+  }, [searchParams]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);

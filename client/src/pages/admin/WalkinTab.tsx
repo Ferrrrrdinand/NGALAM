@@ -23,119 +23,62 @@ export default function WalkinTab({
     {
       id: 'apple',
       name: 'Apple iPhone',
-      icon: (
-        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.96.04-2.08.64-2.73 1.4-.56.64-1.06 1.7-1.01 2.74 1.07.08 2.15-.55 2.73-1.27z" />
-        </svg>
-      )
+      icon: <img src="/images/brands/apple.svg" alt="Apple" className="w-3.5 h-3.5 object-contain inline-block" />
     },
     {
       id: 'samsung',
       name: 'Samsung',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 44 16" fill="none">
-          <rect width="44" height="16" rx="3.5" fill="#034EA2" />
-          <text x="22" y="11.5" fill="#FFFFFF" fontFamily="'Inter', Arial, sans-serif" fontWeight="900" fontSize="7" letterSpacing="0.6" textAnchor="middle">SAMSUNG</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/samsung.svg" alt="Samsung" className="h-3 object-contain inline-block" />
     },
     {
       id: 'xiaomi',
       name: 'Xiaomi / Redmi',
-      icon: (
-        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-          <rect width="24" height="24" rx="6.5" fill="#FF6900" />
-          <path d="M6 7.5h2.8v4.8c0 .7.5 1.2 1.2 1.2s1.2-.5 1.2-1.2V7.5H14v4.8c0 .7.5 1.2 1.2 1.2s1.2-.5 1.2-1.2V7.5H18v5.2c0 2.2-1.8 4-4 4-1.3 0-2.4-.6-3.1-1.6-.7 1-1.8 1.6-3.1 1.6-2.2 0-4-1.8-4-4V7.5z" fill="#FFFFFF" />
-          <rect x="15.2" y="10" width="1.4" height="3.8" rx="0.4" fill="#FF6900" />
-        </svg>
-      )
+      icon: <img src="/images/brands/xiaomi.svg" alt="Xiaomi" className="w-3.5 h-3.5 object-contain inline-block" />
     },
     {
       id: 'poco',
       name: 'POCO',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 32 16" fill="none">
-          <rect width="32" height="16" rx="3.5" fill="#FFD700" />
-          <text x="16" y="11.5" fill="#000000" fontFamily="'Arial Black', Impact, sans-serif" fontWeight="900" fontSize="8" letterSpacing="0.5" textAnchor="middle">POCO</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/poco.svg" alt="POCO" className="h-3 object-contain inline-block" />
     },
     {
       id: 'oppo',
       name: 'OPPO',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 34 16" fill="none">
-          <rect width="34" height="16" rx="3.5" fill="#00875A" />
-          <text x="17" y="11.2" fill="#FFFFFF" fontFamily="'Inter', Arial, sans-serif" fontWeight="900" fontSize="7.5" letterSpacing="-0.2" textAnchor="middle">oppo</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/oppo.svg" alt="OPPO" className="h-3 object-contain inline-block" />
     },
     {
       id: 'vivo',
       name: 'Vivo',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 32 16" fill="none">
-          <rect width="32" height="16" rx="3.5" fill="#0055FF" />
-          <text x="16" y="11.2" fill="#FFFFFF" fontFamily="'Inter', Arial, sans-serif" fontWeight="800" fontSize="8" letterSpacing="0.2" textAnchor="middle">vivo</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/vivo.svg" alt="Vivo" className="h-3 object-contain inline-block" />
     },
     {
       id: 'realme',
       name: 'Realme',
-      icon: (
-        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-          <rect width="24" height="24" rx="6" fill="#FFC915" />
-          <path d="M7 17V7h4.8c2.2 0 3.7 1.3 3.7 3.2 0 1.5-.9 2.5-2.2 2.9L16 17h-2.8l-2.4-3.5H9.4V17H7zm2.4-5.5h2.2c1 0 1.6-.5 1.6-1.3 0-.8-.6-1.3-1.6-1.3H9.4v2.6z" fill="#000000" />
-        </svg>
-      )
+      icon: <img src="/images/brands/realme.svg" alt="Realme" className="w-3.5 h-3.5 object-contain inline-block" />
     },
     {
       id: 'infinix',
       name: 'Infinix',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 36 16" fill="none">
-          <rect width="36" height="16" rx="3.5" fill="#0B1528" stroke="#15E89B" strokeWidth="1.2" />
-          <text x="18" y="11.2" fill="#15E89B" fontFamily="'Inter', Arial, sans-serif" fontWeight="900" fontSize="6.8" letterSpacing="0.5" textAnchor="middle">infinix</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/infinix.svg" alt="Infinix" className="h-3 object-contain inline-block" />
     },
     {
       id: 'iqoo',
       name: 'iQOO',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 32 16" fill="none">
-          <rect width="32" height="16" rx="3.5" fill="#FFCC00" />
-          <text x="16" y="11.5" fill="#000000" fontFamily="'Arial Black', Impact, sans-serif" fontWeight="900" fontSize="7.5" letterSpacing="-0.3" textAnchor="middle">iQOO</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/iqoo.svg" alt="iQOO" className="h-3 object-contain inline-block" />
     },
     {
       id: 'tecno_itel',
       name: 'Tecno & itel',
-      icon: (
-        <svg className="w-4 h-3" viewBox="0 0 36 16" fill="none">
-          <rect width="18" height="16" rx="3.5" fill="#0066FF" />
-          <rect x="18" width="18" height="16" rx="3.5" fill="#E60012" />
-          <text x="9" y="11" fill="#FFFFFF" fontFamily="'Inter', sans-serif" fontWeight="900" fontSize="5.8" textAnchor="middle">TEC</text>
-          <text x="27" y="11" fill="#FFFFFF" fontFamily="'Inter', sans-serif" fontWeight="900" fontSize="5.8" textAnchor="middle">itel</text>
-        </svg>
-      )
+      icon: <img src="/images/brands/tecno_itel.svg" alt="Tecno itel" className="h-3 object-contain inline-block" />
     },
     {
       id: 'asus',
       name: 'ASUS ROG',
-      icon: (
-        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-          <path d="M2.5 13.5l4.8 2.2-2.1 1.7 5.5 3.6 4.3-5-3.8-1.5 5.5-2.2 4.1 4.2 2.7-1.5-3.5-3.8 4.7-1.8L12.5 1.5C9.8 1.5 7.6 2.7 6.1 4.7L2.5 13.5z" fill="#FF0033" />
-          <path d="M12.2 8.5l-2.8 1.2 1.8.7-2.2 2.5 2.1-.8 1.1-3.6z" fill="#FFFFFF" />
-        </svg>
-      )
+      icon: <img src="/images/brands/asus.svg" alt="ASUS" className="w-3.5 h-3.5 object-contain inline-block" />
     },
     {
       id: 'others',
       name: 'Lainnya / Pixel',
-      icon: <Smartphone className="w-3.5 h-3.5 text-slate-600" />
+      icon: <img src="/images/brands/google.svg" alt="Pixel / Lainnya" className="w-3.5 h-3.5 object-contain inline-block" />
     }
   ];
 
