@@ -75,7 +75,7 @@ function appendActivityLog(action, tableName, recordId, payload) {
     performed_at: new Date().toISOString()
   };
   logs.unshift(logEntry);
-  if (logs.length > 500) logs.length = 500;
+  // Simpan riwayat log tanpa batas (unlimited)
   saveTable('activity_logs', logs);
   return logEntry;
 }

@@ -28,9 +28,9 @@ function sanitizeLogValue(value, depth = 0) {
   return value;
 }
 
-async function getSanitizedActivityLogs(limit = 100) {
-  const safeLimit = Math.max(1, Math.min(Number(limit) || 100, 500));
+async function getSanitizedActivityLogs(limit = null) {
   let rows = [];
+  const limitClause = limit && Number(limit) > 0 ? `LIMIT ${Number(limit)}` : '';
   try {
     // Potong payload besar (mis. base64 gambar banner) langsung di PostgreSQL
     // agar data 20MB tidak perlu ditransfer dari database ke server.
@@ -50,7 +50,7 @@ async function getSanitizedActivityLogs(limit = 100) {
               END AS payload
        FROM activity_logs
        ORDER BY performed_at DESC
-       LIMIT ${safeLimit}`,
+       ${limitClause}`,
       { type: db.Sequelize.QueryTypes.SELECT }
     );
   } catch (_) {}
@@ -154,7 +154,7 @@ router.get('/admin/dashboard', async (req, res) => {
     safe(() => getAllOrders(), []),
     safe(async () => readTransactions(), []),
     safe(async () => getAllPromos(true), []),
-    safe(async () => getSanitizedActivityLogs(100), []),
+    safe(async () => getSanitizedActivityLogs(), []),
     safe(async () => userService.getMitraUsers(), []),
     safe(async () => {
       await customerService.refreshCustomersFromDb();
@@ -349,10 +349,11 @@ router.all(['/database/sync', '/sync-database'], async (req, res) => {
   }
 });
 
-// Activity logs endpoint
+// Activity logs endpoint (menampilkan seluruh log tanpa batas)
 router.get('/activity-logs', async (req, res) => {
   try {
-    const logs = await getSanitizedActivityLogs(100);
+    const limit = req.query.limit ? Number(req.query.limit) : null;
+    const logs = await getSanitizedActivityLogs(limit);
     return res.json({ success: true, source: 'postgresql', logs });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
