@@ -25,6 +25,7 @@ const { generateToken, verifyToken } = require('../src/utils/jwt');
 const { verifyPassword } = require('../src/utils/security');
 const { sendAuthError } = require('../src/utils/authError');
 const { isValidEmail, normalizeEmail } = require('../src/utils/phone');
+const { authRateLimiter } = require('../src/middlewares/security');
 const unregisteredUserService = require('../services/unregisteredUserService');
 
 router.use(async (req, res, next) => {
@@ -624,7 +625,8 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /api/customer/login
-router.post('/login', async (req, res) => {
+// POST /api/customer/login (Max 30 attempts per 15 minutes per IP to prevent brute-force)
+router.post('/login', authRateLimiter(30, 15 * 60 * 1000), async (req, res) => {
   try {
     const { identifier = '', pin = '', password = '' } = req.body;
     const isRemember = req.body.rememberMe === true || req.body.rememberMe === 'true' || req.body.remember === true;

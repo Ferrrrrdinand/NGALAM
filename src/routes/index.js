@@ -131,8 +131,11 @@ router.get('/battery-prices', (req, res) => {
 // ============================================================
 // ADMIN DASHBOARD AGGREGATE ENDPOINT
 // Satu request untuk semua data panel admin (menggantikan 6 request paralel).
+// Dilindungi JWT Token Guard (hanya admin/staf berwenang)
 // ============================================================
-router.get('/admin/dashboard', async (req, res) => {
+const { requireAuth } = require('../middlewares/authGuard');
+
+router.get('/admin/dashboard', requireAuth(['admin', 'superadmin', 'owner', 'kasir', 'teknisi']), async (req, res) => {
   const { getAllOrders } = require('../../services/orderService');
   const { readTransactions, refreshTransactionsFromDb, generateMitraCode } = require('../../services/financeService');
   const { getAllPromos } = require('../../services/promoService');

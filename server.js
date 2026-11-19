@@ -10,17 +10,32 @@ const path = require('path');
 const fs = require('fs');
 
 const { jsonSyntaxErrorHandler, globalErrorHandler } = require('./src/middlewares/errorHandler');
+const { securityHeaders, rateLimiter, injectionShield } = require('./src/middlewares/security');
 const apiRoutes = require('./src/routes');
 const db = require('./src/models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust reverse proxy (cPanel / Nginx / Cloudflare / LiteSpeed) for accurate client IP in rate limiting
+app.set('trust proxy', 1);
+
+// Security Headers (OWASP: nosniff, clickjacking, HSTS, XSS)
+app.use(securityHeaders);
+
 // Global Middlewares
 app.use(cors());
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(jsonSyntaxErrorHandler);
+app.use(injectionShield);
+
+// Rate Limiting: 1000 requests per 15 minutes per IP
+app.use('/api', rateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  message: 'Batas kuota request tercapai (maks 1000 request per 15 menit). Silakan coba beberapa saat lagi.'
+}));
 
 // Serve static images and promo uploads
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));

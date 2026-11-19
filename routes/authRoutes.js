@@ -14,6 +14,7 @@ const {
   getUsers,
 } = require('../services/authService');
 const { sendAuthError } = require('../src/utils/authError');
+const { authRateLimiter } = require('../src/middlewares/security');
 const unregisteredUserService = require('../services/unregisteredUserService');
 const userService = require('../services/userService');
 
@@ -33,8 +34,8 @@ function parseCookies(req) {
   return list;
 }
 
-// POST /api/auth/login
-router.post('/login', async (req, res) => {
+// POST /api/auth/login (Max 30 attempts per 15 minutes per IP to prevent brute-force)
+router.post('/login', authRateLimiter(30, 15 * 60 * 1000), async (req, res) => {
   try {
     const identifier = req.body.identifier || req.body.username || req.body.email || '';
     const password = req.body.password || '';
