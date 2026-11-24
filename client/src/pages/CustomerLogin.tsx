@@ -1365,11 +1365,14 @@ export default function CustomerLogin() {
         sessionStorage.setItem('ngalam_customer_token', token);
       }
       setLoading(true);
-      fetchApi('/api/customer/me')
+      fetchApi(`/api/customer/me${token ? `?token=${encodeURIComponent(token)}` : ''}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      })
         .then(({ ok, data }) => {
           if (ok && data.success && data.customer) {
             loginCustomer(data.customer, true);
             if (data.customer.needsPhone) setTab('complete');
+            window.history.replaceState({}, '', '/login');
           } else {
             setErrorMsg(data.message || 'Sesi Google tidak valid. Silakan login ulang.');
           }

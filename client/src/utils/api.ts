@@ -17,12 +17,33 @@ export async function fetchApi<T = any>(endpoint: string, options: FetchApiOptio
   };
 
   if (typeof window !== 'undefined') {
-    const token = sessionStorage.getItem('ngalam_jwt_token') || 
-                  localStorage.getItem('ngalam_jwt_token') ||
-                  sessionStorage.getItem('ngalam_customer_token') || 
-                  localStorage.getItem('ngalam_customer_token') ||
-                  sessionStorage.getItem('ngalam_mitra_token') || 
-                  localStorage.getItem('ngalam_mitra_token');
+    // Priority order based on route/context:
+    // If request is for /api/customer/..., use customer token first!
+    // If request is for /api/mitra/..., use mitra token first!
+    // Otherwise fallback to staff jwt token.
+    let token: string | null = null;
+    const isCustomerRoute = endpoint.includes('/customer/');
+    const isMitraRoute = endpoint.includes('/mitra/');
+
+    if (isCustomerRoute) {
+      token = sessionStorage.getItem('ngalam_customer_token') || 
+              localStorage.getItem('ngalam_customer_token') ||
+              sessionStorage.getItem('ngalam_jwt_token') || 
+              localStorage.getItem('ngalam_jwt_token');
+    } else if (isMitraRoute) {
+      token = sessionStorage.getItem('ngalam_mitra_token') || 
+              localStorage.getItem('ngalam_mitra_token') ||
+              sessionStorage.getItem('ngalam_jwt_token') || 
+              localStorage.getItem('ngalam_jwt_token');
+    } else {
+      token = sessionStorage.getItem('ngalam_jwt_token') || 
+              localStorage.getItem('ngalam_jwt_token') ||
+              sessionStorage.getItem('ngalam_customer_token') || 
+              localStorage.getItem('ngalam_customer_token') ||
+              sessionStorage.getItem('ngalam_mitra_token') || 
+              localStorage.getItem('ngalam_mitra_token');
+    }
+
     if (token) {
       defaultHeaders['Authorization'] = `Bearer ${token}`;
     }

@@ -1000,7 +1000,7 @@ router.get('/list', async (req, res) => {
   try {
     await refreshCustomersFromDb();
     const customers = getAllCustomers();
-    const orders = getAllOrders();
+    const orders = await getAllOrders();
 
     const formatted = customers.map(c => {
       const custPhone = normalizePhone(c.whatsapp || c.phone || '');
@@ -1266,7 +1266,7 @@ router.get('/me', async (req, res) => {
   try {
     const token = getCustomerToken(req);
     const payload = verifyToken(token);
-    if (!payload || payload.role !== 'customer') {
+    if (!payload) {
       return res.status(401).json({
         success: false,
         code: 'SESSION_INVALID',
@@ -1277,9 +1277,9 @@ router.get('/me', async (req, res) => {
     const nowSec = Math.floor(Date.now() / 1000);
     const maxAge = payload.exp ? Math.max(0, payload.exp - nowSec) : 86400;
 
-    if (payload.accountType === 'mitra') {
+    if (payload.accountType === 'mitra' || payload.role === 'mitra') {
       await userService.refreshUsersFromDb();
-      const mitra = findMitraById(payload.mitraId || payload.customerId || payload.username);
+      const mitra = findMitraById(payload.mitraId || payload.customerId || payload.id || payload.username);
       if (!mitra) {
         return res.status(404).json({
           success: false,

@@ -95,7 +95,9 @@ export default function Mitra() {
       localStorage.setItem('ngalam_mitra_token', token);
       sessionStorage.setItem('ngalam_mitra_token', token);
     }
-    fetchApi('/api/mitra/auth/session')
+    fetchApi(`/api/mitra/auth/session${token ? `?token=${encodeURIComponent(token)}` : ''}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
       .then(({ ok, data }) => {
         if (ok && data.success && data.driver) {
           if (data.driver.needsPhone) {
