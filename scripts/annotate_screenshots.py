@@ -74,13 +74,13 @@ def annotate_all_screenshots(src_dir="docs/screenshots", out_dir="docs/screensho
     draw_callout_box(draw, 410, 540, 870, 780, "Formulir Pendaftaran Akun Mitra Resmi (5% Komisi)", "3", "#059669")
     im.convert("RGB").save(f"{out_dir}/04_portal_mitra.png", quality=95)
 
-    # 5. 05_booking_servis.png (Scrolled clean view)
-    # Measured DOM: Brand Area: [83, 378, 719, 524]. Damage Area: [83, 709, 719, 836].
+    # 5. 05_booking_servis.png (Clean view without promo popup)
+    # Measured DOM: Name: [440, 352, 840, 403], Phone: [440, 447, 840, 499], Submit: [440, 515, 840, 564]
     im = Image.open(f"{src_dir}/05_booking_servis.png").convert("RGBA")
     draw = ImageDraw.Draw(im)
-    draw_callout_box(draw, 80, 372, 725, 530, "Langkah 1: Pilih Merek Smartphone (iPhone, Samsung, dll)", "1", "#2563eb")
-    draw_callout_box(draw, 80, 550, 725, 690, "Langkah 2: Pilih Tipe / Seri Model Handphone", "2", "#d97706")
-    draw_callout_box(draw, 745, 200, 1220, 680, "Langkah 3: Kalkulator Estimasi Biaya & Garansi Terhitung", "3", "#059669")
+    draw_callout_box(draw, 438, 348, 842, 406, "Langkah 1: Masukkan Nama Lengkap Anda", "1", "#2563eb")
+    draw_callout_box(draw, 438, 444, 842, 502, "Langkah 2: Masukkan Nomor WhatsApp Aktif", "2", "#d97706")
+    draw_callout_box(draw, 438, 512, 842, 568, "Langkah 3: Klik 'Lanjutkan' untuk Pilih Perangkat", "3", "#059669")
     im.convert("RGB").save(f"{out_dir}/05_booking_servis.png", quality=95)
 
     # 6. 06_admin_orders.png

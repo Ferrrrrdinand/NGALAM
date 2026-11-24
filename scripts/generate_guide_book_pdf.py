@@ -631,14 +631,14 @@ def build_complete_pdf(filename="docs/NGALAM_FIX_PRO_GUIDE_BOOK.pdf"):
     ))
 
     # Screenshot Booking dengan Penanda
-    story.append(add_screenshot("05_booking_servis.png", "Formulir Booking Servis Online Lengkap Kalkulator Estimasi Biaya & Garansi", width=170*mm, height=106.25*mm))
+    story.append(add_screenshot("05_booking_servis.png", "Formulir Booking Servis Online: Registrasi Pelanggan untuk Reservasi Servis", width=170*mm, height=106.25*mm))
 
     story.append(Paragraph("Langkah Pesan Servis dari Rumah:", h2_style))
     penjelasan_booking = (
         "<b>CARA MENGGUNAKAN FORMULIR BOOKING ONLINE:</b><br/>"
-        "<b>[1] PILIH MEREK HP:</b> Buka <code>https://ngalamfixpro.com/booking</code>, klik logo merek HP Anda.<br/>"
-        "<b>[2] PILIH KERUSAKAN:</b> Klik masalah kerusakan yang dialami. Kalkulator otomatis menghitung estimasi biaya suku cadang dan masa garansi yang didapat.<br/>"
-        "<b>[3] KONSULTASI VIA WA:</b> Tekan tombol <b>'Konsultasi via WhatsApp'</b>. Anda akan langsung terhubung ke teknisi lab untuk konfirmasi jadwal kedatangan!"
+        "<b>[1] MASUKKAN NAMA LENGKAP:</b> Buka link <code>https://ngalamfixpro.com/booking</code>, isi nama lengkap pemilik smartphone pada kolom yang tersedia.<br/>"
+        "<b>[2] MASUKKAN NOMOR WHATSAPP:</b> Masukkan nomor WA aktif (contoh: <code>081234567890</code>). Nomor ini digunakan untuk konfirmasi jadwal dan update perbaikan.<br/>"
+        "<b>[3] KLIK LANJUTKAN:</b> Tekan tombol <b>'Lanjutkan'</b> untuk memilih merek, tipe HP, estimasi biaya suku cadang, dan klaim garansi resmi secara online!"
     )
     story.append(make_box(penjelasan_booking, bg_hex="#f8fafc", border_hex="#64748b", title="🏡 PANDUAN BOOKING DARI RUMAH"))
 
