@@ -18,7 +18,7 @@ const {
   upsertGoogleCustomer,
   updateCustomerById,
 } = require('../services/customerService');
-const { readTransactions } = require('../services/financeService');
+const { readTransactions, refreshTransactionsFromDb } = require('../services/financeService');
 const userService = require('../services/userService');
 const db = require('../services/db');
 const { generateToken, verifyToken } = require('../src/utils/jwt');
@@ -31,6 +31,7 @@ const unregisteredUserService = require('../services/unregisteredUserService');
 router.use(async (req, res, next) => {
   try {
     await refreshCustomersFromDb();
+    await refreshTransactionsFromDb();
   } catch (_) {}
   next();
 });
