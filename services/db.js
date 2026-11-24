@@ -31,7 +31,7 @@ let initInFlight = null;
 
 function convertPgQueryToMysql(text, params = []) {
   let convertedText = text;
-  let convertedParams = params ? [...params] : [];
+  let rawParams = params ? [...params] : [];
 
   // 1. Convert = ANY($1::text[]) or = ANY($1) -> IN (?)
   convertedText = convertedText.replace(/=\s*ANY\s*\(\s*\$(\d+)(?:::text\[\])?\s*\)/gi, (match, paramNum) => {
@@ -48,9 +48,19 @@ function convertPgQueryToMysql(text, params = []) {
   // 4. Convert PostgreSQL specific functions to MySQL equivalents
   convertedText = convertedText.replace(/current_database\(\)/gi, 'DATABASE()');
 
-  // 5. Convert $1, $2, ... to ?
-  convertedText = convertedText.replace(/\$(\d+)/g, '?');
+  // 5. Safely reorder parameters matching the exact order $1, $2, $3 appears in SQL
+  const reorderedParams = [];
+  convertedText = convertedText.replace(/\$(\d+)/g, (match, numStr) => {
+    const idx = parseInt(numStr, 10) - 1;
+    if (idx >= 0 && idx < rawParams.length) {
+      reorderedParams.push(rawParams[idx]);
+    } else {
+      reorderedParams.push(null);
+    }
+    return '?';
+  });
 
+  const convertedParams = reorderedParams.length > 0 ? reorderedParams : rawParams;
   return { text: convertedText, params: convertedParams };
 }
 
