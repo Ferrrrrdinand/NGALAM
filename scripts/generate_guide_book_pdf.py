@@ -209,10 +209,13 @@ def build_complete_pdf(filename="docs/NGALAM_FIX_PRO_GUIDE_BOOK.pdf"):
     # Exact 16:10 aspect ratio calculation
     # Width 170mm -> Height = 170 / 1.6 = 106.25mm
     # For compact screens (height 95mm -> width 152mm)
-    def add_screenshot(img_filename, caption_text, width=170*mm, height=106.25*mm):
+    def add_screenshot(img_filename, caption_text, width=170*mm, height=106.25*mm, use_annotated=True):
         annotated_path = f"docs/screenshots/annotated/{img_filename}"
         normal_path = f"docs/screenshots/{img_filename}"
-        chosen_path = annotated_path if os.path.exists(annotated_path) else normal_path
+        if use_annotated and os.path.exists(annotated_path):
+            chosen_path = annotated_path
+        else:
+            chosen_path = normal_path
 
         if os.path.exists(chosen_path):
             img = Image(chosen_path, width=width, height=height)
@@ -234,8 +237,8 @@ def build_complete_pdf(filename="docs/NGALAM_FIX_PRO_GUIDE_BOOK.pdf"):
     ))
     story.append(HRFlowable(width="100%", thickness=2.5, color=c_accent, spaceBefore=6, spaceAfter=14))
 
-    # Hero Cover Image (Homepage)
-    story.append(add_screenshot("01_homepage.png", "Halaman Utama Website Resmi Ngalam Fix Pro (https://ngalamfixpro.com)", width=174*mm, height=108.75*mm))
+    # Hero Cover Image (Homepage) - Menggunakan screenshot bersih ASLI tanpa penanda/garis kotak
+    story.append(add_screenshot("01_homepage.png", "Tampilan Utama Website Resmi Ngalam Fix Pro (https://ngalamfixpro.com)", width=174*mm, height=108.75*mm, use_annotated=False))
 
     story.append(Spacer(1, 4 * mm))
     cover_meta = [
