@@ -20,7 +20,9 @@ export async function fetchApi<T = any>(endpoint: string, options: FetchApiOptio
     const token = sessionStorage.getItem('ngalam_jwt_token') || 
                   localStorage.getItem('ngalam_jwt_token') ||
                   sessionStorage.getItem('ngalam_customer_token') || 
-                  localStorage.getItem('ngalam_customer_token');
+                  localStorage.getItem('ngalam_customer_token') ||
+                  sessionStorage.getItem('ngalam_mitra_token') || 
+                  localStorage.getItem('ngalam_mitra_token');
     if (token) {
       defaultHeaders['Authorization'] = `Bearer ${token}`;
     }

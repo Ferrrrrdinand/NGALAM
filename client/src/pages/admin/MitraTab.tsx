@@ -148,7 +148,7 @@ export default function MitraTab({
   };
 
   const getBookingUrl = (refCode: string) => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ngalam1-delta.vercel.app';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ngalamfixpro.com';
     return `${origin}/pesan-servis?ref=${encodeURIComponent(refCode || '')}`;
   };
 

@@ -1250,7 +1250,11 @@ router.get('/auth/google/callback', async (req, res) => {
         provider: 'Google OAuth 2.0'
       });
     } catch (_) {}
-    res.redirect(`${frontendBase}/login?auth=google${cust.whatsapp ? '' : '&needsPhone=1'}`);
+    const redirectParams = new URLSearchParams();
+    redirectParams.set('auth', 'google');
+    redirectParams.set('token', jwtInfo.token);
+    if (!cust.whatsapp) redirectParams.set('needsPhone', '1');
+    res.redirect(`${frontendBase}/login?${redirectParams.toString()}`);
   } catch (err) {
     console.error('[Google OAuth] Callback error:', err.message);
     return failRedirect('server_error');
@@ -1294,9 +1298,16 @@ router.get('/me', async (req, res) => {
       return res.json({ success: true, customer: customerSession });
     }
 
-    const cust = findCustomerByIdentifier(payload.customerId) ||
-      findCustomerByEmail(payload.email) ||
-      findCustomerByIdentifier(payload.whatsapp);
+    // Pastikan sinkronisasi memori dengan database bila data baru diupdate/insert via OAuth
+    await refreshCustomersFromDb(true);
+
+    let cust = findCustomerByIdentifier(payload.customerId) ||
+      (payload.email && findCustomerByEmail(payload.email)) ||
+      (payload.whatsapp && findCustomerByIdentifier(payload.whatsapp));
+
+    if (!cust && payload.googleId) {
+      cust = findCustomerByGoogleId(payload.googleId);
+    }
 
     if (!cust) {
       return res.status(404).json({

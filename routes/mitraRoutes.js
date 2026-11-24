@@ -329,7 +329,11 @@ router.get('/auth/google/callback', async (req, res) => {
     }, true);
 
     setMitraTokenCookie(res, jwtInfo.token, jwtInfo.maxAge);
-    res.redirect(`${frontendBase}/mitra?auth=google${mitra.phone ? '' : '&needsPhone=1'}`);
+    const redirectParams = new URLSearchParams();
+    redirectParams.set('auth', 'google');
+    redirectParams.set('token', jwtInfo.token);
+    if (!mitra.phone) redirectParams.set('needsPhone', '1');
+    res.redirect(`${frontendBase}/mitra?${redirectParams.toString()}`);
   } catch (err) {
     console.error('[Mitra Google OAuth] Callback error:', err.message);
     return failRedirect('server_error');
@@ -337,14 +341,15 @@ router.get('/auth/google/callback', async (req, res) => {
 });
 
 // GET /api/mitra/auth/session - Pulihkan sesi mitra dari cookie (dipakai setelah redirect Google)
-router.get('/auth/session', (req, res) => {
+router.get('/auth/session', async (req, res) => {
   try {
     const payload = verifyToken(getMitraToken(req));
     if (!payload) {
       return res.status(401).json({ success: false, message: 'Sesi mitra tidak valid atau sudah kedaluwarsa.' });
     }
+    await userService.refreshUsersFromDb(true);
     const users = readUsers();
-    const mitra = users.find(u => u.id === payload.id || u.username === payload.username);
+    const mitra = users.find(u => u.id === payload.id || u.username === payload.username || (payload.email && u.email === payload.email));
     if (!mitra) {
       return res.status(404).json({ success: false, message: 'Akun mitra tidak ditemukan.' });
     }

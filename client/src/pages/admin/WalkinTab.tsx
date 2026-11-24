@@ -475,7 +475,7 @@ export default function WalkinTab({
             <div>1. Harap bawa tanda terima ini saat pengambilan unit di counter.</div>
             <div>2. Garansi resmi berlaku terhitung setelah unit selesai & diambil.</div>
             <div>3. Lacak progres pengerjaan teknisi online 24 jam di:</div>
-            <div class="bold" style="margin-top:2px;">ngalam1-delta.vercel.app/lacak?id=${order.id}</div>
+            <div class="bold" style="margin-top:2px;">ngalamfixpro.com/lacak?id=${order.id}</div>
           </div>
 
           <div class="sign-grid">
@@ -513,7 +513,7 @@ export default function WalkinTab({
       `• Estimasi Biaya: Rp ${Number(order.cost || order.estimatedCost || 0).toLocaleString('id-ID')}\n` +
       `• Garansi Resmi: ${/baterai/i.test(order.damage || '') ? '90 Hari Penuh' : '30 Hari Hardware'}\n\n` +
       `🔍 *Pantau Progres Pengerjaan Meja Lab Live:*\n` +
-      `https://ngalam1-delta.vercel.app/lacak?id=${order.id}\n\n` +
+      `https://ngalamfixpro.com/lacak?id=${order.id}\n\n` +
       `Unit Anda sedang masuk antrean meja lab teknisi kami. Tim kami akan segera mengabari saat unit siap diambil di workshop.\n\n` +
       `Workshop Ngalam Fix Pro • Jl. Candi Mendut No.12, Malang`
     );

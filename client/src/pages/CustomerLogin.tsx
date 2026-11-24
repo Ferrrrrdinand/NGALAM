@@ -29,6 +29,31 @@ function CustomerReceiptModal({ order, onClose }: { order: any; onClose: () => v
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          #customerReceiptContent, #customerReceiptContent * {
+            visibility: visible !important;
+          }
+          #customerReceiptContent {
+            position: fixed !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 80mm !important;
+            margin: 0 auto !important;
+            padding: 10px !important;
+            background: white !important;
+            color: black !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            z-index: 999999 !important;
+          }
+        }
+      `}</style>
       <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -44,7 +69,7 @@ function CustomerReceiptModal({ order, onClose }: { order: any; onClose: () => v
         </div>
 
         {/* Format Slip Nota / Tanda Terima */}
-        <div className="p-5 bg-amber-50/40 border border-dashed border-amber-300 rounded-2xl font-mono text-xs text-slate-800 space-y-3">
+        <div id="customerReceiptContent" className="receipt-paper p-5 bg-amber-50/40 border border-dashed border-amber-300 rounded-2xl font-mono text-xs text-slate-800 space-y-3">
           <div className="text-center pb-3 border-b border-dashed border-amber-300">
             <strong className="text-sm block font-sans font-black tracking-wide text-slate-900">NGALAM FIX PRO</strong>
             <span className="text-[10px] text-slate-600">Spesialis Servis HP &amp; iPhone Malang</span>
@@ -1334,6 +1359,11 @@ export default function CustomerLogin() {
     }
 
     if (auth === 'google') {
+      const token = searchParams.get('token');
+      if (token) {
+        localStorage.setItem('ngalam_customer_token', token);
+        sessionStorage.setItem('ngalam_customer_token', token);
+      }
       setLoading(true);
       fetchApi('/api/customer/me')
         .then(({ ok, data }) => {

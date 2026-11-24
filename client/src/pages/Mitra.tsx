@@ -90,6 +90,11 @@ export default function Mitra() {
     }
 
     setGoogleLoading(true);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('ngalam_mitra_token', token);
+      sessionStorage.setItem('ngalam_mitra_token', token);
+    }
     fetchApi('/api/mitra/auth/session')
       .then(({ ok, data }) => {
         if (ok && data.success && data.driver) {
