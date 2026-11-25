@@ -1627,7 +1627,7 @@ export default function CustomerLogin() {
               disabled={loading}
               className="w-full py-3 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md transition-all cursor-pointer"
             >
-              <span>{loading ? 'Menyimpan...' : 'Simpan & Buka Dashboard ↗'}</span>
+              <span>{loading ? 'Menyimpan...' : 'Simpan & Lihat Riwayat Servis ↗'}</span>
             </button>
             <button
               type="button"
@@ -1699,7 +1699,7 @@ export default function CustomerLogin() {
               disabled={loading}
               className="w-full py-3 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md shadow-amber-500/25 transition-all cursor-pointer"
             >
-              <span>{loading ? 'Memvalidasi...' : 'Buka Dashboard Member ↗'}</span>
+              <span>{loading ? 'Memvalidasi...' : 'Masuk ke Riwayat Servis Saya ↗'}</span>
             </button>
           </form>
         ) : (

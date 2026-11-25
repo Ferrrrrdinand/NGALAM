@@ -338,7 +338,7 @@ export default function Mitra() {
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                 <Bike className="w-4 h-4 text-emerald-600" />
                 <Store className="w-4 h-4 text-emerald-600" />
-                <span>PROGRAM RESMI KEMITRAAN & AFILIASI QR CODE</span>
+                <span>PROGRAM MITRA NGALAM FIX PRO</span>
               </span>
             </div>
             <h1 className="mitra-hero-title">
@@ -346,7 +346,7 @@ export default function Mitra() {
               <span style={{ color: '#059669' }}>Dapatkan Komisi 5% Per Transaksi!</span>
             </h1>
             <p className="mitra-hero-desc">
-              Khusus Mitra Driver Ojol (Gojek, Grab, Maxim, Shopee) dan Toko/Bengkel Rekanan Malang. Setiap mitra memiliki <strong>Kode Unik Otomatis</strong> & <strong>QR Code Pribadi</strong>. Pelanggan cukup scan QR Code Anda saat memesan servis, dan komisi otomatis masuk ke akun Anda!
+              Khusus Driver Ojol (Gojek, Grab, Maxim, Shopee) &amp; Toko Rekanan Malang. Bagikan <strong>QR Code / link Anda</strong> ke penumpang atau teman — setiap mereka servis HP, komisi 5% langsung masuk ke saldo Anda!
             </p>
           </div>
 

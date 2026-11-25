@@ -481,7 +481,7 @@ export default function PesanServis() {
             </svg>
             <span>Formulir Masuk Servis</span>
           </h2>
-          <span className="form-header-tag">ONLINE INTAKE RESMI</span>
+          <span className="form-header-tag">PENDAFTARAN SERVIS ONLINE</span>
         </div>
 
         {successOrder ? (

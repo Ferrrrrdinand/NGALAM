@@ -91,33 +91,33 @@ export default function Lacak() {
   const steps = [
     {
       num: 1,
-      title: 'Registrasi & Intake',
-      shortDesc: 'Penerimaan Meja 1',
-      desc: 'Unit HP diterima petugas, inspeksi fisik awal & penerbitan tiket resmi.'
+      title: 'Unit Diterima',
+      shortDesc: 'Penerimaan Counter',
+      desc: 'Unit HP diterima petugas, dicek kondisi fisiknya & dibuatkan nomor tiket resmi.'
     },
     {
       num: 2,
-      title: 'Diagnosa Lab',
-      shortDesc: 'Analisa Kerusakan',
-      desc: 'Pemeriksaan jalur sirkuit, deteksi thermal & pengecekan ketersediaan suku cadang.'
+      title: 'Sedang Dicek Teknisi',
+      shortDesc: 'Pengecekan Kerusakan',
+      desc: 'Teknisi memeriksa sumber kerusakan & mengecek ketersediaan suku cadang.'
     },
     {
       num: 3,
-      title: 'Pengerjaan Lab',
-      shortDesc: 'Reparasi Presisi',
-      desc: 'Perbaikan mikro-soldering, laminasi OCA, atau instalasi komponen baru di meja teknisi.'
+      title: 'Sedang Diperbaiki',
+      shortDesc: 'Proses Perbaikan',
+      desc: 'Perbaikan atau pemasangan komponen baru dikerjakan langsung oleh teknisi ahli.'
     },
     {
       num: 4,
-      title: 'Quality Control',
-      shortDesc: 'Pengujian 24 Titik',
-      desc: 'Uji fungsi layar, kamera, baterai, sinyal & charging sebelum penyerahan.'
+      title: 'Tes Kelayakan Akhir',
+      shortDesc: 'Cek Fungsi 24 Titik',
+      desc: 'Uji fungsi layar, kamera, baterai, sinyal & pengisian daya sebelum diserahkan.'
     },
     {
       num: 5,
-      title: 'Selesai & Siap Ambil',
-      shortDesc: 'Garansi Aktif',
-      desc: 'Unit siap diserahkan di counter workshop atau dikirim via kurir, sertifikat garansi aktif.'
+      title: 'Selesai & Siap Diambil',
+      shortDesc: 'Garansi Resmi Aktif',
+      desc: 'Unit siap diambil di workshop atau dikirim via kurir, sertifikat garansi aktif.'
     }
   ];
 
