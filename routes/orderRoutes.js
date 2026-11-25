@@ -101,9 +101,10 @@ router.post('/', async (req, res) => {
     // Jika tidak menyertakan kode secara manual, cek apakah nomor WA / email pelanggan terhubung dengan mitra rujukan
     if (!affiliateCode) {
       try {
-        const { findCustomerByIdentifier } = require('../services/customerService');
+        const customerService = require('../services/customerService');
+        await customerService.refreshCustomersFromDb();
         const custPhone = orderData.whatsapp || orderData.phone || orderData.customerPhone || '';
-        const foundCust = findCustomerByIdentifier(custPhone) || (orderData.email ? findCustomerByIdentifier(orderData.email) : null);
+        const foundCust = customerService.findCustomerByIdentifier(custPhone) || (orderData.email ? customerService.findCustomerByIdentifier(orderData.email) : null);
         if (foundCust && foundCust.referredByMitra) {
           affiliateCode = String(foundCust.referredByMitra).trim().toUpperCase();
         }

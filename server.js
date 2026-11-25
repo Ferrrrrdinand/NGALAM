@@ -37,8 +37,10 @@ app.use('/api', rateLimiter({
   message: 'Batas kuota request tercapai (maks 1000 request per 15 menit). Silakan coba beberapa saat lagi.'
 }));
 
-// Serve static images and promo uploads
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+// Serve static images and promo uploads with caching
+app.use('/images', express.static(path.join(__dirname, 'public', 'images'), {
+  maxAge: '1d'
+}));
 
 // Master API Routes
 app.use('/api', apiRoutes);
@@ -47,11 +49,24 @@ app.use('/api', apiRoutes);
 const clientDist = path.join(__dirname, 'client', 'dist');
 
 if (fs.existsSync(clientDist)) {
-  app.use(express.static(clientDist));
+  // Hashed Vite assets can be cached aggressively
+  app.use('/assets', express.static(path.join(clientDist, 'assets'), {
+    maxAge: '1y',
+    immutable: true
+  }));
+  app.use(express.static(clientDist, {
+    maxAge: '1h',
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('index.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      }
+    }
+  }));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
       return next();
     }
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }

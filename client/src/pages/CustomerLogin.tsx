@@ -4,7 +4,7 @@ import {
   User, AlertCircle, Phone, Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2,
   Smartphone, Search, RefreshCw, Calendar, Tag, FileText, ExternalLink, ChevronRight, 
   X, AlertTriangle, Sparkles, Send, MapPin, Copy, Check, Printer, Clock, Info,
-  Wrench, CheckCircle, HelpCircle, LogOut, Star, QrCode, Download
+  Wrench, CheckCircle, HelpCircle, LogOut, Star, QrCode, Download, Eye, EyeOff
 } from 'lucide-react';
 import MemberQrCardModal from '../components/MemberQrCardModal';
 import { fetchApi, formatRp, formatDateId } from '../utils/api';
@@ -1325,6 +1325,7 @@ export default function CustomerLogin() {
   const [tab, setTab] = useState('login'); // 'login' | 'register' | 'complete'
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [district, setDistrict] = useState('');
@@ -1663,13 +1664,21 @@ export default function CustomerLogin() {
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="Masukkan password akun"
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-0.5"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
@@ -1763,15 +1772,25 @@ export default function CustomerLogin() {
               <label className="text-xs font-bold text-slate-700 block mb-1">
                 Password Akun (Min. 6 Karakter) *
               </label>
-              <input
-                type="password"
-                required
-                minLength={6}
-                placeholder="Buat password akun"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  minLength={6}
+                  placeholder="Buat password akun (min. 6 huruf/angka)"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-0.5"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button

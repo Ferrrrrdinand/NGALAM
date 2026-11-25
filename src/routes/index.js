@@ -31,39 +31,61 @@ function sanitizeLogValue(value, depth = 0) {
 async function getSanitizedActivityLogs(limit = null) {
   let rows = [];
   const limitClause = limit && Number(limit) > 0 ? `LIMIT ${Number(limit)}` : '';
+  const dialect = typeof db.sequelize?.getDialect === 'function' ? db.sequelize.getDialect() : 'postgres';
   try {
-    // Potong payload besar (mis. base64 gambar banner) langsung di PostgreSQL
-    // agar data 20MB tidak perlu ditransfer dari database ke server.
-    rows = await db.sequelize.query(
-      `SELECT id, action, table_name, record_id, performed_at,
-              CASE
-                WHEN action = 'BANNER_UPDATED'
-                  THEN jsonb_build_object(
-                    'id', payload->'id',
-                    'title', payload->'title',
-                    'active', payload->'active',
-                    'truncated', true
-                  )
-                WHEN length(payload::text) > 4000
-                  THEN jsonb_build_object('truncated', true, 'originalLength', length(payload::text))
-                ELSE payload
-              END AS payload
-       FROM activity_logs
-       ORDER BY performed_at DESC
-       ${limitClause}`,
-      { type: db.Sequelize.QueryTypes.SELECT }
-    );
+    if (dialect === 'postgres') {
+      // Potong payload besar (mis. base64 gambar banner) langsung di PostgreSQL
+      rows = await db.sequelize.query(
+        `SELECT id, action, table_name, record_id, performed_at,
+                CASE
+                  WHEN action = 'BANNER_UPDATED'
+                    THEN jsonb_build_object(
+                      'id', payload->'id',
+                      'title', payload->'title',
+                      'active', payload->'active',
+                      'truncated', true
+                    )
+                  WHEN length(payload::text) > 4000
+                    THEN jsonb_build_object('truncated', true, 'originalLength', length(payload::text))
+                  ELSE payload
+                END AS payload
+         FROM activity_logs
+         ORDER BY performed_at DESC
+         ${limitClause}`,
+        { type: db.Sequelize.QueryTypes.SELECT }
+      );
+    } else {
+      // MySQL / SQLite compatible query
+      rows = await db.sequelize.query(
+        `SELECT id, action, table_name, record_id, performed_at, payload
+         FROM activity_logs
+         ORDER BY performed_at DESC
+         ${limitClause}`,
+        { type: db.Sequelize.QueryTypes.SELECT }
+      );
+    }
   } catch (_) {}
 
   if (!rows || rows.length === 0) rows = loadTable('activity_logs');
 
   return (rows || []).map((log) => {
     const item = typeof log?.toJSON === 'function' ? log.toJSON() : log;
-    return { ...item, payload: sanitizeLogValue(item?.payload) };
+    let parsedPayload = item?.payload;
+    if (typeof parsedPayload === 'string') {
+      try {
+        parsedPayload = JSON.parse(parsedPayload);
+      } catch (_) {}
+    }
+    return { ...item, payload: sanitizeLogValue(parsedPayload) };
   });
 }
 
+const PUBLIC_NO_USER_HYDRATE_PREFIXES = ['/lcd-prices', '/battery-prices', '/ads', '/testimonials', '/promos', '/promo-codes', '/chatbot', '/database/status'];
+
 router.use(async (req, res, next) => {
+  if (PUBLIC_NO_USER_HYDRATE_PREFIXES.some((prefix) => req.path.startsWith(prefix))) {
+    return next();
+  }
   try {
     await userService.refreshUsersFromDb();
   } catch (_) {}
@@ -96,15 +118,22 @@ router.use('/', promoRoutes);
 router.use('/', chatbotRoutes);
 router.use('/', adRoutes);
 
+let cachedLcdPrices = null;
+let cachedBatteryPrices = null;
+
 // LCD OG SUPER CATALOG ENDPOINT
 router.get('/lcd-prices', (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
-    const catalogPath = path.join(__dirname, '../../data/lcd_og_super.json');
-    if (fs.existsSync(catalogPath)) {
-      const data = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
-      return res.json({ success: true, ...data });
+    if (!cachedLcdPrices) {
+      const fs = require('fs');
+      const path = require('path');
+      const catalogPath = path.join(__dirname, '../../data/lcd_og_super.json');
+      if (fs.existsSync(catalogPath)) {
+        cachedLcdPrices = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+      }
+    }
+    if (cachedLcdPrices) {
+      return res.json({ success: true, ...cachedLcdPrices });
     }
     return res.status(404).json({ success: false, message: 'Katalog LCD belum dibuat.' });
   } catch (err) {
@@ -115,12 +144,16 @@ router.get('/lcd-prices', (req, res) => {
 // BATTERY CATALOG ENDPOINT
 router.get('/battery-prices', (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
-    const catalogPath = path.join(__dirname, '../../data/battery_prices.json');
-    if (fs.existsSync(catalogPath)) {
-      const items = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
-      return res.json({ success: true, total: items.length, items });
+    if (!cachedBatteryPrices) {
+      const fs = require('fs');
+      const path = require('path');
+      const catalogPath = path.join(__dirname, '../../data/battery_prices.json');
+      if (fs.existsSync(catalogPath)) {
+        cachedBatteryPrices = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+      }
+    }
+    if (cachedBatteryPrices) {
+      return res.json({ success: true, total: cachedBatteryPrices.length, items: cachedBatteryPrices });
     }
     return res.status(404).json({ success: false, message: 'Katalog Baterai belum dibuat.' });
   } catch (err) {

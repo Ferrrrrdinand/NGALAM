@@ -4,7 +4,7 @@ import confetti from 'canvas-confetti';
 import { 
   Check, Zap, ShieldCheck, Lock, UserCheck, Sparkles, 
   Bike, AlertCircle, Smartphone, Battery, Gem, Camera, 
-  PowerOff, CheckCircle2, ChevronDown, Search
+  PowerOff, CheckCircle2, ChevronDown, Search, Copy
 } from 'lucide-react';
 import { fetchApi, formatRp } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
@@ -39,6 +39,7 @@ export default function PesanServis() {
   const [referralStatus, setReferralStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
+  const [copiedTicket, setCopiedTicket] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
@@ -492,9 +493,34 @@ export default function PesanServis() {
             <p style={{ color: '#000000', fontSize: '0.9rem', marginTop: '6px' }}>
               Tiket resmi Anda telah dibuat. Silakan simpan nomor tiket berikut:
             </p>
-            <div style={{ margin: '20px auto', padding: '16px', background: '#ecfdf5', border: '2px solid #10b981', borderRadius: '16px', maxWidth: '320px' }}>
+            <div style={{ margin: '20px auto', padding: '16px', background: '#ecfdf5', border: '2px solid #10b981', borderRadius: '16px', maxWidth: '340px' }}>
               <span style={{ fontSize: '0.8rem', color: '#047857', fontWeight: 700, display: 'block' }}>NOMOR TIKET:</span>
-              <strong style={{ fontSize: '1.6rem', color: '#065f46', fontFamily: 'monospace' }}>{successOrder.id}</strong>
+              <strong style={{ fontSize: '1.6rem', color: '#065f46', fontFamily: 'monospace', display: 'block', margin: '4px 0' }}>{successOrder.id}</strong>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText(successOrder.id);
+                  setCopiedTicket(true);
+                  setTimeout(() => setCopiedTicket(false), 2500);
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginTop: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '999px',
+                  border: '1px solid #10b981',
+                  background: copiedTicket ? '#10b981' : '#ffffff',
+                  color: copiedTicket ? '#ffffff' : '#065f46',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                {copiedTicket ? <Check style={{ width: '14px', height: '14px' }} /> : <Copy style={{ width: '14px', height: '14px' }} />}
+                <span>{copiedTicket ? 'Nomor Tiket Disalin!' : 'Salin Nomor Tiket'}</span>
+              </button>
               {(referralMitra || successOrder.affiliateRef) && (
                 <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #a7f3d0', fontSize: '0.78rem', color: '#065f46', textAlign: 'center' }}>
                   ✨ <b>Terkoneksi Mitra:</b> {referralMitra?.name || successOrder.partnerName || successOrder.affiliateRef} ({referralMitra?.referralCode || successOrder.affiliateRef})
@@ -1002,6 +1028,13 @@ export default function PesanServis() {
                 </div>
               ) : null}
             </div>
+
+            {submitError && (
+              <div style={{ background: '#fef2f2', border: '1px solid #f87171', color: '#b91c1c', padding: '12px', borderRadius: '12px', fontSize: '0.85rem', marginTop: '14px' }} className="flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                <span>{submitError}</span>
+              </div>
+            )}
 
             <button type="submit" className="btn full" disabled={isSubmitting} style={{ padding: '16px', fontSize: '1rem', fontWeight: 800, borderRadius: '14px', marginTop: '14px' }}>
               <span>{isSubmitting ? 'Memproses Pesanan...' : 'Daftarkan Servis HP Sekarang ↗'}</span>

@@ -52,7 +52,7 @@ export default function MitraTab({
         alert(res.data.message || 'Berhasil menambahkan 100 slot mitra baru.');
         if (onRefresh) onRefresh();
       } else {
-        alert('Gagal menambahkan slot mitra: ' + (res.data?.error || res.statusText || 'Terjadi kesalahan.'));
+        alert('Gagal menambahkan slot mitra: ' + (res.data?.error || res.data?.message || 'Terjadi kesalahan.'));
       }
     } catch (err: any) {
       console.error(err);

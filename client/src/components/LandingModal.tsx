@@ -73,10 +73,10 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">👋</div>
           <h2 className="text-2xl font-bold text-slate-800 mb-2">
-            Selamat Datang!
+            Butuh Servis HP Cepat?
           </h2>
           <p className="text-slate-600 text-sm">
-            Isi data Anda untuk melanjutkan ke dashboard
+            Isi nama &amp; nomor WhatsApp Anda agar tim kami bisa bantu cek estimasi biaya gratis (bisa dilewati).
           </p>
         </div>
         
@@ -119,14 +119,22 @@ export default function LandingModal({ onClose, referralCode }: LandingModalProp
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer"
           >
-            {loading ? 'Menyimpan...' : 'Lanjutkan'}
+            {loading ? 'Menyimpan...' : 'Simpan & Lanjutkan'}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="w-full py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+          >
+            Nanti Saja / Lewati
           </button>
         </form>
         
-        <p className="text-xs text-slate-500 text-center mt-4">
-          Dengan melanjutkan, Anda akan diminta login dengan Google untuk verifikasi akun
+        <p className="text-xs text-slate-500 text-center mt-3">
+          Gratis konsultasi &amp; cek kerusakan awal tanpa biaya bongkar.
         </p>
       </div>
     </div>

@@ -30,8 +30,10 @@ const unregisteredUserService = require('../services/unregisteredUserService');
 
 router.use(async (req, res, next) => {
   try {
-    await refreshCustomersFromDb();
-    await refreshTransactionsFromDb();
+    await Promise.all([
+      refreshCustomersFromDb(),
+      refreshTransactionsFromDb()
+    ]);
   } catch (_) {}
   next();
 });
