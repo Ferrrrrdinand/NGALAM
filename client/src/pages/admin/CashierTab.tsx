@@ -7,37 +7,10 @@ import { formatRp } from '../../utils/api';
 
 const PAYMENT_CATEGORIES = [
   {
-    category: 'Tunai & Instan',
+    category: 'Metode Pembayaran Resmi Workshop',
     methods: [
       { id: 'Tunai (Cash)', label: 'Tunai / Cash Counter', sublabel: 'Bayar tunai di meja kasir workshop', icon: Banknote, color: 'text-emerald-600', badge: 'Cash' },
-      { id: 'QRIS / Statis Workshop', label: 'QRIS Workshop', sublabel: 'BCA, Mandiri, GoPay, OVO, ShopeePay, Dana', icon: QrCode, color: 'text-blue-600', badge: 'Instan Bebas Biaya' },
-    ]
-  },
-  {
-    category: 'Transfer Bank (Virtual Account / Rekening)',
-    methods: [
-      { id: 'Transfer Bank BCA', label: 'Bank Central Asia (BCA)', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-indigo-600', badge: 'BCA' },
       { id: 'Transfer Bank BRI', label: 'Bank Rakyat Indonesia (BRI)', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-blue-700', badge: 'BRI' },
-      { id: 'Transfer Bank Mandiri', label: 'Bank Mandiri', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-amber-700', badge: 'Mandiri' },
-      { id: 'Transfer Bank BNI', label: 'Bank Negara Indonesia (BNI)', sublabel: 'Rekening Resmi Workshop NGALAM FIX PRO', icon: Building2, color: 'text-teal-700', badge: 'BNI' },
-      { id: 'Transfer Bank Lainnya', label: 'Transfer Antar Bank / BI-FAST', sublabel: 'Permata, CIMB, Danamon, BSI, Jatim', icon: Building2, color: 'text-slate-600', badge: 'BI-FAST' },
-    ]
-  },
-  {
-    category: 'E-Wallet & Dompet Digital',
-    methods: [
-      { id: 'E-Wallet GoPay / GoTo', label: 'GoPay / GoPay Later', sublabel: 'Transfer akun bisnis atau scan QR', icon: Smartphone, color: 'text-sky-600', badge: 'GoPay' },
-      { id: 'E-Wallet OVO', label: 'OVO Premier', sublabel: 'Kirim nomor ponsel akun workshop', icon: Smartphone, color: 'text-purple-600', badge: 'OVO' },
-      { id: 'E-Wallet DANA', label: 'DANA Bisnis', sublabel: 'Kirim nomor ponsel akun workshop', icon: Smartphone, color: 'text-blue-500', badge: 'DANA' },
-      { id: 'E-Wallet ShopeePay', label: 'ShopeePay', sublabel: 'Transfer saldo ShopeePay workshop', icon: Smartphone, color: 'text-orange-500', badge: 'ShopeePay' },
-    ]
-  },
-  {
-    category: 'Mesin EDC & Kartu',
-    methods: [
-      { id: 'Debit Card EDC BCA/Mandiri', label: 'Kartu Debit (EDC)', sublabel: 'GPN, Chip BCA, Mandiri, BRI, BNI', icon: CreditCard, color: 'text-slate-700', badge: 'EDC Mesin' },
-      { id: 'Credit Card (Kartu Kredit)', label: 'Kartu Kredit (Visa / Mastercard)', sublabel: 'Swipe / Dip Mesin EDC Workshop', icon: CreditCard, color: 'text-rose-600', badge: 'Visa/MC' },
-      { id: 'Split Payment (Sebagian Tunai + Transfer)', label: 'Split Payment (Campuran)', sublabel: 'Sebagian tunai + sebagian transfer/QRIS', icon: Banknote, color: 'text-purple-700', badge: 'Kombinasi' },
     ]
   }
 ];
