@@ -16,7 +16,8 @@ export default function WalkinTab({
   walkinSuccess,
   handleWalkinSubmit,
   loadData,
-  currentUser
+  currentUser,
+  onGoToCashier
 }: any) {
   // Brand list dengan logo resmi
   const brandsList = [
@@ -528,8 +529,8 @@ export default function WalkinTab({
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       
-      {/* 1. Header Banner Kasir Offline */}
-      <div className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-xl relative overflow-hidden">
+      {/* 1. Header Banner Kasir Offline & Alur Penerimaan */}
+      <div className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-xl relative overflow-hidden space-y-4">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-300"></div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -543,15 +544,50 @@ export default function WalkinTab({
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-              Formulir penerimaan unit pelanggan offline yang datang langsung ke workshop. Dilengkapi pemilih merek &amp; tipe HP, estimasi biaya otomatis, cetak slip fisik kasir, dan notifikasi WhatsApp tiket antrian.
+              Alur SOP Resmi: Terima unit HP &rarr; Cek &amp; Diagnosa Meja Lab &rarr; Jelaskan opsi &amp; estimasi biaya ke Pelanggan &rarr; Jika Cocok/Setuju, baru lanjut ke Kasir &amp; Pembayaran.
             </p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold text-slate-600 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 flex items-center gap-1.5 shadow-2xs">
               <Clock className="w-3.5 h-3.5 text-amber-600" />
-              <span>Standar Lab: 30 - 60 Menit</span>
+              <span>Standar Diagnosa: 10 - 15 Menit</span>
             </span>
+          </div>
+        </div>
+
+        {/* ALUR SOP TAHAPAN KASIR & PENERIMAAN UNIT */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-100 text-xs">
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-slate-900 text-amber-400 font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <div>
+              <span className="font-bold text-slate-900 block text-[11px]">Terima HP Pelanggan</span>
+              <p className="text-[10px] text-slate-500 mt-0.5">Admin counter menerima unit di meja intake.</p>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 flex items-start gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-amber-600 text-white font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <div>
+              <span className="font-bold text-amber-950 block text-[11px]">Diagnosa Awal Meja</span>
+              <p className="text-[10px] text-amber-800/80 mt-0.5">Cek fisik, layar, baterai, dan komponen lab.</p>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-blue-50/80 border border-blue-200 flex items-start gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <div>
+              <span className="font-bold text-blue-950 block text-[11px]">Jelaskan ke Pelanggan</span>
+              <p className="text-[10px] text-blue-800/80 mt-0.5">Terangkan opsi part, estimasi harga &amp; garansi.</p>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200 flex items-start gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5">4</span>
+            <div>
+              <span className="font-bold text-emerald-950 block text-[11px]">Cocok &rarr; Kasir / Nota</span>
+              <p className="text-[10px] text-emerald-800/80 mt-0.5">Jika cocok, lanjut pembayaran &amp; cetak nota.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -598,34 +634,45 @@ export default function WalkinTab({
             </div>
           </div>
 
-          {/* Action Buttons: Cetak Slip & Kirim WA & Reset */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          {/* Action Buttons: Cetak Slip & Kirim WA & Lanjut Kasir */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+            {onGoToCashier && (
+              <button
+                type="button"
+                onClick={() => onGoToCashier(createdOrder)}
+                className="py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 cursor-pointer transition-all"
+              >
+                <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                <span>Pelanggan Cocok &rarr; Bayar di Kasir</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => handlePrintSlip(createdOrder)}
               className="py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
             >
               <Printer className="w-4 h-4 text-amber-400" />
-              <span>Cetak Slip Tanda Terima (Fisik)</span>
+              <span>Cetak Tanda Terima</span>
             </button>
 
             <a
               href={generateWhatsAppLink(createdOrder)}
               target="_blank"
               rel="noreferrer"
-              className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
+              className="py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
             >
               <Share2 className="w-4 h-4 text-white" />
-              <span>Kirim Tiket ke WhatsApp Pelanggan</span>
+              <span>Kirim Tiket ke WA</span>
             </a>
 
             <button
               type="button"
               onClick={handleResetForm}
-              className="py-3 px-4 rounded-xl border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
+              className="py-3 px-4 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
-              <Plus className="w-4 h-4 text-amber-700" />
-              <span>+ Input Pendaftaran Berikutnya</span>
+              <Plus className="w-4 h-4 text-slate-600" />
+              <span>+ Input Pendaftaran Baru</span>
             </button>
           </div>
         </div>

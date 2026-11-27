@@ -56,17 +56,45 @@ export default function CashierTab({
     <div className="max-w-3xl mx-auto space-y-6">
       
       {/* Header Info */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <span>Kasir &amp; Pelunasan Nota Servis</span>
-            <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              Pos Kasir Meja 1
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span>Kasir &amp; Pelunasan Nota Servis</span>
+              <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Pos Kasir Meja 1
+              </span>
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Tahap Akhir Pelunasan: Diproses setelah diagnosa meja diterangkan dan pelanggan telah cocok/sepakat dengan opsi biaya servis.
+            </p>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Garansi Aktif Otomatis</span>
             </span>
-          </h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Validasi pembayaran nota servis, otomatisasi cetak struk thermal, dan kalkulasi bagi hasil komisi mitra 5%.
-          </p>
+          </div>
+        </div>
+
+        {/* Banner SOP Singkat Kasir */}
+        <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center shrink-0">i</span>
+            <span className="text-[11px] font-medium">
+              Pastikan pelanggan sudah mendapatkan penjelasan diagnosa unit dan menyetujui total biaya sebelum melakukan penyelesaian transaksi.
+            </span>
+          </div>
+          {setActiveTab && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('walkin')}
+              className="text-[11px] font-bold text-amber-800 hover:text-amber-950 underline shrink-0 cursor-pointer"
+            >
+              &larr; Input / Cek Diagnosa Walk-in
+            </button>
+          )}
         </div>
       </div>
 

@@ -814,6 +814,43 @@ export default function AdminDashboard() {
               handleWalkinSubmit={handleWalkinSubmit}
               loadData={loadData}
               currentUser={user}
+              onGoToCashier={(order) => {
+                const numericCost = Number(String(order.subtotal || order.cost || order.estimatedCost || "0").replace(/\D/g, "")) || 0;
+                const defaultTotal = numericCost > 0 ? numericCost : 250000;
+                const defaultService = 100000;
+                const defaultPart = Math.max(0, defaultTotal - defaultService);
+                const defaultOther = 0;
+                const defaultSubtotal = defaultPart + defaultService + defaultOther;
+
+                let discountAmt = 0;
+                if (order.promoCode) {
+                  const discountPct = Number(order.promoDiscountValue) || 10;
+                  const minSpend = Number(order.promoMinSpend) || 0;
+                  if (defaultSubtotal >= minSpend) {
+                    discountAmt = Math.round(defaultSubtotal * (discountPct / 100));
+                    if (order.promoMaxDiscount && Number(order.promoMaxDiscount) > 0) {
+                      discountAmt = Math.min(discountAmt, Number(order.promoMaxDiscount));
+                    }
+                  }
+                }
+                const finalAmt = Math.max(0, defaultSubtotal - discountAmt);
+
+                setPaymentOrder(order);
+                setPaymentForm({
+                  partCost: defaultPart,
+                  serviceCost: defaultService,
+                  otherCost: defaultOther,
+                  otherCostNotes: '',
+                  subtotal: defaultSubtotal,
+                  discountAmount: discountAmt,
+                  finalAmount: finalAmt,
+                  paymentMethod: "Tunai (Cash)",
+                  notes: order.promoCode 
+                    ? `Promo ${order.promoCode} (${order.promoDiscountValue || 5}%): Diskon ${formatRp(discountAmt)} (Dipotong by system)`
+                    : (order.affiliateRef ? `Komisi Mitra 5%: ${order.partnerName || order.affiliateMitraName || order.affiliateRef}` : "")
+                });
+                setActiveTab("cashier");
+              }}
             />
           )}
 
