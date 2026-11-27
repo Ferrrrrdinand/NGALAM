@@ -24,20 +24,21 @@ export default function ReceiptModal({
 
   const isPaid = receiptTx.isPaid !== false && receiptTx.status !== 'Menunggu Pelunasan (Draft Struk)';
 
-  // Format data
-  const ticketId = receiptTx.ticketId || receiptTx.orderId || receiptTx.invoiceNumber || receiptTx.invoiceNo || 'NGF-SERVIS';
-  const noServis = (receiptTx.invoiceNumber || receiptTx.invoiceNo || ticketId).replace(/[^0-9]/g, '') || String(Date.now()).slice(-10);
-  const customerName = (receiptTx.customerName || receiptTx.name || 'PELANGGAN').toUpperCase();
-  const phone = receiptTx.whatsapp || receiptTx.phone || receiptTx.customerPhone || '08113185858';
+  // Format data with safe fallback null checks
+  const ticketId = String(receiptTx.ticketId || receiptTx.orderId || receiptTx.invoiceNumber || receiptTx.invoiceNo || 'NGF-SERVIS');
+  const rawId = String(receiptTx.invoiceNumber || receiptTx.invoiceNo || ticketId || '');
+  const noServis = rawId.replace(/[^0-9]/g, '') || String(Date.now()).slice(-10);
+  const customerName = String(receiptTx.customerName || receiptTx.name || 'PELANGGAN').toUpperCase();
+  const phone = String(receiptTx.whatsapp || receiptTx.phone || receiptTx.customerPhone || '08113185858');
   
   // Masking phone number like receipt: 08113185858 -> 08***5858
   const maskedPhone = phone.length > 7 
     ? `${phone.slice(0, 4)}***${phone.slice(-4)}` 
     : phone;
 
-  const device = (receiptTx.phoneType || receiptTx.device || 'SMARTPHONE').toUpperCase();
-  const technician = receiptTx.technician || receiptTx.cashier || 'bayu';
-  const noteAuthor = receiptTx.noteAuthor || receiptTx.csName || 'ANGGA';
+  const device = String(receiptTx.phoneType || receiptTx.device || 'SMARTPHONE').toUpperCase();
+  const technician = String(receiptTx.technician || receiptTx.cashier || receiptTx.cashierName || 'bayu');
+  const noteAuthor = String(receiptTx.noteAuthor || receiptTx.csName || 'ANGGA');
   
   // Format dates
   const today = new Date();
@@ -46,7 +47,7 @@ export default function ReceiptModal({
   const printTimestamp = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()} ${today.getHours().toString().padStart(2, '0')}.${today.getMinutes().toString().padStart(2, '0')} WIB`;
 
   // Warranty calculation
-  const isBattery = /baterai|battery/i.test(receiptTx.serviceItem || receiptTx.damage || '');
+  const isBattery = /baterai|battery/i.test(String(receiptTx.serviceItem || receiptTx.damage || ''));
   const warrantyDays = isBattery ? 90 : 7; // or 30 days
   const warrantyEndDate = new Date(today.getTime() + warrantyDays * 24 * 60 * 60 * 1000);
   const warrantyStr = `${warrantyDays === 7 ? '1 Minggu' : warrantyDays === 90 ? '3 Bulan (90 Hari)' : '1 Bulan'} [${warrantyEndDate.getDate()} ${months[warrantyEndDate.getMonth()]} ${warrantyEndDate.getFullYear().toString().slice(-2)}]`;
@@ -54,13 +55,13 @@ export default function ReceiptModal({
   // Pricing
   const totalAmount = Number(receiptTx.totalPaid || receiptTx.amount || receiptTx.cost || 0);
   const downPayment = Number(receiptTx.downPayment || 0);
-  const paymentMethod = /bri/i.test(receiptTx.paymentMethod || '') 
+  const paymentMethod = /bri/i.test(String(receiptTx.paymentMethod || '')) 
     ? 'Transfer Bank BRI' 
-    : (receiptTx.paymentMethod || 'Tunai');
+    : (receiptTx.paymentMethod ? String(receiptTx.paymentMethod) : 'Tunai');
 
   // Kerusakan & Tindakan
-  const damageDesc = (receiptTx.damage || receiptTx.serviceItem || 'GANTI LCD OLED').toUpperCase();
-  const actionDesc = (receiptTx.actionTaken || receiptTx.serviceItem || damageDesc).toUpperCase();
+  const damageDesc = String(receiptTx.damage || receiptTx.serviceItem || 'GANTI LCD OLED').toUpperCase();
+  const actionDesc = String(receiptTx.actionTaken || receiptTx.serviceItem || damageDesc).toUpperCase();
 
   // QR Code URL for live tracking & warranty verification
   const qrTarget = typeof window !== 'undefined'
@@ -68,17 +69,27 @@ export default function ReceiptModal({
     : `https://ngalamfixpro.com/lacak?id=${ticketId}`;
 
   useEffect(() => {
-    QRCode.toDataURL(qrTarget, {
-      width: 200,
-      margin: 1,
-      errorCorrectionLevel: 'M',
-      color: {
-        dark: '#000000',
-        light: '#ffffff'
-      }
-    })
-      .then((url) => setQrCodeUrl(url))
-      .catch((err) => console.error('[Struk QR Error]', err));
+    let isMounted = true;
+    try {
+      QRCode.toDataURL(qrTarget, {
+        width: 200,
+        margin: 1,
+        errorCorrectionLevel: 'M',
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      })
+        .then((url) => {
+          if (isMounted) setQrCodeUrl(url);
+        })
+        .catch((err) => console.error('[Struk QR Error]', err));
+    } catch (e) {
+      console.error('[Struk QR Exception]', e);
+    }
+    return () => {
+      isMounted = false;
+    };
   }, [qrTarget]);
 
   return (
