@@ -63,10 +63,98 @@ export default function ReceiptModal({
   const damageDesc = String(receiptTx.damage || receiptTx.serviceItem || 'GANTI LCD OLED').toUpperCase();
   const actionDesc = String(receiptTx.actionTaken || receiptTx.serviceItem || damageDesc).toUpperCase();
 
-  // QR Code URL for live tracking & warranty verification
-  const qrTarget = typeof window !== 'undefined'
-    ? `${window.location.origin}/lacak?id=${encodeURIComponent(ticketId)}`
-    : `https://ngalamfixpro.com/lacak?id=${ticketId}`;
+  // Dedicated direct printer function for 58mm / 80mm thermal printers
+  const triggerThermalPrint = () => {
+    const printArea = document.getElementById('thermalReceipt');
+    if (!printArea) {
+      window.print();
+      return;
+    }
+
+    const htmlContent = printArea.innerHTML;
+    const printWindow = window.open('', '_blank', 'width=450,height=700');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Nota Servis - ${noServis}</title>
+          <style>
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              font-size: 11px;
+              line-height: 1.25;
+              margin: 0;
+              padding: 8px 10px;
+              color: #000000;
+              max-width: 78mm;
+              background: #ffffff;
+            }
+            .grid {
+              display: grid;
+            }
+            .grid-cols-\\[90px_10px_1fr\\] {
+              grid-template-columns: 90px 10px 1fr;
+            }
+            .font-bold {
+              font-weight: bold;
+            }
+            .font-extrabold {
+              font-weight: 800;
+            }
+            .font-semibold {
+              font-weight: 600;
+            }
+            .uppercase {
+              text-transform: uppercase;
+            }
+            .text-center {
+              text-align: center;
+            }
+            .border-b {
+              border-bottom: 1px dashed #666;
+            }
+            .my-1 {
+              margin-top: 4px;
+              margin-bottom: 4px;
+            }
+            .my-2 {
+              margin-top: 6px;
+              margin-bottom: 6px;
+            }
+            .space-y-0\\.5 > * + * {
+              margin-top: 2px;
+            }
+            .space-y-0\\.5 > div {
+              margin-bottom: 2px;
+            }
+            img {
+              display: block;
+              margin: 0 auto;
+            }
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 350);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -329,10 +417,10 @@ export default function ReceiptModal({
 
           <div className="flex gap-2">
             <button
-              onClick={handlePrint}
-              className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              onClick={triggerThermalPrint}
+              className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm transition-all"
             >
-              <Printer className="w-4 h-4" />
+              <Printer className="w-4 h-4 text-amber-400" />
               <span>Cetak Nota Servis (Thermal)</span>
             </button>
             <button
