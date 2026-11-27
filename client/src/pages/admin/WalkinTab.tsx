@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import QRCode from 'qrcode';
 import { 
   Smartphone, Battery, Zap, Gem, Camera, PowerOff, 
   Check, CheckCircle2, User, Phone, MapPin, Mail, 
@@ -395,98 +396,111 @@ export default function WalkinTab({
     setEstimatedCost(250000);
   };
 
-  // Print Slip Tanda Terima Fisik (Thermal Printer & A4)
-  const handlePrintSlip = (order: any) => {
+  // Print Slip Tanda Terima Fisik (Thermal Printer Nota Servis)
+  const handlePrintSlip = async (order: any) => {
     const printWindow = window.open('', '_blank', 'width=450,height=650');
     if (!printWindow) {
       window.print();
       return;
     }
 
-    const todayStr = new Date().toLocaleDateString('id-ID', { 
-      day: 'numeric', month: 'short', year: 'numeric', 
-      hour: '2-digit', minute: '2-digit' 
-    });
+    const today = new Date();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const technician = order.technician || 'bayu';
+    const dateStr = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()} [${technician}]`;
+    const printTimestamp = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()} ${today.getHours().toString().padStart(2, '0')}.${today.getMinutes().toString().padStart(2, '0')} WIB`;
+
+    const noServis = (order.id || '').replace(/[^0-9]/g, '') || String(Date.now()).slice(-10);
+    const phone = order.whatsapp || order.phone || '';
+    const maskedPhone = phone.length > 7 ? `${phone.slice(0, 4)}***${phone.slice(-4)}` : phone;
 
     const isBattery = /baterai|battery/i.test(order.damage || order.damageDescription || '');
-    const warrantyLabel = isBattery ? 'Garansi Resmi Baterai 90 Hari (3 Bulan)' : 'Garansi Servis Hardware 30 Hari (1 Bulan)';
+    const warrantyDays = isBattery ? 90 : 7;
+    const warrantyEndDate = new Date(today.getTime() + warrantyDays * 24 * 60 * 60 * 1000);
+    const warrantyStr = `${warrantyDays === 7 ? '1 Minggu' : '3 Bulan'} [${warrantyEndDate.getDate()} ${months[warrantyEndDate.getMonth()]} ${warrantyEndDate.getFullYear().toString().slice(-2)}]`;
+
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ngalamfixpro.com';
+    const qrUrl = `${origin}/lacak?id=${encodeURIComponent(order.id || '')}`;
+    
+    let qrDataUrl = '';
+    try {
+      qrDataUrl = await QRCode.toDataURL(qrUrl, {
+        width: 180,
+        margin: 1,
+        color: { dark: '#000000', light: '#ffffff' }
+      });
+    } catch (e) {
+      console.error(e);
+    }
 
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Tanda Terima Servis - ${order.id}</title>
+          <title>Nota Servis - ${order.id}</title>
           <style>
-            @page { size: 80mm auto; margin: 4mm; }
+            @page { size: 80mm auto; margin: 0; }
             body { 
               font-family: 'Courier New', Courier, monospace; 
               font-size: 11px; 
-              line-height: 1.35; 
+              line-height: 1.25; 
               margin: 0; 
-              padding: 10px; 
+              padding: 8px 10px; 
               color: #000000; 
-              max-width: 320px; 
+              max-width: 78mm; 
             }
             .center { text-align: center; }
-            .border-b { border-bottom: 1px dashed #444; padding-bottom: 8px; margin-bottom: 8px; }
-            .row { display: flex; justify-content: space-between; margin: 3px 0; }
+            .border-b { border-bottom: 1px dashed #444; padding-bottom: 4px; margin-bottom: 4px; }
+            .row { display: grid; grid-template-columns: 85px 10px 1fr; margin: 2px 0; }
             .bold { font-weight: bold; }
-            .title { font-size: 14px; font-weight: 900; letter-spacing: 0.5px; }
-            .subtitle { font-size: 9px; color: #333; }
-            .ticket-badge { 
-              display: inline-block; 
-              font-size: 15px; 
-              font-weight: 900; 
-              letter-spacing: 1px; 
-              border: 2px solid #000; 
-              padding: 4px 8px; 
-              margin: 6px 0; 
-            }
-            .footer { font-size: 8.5px; text-align: center; margin-top: 10px; color: #444; }
-            .sign-grid { display: flex; justify-content: space-between; margin-top: 25px; text-align: center; font-size: 9px; }
+            .uppercase { text-transform: uppercase; }
+            .title { font-size: 13px; font-weight: bold; letter-spacing: 2px; }
+            .brand { font-size: 15px; font-weight: 900; letter-spacing: 1px; }
+            .subtitle { font-size: 9.5px; }
+            .footer { font-size: 9px; text-align: center; margin-top: 6px; }
+            .qr-box { text-align: center; margin: 6px 0; }
+            .qr-box img { width: 110px; height: 110px; margin: 0 auto; display: block; }
           </style>
         </head>
         <body>
           <div class="center border-b">
-            <div class="title">NGALAM FIX PRO</div>
-            <div class="subtitle">Pusat Reparasi Smartphone & Apple iPhone Malang</div>
-            <div class="subtitle">Jl. Galunggung, Malang • CS WhatsApp: +62 811-3185-858</div>
-            <div class="ticket-badge">${order.id}</div>
-            <div class="subtitle">TANDA TERIMA INTAKE MEJA 1 (OFFLINE)</div>
+            <div class="title">NOTA SERVIS</div>
+            <div class="brand">NGALAM FIX PRO</div>
+            <div class="subtitle">Telp. 08113185858 | WA 08113185858</div>
           </div>
 
           <div class="border-b">
-            <div class="row"><span>Waktu Masuk:</span><span>${todayStr}</span></div>
-            <div class="row"><span>Front Desk:</span><span>${order.technician || 'Kasir Meja 1'}</span></div>
-            <div class="row"><span>Pelanggan:</span><span class="bold">${order.customerName}</span></div>
-            <div class="row"><span>WhatsApp:</span><span>${order.whatsapp}</span></div>
-            ${order.district ? `<div class="row"><span>Wilayah:</span><span>${order.district}</span></div>` : ''}
+            <div class="row"><span>No. Servis</span><span>:</span><span class="bold">${noServis}</span></div>
+            <div class="row"><span>Nama</span><span>:</span><span class="bold uppercase">${order.customerName || 'PELANGGAN'}</span></div>
+            <div class="row"><span>Telp. WA</span><span>:</span><span>${maskedPhone}</span></div>
+            <div class="row"><span>Tgl Masuk</span><span>:</span><span>${dateStr}</span></div>
+            <div class="row"><span>Barang</span><span>:</span><span class="bold uppercase">${order.phoneType || '-'}</span></div>
+            <div class="row"><span>S/N</span><span>:</span><span>-</span></div>
+            <div class="row"><span>Kelengkapan</span><span>:</span><span>UNIT</span></div>
+            <div class="row"><span>Kerusakan</span><span>:</span><span class="uppercase">${order.damage || order.damageDescription || 'PEMERIKSAAN MEJA 1'}</span></div>
+            <div class="row"><span>Ket.Tindakan</span><span>:</span><span class="uppercase">${order.damage || 'SERVIS SPESIALIS'}</span></div>
+            <div class="row"><span>Catatan</span><span>:</span><span>ANGGA</span></div>
+            <div class="row"><span>Biaya Servis</span><span>:</span><span class="bold">Rp ${(Number(order.cost || order.estimatedCost || 0)).toLocaleString('id-ID')}</span></div>
+            <div class="row"><span>Uang Muka</span><span>:</span><span>Rp 0</span></div>
+            <div class="row"><span>Status Bayar</span><span>:</span><span class="bold">MENUNGGU PEMBAYARAN</span></div>
+            <div class="row"><span>Cara Bayar</span><span>:</span><span>Tunai</span></div>
+            <div class="row"><span>Garansi</span><span>:</span><span class="bold">${warrantyStr}</span></div>
+            <div class="row"><span>Teknisi</span><span>:</span><span>${technician}</span></div>
+            <div class="row"><span>QC</span><span>:</span><span>..................</span></div>
+            <div class="row"><span>Tgl Ambil</span><span>:</span><span>${dateStr}</span></div>
+            <div class="row"><span>Pengambil</span><span>:</span><span class="bold uppercase">${order.customerName || 'PELANGGAN'}</span></div>
           </div>
 
-          <div class="border-b">
-            <div class="row"><span>Tipe Perangkat:</span><span class="bold">${order.phoneType}</span></div>
-            <div class="row"><span>Layanan / Kerusakan:</span></div>
-            <div style="padding: 2px 0 4px 0; font-weight: bold;">${order.damage || order.damageDescription || 'Pemeriksaan Meja 1'}</div>
-            <div class="row"><span>Estimasi Biaya:</span><span class="bold">Rp ${Number(order.cost || order.estimatedCost || 0).toLocaleString('id-ID')}</span></div>
-            <div class="row"><span>Garansi Resmi:</span><span class="bold">${warrantyLabel}</span></div>
+          <div class="qr-box">
+            ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR Code" />` : ''}
+            <div style="font-size: 9.5px; font-family: sans-serif; margin-top: 3px;">Scan QR Code ini untuk Cek Online</div>
           </div>
 
-          <div class="border-b footer">
-            <div class="bold">KETENTUAN SERVIS MEJA TERBUKA:</div>
-            <div>1. Harap bawa tanda terima ini saat pengambilan unit di counter.</div>
-            <div>2. Garansi resmi berlaku terhitung setelah unit selesai & diambil.</div>
-            <div>3. Lacak progres pengerjaan teknisi online 24 jam di:</div>
-            <div class="bold" style="margin-top:2px;">ngalamfixpro.com/lacak?id=${order.id}</div>
-          </div>
-
-          <div class="sign-grid">
-            <div>
-              Hormat Kami,<br/><br/><br/>
-              <b>( Petugas Kasir )</b>
-            </div>
-            <div>
-              Pemilik Unit,<br/><br/><br/>
-              <b>( ${order.customerName || 'Pelanggan'} )</b>
+          <div class="footer">
+            <div>Dicetak ${technician} [${printTimestamp}]</div>
+            <div style="margin-top: 3px;">
+              Terima kasih atas kepercayaan Anda telah melakukan servis di<br />
+              <strong>NGALAM FIX PRO</strong>
             </div>
           </div>
         </body>
